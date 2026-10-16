@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "id": "factory-rock-start",
+  "name": "Rock \u2014 Starting Point",
+  "author": "MPS Audio Studio",
+  "origin": "original heuristic",
+  "modules": [
+    {
+      "type": "eq",
+      "enabled": true,
+      "bands": [
+        {
+          "type": "lowshelf",
+          "frequencyHz": 90,
+          "gainDb": 1.0,
+          "q": 0.707
+        },
+        {
+          "type": "bell",
+          "frequencyHz": 280,
+          "gainDb": -0.7,
+          "q": 1.0
+        },
+        {
+          "type": "bell",
+          "frequencyHz": 3200,
+          "gainDb": 0.7,
+          "q": 0.8
+        }
+      ]
+    },
+    {
+      "type": "compressor",
+      "enabled": true,
+      "thresholdDb": -18,
+      "ratio": 2.0,
+      "attackMs": 25,
+      "releaseMs": 160,
+      "kneeDb": 6,
+      "makeupDb": 0
+    },
+    {
+      "type": "stereoWidth",
+      "enabled": true,
+      "widthPercent": 110,
+      "monoBassBelowHz": 150
+    },
+    {
+      "type": "limiter",
+      "enabled": true,
+      "ceilingDbtp": -1.0
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+# Paste this into Codex in the new repository
+
+You are implementing MPS Audio Studio as a real installable macOS audio application, not a browser-only prototype. Read `AGENTS.md`, `README.md`, every document in `docs/`, the preset schema, and reference baseline before writing code. Follow the JUCE/C++20/CMake architecture unless you discover a specific blocker, in which case document an ADR and propose an evidence-based alternative.
+
+Start **now** with Milestone 0 and then Milestone 1 if time permits. Do not ask me what to build or request a CV or unrelated inputs. Inspect the legacy HTML only to understand features and prior bugs; do not reuse the fragile Web Audio engine. Create a working native macOS project with original Fostex-inspired console styling, automated tests and CI. Implement a stable WAV import/play/pause/seek vertical slice. Do not claim functionality without tests. When done, report files changed, commands and test results, how to run on macOS, and exact remaining blockers. Preserve the Lia v6 sonic target as a reference, not a fake recovered preset.
