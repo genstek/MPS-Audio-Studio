@@ -2,9 +2,38 @@
 
 Approved direction: **React + Vite + JavaScript + Web Audio API**, with JavaScript Playwright browser tests and Vitest logic/audio tests. Tracking: [SCRUM-6](https://genstek69.atlassian.net/browse/SCRUM-6), under [SCRUM-5](https://genstek69.atlassian.net/browse/SCRUM-5).
 
-This branch contains documentation and a legacy prototype, not the modern web application. There is no package.json here: `npm ci`, `npm run dev` and `npm run check` are not available on this branch yet. The unpublished playback implementation described in the audit is separate work and must be reviewed in its own PR.
+## Run on your Mac
 
-Read [ADR-002](docs/ADR-002-web-first.md) for the architecture decision, [the repository audit](docs/SCRUM-6_AUDIT.md) for verified status and [AGENTS.md](AGENTS.md) for current development instructions. Preserve the native handoff below as historical context; its stack and bootstrap instructions are superseded for current web work.
+Requires Node.js 22.12+ (verified with 22.17.0), npm and Google Chrome in Applications.
+
+```sh
+cd "/Users/g_lab/Documents/ChatGPT/LoVerse OS - Mastering/MPS-Audio-Studio"
+npm ci
+npm run dev -- --port 5174 --strictPort
+```
+
+Open <http://127.0.0.1:5174>. Keep the Terminal window open; Control-C stops the app. To use another checkout, change the `cd` path. No server account or audio upload is involved.
+
+The JavaScript React/Vite app has an empty session, transport, track area, planned processing strips and master section. Import a WAV (up to 100 MiB) for local decoding and single-track Play / Pause / Stop. Decoded sample rate may differ from the original because AudioContext may resample. Replacement decode errors preserve the previous track. EQ, dynamics, multitrack, waveform/seek, level controls, meters and export are visibly unavailable; no mastering processing is claimed.
+
+## Playwright for beginners
+
+```sh
+npm run test:e2e                       # both browser tests; starts its own app
+npm run test:e2e -- --grep TC-001       # just the mixer UI smoke test
+npm run test:e2e:headed                # watch Chrome run the tests
+npm run test:e2e:ui                    # interactive test explorer
+npm run test:e2e:report                # open the latest HTML results
+npm run check                         # lint + unit tests + build + browser tests
+```
+
+Run these from the same repository directory. Test runs use port **5173**; the app you open manually uses **5174**, so they can run together. Stop anything using 5173 before testing. UI mode opens an explorer: select a test and press Run. The HTML report contains the last completed run, not the current app state. Terminal output gives the pass/fail summary and exits nonzero on failure. Failure screenshots and traces are kept in `test-results/`; the report links to them. Generated results are ignored by Git.
+
+This configuration uses installed Google Chrome (Chromium engine) via `channel: 'chrome'`. On this macOS 13.7.8 machine, the current Playwright managed Chromium download was unsupported; no `npx playwright install` is needed for the Chrome channel. If Chrome is missing, install it in Applications first.
+
+Read [TC-001 and the executed results](docs/SPRINT-0.md). [The smoke test](tests/e2e/mixer.spec.js) introduces `test`, `page`, locators, `await` and `expect` in short comments. Each case gets a fresh page. Role/label locators use the names people and assistive technology see; assertions wait for actual UI state without sleeps. The separate playback regression imports an original generated PCM16 tone. Unit tests mock AudioContext and check lifecycle behavior; they do not measure sound quality.
+
+Read [ADR-002](docs/ADR-002-web-first.md), [the repository audit](docs/SCRUM-6_AUDIT.md) and [AGENTS.md](AGENTS.md) for the approved architecture and historical context.
 
 ## Historical native handoff
 
