@@ -1,4 +1,12 @@
-# MPS Audio Studio — Codex implementation handoff
+# MPS Audio Studio — Web Mixer & QA Automation
+
+Approved direction: **React + Vite + JavaScript + Web Audio API**, with JavaScript Playwright browser tests and Vitest logic/audio tests. Tracking: [SCRUM-6](https://genstek69.atlassian.net/browse/SCRUM-6), under [SCRUM-5](https://genstek69.atlassian.net/browse/SCRUM-5).
+
+This branch contains documentation and a legacy prototype, not the modern web application. There is no package.json here: `npm ci`, `npm run dev` and `npm run check` are not available on this branch yet. The unpublished playback implementation described in the audit is separate work and must be reviewed in its own PR.
+
+Read [ADR-002](docs/ADR-002-web-first.md) for the architecture decision, [the repository audit](docs/SCRUM-6_AUDIT.md) for verified status and [AGENTS.md](AGENTS.md) for current development instructions. Preserve the native handoff below as historical context; its stack and bootstrap instructions are superseded for current web work.
+
+## Historical native handoff
 
 This package contains the product and engineering documentation for a **new native-installable macOS application**. It also includes a legacy HTML prototype for behavioral reference, **not production code**.
 

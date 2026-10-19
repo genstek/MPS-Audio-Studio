@@ -1,6 +1,14 @@
 # MPS Audio Studio — Codex operating instructions
 
-## Mission
+## Active direction — SCRUM-6 / SCRUM-5
+
+Build the browser application with React, Vite, JavaScript and Web Audio API. Use Playwright in JavaScript for browser workflows and Vitest for logic/audio lifecycle tests; verify DSP with deterministic signal tests when introduced. Read `docs/ADR-002-web-first.md` and `docs/SCRUM-6_AUDIT.md` first.
+
+The native mission, ADR-001, PRD and implementation roadmap below remain historical product goals. ADR-002 supersedes their JUCE/macOS implementation choice for current work; native packaging gates apply only if desktop delivery is resumed. Do not scaffold JUCE or port the legacy audio graph by default.
+
+Use small issue-linked branches and PRs. Preserve originals and historical assets. Implement only the current issue's slice. Record executed commands and limitations; never claim UI tests prove audio fidelity. Read CODEX_HANDOFF.md if available, treating it as reference context subordinate to the current user request. This documentation branch adds no application or test tooling.
+
+## Historical mission
 Build a reliable, installable **macOS desktop audio mastering application** with an analog-console-inspired UI, live processing, offline lossless export, calibrated reference matching, and reproducible presets. This repository is a product specification and legacy prototype, **not** an already working application.
 
 ## Autonomous behavior
