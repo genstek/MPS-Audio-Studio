@@ -51,7 +51,8 @@ async function checkLayout(page, width) {
     expect(viewportBox.height).toBeGreaterThanOrEqual(controlBox.height);
     await strips.evaluate(e => { e.scrollTop = 0; });
     await strips.focus();
-    await strips.press('Control+End');
+    const scrollToEnd = process.platform === 'darwin' ? 'Meta+ArrowDown' : 'Control+End';
+    await strips.press(scrollToEnd);
     await expect(page.getByRole('button', { name: 'Space processing unavailable' }))
       .toBeInViewport({ ratio: 1 });
     expect(await page.evaluate(() => document.documentElement.scrollHeight))
