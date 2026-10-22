@@ -68,10 +68,10 @@ function App() {
           <div className="track-space">
             <span className="audio-icon" aria-hidden="true">♫</span>
             <h3>{track ? track.name : 'Your session starts here'}</h3>
-            <p>{track ? `${track.duration.toFixed(1)} seconds · ${track.channels} channel(s) · ${track.sampleRate.toLocaleString()} Hz decoded` : 'Import a WAV file to start listening.'}</p>
             <label className="file-picker">{track ? 'Replace WAV' : 'Import WAV'}
               <input type="file" accept=".wav,audio/wav" aria-label="Import WAV" onChange={importAudio} disabled={busy} />
             </label>
+            <p className="track-blurb">{track ? `${track.duration.toFixed(1)} seconds · ${track.channels} channel(s) · ${track.sampleRate.toLocaleString()} Hz decoded` : 'Import a WAV file to start listening.'}</p>
             <p className="fine-print">WAV up to 100 MiB · Files stay on your device</p>
           </div>
           {error && <p role="alert" className="error">{error}</p>}
@@ -80,14 +80,25 @@ function App() {
 
         <section className="master panel" aria-labelledby="master-title">
           <div className="panel-heading"><h2 id="master-title">Master</h2><span className="badge">STEREO</span></div>
-          <div className="master-body"><p className="eyebrow">OUTPUT STAGE</p><div className="master-symbol" aria-hidden="true">L <span>│</span> R</div><p>Direct playback</p><p className="muted">Output trim and measured meters coming soon.</p><label>Master level<input aria-label="Master level" type="range" min="0" max="100" defaultValue="75" disabled /></label><p className="fine-print">Level control unavailable</p></div>
-          <button disabled>Export WAV — coming soon</button>
+          <div className="master-body" role="region" aria-label="Master details" tabIndex={0}>
+            <p className="eyebrow">OUTPUT STAGE</p>
+            <div className="master-symbol" aria-hidden="true">L <span>│</span> R</div>
+            <p>Direct playback</p>
+            <p className="muted">Output trim and measured meters coming soon.</p>
+            <p className="fine-print">Level control unavailable</p>
+          </div>
+          <div className="master-controls">
+            <label>Master level
+              <input aria-label="Master level" type="range" min="0" max="100" defaultValue="75" disabled />
+            </label>
+            <button disabled>Export WAV — coming soon</button>
+          </div>
         </section>
       </div>
 
       <section className="mixer panel" aria-labelledby="mixer-title">
         <div className="panel-heading"><h2 id="mixer-title">Mixer</h2><span className="badge">PROCESSING MODULES · COMING SOON</span></div>
-        <div className="strips">{['Input', 'EQ', 'Dynamics', 'Space'].map((name, index) => (
+        <div className="strips" role="group" aria-label="Processing modules">{['Input', 'EQ', 'Dynamics', 'Space'].map((name, index) => (
           <section className="strip" key={name} aria-label={`${name} channel strip`}>
             <div className="strip-title"><span className="strip-number">0{index + 1}</span><h3>{name}</h3></div>
             <div className="knob" aria-hidden="true" />
