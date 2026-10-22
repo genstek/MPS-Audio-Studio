@@ -65,22 +65,23 @@ function App() {
       <div className="workspace">
         <section className="tracks panel" aria-labelledby="tracks-title">
           <div className="panel-heading"><h2 id="tracks-title">Tracks</h2><span className="badge">{track ? '01 TRACK' : '00 TRACKS'}</span></div>
-          <div className="track-space">
-            <span className="audio-icon" aria-hidden="true">♫</span>
-            <h3>{track ? track.name : 'Your session starts here'}</h3>
-            <p>{track ? `${track.duration.toFixed(1)} seconds · ${track.channels} channel(s) · ${track.sampleRate.toLocaleString()} Hz decoded` : 'Import a WAV file to start listening.'}</p>
+          <div className="track-space"><div className="track-content">
+            <span className="audio-icon" aria-hidden="true"><span>♫</span></span>
+            <h3 title={track ? track.name : undefined}>{track ? track.name : 'Your session starts here'}</h3>
+            <p className="track-info">{track ? `${track.duration.toFixed(1)} seconds · ${track.channels} channel(s) · ${track.sampleRate.toLocaleString()} Hz decoded` : 'Import a WAV file to start listening.'}</p>
             <label className="file-picker">{track ? 'Replace WAV' : 'Import WAV'}
               <input type="file" accept=".wav,audio/wav" aria-label="Import WAV" onChange={importAudio} disabled={busy} />
             </label>
             <p className="fine-print">WAV up to 100 MiB · Files stay on your device</p>
-          </div>
+          </div></div>
           {error && <p role="alert" className="error">{error}</p>}
           <div className="track-footer">SINGLE-TRACK PLAYBACK <span>Waveform & seeking coming soon</span></div>
         </section>
 
         <section className="master panel" aria-labelledby="master-title">
           <div className="panel-heading"><h2 id="master-title">Master</h2><span className="badge">STEREO</span></div>
-          <div className="master-body" role="region" aria-label="Master details" tabIndex={0}><p className="eyebrow">OUTPUT STAGE</p><div className="master-symbol" aria-hidden="true">L <span>│</span> R</div><p>Direct playback</p><p className="muted">Output trim and measured meters coming soon.</p><label>Master level<input aria-label="Master level" type="range" min="0" max="100" defaultValue="75" disabled /></label><p className="fine-print">Level control unavailable</p></div>
+          <div className="master-body" role="region" aria-label="Master details" tabIndex={0}><p className="eyebrow">OUTPUT STAGE</p><div className="master-symbol" aria-hidden="true">L <span>│</span> R</div><p>Direct playback</p><p className="muted">Output trim and measured meters coming soon.</p></div>
+          <div className="master-level"><label>Master level<input aria-label="Master level" type="range" min="0" max="100" defaultValue="75" disabled /></label><p className="fine-print">Level control unavailable</p></div>
           <button disabled>Export WAV — coming soon</button>
         </section>
       </div>

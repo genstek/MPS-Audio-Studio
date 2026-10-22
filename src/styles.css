@@ -1,15 +1,18 @@
 :root { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #ecedf0; background: #111519; font-synthesis: none; color-scheme: dark; }
 * { box-sizing: border-box; }
-body { margin: 0; }
-/* Keep Tracks at its content height; share remaining space with a scrollable Mixer. */
-main { --space: clamp(8px, 1.6dvh, 20px); max-width: 1440px; height: 100dvh; margin: auto; padding: var(--space) clamp(16px, 2.5vw, 36px); display: grid; grid-template-rows: auto auto minmax(min-content, 1fr) minmax(0, .65fr) auto; gap: var(--space); }
+/* An explicit line height keeps text rows equally tall whichever system font renders them. */
+body { margin: 0; line-height: 1.2; }
+/* Every row is at least as tall as its compact arrangement, which shows all essential controls.
+   Spare height first lets Tracks stack; the Mixer may grow past its compact size only while
+   29rem of the viewport remains for the other rows; whatever is left goes to the workspace. */
+main { --space: clamp(6px, 1.6dvh, 20px); --mixer-max: clamp(0px, 100dvh - 29rem, 15rem); max-width: 1440px; height: 100dvh; margin: auto; padding: var(--space) clamp(16px, 2.5vw, 36px); display: grid; grid-template-rows: auto auto minmax(min-content, 1fr) minmax(min-content, var(--mixer-max)) auto; gap: var(--space); }
 main > *, .workspace > * { min-width: 0; }
 h1, h2, h3, p { margin: 0; }
 h1 { font-size: 24px; font-weight: 600; letter-spacing: -.5px; }
 h2 { font-size: 16px; font-weight: 600; }
 h3 { font-size: 19px; font-weight: 500; }
 button, input { font: inherit; }
-button { border: 1px solid #52616c; border-radius: 5px; padding: 11px 18px; background: #303a43; color: #f0f3f4; cursor: pointer; }
+button { border: 1px solid #52616c; border-radius: 5px; padding: clamp(7px, 1.25dvh, 11px) 18px; background: #303a43; color: #f0f3f4; cursor: pointer; }
 button:not(:disabled):hover { background: #44525e; }
 button:disabled { opacity: .58; cursor: not-allowed; }
 button.primary { background: #d7af6c; color: #14191d; border-color: #d7af6c; font-weight: 650; }
@@ -17,9 +20,9 @@ button.primary { background: #d7af6c; color: #14191d; border-color: #d7af6c; fon
 .masthead, .brand, .transport, .panel-heading, .strip-title, footer, .track-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .masthead { min-width: 0; }
 .brand { justify-content: flex-start; }
-.brand-mark { border: 1px solid #d7af6c; color: #e8c58d; padding: 14px 10px; font-size: 16px; font-weight: 750; letter-spacing: 2px; border-radius: 5px; }
+.brand-mark { border: 1px solid #d7af6c; color: #e8c58d; padding: clamp(9px, 1.6dvh, 14px) 10px; font-size: 16px; font-weight: 750; letter-spacing: 2px; border-radius: 5px; }
 .eyebrow, .version, .badge, .track-footer, footer { font-size: 10px; letter-spacing: 1.5px; color: #a7b2bc; }
-.eyebrow { margin-bottom: 7px; }
+.eyebrow { margin-bottom: clamp(3px, .8dvh, 7px); }
 .version { color: #d9ba86; }
 .panel { background: #1c2329; border: 1px solid #39434c; border-radius: 8px; }
 .transport { padding: var(--space) clamp(12px, 2vw, 24px); }
@@ -27,51 +30,78 @@ button.primary { background: #d7af6c; color: #14191d; border-color: #d7af6c; fon
 .status { color: #d9ba86; min-width: 135px; font-size: 13px; }
 .status::before { content: '●'; margin-right: 9px; }
 .workspace { display: grid; grid-template-columns: minmax(0, 1fr) clamp(220px, 22vw, 280px); gap: var(--space); min-height: min-content; }
-.panel-heading { padding: clamp(8px, 1.5dvh, 17px) 16px; border-bottom: 1px solid #39434c; }
+.panel-heading { padding: clamp(6px, 1.5dvh, 17px) 16px; border-bottom: 1px solid #39434c; }
 .badge { font-size: 9px; letter-spacing: 1px; }
 .tracks { display: flex; flex-direction: column; min-height: min-content; }
 .tracks > .panel-heading, .track-footer { flex-shrink: 0; }
-.track-space { flex: 1 0 auto; min-height: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: clamp(6px, 1.2dvh, 15px); padding: var(--space); text-align: center; background: radial-gradient(ellipse at center, #25313a44, transparent 75%); }
-.track-space h3 { max-width: 100%; overflow-wrap: anywhere; }
-.track-space > p { font-size: 13px; color: #aebac4; }
-.audio-icon { color: #d7af6c; font-size: 35px; }
-.file-picker { position: relative; overflow: hidden; background: #d7af6c; color: #15191d; padding: 12px 24px; border-radius: 5px; font-weight: 650; font-size: 13px; cursor: pointer; }
+/* Tracks content is a size container: stacked by default, a compact row (text beside the
+   file button) whenever the panel gets less height than stacking needs. */
+.track-space { flex: 1 1 auto; container: track / size; contain-intrinsic-block-size: 4rem; padding: var(--space); background: radial-gradient(ellipse at center, #25313a44, transparent 75%); }
+.track-content { height: 100%; display: grid; grid-template-columns: minmax(0, max-content); grid-template-rows: minmax(0, 2.75rem) repeat(4, min-content); grid-template-areas: "icon" "title" "info" "picker" "note"; justify-content: center; justify-items: center; align-content: center; row-gap: clamp(4px, 1.2dvh, 15px); text-align: center; }
+.track-content > * { min-width: 0; max-width: 100%; }
+.track-content h3 { grid-area: title; }
+.track-content h3, .track-info, .track-content .fine-print { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.track-info { grid-area: info; font-size: 13px; color: #aebac4; }
+.track-content .fine-print { grid-area: note; }
+.audio-icon { grid-area: icon; align-self: stretch; container: track-icon / size; display: grid; place-items: center; color: #d7af6c; }
+.audio-icon span { font-size: min(35px, 100cqh); line-height: 1; }
+@container track-icon (height < 1rem) { .audio-icon span { display: none; } }
+@container track (height < 9.75rem) {
+  .track-content { grid-template-columns: minmax(0, max-content) max-content; grid-template-rows: repeat(3, min-content); grid-template-areas: "title picker" "info picker" "note picker"; justify-items: start; column-gap: clamp(16px, 3vw, 32px); row-gap: 2px; text-align: left; }
+  .audio-icon { display: none; }
+}
+.file-picker { grid-area: picker; align-self: center; position: relative; overflow: hidden; background: #d7af6c; color: #15191d; padding: 12px 24px; border-radius: 5px; font-weight: 650; font-size: 13px; cursor: pointer; white-space: nowrap; }
 .file-picker input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
 .file-picker:focus-within { outline: 3px solid #80d1e0; outline-offset: 4px; }
 .track-space p.fine-print, .fine-print { font-size: 11px; color: #a4afb8; }
 .track-footer { border-top: 1px solid #39434c; padding: var(--space) 16px; font-size: 9px; flex-wrap: wrap; letter-spacing: 1px; }
 .track-footer span { text-transform: none; letter-spacing: 0; }
 .master { display: flex; flex-direction: column; min-height: 0; }
-.master > .panel-heading, .master > button { flex-shrink: 0; }
-/* Master content scrolls without expanding the row reserved above Export. */
-.master-body { contain: size; flex: 1; min-height: 0; overflow: auto; text-align: center; padding: var(--space); font-size: 13px; }
-.master-symbol { font-size: 32px; letter-spacing: 12px; color: #d7af6c; margin: clamp(4px, 1dvh, 15px) 0; }
+.master > .panel-heading, .master-level, .master > button { flex-shrink: 0; }
+/* Only the supplementary details scroll; the level control and Export stay visible below them. */
+.master-body { contain: size; flex: 1; min-height: calc(2 * var(--space) + 1.25rem); overflow: auto; text-align: center; padding: var(--space); font-size: 13px; }
+.master-symbol { font-size: 32px; line-height: 1.15; letter-spacing: 12px; color: #d7af6c; margin: clamp(4px, 1dvh, 15px) 0; }
 .master-symbol span { color: #52616c; }
 .muted { color: #aebac4; line-height: 1.6; margin-top: 8px; }
-.master label { display: block; margin-top: var(--space); color: #aebac4; font-size: 12px; }
-.master input { display: block; width: 100%; margin: 10px 0; }
-.master > button { margin: 0 16px var(--space); font-size: 12px; }
-.mixer { display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 0; }
-.strips { overflow: auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.strip { padding: var(--space) var(--space) .25em; text-align: center; border-right: 1px solid #39434c; background: linear-gradient(110deg, #ffffff03, transparent); }
+.master-level { border-top: 1px solid #39434c; padding: clamp(4px, 1dvh, 10px) 16px 0; text-align: center; }
+.master-level label { display: block; color: #aebac4; font-size: 12px; }
+.master-level input { display: block; width: 100%; margin: clamp(2px, .6dvh, 8px) 0; }
+.master > button { margin: var(--space) 12px; padding-inline: 10px; font-size: 12px; }
+.mixer { display: grid; grid-template-rows: auto minmax(min-content, 1fr); min-height: 0; }
+/* Strips are a size container: full console strips by default; the caption is dropped when they
+   are shorter, and in the compact row the knob sits beside the button. Nothing essential hides. */
+.strips { container: strips / size; contain-intrinsic-block-size: calc(var(--space) + 4rem); overflow: auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.strip { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "title" "knob" "caption" "button"; justify-items: center; align-content: center; row-gap: clamp(4px, 1dvh, 12px); padding: var(--space) var(--space) .25em; text-align: center; border-right: 1px solid #39434c; background: linear-gradient(110deg, #ffffff03, transparent); }
 .strip:last-child { border: 0; }
-.strip-title { justify-content: flex-start; text-align: left; }
+.strip-title { grid-area: title; justify-self: stretch; justify-content: flex-start; text-align: left; }
 .strip-title h3 { font-size: 14px; }
 .strip-number { color: #d7af6c; font-size: 11px; }
-.knob { width: 46px; height: 46px; border: 4px solid #47525b; background: #222a30; border-radius: 50%; margin: var(--space) auto clamp(6px, 1dvh, 12px); box-shadow: 0 3px 6px #0005; }
+.knob { grid-area: knob; width: 46px; aspect-ratio: 1; border: 4px solid #47525b; background: #222a30; border-radius: 50%; box-shadow: 0 3px 6px #0005; }
 .knob::before { content: ''; display: block; width: 2px; height: 12px; background: #88959f; margin: 3px auto; }
-.strip p { font-size: 11px; color: #adb7bf; margin-bottom: clamp(6px, 1dvh, 14px); }
-.strip button { font-size: 11px; padding: 7px 16px; }
-.error { margin: 0 16px var(--space); padding: 14px; background: #4d2428; border: 1px solid #c17474; border-radius: 5px; font-size: 13px; }
+.strip p { grid-area: caption; font-size: 11px; color: #adb7bf; }
+.strip button { grid-area: button; font-size: 11px; padding: 7px 16px; }
+@container strips (height < 10.5rem) {
+  .strip { grid-template-areas: "title" "knob" "button"; }
+  .strip p { display: none; }
+  .knob { width: clamp(30px, 100cqh - 6.5rem, 46px); }
+}
+@container strips (height < 7.5rem) {
+  .strip { grid-template-columns: 1fr 1fr; grid-template-areas: "title title" "knob button"; column-gap: 12px; row-gap: 4px; }
+  .knob { width: 30px; justify-self: end; }
+  .strip button { justify-self: start; }
+}
+.error { margin: 0 16px var(--space); padding: clamp(4px, 1dvh, 14px) 12px; background: #4d2428; border: 1px solid #c17474; border-radius: 5px; font-size: 13px; }
 footer { letter-spacing: .3px; font-size: 10px; line-height: 1.6; }
 .connection { color: #adc6bd; white-space: nowrap; }
 @media (max-width: 760px) {
   main { height: auto; min-height: 100dvh; grid-template-rows: auto; padding: 20px 16px; }
   .masthead, .transport { flex-wrap: wrap; }
   .workspace { grid-template-columns: 1fr; }
+  /* The page scrolls here, so Tracks and strips keep their full (default) arrangement. */
+  .track-space, .strips { container-type: normal; }
   .mixer { display: block; }
   .strips { overflow: visible; }
-  .master-body { contain: none; max-width: 400px; margin: auto; }
+  .master-body, .master-level { contain: none; max-width: 400px; margin: auto; border-top: 0; }
   .strips { grid-template-columns: repeat(2, 1fr); }
   .strip { padding-bottom: var(--space); }
   .strip:nth-child(2) { border-right: 0; }
