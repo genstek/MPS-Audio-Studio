@@ -2,7 +2,7 @@
 * { box-sizing: border-box; }
 body { margin: 0; }
 /* Keep Tracks at its content height; share remaining space with a scrollable Mixer. */
-main { --space: clamp(8px, 1.6dvh, 20px); max-width: 1440px; height: 100dvh; margin: auto; padding: var(--space) clamp(16px, 2.5vw, 36px); display: grid; grid-template-rows: auto auto minmax(min-content, 1fr) minmax(0, .65fr) auto; gap: var(--space); }
+main { --space: clamp(8px, 1.6dvh, 20px); max-width: 1440px; height: 100dvh; margin: auto; padding: var(--space) clamp(16px, 2.5vw, 36px); display: grid; grid-template-rows: auto auto minmax(min-content, 1fr) minmax(min-content, .65fr) auto; gap: var(--space); }
 main > *, .workspace > * { min-width: 0; }
 h1, h2, h3, p { margin: 0; }
 h1 { font-size: 24px; font-weight: 600; letter-spacing: -.5px; }
@@ -51,9 +51,10 @@ button.primary { background: #d7af6c; color: #14191d; border-color: #d7af6c; fon
 .master label { display: block; margin-top: var(--space); color: #aebac4; font-size: 12px; }
 .master input { display: block; width: 100%; margin: 10px 0; }
 .master > button { margin: 0 16px var(--space); font-size: 12px; }
-.mixer { display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 0; }
-.strips { overflow: auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.strip { padding: var(--space) var(--space) .25em; text-align: center; border-right: 1px solid #39434c; background: linear-gradient(110deg, #ffffff03, transparent); }
+.mixer { --control-padding: 7px; --control-border: 1px; display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: min-content; }
+/* Reserve a complete control line, its padding and border in the scroll viewport. */
+.strips { contain: size; font-size: 11px; line-height: 1.4; min-height: calc(1lh + 2 * var(--control-padding) + 2 * var(--control-border) + 2 * var(--space)); overflow: auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.strip { padding: var(--space); text-align: center; border-right: 1px solid #39434c; background: linear-gradient(110deg, #ffffff03, transparent); }
 .strip:last-child { border: 0; }
 .strip-title { justify-content: flex-start; text-align: left; }
 .strip-title h3 { font-size: 14px; }
@@ -61,7 +62,7 @@ button.primary { background: #d7af6c; color: #14191d; border-color: #d7af6c; fon
 .knob { width: 46px; height: 46px; border: 4px solid #47525b; background: #222a30; border-radius: 50%; margin: var(--space) auto clamp(6px, 1dvh, 12px); box-shadow: 0 3px 6px #0005; }
 .knob::before { content: ''; display: block; width: 2px; height: 12px; background: #88959f; margin: 3px auto; }
 .strip p { font-size: 11px; color: #adb7bf; margin-bottom: clamp(6px, 1dvh, 14px); }
-.strip button { font-size: 11px; padding: 7px 16px; }
+.strip button { font-size: 11px; padding: var(--control-padding) 16px; border-width: var(--control-border); }
 .error { margin: 0 16px var(--space); padding: 14px; background: #4d2428; border: 1px solid #c17474; border-radius: 5px; font-size: 13px; }
 footer { letter-spacing: .3px; font-size: 10px; line-height: 1.6; }
 .connection { color: #adc6bd; white-space: nowrap; }
@@ -70,10 +71,9 @@ footer { letter-spacing: .3px; font-size: 10px; line-height: 1.6; }
   .masthead, .transport { flex-wrap: wrap; }
   .workspace { grid-template-columns: 1fr; }
   .mixer { display: block; }
-  .strips { overflow: visible; }
+  .strips { contain: none; min-height: 0; overflow: visible; }
   .master-body { contain: none; max-width: 400px; margin: auto; }
   .strips { grid-template-columns: repeat(2, 1fr); }
-  .strip { padding-bottom: var(--space); }
   .strip:nth-child(2) { border-right: 0; }
   .strip:nth-child(-n+2) { border-bottom: 1px solid #39434c; }
   .track-footer, footer { flex-wrap: wrap; }

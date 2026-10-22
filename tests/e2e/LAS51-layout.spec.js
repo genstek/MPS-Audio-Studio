@@ -20,7 +20,7 @@ async function checkLayout(page, width) {
     await expect(transport.getByRole('button', { name })).toBeInViewport({ ratio: 1 });
   }
   const upload = page.getByRole('button', { name: 'Import WAV', exact: true });
-  if (width <= 760) await upload.scrollIntoViewIfNeeded();
+  if (width <= 760) await upload.evaluate(e => e.scrollIntoView({ block: 'center', inline: 'nearest' }));
   await expect(upload).toBeInViewport({ ratio: 1 });
 
   // Export must occupy its own row outside the bounded Master scroller.
@@ -30,22 +30,25 @@ async function checkLayout(page, width) {
   const exportBox = await exportButton.boundingBox();
   expect(bodyBox.y + bodyBox.height).toBeLessThanOrEqual(exportBox.y + 1);
   const levelNote = body.getByText('Level control unavailable');
-  await levelNote.scrollIntoViewIfNeeded();
+  await levelNote.evaluate(e => e.scrollIntoView({ block: 'center', inline: 'nearest' }));
   await expect(levelNote).toBeInViewport({ ratio: 1 });
   const noteBox = await levelNote.boundingBox();
   const buttonBox = await exportButton.boundingBox();
   expect(noteBox.y + noteBox.height).toBeLessThanOrEqual(buttonBox.y + 1);
-  await exportButton.scrollIntoViewIfNeeded();
+  await exportButton.evaluate(e => e.scrollIntoView({ block: 'center', inline: 'nearest' }));
   await expect(exportButton).toBeInViewport({ ratio: 1 });
 
   // Every Mixer control remains reachable within the strip scroller.
   for (const name of ['Input', 'EQ', 'Dynamics', 'Space']) {
     const control = page.getByRole('button', { name: `${name} processing unavailable` });
-    await control.scrollIntoViewIfNeeded();
+    await control.evaluate(e => e.scrollIntoView({ block: 'center', inline: 'nearest' }));
     await expect(control).toBeInViewport({ ratio: 1 });
   }
   if (width > 760) {
     const strips = page.getByRole('group', { name: 'Processing modules' });
+    const viewportBox = await strips.boundingBox();
+    const controlBox = await strips.getByRole('button').first().boundingBox();
+    expect(viewportBox.height).toBeGreaterThanOrEqual(controlBox.height);
     await strips.evaluate(e => { e.scrollTop = 0; });
     await strips.focus();
     await strips.press('Control+End');
@@ -65,8 +68,18 @@ for (const loaded of [false, true]) {
     }
     for (const [width, height] of sizes) {
       await page.setViewportSize({ width, height });
-      await checkLayout(page, width);
+      await test.step(`${width}x${height}`, async () => checkLayout(page, width));
       await page.screenshot({ path: testInfo.outputPath(`${width}x${height}.png`), fullPage: true });
     }
   });
 }
+
+test('LAS-51: Mixer controls fit with taller text metrics', async ({ page }) => {
+  await page.goto('/');
+  // Exercise line boxes taller than the Linux default without depending on a platform font.
+  await page.addStyleTag({ content: ':root { line-height: 1.3; }' });
+  for (const [width, height] of sizes) {
+    await page.setViewportSize({ width, height });
+    await test.step(`${width}x${height}`, async () => checkLayout(page, width));
+  }
+});
