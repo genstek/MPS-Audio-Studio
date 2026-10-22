@@ -1,87 +1,135 @@
 import { test, expect } from '@playwright/test';
 import { makeWav } from '../fixtures/wav.js';
 
-const sizes = [
-  [1440, 900], [1280, 720], [990, 661], [817, 598], [803, 615],
-  [785, 520], [900, 560], [761, 520], [760, 520], [600, 650],
-  [759, 598], [762, 598], [785, 520], [990, 661], [1440, 900],
+const desktopSizes = [
+  [776, 888], [1440, 900], [1280, 720], [990, 661], [989, 610],
+  [971, 553], [817, 598], [803, 615], [785, 520], [804, 471],
+  [784, 626], [761, 450], [900, 450], [1440, 450], [1100, 575],
+  [820, 499], [762, 800], [761, 801], [785, 520], [776, 888], [1440, 900],
 ];
 
-async function checkLayout(page, width, height) {
-  const expectAtViewport = actual => expect(actual, `Viewport ${width}x${height}`);
-  await page.evaluate(() => {
-    window.scrollTo(0, 0);
-    document.querySelectorAll('.master-body, .strips').forEach(e => { e.scrollTop = 0; });
-  });
-  expectAtViewport(await page.evaluate(() => document.documentElement.scrollWidth))
-    .toBeLessThanOrEqual(width);
-  const transport = page.getByRole('region', { name: 'Transport' });
-  await expectAtViewport(transport).toBeInViewport({ ratio: 1 });
-  for (const name of ['Play', 'Pause', 'Stop']) {
-    await expectAtViewport(transport.getByRole('button', { name })).toBeInViewport({ ratio: 1 });
-  }
-  const upload = page.getByRole('button', { name: 'Import WAV', exact: true });
-  if (width <= 760) await upload.evaluate(e => e.scrollIntoView({ block: 'center', inline: 'nearest' }));
-  await expectAtViewport(upload).toBeInViewport({ ratio: 1 });
-
-  // Export must occupy its own row outside the bounded Master scroller.
-  const body = page.locator('.master-body');
-  const exportButton = page.getByRole('button', { name: 'Export WAV — coming soon' });
-  const bodyBox = await body.boundingBox();
-  const exportBox = await exportButton.boundingBox();
-  expectAtViewport(bodyBox.y + bodyBox.height).toBeLessThanOrEqual(exportBox.y + 1);
-  const levelNote = body.getByText('Level control unavailable');
-  await levelNote.evaluate(e => e.scrollIntoView({ block: 'center', inline: 'nearest' }));
-  await expectAtViewport(levelNote).toBeInViewport({ ratio: 1 });
-  const noteBox = await levelNote.boundingBox();
-  const buttonBox = await exportButton.boundingBox();
-  expectAtViewport(noteBox.y + noteBox.height).toBeLessThanOrEqual(buttonBox.y + 1);
-  await exportButton.evaluate(e => e.scrollIntoView({ block: 'center', inline: 'nearest' }));
-  await expectAtViewport(exportButton).toBeInViewport({ ratio: 1 });
-
-  // Every Mixer control remains reachable within the strip scroller.
+async function checkDesktopLayout(page, width, height) {
+  const check = actual => expect(actual, `Viewport ${width}x${height}, before scrolling`);
+  const transport = page.getByRole('region', { name: 'Transport', exact: true });
+  const tracks = page.getByRole('region', { name: 'Tracks', exact: true });
+  const master = page.getByRole('region', { name: 'Master', exact: true });
+  const mixer = page.getByRole('region', { name: 'Mixer', exact: true });
+  const footer = page.locator('footer');
+  const essentials = [
+    [transport.getByRole('button', { name: 'Play' }), transport],
+    [transport.getByRole('button', { name: 'Pause' }), transport],
+    [transport.getByRole('button', { name: 'Stop' }), transport],
+    [page.getByRole('status'), transport],
+    [tracks.getByRole('heading', { name: 'Tracks', exact: true }), tracks],
+    [page.getByRole('button', { name: 'Import WAV', exact: true }), tracks],
+    [master.getByRole('heading', { name: 'Master', exact: true }), master],
+    [master.getByText('Master level', { exact: true }), master],
+    [page.getByLabel('Master level', { exact: true }), master],
+    [master.getByRole('button', { name: 'Export WAV — coming soon' }), master],
+    [mixer.getByRole('heading', { name: 'Mixer', exact: true }), mixer],
+    [footer, page.locator('main')],
+  ];
   for (const name of ['Input', 'EQ', 'Dynamics', 'Space']) {
-    const control = page.getByRole('button', { name: `${name} processing unavailable` });
-    await control.evaluate(e => e.scrollIntoView({ block: 'center', inline: 'nearest' }));
-    await expectAtViewport(control).toBeInViewport({ ratio: 1 });
+    const strip = page.getByRole('region', { name: `${name} channel strip` });
+    essentials.push([strip.getByRole('heading', { name, exact: true }), strip]);
+    essentials.push([strip.locator('.knob'), strip]);
+    essentials.push([strip.getByRole('button', { name: `${name} processing unavailable` }), strip]);
   }
-  if (width > 760) {
-    const strips = page.getByRole('group', { name: 'Processing modules' });
-    const viewportBox = await strips.boundingBox();
-    const controlBox = await strips.getByRole('button').first().boundingBox();
-    expectAtViewport(viewportBox.height).toBeGreaterThanOrEqual(controlBox.height);
-    await strips.evaluate(e => { e.scrollTop = 0; });
-    await strips.focus();
-    const scrollToEnd = process.platform === 'darwin' ? 'Meta+ArrowDown' : 'Control+End';
-    await strips.press(scrollToEnd);
-    await expectAtViewport(page.getByRole('button', { name: 'Space processing unavailable' }))
-      .toBeInViewport({ ratio: 1 });
-    expectAtViewport(await page.evaluate(() => document.documentElement.scrollHeight))
-      .toBeLessThanOrEqual(await page.evaluate(() => innerHeight));
+  // Assert every essential before any scroll, focus or click can reveal it.
+  for (const [element, panel] of essentials) {
+    await check(element).toBeInViewport({ ratio: 1 });
+    const rect = await element.boundingBox();
+    const bounds = await panel.boundingBox();
+    check(rect.x).toBeGreaterThanOrEqual(bounds.x);
+    check(rect.y).toBeGreaterThanOrEqual(bounds.y);
+    check(rect.x + rect.width).toBeLessThanOrEqual(bounds.x + bounds.width);
+    check(rect.y + rect.height).toBeLessThanOrEqual(bounds.y + bounds.height);
+    check(await element.evaluate(e => {
+      const r = e.getBoundingClientRect();
+      const hit = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
+      return !!hit && (e.contains(hit) || hit.contains(e));
+    })).toBe(true);
+  }
+  const detailsBox = await page.locator('.track-details').boundingBox();
+  const importBox = await page.locator('.file-picker').boundingBox();
+  check(detailsBox.y + detailsBox.height).toBeLessThanOrEqual(importBox.y);
+  const masterDetails = await page.locator('.master-body').boundingBox();
+  const masterControls = await page.locator('.master-controls').boundingBox();
+  check(masterDetails.y + masterDetails.height).toBeLessThanOrEqual(masterControls.y);
+  const geometry = await page.evaluate(() => ({
+    width: document.documentElement.scrollWidth,
+    height: document.documentElement.scrollHeight,
+    x: window.scrollX, y: window.scrollY,
+    mixerScroll: document.querySelector('.strips').scrollTop,
+    panels: [...document.querySelectorAll('.masthead, .transport, .tracks, .master, .mixer, footer')]
+      .map(e => { const r = e.getBoundingClientRect(); return { x: r.x, y: r.y, right: r.right, bottom: r.bottom }; }),
+  }));
+  check(geometry.width).toBeLessThanOrEqual(width);
+  check(geometry.height).toBeLessThanOrEqual(height);
+  check([geometry.x, geometry.y, geometry.mixerScroll]).toEqual([0, 0, 0]);
+  for (let i = 0; i < geometry.panels.length; i++) {
+    for (let j = i + 1; j < geometry.panels.length; j++) {
+      const a = geometry.panels[i], b = geometry.panels[j];
+      const overlap = Math.min(a.right, b.right) > Math.max(a.x, b.x)
+        && Math.min(a.bottom, b.bottom) > Math.max(a.y, b.y);
+      check(overlap).toBe(false);
+    }
+  }
+  await check(page.getByLabel('Master level')).toBeDisabled();
+  await check(master.getByRole('button')).toBeDisabled();
+  for (const control of await mixer.getByRole('button').all()) await check(control).toBeDisabled();
+}
+
+async function prepareState(page, state) {
+  if (state === 'empty') return;
+  const name = state === 'long-filename'
+    ? `${'Long recording name with detailed session notes '.repeat(4)}.wav` : 'tone.wav';
+  await page.getByLabel('Import WAV').setInputFiles({ name, mimeType: 'audio/wav', buffer: makeWav() });
+  await expect(page.getByRole('status')).toHaveText('Ready');
+  if (state === 'load-error') {
+    await page.getByLabel('Import WAV').setInputFiles({ name: 'broken.wav', mimeType: 'audio/wav', buffer: Buffer.from('RIFF0000WAVE') });
+    await expect(page.getByRole('alert')).toContainText('Unable to decode');
   }
 }
 
-for (const loaded of [false, true]) {
-  test(`LAS-51: ${loaded ? 'WAV-loaded' : 'empty'} layout survives viewport changes`, async ({ page }, testInfo) => {
+for (const state of ['empty', 'WAV-loaded', 'long-filename', 'load-error']) {
+  test(`LAS-51: ${state} essentials stay visible before scrolling`, async ({ page }, testInfo) => {
+    await page.setViewportSize({ width: 776, height: 888 });
     await page.goto('/');
-    if (loaded) {
-      await page.getByLabel('Import WAV').setInputFiles({ name: 'tone.wav', mimeType: 'audio/wav', buffer: makeWav() });
-      await expect(page.getByRole('status')).toHaveText('Ready');
+    await prepareState(page, state);
+    for (const [width, height] of desktopSizes) {
+      await test.step(`Viewport ${width}x${height}`, async () => {
+        await page.setViewportSize({ width, height });
+        await page.screenshot({ path: testInfo.outputPath(`${width}x${height}.png`) });
+        await checkDesktopLayout(page, width, height);
+      });
     }
-    for (const [width, height] of sizes) {
-      await page.setViewportSize({ width, height });
-      await test.step(`Viewport ${width}x${height}`, async () => checkLayout(page, width, height));
-      await page.screenshot({ path: testInfo.outputPath(`${width}x${height}.png`), fullPage: true });
+    // Cross both layout breakpoints, then return to desktop without reloading.
+    for (const width of [760, 600, 759, 761, 776]) {
+      await test.step(`Breakpoint ${width}x888`, async () => {
+        await page.setViewportSize({ width, height: 888 });
+        if (width >= 761) await checkDesktopLayout(page, width, 888);
+        else {
+          const tracks = await page.locator('.tracks').boundingBox();
+          const master = await page.locator('.master').boundingBox();
+          expect(master.y).toBeGreaterThanOrEqual(tracks.y + tracks.height);
+          expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+          await page.locator('footer').scrollIntoViewIfNeeded();
+          await expect(page.locator('footer')).toBeInViewport({ ratio: 1 });
+        }
+      });
     }
   });
 }
 
-test('LAS-51: Mixer controls fit with taller text metrics', async ({ page }) => {
+test('LAS-51: taller text metrics preserve immediate desktop visibility', async ({ page }) => {
+  await page.setViewportSize({ width: 776, height: 888 });
   await page.goto('/');
-  // Exercise line boxes taller than the Linux default without depending on a platform font.
   await page.addStyleTag({ content: ':root { line-height: 1.3; }' });
-  for (const [width, height] of sizes) {
-    await page.setViewportSize({ width, height });
-    await test.step(`Viewport ${width}x${height}`, async () => checkLayout(page, width, height));
+  for (const [width, height] of desktopSizes) {
+    await test.step(`Viewport ${width}x${height}`, async () => {
+      await page.setViewportSize({ width, height });
+      await checkDesktopLayout(page, width, height);
+    });
   }
 });
