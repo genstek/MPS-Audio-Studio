@@ -1,0 +1,65 @@
+Running 3 tests using 3 workers
+  ✘  1 [chromium] › <scratch>/probe-specs/only-761450.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes (7.1s)
+  ✘  2 [chromium] › <scratch>/probe-specs/only-804471.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes (7.4s)
+  ✘  3 [chromium] › <scratch>/probe-specs/only-776888.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes (7.9s)
+  1) [chromium] › <scratch>/probe-specs/only-761450.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes › empty 761x450
+    Error: empty 761x450: Master level visible before scrolling
+    expect(locator).toBeInViewport() failed
+    Locator:  getByRole('region', { name: 'Master', exact: true }).getByRole('slider', { name: 'Master level' })
+    Expected: in viewport
+    Received: viewport ratio 0
+    Timeout:  5000ms
+    Call log:
+      - empty 761x450: Master level visible before scrolling getByRole('region', { name: 'Master', exact: true }).getByRole('slider', { name: 'Master level' }) with timeout 5000ms
+      - waiting for getByRole('region', { name: 'Master', exact: true }).getByRole('slider', { name: 'Master level' })
+        14 × locator resolved to <input min="0" disabled max="100" value="75" type="range" aria-label="Master level"/>
+           - unexpected value "viewport ratio 0"
+      44 |
+      45 | async function expectFullyVisible(locator, message) {
+    > 46 |   await expect(locator, message).toBeInViewport({ ratio: 1 });
+         |                                  ^
+      47 |   await expectUnobscured(locator, `${message} (not covered)`);
+      48 | }
+      49 |
+  2) [chromium] › <scratch>/probe-specs/only-776888.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes › empty 776x888
+    Error: empty 776x888: Master level sits outside the details scroller
+    expect(locator).toHaveCount(expected) failed
+    Locator:  getByRole('region', { name: 'Master', exact: true }).getByRole('region', { name: 'Master details' }).getByRole('slider')
+    Expected: 0
+    Received: 1
+    Timeout:  5000ms
+    Call log:
+      - empty 776x888: Master level sits outside the details scroller getByRole('region', { name: 'Master', exact: true }).getByRole('region', { name: 'Master details' }).getByRole('slider') with timeout 5000ms
+      - waiting for getByRole('region', { name: 'Master', exact: true }).getByRole('region', { name: 'Master details' }).getByRole('slider')
+        14 × locator resolved to 1 element
+           - unexpected value "1"
+      115 |     await expectFullyVisible(element, `${label}: ${name} visible before scrolling`);
+      116 |   }
+    > 117 |   await expect(masterBody.getByRole('slider'), `${label}: Master level sits outside the details scroller`).toHaveCount(0);
+          |                                                                                                            ^
+      118 |   const mixer = await scrollState(strips);
+      119 |   expect(mixer.scrollTop, `${label}: Mixer not scrolled`).toBe(0);
+      120 |   expect(mixer.scrollHeight, `${label}: Mixer shows all its content without inner scrolling`).toBeLessThanOrEqual(mixer.clientHeight + 1);
+  3) [chromium] › <scratch>/probe-specs/only-804471.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes › empty 804x471
+    Error: empty 804x471: Master level visible before scrolling
+    expect(locator).toBeInViewport() failed
+    Locator:  getByRole('region', { name: 'Master', exact: true }).getByRole('slider', { name: 'Master level' })
+    Expected: in viewport
+    Received: viewport ratio 0
+    Timeout:  5000ms
+    Call log:
+      - empty 804x471: Master level visible before scrolling getByRole('region', { name: 'Master', exact: true }).getByRole('slider', { name: 'Master level' }) with timeout 5000ms
+      - waiting for getByRole('region', { name: 'Master', exact: true }).getByRole('slider', { name: 'Master level' })
+        14 × locator resolved to <input min="0" disabled max="100" value="75" type="range" aria-label="Master level"/>
+           - unexpected value "viewport ratio 0"
+      44 |
+      45 | async function expectFullyVisible(locator, message) {
+    > 46 |   await expect(locator, message).toBeInViewport({ ratio: 1 });
+         |                                  ^
+      47 |   await expectUnobscured(locator, `${message} (not covered)`);
+      48 | }
+      49 |
+  3 failed
+    [chromium] › <scratch>/probe-specs/only-761450.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes
+    [chromium] › <scratch>/probe-specs/only-776888.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes
+    [chromium] › <scratch>/probe-specs/only-804471.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes

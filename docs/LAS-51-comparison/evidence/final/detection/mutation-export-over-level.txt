@@ -1,0 +1,44 @@
+Running 3 tests using 3 workers
+  ✘  1 [chromium] › <scratch>/probe-specs/only-804471.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes (2.1s)
+  ✘  2 [chromium] › <scratch>/probe-specs/only-761450.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes (2.2s)
+  ✘  3 [chromium] › <scratch>/probe-specs/only-776888.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes (2.3s)
+  1) [chromium] › <scratch>/probe-specs/only-761450.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes › empty 761x450
+    Error: empty 761x450: Master level visible before scrolling (not covered)
+    expect(received).toBe(expected) // Object.is equality
+    Expected: 0
+    Received: 5
+      40 |     return points.filter(([x, y]) => !element.contains(document.elementFromPoint(x, y))).length;
+      41 |   });
+    > 42 |   expect(coveredPoints, message).toBe(0);
+         |                                  ^
+      43 | }
+      44 |
+      45 | async function expectFullyVisible(locator, message) {
+  2) [chromium] › <scratch>/probe-specs/only-776888.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes › empty 776x888
+    Error: empty 776x888: Master level visible before scrolling (not covered)
+    expect(received).toBe(expected) // Object.is equality
+    Expected: 0
+    Received: 5
+      40 |     return points.filter(([x, y]) => !element.contains(document.elementFromPoint(x, y))).length;
+      41 |   });
+    > 42 |   expect(coveredPoints, message).toBe(0);
+         |                                  ^
+      43 | }
+      44 |
+      45 | async function expectFullyVisible(locator, message) {
+  3) [chromium] › <scratch>/probe-specs/only-804471.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes › empty 804x471
+    Error: empty 804x471: Master level visible before scrolling (not covered)
+    expect(received).toBe(expected) // Object.is equality
+    Expected: 0
+    Received: 5
+      40 |     return points.filter(([x, y]) => !element.contains(document.elementFromPoint(x, y))).length;
+      41 |   });
+    > 42 |   expect(coveredPoints, message).toBe(0);
+         |                                  ^
+      43 | }
+      44 |
+      45 | async function expectFullyVisible(locator, message) {
+  3 failed
+    [chromium] › <scratch>/probe-specs/only-761450.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes
+    [chromium] › <scratch>/probe-specs/only-776888.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes
+    [chromium] › <scratch>/probe-specs/only-804471.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes

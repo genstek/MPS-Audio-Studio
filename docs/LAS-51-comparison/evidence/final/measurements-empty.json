@@ -1,0 +1,3326 @@
+[
+ {
+  "width": 1920,
+  "height": 1080,
+  "geo": {
+   "inner": [
+    1920,
+    1080
+   ],
+   "docScroll": [
+    1920,
+    1080
+   ],
+   "header": {
+    "top": 17.27,
+    "bottom": 66.45,
+    "left": 276,
+    "right": 1644,
+    "h": 49.19
+   },
+   "transport": {
+    "top": 83.72,
+    "bottom": 163.44,
+    "left": 276,
+    "right": 1644,
+    "h": 79.72
+   },
+   "workspace": {
+    "top": 180.7,
+    "bottom": 772.2,
+    "left": 276,
+    "right": 1644,
+    "h": 591.5
+   },
+   "tracks": {
+    "top": 180.7,
+    "bottom": 772.2,
+    "left": 276,
+    "right": 1346.73,
+    "h": 591.5
+   },
+   "trackSpace": {
+    "top": 234.27,
+    "bottom": 724.88,
+    "left": 277,
+    "right": 1345.73,
+    "h": 490.61
+   },
+   "picker": {
+    "top": 507.33,
+    "bottom": 546.92,
+    "left": 749.34,
+    "right": 873.36,
+    "h": 39.59
+   },
+   "trackFooter": {
+    "top": 724.88,
+    "bottom": 771.2,
+    "left": 277,
+    "right": 1345.73,
+    "h": 46.33
+   },
+   "master": {
+    "top": 180.7,
+    "bottom": 772.2,
+    "left": 1364,
+    "right": 1644,
+    "h": 591.5
+   },
+   "masterBody": {
+    "top": 234.27,
+    "bottom": 630.77,
+    "left": 1365,
+    "right": 1643,
+    "h": 396.5,
+    "clientHeight": 397,
+    "scrollHeight": 397,
+    "scrollTop": 0,
+    "maxScroll": 0
+   },
+   "exportBtn": {
+    "top": 715.55,
+    "bottom": 753.94,
+    "left": 1377,
+    "right": 1631,
+    "h": 38.39
+   },
+   "mixer": {
+    "top": 789.47,
+    "bottom": 1029.47,
+    "left": 276,
+    "right": 1644,
+    "h": 240
+   },
+   "strips": {
+    "top": 843.03,
+    "bottom": 1028.47,
+    "left": 277,
+    "right": 1643,
+    "h": 185.44,
+    "clientHeight": 185,
+    "scrollHeight": 185,
+    "scrollTop": 0,
+    "maxScroll": 0
+   },
+   "spaceBtn": {
+    "top": 981.97,
+    "bottom": 1011.16,
+    "left": 1425.08,
+    "right": 1519.41,
+    "h": 29.19
+   },
+   "footer": {
+    "top": 1046.73,
+    "bottom": 1062.73,
+    "left": 276,
+    "right": 1644,
+    "h": 16
+   },
+   "atEnd": {
+    "body": {
+     "clientHeight": 397,
+     "scrollHeight": 397,
+     "scrollTop": 0,
+     "maxScroll": 0
+    },
+    "strips": {
+     "clientHeight": 185,
+     "scrollHeight": 185,
+     "scrollTop": 0,
+     "maxScroll": 0
+    },
+    "note": {
+     "top": 685.09,
+     "bottom": 698.28,
+     "left": 1381,
+     "right": 1627,
+     "h": 13.19
+    },
+    "bodyBox": {
+     "top": 234.27,
+     "bottom": 630.77,
+     "left": 1365,
+     "right": 1643,
+     "h": 396.5
+    },
+    "space": {
+     "top": 981.97,
+     "bottom": 1011.16,
+     "left": 1425.08,
+     "right": 1519.41,
+     "h": 29.19
+    },
+    "stripsBox": {
+     "top": 843.03,
+     "bottom": 1028.47,
+     "left": 277,
+     "right": 1643,
+     "h": 185.44
+    }
+   }
+  },
+  "keys": {
+   "Control+End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "PageDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "Meta+ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   }
+  },
+  "masterKeys": {
+   "endTop": 0,
+   "max": 0,
+   "focused": true,
+   "homeTop": 0
+  }
+ },
+ {
+  "width": 1440,
+  "height": 900,
+  "geo": {
+   "inner": [
+    1440,
+    900
+   ],
+   "docScroll": [
+    1440,
+    900
+   ],
+   "header": {
+    "top": 14.39,
+    "bottom": 63.58,
+    "left": 36,
+    "right": 1404,
+    "h": 49.19
+   },
+   "transport": {
+    "top": 77.97,
+    "bottom": 151.94,
+    "left": 36,
+    "right": 1404,
+    "h": 73.97
+   },
+   "workspace": {
+    "top": 166.33,
+    "bottom": 600.83,
+    "left": 36,
+    "right": 1404,
+    "h": 434.5
+   },
+   "tracks": {
+    "top": 166.33,
+    "bottom": 600.83,
+    "left": 36,
+    "right": 1109.61,
+    "h": 434.5
+   },
+   "trackSpace": {
+    "top": 214.52,
+    "bottom": 559.25,
+    "left": 37,
+    "right": 1108.61,
+    "h": 344.73
+   },
+   "picker": {
+    "top": 412.48,
+    "bottom": 452.08,
+    "left": 510.78,
+    "right": 634.8,
+    "h": 39.59
+   },
+   "trackFooter": {
+    "top": 559.25,
+    "bottom": 599.83,
+    "left": 37,
+    "right": 1108.61,
+    "h": 40.58
+   },
+   "master": {
+    "top": 166.33,
+    "bottom": 600.83,
+    "left": 1124,
+    "right": 1404,
+    "h": 434.5
+   },
+   "masterBody": {
+    "top": 214.52,
+    "bottom": 468.3,
+    "left": 1125,
+    "right": 1403,
+    "h": 253.78,
+    "clientHeight": 254,
+    "scrollHeight": 254,
+    "scrollTop": 0,
+    "maxScroll": 0
+   },
+   "exportBtn": {
+    "top": 547.05,
+    "bottom": 585.44,
+    "left": 1137,
+    "right": 1391,
+    "h": 38.39
+   },
+   "mixer": {
+    "top": 615.22,
+    "bottom": 855.22,
+    "left": 36,
+    "right": 1404,
+    "h": 240
+   },
+   "strips": {
+    "top": 663.41,
+    "bottom": 854.22,
+    "left": 37,
+    "right": 1403,
+    "h": 190.81,
+    "clientHeight": 191,
+    "scrollHeight": 191,
+    "scrollTop": 0,
+    "maxScroll": 0
+   },
+   "spaceBtn": {
+    "top": 800.91,
+    "bottom": 830.09,
+    "left": 1185.08,
+    "right": 1279.41,
+    "h": 29.19
+   },
+   "footer": {
+    "top": 869.61,
+    "bottom": 885.61,
+    "left": 36,
+    "right": 1404,
+    "h": 16
+   },
+   "atEnd": {
+    "body": {
+     "clientHeight": 254,
+     "scrollHeight": 254,
+     "scrollTop": 0,
+     "maxScroll": 0
+    },
+    "strips": {
+     "clientHeight": 191,
+     "scrollHeight": 191,
+     "scrollTop": 0,
+     "maxScroll": 0
+    },
+    "note": {
+     "top": 519.47,
+     "bottom": 532.66,
+     "left": 1141,
+     "right": 1387,
+     "h": 13.19
+    },
+    "bodyBox": {
+     "top": 214.52,
+     "bottom": 468.3,
+     "left": 1125,
+     "right": 1403,
+     "h": 253.78
+    },
+    "space": {
+     "top": 800.91,
+     "bottom": 830.09,
+     "left": 1185.08,
+     "right": 1279.41,
+     "h": 29.19
+    },
+    "stripsBox": {
+     "top": 663.41,
+     "bottom": 854.22,
+     "left": 37,
+     "right": 1403,
+     "h": 190.81
+    }
+   }
+  },
+  "keys": {
+   "Control+End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "PageDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "Meta+ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   }
+  },
+  "masterKeys": {
+   "endTop": 0,
+   "max": 0,
+   "focused": true,
+   "homeTop": 0
+  }
+ },
+ {
+  "width": 776,
+  "height": 888,
+  "geo": {
+   "inner": [
+    776,
+    888
+   ],
+   "docScroll": [
+    776,
+    888
+   ],
+   "header": {
+    "top": 14.2,
+    "bottom": 63.39,
+    "left": 19.39,
+    "right": 756.61,
+    "h": 49.19
+   },
+   "transport": {
+    "top": 77.59,
+    "bottom": 151.19,
+    "left": 19.39,
+    "right": 756.61,
+    "h": 73.59
+   },
+   "workspace": {
+    "top": 165.39,
+    "bottom": 589.39,
+    "left": 19.39,
+    "right": 756.61,
+    "h": 424
+   },
+   "tracks": {
+    "top": 165.39,
+    "bottom": 589.39,
+    "left": 19.39,
+    "right": 522.41,
+    "h": 424
+   },
+   "trackSpace": {
+    "top": 213.2,
+    "bottom": 548.19,
+    "left": 20.39,
+    "right": 521.41,
+    "h": 334.98
+   },
+   "picker": {
+    "top": 406.14,
+    "bottom": 445.73,
+    "left": 208.88,
+    "right": 332.89,
+    "h": 39.59
+   },
+   "trackFooter": {
+    "top": 548.19,
+    "bottom": 588.39,
+    "left": 20.39,
+    "right": 521.41,
+    "h": 40.2
+   },
+   "master": {
+    "top": 165.39,
+    "bottom": 589.39,
+    "left": 536.61,
+    "right": 756.61,
+    "h": 424
+   },
+   "masterBody": {
+    "top": 213.2,
+    "bottom": 457.52,
+    "left": 537.61,
+    "right": 755.61,
+    "h": 244.31,
+    "clientHeight": 244,
+    "scrollHeight": 244,
+    "scrollTop": 0,
+    "maxScroll": 0
+   },
+   "exportBtn": {
+    "top": 535.8,
+    "bottom": 574.19,
+    "left": 549.61,
+    "right": 743.61,
+    "h": 38.39
+   },
+   "mixer": {
+    "top": 603.59,
+    "bottom": 843.59,
+    "left": 19.39,
+    "right": 756.61,
+    "h": 240
+   },
+   "strips": {
+    "top": 651.41,
+    "bottom": 842.59,
+    "left": 20.39,
+    "right": 755.61,
+    "h": 191.19,
+    "clientHeight": 191,
+    "scrollHeight": 191,
+    "scrollTop": 0,
+    "maxScroll": 0
+   },
+   "spaceBtn": {
+    "top": 788.81,
+    "bottom": 818,
+    "left": 616.53,
+    "right": 710.86,
+    "h": 29.19
+   },
+   "footer": {
+    "top": 857.8,
+    "bottom": 873.8,
+    "left": 19.39,
+    "right": 756.61,
+    "h": 16
+   },
+   "atEnd": {
+    "body": {
+     "clientHeight": 244,
+     "scrollHeight": 244,
+     "scrollTop": 0,
+     "maxScroll": 0
+    },
+    "strips": {
+     "clientHeight": 191,
+     "scrollHeight": 191,
+     "scrollTop": 0,
+     "maxScroll": 0
+    },
+    "note": {
+     "top": 508.41,
+     "bottom": 521.59,
+     "left": 553.61,
+     "right": 739.61,
+     "h": 13.19
+    },
+    "bodyBox": {
+     "top": 213.2,
+     "bottom": 457.52,
+     "left": 537.61,
+     "right": 755.61,
+     "h": 244.31
+    },
+    "space": {
+     "top": 788.81,
+     "bottom": 818,
+     "left": 616.53,
+     "right": 710.86,
+     "h": 29.19
+    },
+    "stripsBox": {
+     "top": 651.41,
+     "bottom": 842.59,
+     "left": 20.39,
+     "right": 755.61,
+     "h": 191.19
+    }
+   }
+  },
+  "keys": {
+   "Control+End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "PageDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "Meta+ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   }
+  },
+  "masterKeys": {
+   "endTop": 0,
+   "max": 0,
+   "focused": true,
+   "homeTop": 0
+  }
+ },
+ {
+  "width": 1280,
+  "height": 720,
+  "geo": {
+   "inner": [
+    1280,
+    720
+   ],
+   "docScroll": [
+    1280,
+    720
+   ],
+   "header": {
+    "top": 11.52,
+    "bottom": 58.06,
+    "left": 32,
+    "right": 1248,
+    "h": 46.55
+   },
+   "transport": {
+    "top": 69.58,
+    "bottom": 133.8,
+    "left": 32,
+    "right": 1248,
+    "h": 64.22
+   },
+   "workspace": {
+    "top": 145.31,
+    "bottom": 429.45,
+    "left": 32,
+    "right": 1248,
+    "h": 284.14
+   },
+   "tracks": {
+    "top": 145.31,
+    "bottom": 429.45,
+    "left": 32,
+    "right": 956.48,
+    "h": 284.14
+   },
+   "trackSpace": {
+    "top": 188.09,
+    "bottom": 393.63,
+    "left": 33,
+    "right": 955.48,
+    "h": 205.53
+   },
+   "picker": {
+    "top": 314.28,
+    "bottom": 353.88,
+    "left": 432.22,
+    "right": 556.23,
+    "h": 39.59
+   },
+   "trackFooter": {
+    "top": 393.63,
+    "bottom": 428.45,
+    "left": 33,
+    "right": 955.48,
+    "h": 34.83
+   },
+   "master": {
+    "top": 145.31,
+    "bottom": 429.45,
+    "left": 968,
+    "right": 1248,
+    "h": 284.14
+   },
+   "masterBody": {
+    "top": 188.09,
+    "bottom": 310.64,
+    "left": 969,
+    "right": 1247,
+    "h": 122.55,
+    "clientHeight": 123,
+    "scrollHeight": 151,
+    "scrollTop": 0,
+    "maxScroll": 28
+   },
+   "exportBtn": {
+    "top": 382.55,
+    "bottom": 416.94,
+    "left": 981,
+    "right": 1235,
+    "h": 34.39
+   },
+   "mixer": {
+    "top": 440.97,
+    "bottom": 680.97,
+    "left": 32,
+    "right": 1248,
+    "h": 240
+   },
+   "strips": {
+    "top": 483.75,
+    "bottom": 679.97,
+    "left": 33,
+    "right": 1247,
+    "h": 196.22,
+    "clientHeight": 196,
+    "scrollHeight": 196,
+    "scrollTop": 0,
+    "maxScroll": 0
+   },
+   "spaceBtn": {
+    "top": 619.8,
+    "bottom": 648.98,
+    "left": 1048.08,
+    "right": 1142.41,
+    "h": 29.19
+   },
+   "footer": {
+    "top": 692.48,
+    "bottom": 708.48,
+    "left": 32,
+    "right": 1248,
+    "h": 16
+   },
+   "atEnd": {
+    "body": {
+     "clientHeight": 123,
+     "scrollHeight": 151,
+     "scrollTop": 28,
+     "maxScroll": 28
+    },
+    "strips": {
+     "clientHeight": 196,
+     "scrollHeight": 196,
+     "scrollTop": 0,
+     "maxScroll": 0
+    },
+    "note": {
+     "top": 357.84,
+     "bottom": 371.03,
+     "left": 985,
+     "right": 1231,
+     "h": 13.19
+    },
+    "bodyBox": {
+     "top": 188.09,
+     "bottom": 310.64,
+     "left": 969,
+     "right": 1247,
+     "h": 122.55
+    },
+    "space": {
+     "top": 619.8,
+     "bottom": 648.98,
+     "left": 1048.08,
+     "right": 1142.41,
+     "h": 29.19
+    },
+    "stripsBox": {
+     "top": 483.75,
+     "bottom": 679.97,
+     "left": 33,
+     "right": 1247,
+     "h": 196.22
+    }
+   }
+  },
+  "keys": {
+   "Control+End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "PageDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "Meta+ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   }
+  },
+  "masterKeys": {
+   "endTop": 28,
+   "max": 28,
+   "focused": true,
+   "homeTop": 0
+  }
+ },
+ {
+  "width": 990,
+  "height": 661,
+  "geo": {
+   "inner": [
+    990,
+    661
+   ],
+   "docScroll": [
+    990,
+    661
+   ],
+   "header": {
+    "top": 10.56,
+    "bottom": 56.64,
+    "left": 24.75,
+    "right": 965.25,
+    "h": 46.08
+   },
+   "transport": {
+    "top": 67.2,
+    "bottom": 128.02,
+    "left": 24.75,
+    "right": 965.25,
+    "h": 60.81
+   },
+   "workspace": {
+    "top": 138.58,
+    "bottom": 416.31,
+    "left": 24.75,
+    "right": 965.25,
+    "h": 277.73
+   },
+   "tracks": {
+    "top": 138.58,
+    "bottom": 416.31,
+    "left": 24.75,
+    "right": 734.69,
+    "h": 277.73
+   },
+   "trackSpace": {
+    "top": 179.58,
+    "bottom": 382.39,
+    "left": 25.75,
+    "right": 733.69,
+    "h": 202.81
+   },
+   "picker": {
+    "top": 303.7,
+    "bottom": 343.3,
+    "left": 317.7,
+    "right": 441.72,
+    "h": 39.59
+   },
+   "trackFooter": {
+    "top": 382.39,
+    "bottom": 415.31,
+    "left": 25.75,
+    "right": 733.69,
+    "h": 32.92
+   },
+   "master": {
+    "top": 138.58,
+    "bottom": 416.31,
+    "left": 745.25,
+    "right": 965.25,
+    "h": 277.73
+   },
+   "masterBody": {
+    "top": 179.58,
+    "bottom": 302.2,
+    "left": 746.25,
+    "right": 964.25,
+    "h": 122.63,
+    "clientHeight": 123,
+    "scrollHeight": 148,
+    "scrollTop": 0,
+    "maxScroll": 25
+   },
+   "exportBtn": {
+    "top": 371.86,
+    "bottom": 404.75,
+    "left": 758.25,
+    "right": 952.25,
+    "h": 32.89
+   },
+   "mixer": {
+    "top": 426.88,
+    "bottom": 623.88,
+    "left": 24.75,
+    "right": 965.25,
+    "h": 197
+   },
+   "strips": {
+    "top": 467.88,
+    "bottom": 622.88,
+    "left": 25.75,
+    "right": 964.25,
+    "h": 155,
+    "clientHeight": 155,
+    "scrollHeight": 155,
+    "scrollTop": 0,
+    "maxScroll": 0
+   },
+   "spaceBtn": {
+    "top": 572.06,
+    "bottom": 601.25,
+    "left": 799.77,
+    "right": 894.09,
+    "h": 29.19
+   },
+   "footer": {
+    "top": 634.44,
+    "bottom": 650.44,
+    "left": 24.75,
+    "right": 965.25,
+    "h": 16
+   },
+   "atEnd": {
+    "body": {
+     "clientHeight": 123,
+     "scrollHeight": 148,
+     "scrollTop": 25,
+     "maxScroll": 25
+    },
+    "strips": {
+     "clientHeight": 155,
+     "scrollHeight": 155,
+     "scrollTop": 0,
+     "maxScroll": 0
+    },
+    "note": {
+     "top": 348.11,
+     "bottom": 361.3,
+     "left": 762.25,
+     "right": 948.25,
+     "h": 13.19
+    },
+    "bodyBox": {
+     "top": 179.58,
+     "bottom": 302.2,
+     "left": 746.25,
+     "right": 964.25,
+     "h": 122.63
+    },
+    "space": {
+     "top": 572.06,
+     "bottom": 601.25,
+     "left": 799.77,
+     "right": 894.09,
+     "h": 29.19
+    },
+    "stripsBox": {
+     "top": 467.88,
+     "bottom": 622.88,
+     "left": 25.75,
+     "right": 964.25,
+     "h": 155
+    }
+   }
+  },
+  "keys": {
+   "Control+End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "PageDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "Meta+ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   }
+  },
+  "masterKeys": {
+   "endTop": 25,
+   "max": 25,
+   "focused": true,
+   "homeTop": 0
+  }
+ },
+ {
+  "width": 989,
+  "height": 610,
+  "geo": {
+   "inner": [
+    989,
+    610
+   ],
+   "docScroll": [
+    989,
+    610
+   ],
+   "header": {
+    "top": 9.75,
+    "bottom": 55.42,
+    "left": 24.72,
+    "right": 964.28,
+    "h": 45.67
+   },
+   "transport": {
+    "top": 65.17,
+    "bottom": 123.11,
+    "left": 24.72,
+    "right": 964.28,
+    "h": 57.94
+   },
+   "workspace": {
+    "top": 132.86,
+    "bottom": 418.75,
+    "left": 24.72,
+    "right": 964.28,
+    "h": 285.89
+   },
+   "tracks": {
+    "top": 132.86,
+    "bottom": 418.75,
+    "left": 24.72,
+    "right": 734.53,
+    "h": 285.89
+   },
+   "trackSpace": {
+    "top": 172.33,
+    "bottom": 386.45,
+    "left": 25.72,
+    "right": 733.53,
+    "h": 214.13
+   },
+   "picker": {
+    "top": 301.5,
+    "bottom": 341.09,
+    "left": 317.61,
+    "right": 441.63,
+    "h": 39.59
+   },
+   "trackFooter": {
+    "top": 386.45,
+    "bottom": 417.75,
+    "left": 25.72,
+    "right": 733.53,
+    "h": 31.3
+   },
+   "master": {
+    "top": 132.86,
+    "bottom": 418.75,
+    "left": 744.28,
+    "right": 964.28,
+    "h": 285.89
+   },
+   "masterBody": {
+    "top": 172.33,
+    "bottom": 308.63,
+    "left": 745.28,
+    "right": 963.28,
+    "h": 136.3,
+    "clientHeight": 136,
+    "scrollHeight": 146,
+    "scrollTop": 0,
+    "maxScroll": 10
+   },
+   "exportBtn": {
+    "top": 376.36,
+    "bottom": 408,
+    "left": 757.28,
+    "right": 951.28,
+    "h": 31.64
+   },
+   "mixer": {
+    "top": 428.5,
+    "bottom": 574.5,
+    "left": 24.72,
+    "right": 964.28,
+    "h": 146
+   },
+   "strips": {
+    "top": 467.97,
+    "bottom": 573.5,
+    "left": 25.72,
+    "right": 963.28,
+    "h": 105.53,
+    "clientHeight": 106,
+    "scrollHeight": 106,
+    "scrollTop": 0,
+    "maxScroll": 0
+   },
+   "spaceBtn": {
+    "top": 519,
+    "bottom": 549,
+    "left": 852.08,
+    "right": 946.41,
+    "h": 30
+   },
+   "footer": {
+    "top": 584.25,
+    "bottom": 600.25,
+    "left": 24.72,
+    "right": 964.28,
+    "h": 16
+   },
+   "atEnd": {
+    "body": {
+     "clientHeight": 136,
+     "scrollHeight": 146,
+     "scrollTop": 10,
+     "maxScroll": 10
+    },
+    "strips": {
+     "clientHeight": 106,
+     "scrollHeight": 106,
+     "scrollTop": 0,
+     "maxScroll": 0
+    },
+    "note": {
+     "top": 353.42,
+     "bottom": 366.61,
+     "left": 761.28,
+     "right": 947.28,
+     "h": 13.19
+    },
+    "bodyBox": {
+     "top": 172.33,
+     "bottom": 308.63,
+     "left": 745.28,
+     "right": 963.28,
+     "h": 136.3
+    },
+    "space": {
+     "top": 519,
+     "bottom": 549,
+     "left": 852.08,
+     "right": 946.41,
+     "h": 30
+    },
+    "stripsBox": {
+     "top": 467.97,
+     "bottom": 573.5,
+     "left": 25.72,
+     "right": 963.28,
+     "h": 105.53
+    }
+   }
+  },
+  "keys": {
+   "Control+End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "PageDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "Meta+ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   }
+  },
+  "masterKeys": {
+   "endTop": 9,
+   "max": 10,
+   "focused": true,
+   "homeTop": 0
+  }
+ },
+ {
+  "width": 784,
+  "height": 626,
+  "geo": {
+   "inner": [
+    784,
+    626
+   ],
+   "docScroll": [
+    784,
+    626
+   ],
+   "header": {
+    "top": 10.02,
+    "bottom": 55.81,
+    "left": 19.59,
+    "right": 764.41,
+    "h": 45.8
+   },
+   "transport": {
+    "top": 65.83,
+    "bottom": 124.67,
+    "left": 19.59,
+    "right": 764.41,
+    "h": 58.84
+   },
+   "workspace": {
+    "top": 134.69,
+    "bottom": 417.95,
+    "left": 19.59,
+    "right": 764.41,
+    "h": 283.27
+   },
+   "tracks": {
+    "top": 134.69,
+    "bottom": 417.95,
+    "left": 19.59,
+    "right": 534.39,
+    "h": 283.27
+   },
+   "trackSpace": {
+    "top": 174.63,
+    "bottom": 385.13,
+    "left": 20.59,
+    "right": 533.39,
+    "h": 210.5
+   },
+   "picker": {
+    "top": 302.17,
+    "bottom": 341.77,
+    "left": 214.97,
+    "right": 338.98,
+    "h": 39.59
+   },
+   "trackFooter": {
+    "top": 385.13,
+    "bottom": 416.95,
+    "left": 20.59,
+    "right": 533.39,
+    "h": 31.83
+   },
+   "master": {
+    "top": 134.69,
+    "bottom": 417.95,
+    "left": 544.41,
+    "right": 764.41,
+    "h": 283.27
+   },
+   "masterBody": {
+    "top": 174.63,
+    "bottom": 306.58,
+    "left": 545.41,
+    "right": 763.41,
+    "h": 131.95,
+    "clientHeight": 132,
+    "scrollHeight": 147,
+    "scrollTop": 0,
+    "maxScroll": 15
+   },
+   "exportBtn": {
+    "top": 374.92,
+    "bottom": 406.94,
+    "left": 557.41,
+    "right": 751.41,
+    "h": 32.02
+   },
+   "mixer": {
+    "top": 427.97,
+    "bottom": 589.97,
+    "left": 19.59,
+    "right": 764.41,
+    "h": 162
+   },
+   "strips": {
+    "top": 467.91,
+    "bottom": 588.97,
+    "left": 20.59,
+    "right": 763.41,
+    "h": 121.06,
+    "clientHeight": 121,
+    "scrollHeight": 121,
+    "scrollTop": 0,
+    "maxScroll": 0
+   },
+   "spaceBtn": {
+    "top": 546.5,
+    "bottom": 575.69,
+    "left": 623.39,
+    "right": 717.72,
+    "h": 29.19
+   },
+   "footer": {
+    "top": 599.98,
+    "bottom": 615.98,
+    "left": 19.59,
+    "right": 764.41,
+    "h": 16
+   },
+   "atEnd": {
+    "body": {
+     "clientHeight": 132,
+     "scrollHeight": 147,
+     "scrollTop": 15,
+     "maxScroll": 15
+    },
+    "strips": {
+     "clientHeight": 121,
+     "scrollHeight": 121,
+     "scrollTop": 0,
+     "maxScroll": 0
+    },
+    "note": {
+     "top": 351.72,
+     "bottom": 364.91,
+     "left": 561.41,
+     "right": 747.41,
+     "h": 13.19
+    },
+    "bodyBox": {
+     "top": 174.63,
+     "bottom": 306.58,
+     "left": 545.41,
+     "right": 763.41,
+     "h": 131.95
+    },
+    "space": {
+     "top": 546.5,
+     "bottom": 575.69,
+     "left": 623.39,
+     "right": 717.72,
+     "h": 29.19
+    },
+    "stripsBox": {
+     "top": 467.91,
+     "bottom": 588.97,
+     "left": 20.59,
+     "right": 763.41,
+     "h": 121.06
+    }
+   }
+  },
+  "keys": {
+   "Control+End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "PageDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "Meta+ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   }
+  },
+  "masterKeys": {
+   "endTop": 14,
+   "max": 15,
+   "focused": true,
+   "homeTop": 0
+  }
+ },
+ {
+  "width": 817,
+  "height": 598,
+  "geo": {
+   "inner": [
+    817,
+    598
+   ],
+   "docScroll": [
+    817,
+    598
+   ],
+   "header": {
+    "top": 9.56,
+    "bottom": 55.14,
+    "left": 20.42,
+    "right": 796.58,
+    "h": 45.58
+   },
+   "transport": {
+    "top": 64.7,
+    "bottom": 121.95,
+    "left": 20.42,
+    "right": 796.58,
+    "h": 57.25
+   },
+   "workspace": {
+    "top": 131.52,
+    "bottom": 419.31,
+    "left": 20.42,
+    "right": 796.58,
+    "h": 287.8
+   },
+   "tracks": {
+    "top": 131.52,
+    "bottom": 419.31,
+    "left": 20.42,
+    "right": 567.02,
+    "h": 287.8
+   },
+   "trackSpace": {
+    "top": 170.64,
+    "bottom": 387.39,
+    "left": 21.42,
+    "right": 566.02,
+    "h": 216.75
+   },
+   "picker": {
+    "top": 300.98,
+    "bottom": 340.58,
+    "left": 231.7,
+    "right": 355.72,
+    "h": 39.59
+   },
+   "trackFooter": {
+    "top": 387.39,
+    "bottom": 418.31,
+    "left": 21.42,
+    "right": 566.02,
+    "h": 30.92
+   },
+   "master": {
+    "top": 131.52,
+    "bottom": 419.31,
+    "left": 576.58,
+    "right": 796.58,
+    "h": 287.8
+   },
+   "masterBody": {
+    "top": 170.64,
+    "bottom": 310.16,
+    "left": 577.58,
+    "right": 795.58,
+    "h": 139.52,
+    "clientHeight": 140,
+    "scrollHeight": 145,
+    "scrollTop": 0,
+    "maxScroll": 5
+   },
+   "exportBtn": {
+    "top": 377.42,
+    "bottom": 408.75,
+    "left": 589.58,
+    "right": 783.58,
+    "h": 31.33
+   },
+   "mixer": {
+    "top": 428.88,
+    "bottom": 562.88,
+    "left": 20.42,
+    "right": 796.58,
+    "h": 134
+   },
+   "strips": {
+    "top": 468,
+    "bottom": 561.88,
+    "left": 21.42,
+    "right": 795.58,
+    "h": 93.88,
+    "clientHeight": 94,
+    "scrollHeight": 94,
+    "scrollTop": 0,
+    "maxScroll": 0
+   },
+   "spaceBtn": {
+    "top": 513.11,
+    "bottom": 543.11,
+    "left": 691.69,
+    "right": 786.02,
+    "h": 30
+   },
+   "footer": {
+    "top": 572.44,
+    "bottom": 588.44,
+    "left": 20.42,
+    "right": 796.58,
+    "h": 16
+   },
+   "atEnd": {
+    "body": {
+     "clientHeight": 140,
+     "scrollHeight": 145,
+     "scrollTop": 5,
+     "maxScroll": 5
+    },
+    "strips": {
+     "clientHeight": 94,
+     "scrollHeight": 94,
+     "scrollTop": 0,
+     "maxScroll": 0
+    },
+    "note": {
+     "top": 354.67,
+     "bottom": 367.86,
+     "left": 593.58,
+     "right": 779.58,
+     "h": 13.19
+    },
+    "bodyBox": {
+     "top": 170.64,
+     "bottom": 310.16,
+     "left": 577.58,
+     "right": 795.58,
+     "h": 139.52
+    },
+    "space": {
+     "top": 513.11,
+     "bottom": 543.11,
+     "left": 691.69,
+     "right": 786.02,
+     "h": 30
+    },
+    "stripsBox": {
+     "top": 468,
+     "bottom": 561.88,
+     "left": 21.42,
+     "right": 795.58,
+     "h": 93.88
+    }
+   }
+  },
+  "keys": {
+   "Control+End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "PageDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "Meta+ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   }
+  },
+  "masterKeys": {
+   "endTop": 5,
+   "max": 5,
+   "focused": true,
+   "homeTop": 0
+  }
+ },
+ {
+  "width": 803,
+  "height": 615,
+  "geo": {
+   "inner": [
+    803,
+    615
+   ],
+   "docScroll": [
+    803,
+    615
+   ],
+   "header": {
+    "top": 9.83,
+    "bottom": 55.53,
+    "left": 20.06,
+    "right": 782.94,
+    "h": 45.7
+   },
+   "transport": {
+    "top": 65.36,
+    "bottom": 123.58,
+    "left": 20.06,
+    "right": 782.94,
+    "h": 58.22
+   },
+   "workspace": {
+    "top": 133.41,
+    "bottom": 418.52,
+    "left": 20.06,
+    "right": 782.94,
+    "h": 285.11
+   },
+   "tracks": {
+    "top": 133.41,
+    "bottom": 418.52,
+    "left": 20.06,
+    "right": 553.11,
+    "h": 285.11
+   },
+   "trackSpace": {
+    "top": 173.03,
+    "bottom": 386.06,
+    "left": 21.06,
+    "right": 552.11,
+    "h": 213.03
+   },
+   "picker": {
+    "top": 301.72,
+    "bottom": 341.31,
+    "left": 224.56,
+    "right": 348.58,
+    "h": 39.59
+   },
+   "trackFooter": {
+    "top": 386.06,
+    "bottom": 417.52,
+    "left": 21.06,
+    "right": 552.11,
+    "h": 31.45
+   },
+   "master": {
+    "top": 133.41,
+    "bottom": 418.52,
+    "left": 562.94,
+    "right": 782.94,
+    "h": 285.11
+   },
+   "masterBody": {
+    "top": 173.03,
+    "bottom": 308,
+    "left": 563.94,
+    "right": 781.94,
+    "h": 134.97,
+    "clientHeight": 135,
+    "scrollHeight": 146,
+    "scrollTop": 0,
+    "maxScroll": 11
+   },
+   "exportBtn": {
+    "top": 375.92,
+    "bottom": 407.69,
+    "left": 575.94,
+    "right": 769.94,
+    "h": 31.77
+   },
+   "mixer": {
+    "top": 428.34,
+    "bottom": 579.34,
+    "left": 20.06,
+    "right": 782.94,
+    "h": 151
+   },
+   "strips": {
+    "top": 467.97,
+    "bottom": 578.34,
+    "left": 21.06,
+    "right": 781.94,
+    "h": 110.38,
+    "clientHeight": 110,
+    "scrollHeight": 110,
+    "scrollTop": 0,
+    "maxScroll": 0
+   },
+   "spaceBtn": {
+    "top": 521.47,
+    "bottom": 551.47,
+    "left": 677.78,
+    "right": 772.11,
+    "h": 30
+   },
+   "footer": {
+    "top": 589.17,
+    "bottom": 605.17,
+    "left": 20.06,
+    "right": 782.94,
+    "h": 16
+   },
+   "atEnd": {
+    "body": {
+     "clientHeight": 135,
+     "scrollHeight": 146,
+     "scrollTop": 11,
+     "maxScroll": 11
+    },
+    "strips": {
+     "clientHeight": 110,
+     "scrollHeight": 110,
+     "scrollTop": 0,
+     "maxScroll": 0
+    },
+    "note": {
+     "top": 352.91,
+     "bottom": 366.09,
+     "left": 579.94,
+     "right": 765.94,
+     "h": 13.19
+    },
+    "bodyBox": {
+     "top": 173.03,
+     "bottom": 308,
+     "left": 563.94,
+     "right": 781.94,
+     "h": 134.97
+    },
+    "space": {
+     "top": 521.47,
+     "bottom": 551.47,
+     "left": 677.78,
+     "right": 772.11,
+     "h": 30
+    },
+    "stripsBox": {
+     "top": 467.97,
+     "bottom": 578.34,
+     "left": 21.06,
+     "right": 781.94,
+     "h": 110.38
+    }
+   }
+  },
+  "keys": {
+   "Control+End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "PageDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "Meta+ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   }
+  },
+  "masterKeys": {
+   "endTop": 11,
+   "max": 11,
+   "focused": true,
+   "homeTop": 0
+  }
+ },
+ {
+  "width": 971,
+  "height": 553,
+  "geo": {
+   "inner": [
+    971,
+    553
+   ],
+   "docScroll": [
+    971,
+    553
+   ],
+   "header": {
+    "top": 8.84,
+    "bottom": 54.06,
+    "left": 24.27,
+    "right": 946.73,
+    "h": 45.22
+   },
+   "transport": {
+    "top": 62.91,
+    "bottom": 118.2,
+    "left": 24.27,
+    "right": 946.73,
+    "h": 55.3
+   },
+   "workspace": {
+    "top": 127.05,
+    "bottom": 398.88,
+    "left": 24.27,
+    "right": 946.73,
+    "h": 271.83
+   },
+   "tracks": {
+    "top": 127.05,
+    "bottom": 398.88,
+    "left": 24.27,
+    "right": 717.89,
+    "h": 271.83
+   },
+   "trackSpace": {
+    "top": 164.8,
+    "bottom": 368.39,
+    "left": 25.27,
+    "right": 716.89,
+    "h": 203.59
+   },
+   "picker": {
+    "top": 288.02,
+    "bottom": 327.61,
+    "left": 309.06,
+    "right": 433.08,
+    "h": 39.59
+   },
+   "trackFooter": {
+    "top": 368.39,
+    "bottom": 397.88,
+    "left": 25.27,
+    "right": 716.89,
+    "h": 29.48
+   },
+   "master": {
+    "top": 127.05,
+    "bottom": 398.88,
+    "left": 726.73,
+    "right": 946.73,
+    "h": 271.83
+   },
+   "masterBody": {
+    "top": 164.8,
+    "bottom": 293.08,
+    "left": 727.73,
+    "right": 945.73,
+    "h": 128.28,
+    "clientHeight": 128,
+    "scrollHeight": 143,
+    "scrollTop": 0,
+    "maxScroll": 15
+   },
+   "exportBtn": {
+    "top": 358.64,
+    "bottom": 389.03,
+    "left": 739.73,
+    "right": 933.73,
+    "h": 30.39
+   },
+   "mixer": {
+    "top": 407.72,
+    "bottom": 519.31,
+    "left": 24.27,
+    "right": 946.73,
+    "h": 111.59
+   },
+   "strips": {
+    "top": 445.47,
+    "bottom": 518.31,
+    "left": 25.27,
+    "right": 945.73,
+    "h": 72.84,
+    "clientHeight": 73,
+    "scrollHeight": 73,
+    "scrollTop": 0,
+    "maxScroll": 0
+   },
+   "spaceBtn": {
+    "top": 479.7,
+    "bottom": 509.7,
+    "left": 836.67,
+    "right": 931,
+    "h": 30
+   },
+   "footer": {
+    "top": 528.16,
+    "bottom": 544.16,
+    "left": 24.27,
+    "right": 946.73,
+    "h": 16
+   },
+   "atEnd": {
+    "body": {
+     "clientHeight": 128,
+     "scrollHeight": 143,
+     "scrollTop": 15,
+     "maxScroll": 15
+    },
+    "strips": {
+     "clientHeight": 73,
+     "scrollHeight": 73,
+     "scrollTop": 0,
+     "maxScroll": 0
+    },
+    "note": {
+     "top": 336.61,
+     "bottom": 349.8,
+     "left": 743.73,
+     "right": 929.73,
+     "h": 13.19
+    },
+    "bodyBox": {
+     "top": 164.8,
+     "bottom": 293.08,
+     "left": 727.73,
+     "right": 945.73,
+     "h": 128.28
+    },
+    "space": {
+     "top": 479.7,
+     "bottom": 509.7,
+     "left": 836.67,
+     "right": 931,
+     "h": 30
+    },
+    "stripsBox": {
+     "top": 445.47,
+     "bottom": 518.31,
+     "left": 25.27,
+     "right": 945.73,
+     "h": 72.84
+    }
+   }
+  },
+  "keys": {
+   "Control+End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "PageDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "Meta+ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   }
+  },
+  "masterKeys": {
+   "endTop": 15,
+   "max": 15,
+   "focused": true,
+   "homeTop": 0
+  }
+ },
+ {
+  "width": 900,
+  "height": 560,
+  "geo": {
+   "inner": [
+    900,
+    560
+   ],
+   "docScroll": [
+    900,
+    560
+   ],
+   "header": {
+    "top": 8.95,
+    "bottom": 54.22,
+    "left": 22.5,
+    "right": 877.5,
+    "h": 45.27
+   },
+   "transport": {
+    "top": 63.17,
+    "bottom": 118.73,
+    "left": 22.5,
+    "right": 877.5,
+    "h": 55.56
+   },
+   "workspace": {
+    "top": 127.69,
+    "bottom": 405.22,
+    "left": 22.5,
+    "right": 877.5,
+    "h": 277.53
+   },
+   "tracks": {
+    "top": 127.69,
+    "bottom": 405.22,
+    "left": 22.5,
+    "right": 648.55,
+    "h": 277.53
+   },
+   "trackSpace": {
+    "top": 165.66,
+    "bottom": 374.52,
+    "left": 23.5,
+    "right": 647.55,
+    "h": 208.86
+   },
+   "picker": {
+    "top": 291.61,
+    "bottom": 331.2,
+    "left": 273.5,
+    "right": 397.52,
+    "h": 39.59
+   },
+   "trackFooter": {
+    "top": 374.52,
+    "bottom": 404.22,
+    "left": 23.5,
+    "right": 647.55,
+    "h": 29.7
+   },
+   "master": {
+    "top": 127.69,
+    "bottom": 405.22,
+    "left": 657.5,
+    "right": 877.5,
+    "h": 277.53
+   },
+   "masterBody": {
+    "top": 165.66,
+    "bottom": 299.03,
+    "left": 658.5,
+    "right": 876.5,
+    "h": 133.38,
+    "clientHeight": 133,
+    "scrollHeight": 143,
+    "scrollTop": 0,
+    "maxScroll": 10
+   },
+   "exportBtn": {
+    "top": 364.88,
+    "bottom": 395.27,
+    "left": 670.5,
+    "right": 864.5,
+    "h": 30.39
+   },
+   "mixer": {
+    "top": 414.17,
+    "bottom": 526.09,
+    "left": 22.5,
+    "right": 877.5,
+    "h": 111.92
+   },
+   "strips": {
+    "top": 452.14,
+    "bottom": 525.09,
+    "left": 23.5,
+    "right": 876.5,
+    "h": 72.95,
+    "clientHeight": 73,
+    "scrollHeight": 73,
+    "scrollTop": 0,
+    "maxScroll": 0
+   },
+   "spaceBtn": {
+    "top": 486.48,
+    "bottom": 516.48,
+    "left": 773.22,
+    "right": 867.55,
+    "h": 30
+   },
+   "footer": {
+    "top": 535.05,
+    "bottom": 551.05,
+    "left": 22.5,
+    "right": 877.5,
+    "h": 16
+   },
+   "atEnd": {
+    "body": {
+     "clientHeight": 133,
+     "scrollHeight": 143,
+     "scrollTop": 10,
+     "maxScroll": 10
+    },
+    "strips": {
+     "clientHeight": 73,
+     "scrollHeight": 73,
+     "scrollTop": 0,
+     "maxScroll": 0
+    },
+    "note": {
+     "top": 342.73,
+     "bottom": 355.92,
+     "left": 674.5,
+     "right": 860.5,
+     "h": 13.19
+    },
+    "bodyBox": {
+     "top": 165.66,
+     "bottom": 299.03,
+     "left": 658.5,
+     "right": 876.5,
+     "h": 133.38
+    },
+    "space": {
+     "top": 486.48,
+     "bottom": 516.48,
+     "left": 773.22,
+     "right": 867.55,
+     "h": 30
+    },
+    "stripsBox": {
+     "top": 452.14,
+     "bottom": 525.09,
+     "left": 23.5,
+     "right": 876.5,
+     "h": 72.95
+    }
+   }
+  },
+  "keys": {
+   "Control+End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "PageDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "Meta+ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   }
+  },
+  "masterKeys": {
+   "endTop": 10,
+   "max": 10,
+   "focused": true,
+   "homeTop": 0
+  }
+ },
+ {
+  "width": 785,
+  "height": 520,
+  "geo": {
+   "inner": [
+    785,
+    520
+   ],
+   "docScroll": [
+    785,
+    520
+   ],
+   "header": {
+    "top": 8.31,
+    "bottom": 53.27,
+    "left": 19.63,
+    "right": 765.38,
+    "h": 44.95
+   },
+   "transport": {
+    "top": 61.58,
+    "bottom": 115.55,
+    "left": 19.63,
+    "right": 765.38,
+    "h": 53.97
+   },
+   "workspace": {
+    "top": 123.86,
+    "bottom": 368.97,
+    "left": 19.63,
+    "right": 765.38,
+    "h": 245.11
+   },
+   "tracks": {
+    "top": 123.86,
+    "bottom": 368.97,
+    "left": 19.63,
+    "right": 537.06,
+    "h": 245.11
+   },
+   "trackSpace": {
+    "top": 160.64,
+    "bottom": 339.55,
+    "left": 20.63,
+    "right": 536.06,
+    "h": 178.91
+   },
+   "picker": {
+    "top": 271.13,
+    "bottom": 310.72,
+    "left": 216.33,
+    "right": 340.34,
+    "h": 39.59
+   },
+   "trackFooter": {
+    "top": 339.55,
+    "bottom": 367.97,
+    "left": 20.63,
+    "right": 536.06,
+    "h": 28.42
+   },
+   "master": {
+    "top": 123.86,
+    "bottom": 368.97,
+    "left": 545.38,
+    "right": 765.38,
+    "h": 245.11
+   },
+   "masterBody": {
+    "top": 160.64,
+    "bottom": 264.97,
+    "left": 546.38,
+    "right": 764.38,
+    "h": 104.33,
+    "clientHeight": 104,
+    "scrollHeight": 141,
+    "scrollTop": 0,
+    "maxScroll": 37
+   },
+   "exportBtn": {
+    "top": 329.27,
+    "bottom": 359.66,
+    "left": 558.38,
+    "right": 752.38,
+    "h": 30.39
+   },
+   "mixer": {
+    "top": 377.28,
+    "bottom": 487.38,
+    "left": 19.63,
+    "right": 765.38,
+    "h": 110.09
+   },
+   "strips": {
+    "top": 414.06,
+    "bottom": 486.38,
+    "left": 20.63,
+    "right": 764.38,
+    "h": 72.31,
+    "clientHeight": 72,
+    "scrollHeight": 72,
+    "scrollTop": 0,
+    "maxScroll": 0
+   },
+   "spaceBtn": {
+    "top": 447.77,
+    "bottom": 477.77,
+    "left": 661.73,
+    "right": 756.06,
+    "h": 30
+   },
+   "footer": {
+    "top": 495.69,
+    "bottom": 511.69,
+    "left": 19.63,
+    "right": 765.38,
+    "h": 16
+   },
+   "atEnd": {
+    "body": {
+     "clientHeight": 104,
+     "scrollHeight": 141,
+     "scrollTop": 37,
+     "maxScroll": 37
+    },
+    "strips": {
+     "clientHeight": 72,
+     "scrollHeight": 72,
+     "scrollTop": 0,
+     "maxScroll": 0
+    },
+    "note": {
+     "top": 307.77,
+     "bottom": 320.95,
+     "left": 562.38,
+     "right": 748.38,
+     "h": 13.19
+    },
+    "bodyBox": {
+     "top": 160.64,
+     "bottom": 264.97,
+     "left": 546.38,
+     "right": 764.38,
+     "h": 104.33
+    },
+    "space": {
+     "top": 447.77,
+     "bottom": 477.77,
+     "left": 661.73,
+     "right": 756.06,
+     "h": 30
+    },
+    "stripsBox": {
+     "top": 414.06,
+     "bottom": 486.38,
+     "left": 20.63,
+     "right": 764.38,
+     "h": 72.31
+    }
+   }
+  },
+  "keys": {
+   "Control+End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "PageDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "Meta+ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   }
+  },
+  "masterKeys": {
+   "endTop": 37,
+   "max": 37,
+   "focused": true,
+   "homeTop": 0
+  }
+ },
+ {
+  "width": 804,
+  "height": 471,
+  "geo": {
+   "inner": [
+    804,
+    471
+   ],
+   "docScroll": [
+    804,
+    471
+   ],
+   "header": {
+    "top": 7.53,
+    "bottom": 52.09,
+    "left": 20.09,
+    "right": 783.91,
+    "h": 44.56
+   },
+   "transport": {
+    "top": 59.63,
+    "bottom": 111.88,
+    "left": 20.09,
+    "right": 783.91,
+    "h": 52.25
+   },
+   "workspace": {
+    "top": 119.41,
+    "bottom": 324.56,
+    "left": 20.09,
+    "right": 783.91,
+    "h": 205.16
+   },
+   "tracks": {
+    "top": 119.41,
+    "bottom": 324.56,
+    "left": 20.09,
+    "right": 556.38,
+    "h": 205.16
+   },
+   "trackSpace": {
+    "top": 154.72,
+    "bottom": 296.7,
+    "left": 21.09,
+    "right": 555.38,
+    "h": 141.98
+   },
+   "picker": {
+    "top": 205.91,
+    "bottom": 245.5,
+    "left": 356.64,
+    "right": 480.66,
+    "h": 39.59
+   },
+   "trackFooter": {
+    "top": 296.7,
+    "bottom": 323.56,
+    "left": 21.09,
+    "right": 555.38,
+    "h": 26.86
+   },
+   "master": {
+    "top": 119.41,
+    "bottom": 324.56,
+    "left": 563.91,
+    "right": 783.91,
+    "h": 205.16
+   },
+   "masterBody": {
+    "top": 154.72,
+    "bottom": 223.2,
+    "left": 564.91,
+    "right": 782.91,
+    "h": 68.48,
+    "clientHeight": 68,
+    "scrollHeight": 138,
+    "scrollTop": 0,
+    "maxScroll": 70
+   },
+   "exportBtn": {
+    "top": 285.64,
+    "bottom": 316.03,
+    "left": 576.91,
+    "right": 770.91,
+    "h": 30.39
+   },
+   "mixer": {
+    "top": 332.09,
+    "bottom": 439.94,
+    "left": 20.09,
+    "right": 783.91,
+    "h": 107.84
+   },
+   "strips": {
+    "top": 367.41,
+    "bottom": 438.94,
+    "left": 21.09,
+    "right": 782.91,
+    "h": 71.53,
+    "clientHeight": 72,
+    "scrollHeight": 72,
+    "scrollTop": 0,
+    "maxScroll": 0
+   },
+   "spaceBtn": {
+    "top": 400.33,
+    "bottom": 430.33,
+    "left": 681.05,
+    "right": 775.38,
+    "h": 30
+   },
+   "footer": {
+    "top": 447.47,
+    "bottom": 463.47,
+    "left": 20.09,
+    "right": 783.91,
+    "h": 16
+   },
+   "atEnd": {
+    "body": {
+     "clientHeight": 68,
+     "scrollHeight": 138,
+     "scrollTop": 70,
+     "maxScroll": 70
+    },
+    "strips": {
+     "clientHeight": 72,
+     "scrollHeight": 72,
+     "scrollTop": 0,
+     "maxScroll": 0
+    },
+    "note": {
+     "top": 264.92,
+     "bottom": 278.11,
+     "left": 580.91,
+     "right": 766.91,
+     "h": 13.19
+    },
+    "bodyBox": {
+     "top": 154.72,
+     "bottom": 223.2,
+     "left": 564.91,
+     "right": 782.91,
+     "h": 68.48
+    },
+    "space": {
+     "top": 400.33,
+     "bottom": 430.33,
+     "left": 681.05,
+     "right": 775.38,
+     "h": 30
+    },
+    "stripsBox": {
+     "top": 367.41,
+     "bottom": 438.94,
+     "left": 21.09,
+     "right": 782.91,
+     "h": 71.53
+    }
+   }
+  },
+  "keys": {
+   "Control+End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "PageDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "Meta+ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   }
+  },
+  "masterKeys": {
+   "endTop": 70,
+   "max": 70,
+   "focused": true,
+   "homeTop": 0
+  }
+ },
+ {
+  "width": 761,
+  "height": 450,
+  "geo": {
+   "inner": [
+    761,
+    450
+   ],
+   "docScroll": [
+    761,
+    450
+   ],
+   "header": {
+    "top": 7.19,
+    "bottom": 51.58,
+    "left": 19.02,
+    "right": 741.98,
+    "h": 44.39
+   },
+   "transport": {
+    "top": 58.77,
+    "bottom": 110.33,
+    "left": 19.02,
+    "right": 741.98,
+    "h": 51.56
+   },
+   "workspace": {
+    "top": 117.52,
+    "bottom": 305.56,
+    "left": 19.02,
+    "right": 741.98,
+    "h": 188.05
+   },
+   "tracks": {
+    "top": 117.52,
+    "bottom": 305.56,
+    "left": 19.02,
+    "right": 514.8,
+    "h": 188.05
+   },
+   "trackSpace": {
+    "top": 152.2,
+    "bottom": 278.39,
+    "left": 20.02,
+    "right": 513.8,
+    "h": 126.19
+   },
+   "picker": {
+    "top": 195.48,
+    "bottom": 235.08,
+    "left": 334.67,
+    "right": 458.69,
+    "h": 39.59
+   },
+   "trackFooter": {
+    "top": 278.39,
+    "bottom": 304.56,
+    "left": 20.02,
+    "right": 513.8,
+    "h": 26.17
+   },
+   "master": {
+    "top": 117.52,
+    "bottom": 305.56,
+    "left": 521.98,
+    "right": 741.98,
+    "h": 188.05
+   },
+   "masterBody": {
+    "top": 152.2,
+    "bottom": 205.34,
+    "left": 522.98,
+    "right": 740.98,
+    "h": 53.14,
+    "clientHeight": 53,
+    "scrollHeight": 137,
+    "scrollTop": 0,
+    "maxScroll": 84
+   },
+   "exportBtn": {
+    "top": 266.98,
+    "bottom": 297.38,
+    "left": 534.98,
+    "right": 728.98,
+    "h": 30.39
+   },
+   "mixer": {
+    "top": 312.75,
+    "bottom": 419.63,
+    "left": 19.02,
+    "right": 741.98,
+    "h": 106.88
+   },
+   "strips": {
+    "top": 347.44,
+    "bottom": 418.63,
+    "left": 20.02,
+    "right": 740.98,
+    "h": 71.19,
+    "clientHeight": 71,
+    "scrollHeight": 71,
+    "scrollTop": 0,
+    "maxScroll": 0
+   },
+   "spaceBtn": {
+    "top": 380.02,
+    "bottom": 410.02,
+    "left": 639.47,
+    "right": 733.8,
+    "h": 30
+   },
+   "footer": {
+    "top": 426.81,
+    "bottom": 442.81,
+    "left": 19.02,
+    "right": 741.98,
+    "h": 16
+   },
+   "atEnd": {
+    "body": {
+     "clientHeight": 53,
+     "scrollHeight": 137,
+     "scrollTop": 84,
+     "maxScroll": 84
+    },
+    "strips": {
+     "clientHeight": 71,
+     "scrollHeight": 71,
+     "scrollTop": 0,
+     "maxScroll": 0
+    },
+    "note": {
+     "top": 246.61,
+     "bottom": 259.8,
+     "left": 538.98,
+     "right": 724.98,
+     "h": 13.19
+    },
+    "bodyBox": {
+     "top": 152.2,
+     "bottom": 205.34,
+     "left": 522.98,
+     "right": 740.98,
+     "h": 53.14
+    },
+    "space": {
+     "top": 380.02,
+     "bottom": 410.02,
+     "left": 639.47,
+     "right": 733.8,
+     "h": 30
+    },
+    "stripsBox": {
+     "top": 347.44,
+     "bottom": 418.63,
+     "left": 20.02,
+     "right": 740.98,
+     "h": 71.19
+    }
+   }
+  },
+  "keys": {
+   "Control+End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "PageDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "Meta+ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   }
+  },
+  "masterKeys": {
+   "endTop": 84,
+   "max": 84,
+   "focused": true,
+   "homeTop": 0
+  }
+ },
+ {
+  "width": 1440,
+  "height": 450,
+  "geo": {
+   "inner": [
+    1440,
+    450
+   ],
+   "docScroll": [
+    1440,
+    450
+   ],
+   "header": {
+    "top": 7.19,
+    "bottom": 51.58,
+    "left": 36,
+    "right": 1404,
+    "h": 44.39
+   },
+   "transport": {
+    "top": 58.77,
+    "bottom": 110.33,
+    "left": 36,
+    "right": 1404,
+    "h": 51.56
+   },
+   "workspace": {
+    "top": 117.52,
+    "bottom": 305.56,
+    "left": 36,
+    "right": 1404,
+    "h": 188.05
+   },
+   "tracks": {
+    "top": 117.52,
+    "bottom": 305.56,
+    "left": 36,
+    "right": 1116.81,
+    "h": 188.05
+   },
+   "trackSpace": {
+    "top": 152.2,
+    "bottom": 278.39,
+    "left": 37,
+    "right": 1115.81,
+    "h": 126.19
+   },
+   "picker": {
+    "top": 195.48,
+    "bottom": 235.08,
+    "left": 648.75,
+    "right": 772.77,
+    "h": 39.59
+   },
+   "trackFooter": {
+    "top": 278.39,
+    "bottom": 304.56,
+    "left": 37,
+    "right": 1115.81,
+    "h": 26.17
+   },
+   "master": {
+    "top": 117.52,
+    "bottom": 305.56,
+    "left": 1124,
+    "right": 1404,
+    "h": 188.05
+   },
+   "masterBody": {
+    "top": 152.2,
+    "bottom": 205.34,
+    "left": 1125,
+    "right": 1403,
+    "h": 53.14,
+    "clientHeight": 53,
+    "scrollHeight": 137,
+    "scrollTop": 0,
+    "maxScroll": 84
+   },
+   "exportBtn": {
+    "top": 266.98,
+    "bottom": 297.38,
+    "left": 1137,
+    "right": 1391,
+    "h": 30.39
+   },
+   "mixer": {
+    "top": 312.75,
+    "bottom": 419.63,
+    "left": 36,
+    "right": 1404,
+    "h": 106.88
+   },
+   "strips": {
+    "top": 347.44,
+    "bottom": 418.63,
+    "left": 37,
+    "right": 1403,
+    "h": 71.19,
+    "clientHeight": 71,
+    "scrollHeight": 71,
+    "scrollTop": 0,
+    "maxScroll": 0
+   },
+   "spaceBtn": {
+    "top": 380.02,
+    "bottom": 410.02,
+    "left": 1238.25,
+    "right": 1332.58,
+    "h": 30
+   },
+   "footer": {
+    "top": 426.81,
+    "bottom": 442.81,
+    "left": 36,
+    "right": 1404,
+    "h": 16
+   },
+   "atEnd": {
+    "body": {
+     "clientHeight": 53,
+     "scrollHeight": 137,
+     "scrollTop": 84,
+     "maxScroll": 84
+    },
+    "strips": {
+     "clientHeight": 71,
+     "scrollHeight": 71,
+     "scrollTop": 0,
+     "maxScroll": 0
+    },
+    "note": {
+     "top": 246.61,
+     "bottom": 259.8,
+     "left": 1141,
+     "right": 1387,
+     "h": 13.19
+    },
+    "bodyBox": {
+     "top": 152.2,
+     "bottom": 205.34,
+     "left": 1125,
+     "right": 1403,
+     "h": 53.14
+    },
+    "space": {
+     "top": 380.02,
+     "bottom": 410.02,
+     "left": 1238.25,
+     "right": 1332.58,
+     "h": 30
+    },
+    "stripsBox": {
+     "top": 347.44,
+     "bottom": 418.63,
+     "left": 37,
+     "right": 1403,
+     "h": 71.19
+    }
+   }
+  },
+  "keys": {
+   "Control+End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "End": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "PageDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   },
+   "Meta+ArrowDown": {
+    "before": 0,
+    "after": 0,
+    "active": "strips",
+    "pageY": 0
+   }
+  },
+  "masterKeys": {
+   "endTop": 84,
+   "max": 84,
+   "focused": true,
+   "homeTop": 0
+  }
+ },
+ {
+  "width": 760,
+  "height": 520,
+  "geo": {
+   "inner": [
+    760,
+    520
+   ],
+   "docScroll": [
+    760,
+    1013
+   ],
+   "header": {
+    "top": 20,
+    "bottom": 64.95,
+    "left": 16,
+    "right": 744,
+    "h": 44.95
+   },
+   "transport": {
+    "top": 73.27,
+    "bottom": 127.23,
+    "left": 16,
+    "right": 744,
+    "h": 53.97
+   },
+   "workspace": {
+    "top": 135.55,
+    "bottom": 646.77,
+    "left": 16,
+    "right": 744,
+    "h": 511.22
+   },
+   "tracks": {
+    "top": 135.55,
+    "bottom": 378.48,
+    "left": 16,
+    "right": 744,
+    "h": 242.94
+   },
+   "trackSpace": {
+    "top": 172.33,
+    "bottom": 349.06,
+    "left": 17,
+    "right": 743,
+    "h": 176.73
+   },
+   "picker": {
+    "top": 281.73,
+    "bottom": 321.33,
+    "left": 317.98,
+    "right": 442,
+    "h": 39.59
+   },
+   "trackFooter": {
+    "top": 349.06,
+    "bottom": 377.48,
+    "left": 17,
+    "right": 743,
+    "h": 28.42
+   },
+   "master": {
+    "top": 386.8,
+    "bottom": 646.77,
+    "left": 16,
+    "right": 744,
+    "h": 259.97
+   },
+   "masterBody": {
+    "top": 423.58,
+    "bottom": 543.77,
+    "left": 224.97,
+    "right": 535.02,
+    "h": 120.19,
+    "clientHeight": 120,
+    "scrollHeight": 120,
+    "scrollTop": 0,
+    "maxScroll": 0
+   },
+   "exportBtn": {
+    "top": 607.06,
+    "bottom": 637.45,
+    "left": 29,
+    "right": 731,
+    "h": 30.39
+   },
+   "mixer": {
+    "top": 655.08,
+    "bottom": 968.58,
+    "left": 16,
+    "right": 744,
+    "h": 313.5
+   },
+   "strips": {
+    "top": 691.86,
+    "bottom": 967.58,
+    "left": 17,
+    "right": 743,
+    "h": 275.72,
+    "clientHeight": 276,
+    "scrollHeight": 276,
+    "scrollTop": 0,
+    "maxScroll": 0
+   },
+   "spaceBtn": {
+    "top": 930.08,
+    "bottom": 959.27,
+    "left": 514.33,
+    "right": 608.66,
+    "h": 29.19
+   },
+   "footer": {
+    "top": 976.89,
+    "bottom": 992.89,
+    "left": 16,
+    "right": 744,
+    "h": 16
+   },
+   "atEnd": {
+    "body": {
+     "clientHeight": 120,
+     "scrollHeight": 120,
+     "scrollTop": 0,
+     "maxScroll": 0
+    },
+    "strips": {
+     "clientHeight": 276,
+     "scrollHeight": 276,
+     "scrollTop": 0,
+     "maxScroll": 0
+    },
+    "note": {
+     "top": 585.56,
+     "bottom": 598.75,
+     "left": 315.5,
+     "right": 444.5,
+     "h": 13.19
+    },
+    "bodyBox": {
+     "top": 423.58,
+     "bottom": 543.77,
+     "left": 224.97,
+     "right": 535.02,
+     "h": 120.19
+    },
+    "space": {
+     "top": 930.08,
+     "bottom": 959.27,
+     "left": 514.33,
+     "right": 608.66,
+     "h": 29.19
+    },
+    "stripsBox": {
+     "top": 691.86,
+     "bottom": 967.58,
+     "left": 17,
+     "right": 743,
+     "h": 275.72
+    }
+   }
+  }
+ },
+ {
+  "width": 600,
+  "height": 650,
+  "geo": {
+   "inner": [
+    600,
+    650
+   ],
+   "docScroll": [
+    600,
+    1121
+   ],
+   "header": {
+    "top": 20,
+    "bottom": 65.98,
+    "left": 16,
+    "right": 584,
+    "h": 45.98
+   },
+   "transport": {
+    "top": 76.38,
+    "bottom": 168.19,
+    "left": 16,
+    "right": 584,
+    "h": 91.81
+   },
+   "workspace": {
+    "top": 178.58,
+    "bottom": 730.31,
+    "left": 16,
+    "right": 584,
+    "h": 551.73
+   },
+   "tracks": {
+    "top": 178.58,
+    "bottom": 439.98,
+    "left": 16,
+    "right": 584,
+    "h": 261.41
+   },
+   "trackSpace": {
+    "top": 219.27,
+    "bottom": 406.41,
+    "left": 17,
+    "right": 583,
+    "h": 187.14
+   },
+   "picker": {
+    "top": 335.44,
+    "bottom": 375.03,
+    "left": 237.98,
+    "right": 362,
+    "h": 39.59
+   },
+   "trackFooter": {
+    "top": 406.41,
+    "bottom": 438.98,
+    "left": 17,
+    "right": 583,
+    "h": 32.58
+   },
+   "master": {
+    "top": 450.38,
+    "bottom": 730.31,
+    "left": 16,
+    "right": 584,
+    "h": 279.94
+   },
+   "masterBody": {
+    "top": 491.06,
+    "bottom": 618.03,
+    "left": 142.89,
+    "right": 457.09,
+    "h": 126.97,
+    "clientHeight": 127,
+    "scrollHeight": 127,
+    "scrollTop": 0,
+    "maxScroll": 0
+   },
+   "exportBtn": {
+    "top": 686.28,
+    "bottom": 718.92,
+    "left": 29,
+    "right": 571,
+    "h": 32.64
+   },
+   "mixer": {
+    "top": 740.7,
+    "bottom": 1074.3,
+    "left": 16,
+    "right": 584,
+    "h": 333.59
+   },
+   "strips": {
+    "top": 781.39,
+    "bottom": 1073.3,
+    "left": 17,
+    "right": 583,
+    "h": 291.91,
+    "clientHeight": 292,
+    "scrollHeight": 292,
+    "scrollTop": 0,
+    "maxScroll": 0
+   },
+   "spaceBtn": {
+    "top": 1033.72,
+    "bottom": 1062.91,
+    "left": 394.33,
+    "right": 488.66,
+    "h": 29.19
+   },
+   "footer": {
+    "top": 1084.69,
+    "bottom": 1100.69,
+    "left": 16,
+    "right": 584,
+    "h": 16
+   },
+   "atEnd": {
+    "body": {
+     "clientHeight": 127,
+     "scrollHeight": 127,
+     "scrollTop": 0,
+     "maxScroll": 0
+    },
+    "strips": {
+     "clientHeight": 292,
+     "scrollHeight": 292,
+     "scrollTop": 0,
+     "maxScroll": 0
+    },
+    "note": {
+     "top": 662.7,
+     "bottom": 675.89,
+     "left": 235.5,
+     "right": 364.5,
+     "h": 13.19
+    },
+    "bodyBox": {
+     "top": 491.06,
+     "bottom": 618.03,
+     "left": 142.89,
+     "right": 457.09,
+     "h": 126.97
+    },
+    "space": {
+     "top": 1033.72,
+     "bottom": 1062.91,
+     "left": 394.33,
+     "right": 488.66,
+     "h": 29.19
+    },
+    "stripsBox": {
+     "top": 781.39,
+     "bottom": 1073.3,
+     "left": 17,
+     "right": 583,
+     "h": 291.91
+    }
+   }
+  }
+ }
+]

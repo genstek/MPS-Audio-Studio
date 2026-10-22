@@ -1,0 +1,80 @@
+
+Running 3 tests using 1 worker
+
+  ✘  1 [chromium] › tests/e2e/LAS51-layout.spec.js:161:3 › LAS-51: empty layout survives viewport changes (7.8s)
+  ✘  2 [chromium] › tests/e2e/LAS51-layout.spec.js:161:3 › LAS-51: WAV-loaded layout survives viewport changes (8.7s)
+  ✓  3 [chromium] › tests/e2e/LAS51-layout.spec.js:184:1 › LAS-51: playback state survives viewport changes (1.6s)
+
+
+  1) [chromium] › tests/e2e/LAS51-layout.spec.js:161:3 › LAS-51: empty layout survives viewport changes › empty 990x661
+
+    Error: empty 990x661: Mixer needs no inner scroll
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 141
+    Received:    145
+
+      151 |   const mixer = await scrollState(strips);
+      152 |   expect(mixer.clientHeight, `${label}: Mixer visible height`).toBeGreaterThanOrEqual(Math.min(mixer.scrollHeight, 64));
+    > 153 |   if (height >= 640) expect(mixer.scrollHeight, `${label}: Mixer needs no inner scroll`).toBeLessThanOrEqual(mixer.clientHeight + 1);
+          |                                                                                          ^
+      154 |
+      155 |   await checkKeyboardScroll(page, masterBody, outputStage, levelNote, `${label} Master keyboard`);
+      156 |   await checkKeyboardScroll(page, strips, stripTitles[0], stripButtons[3], `${label} Mixer keyboard`);
+        at checkLayout (/home/user/MPS-Audio-Studio-Claude-LAS51/tests/e2e/LAS51-layout.spec.js:153:90)
+        at /home/user/MPS-Audio-Studio-Claude-LAS51/tests/e2e/LAS51-layout.spec.js:178:9
+        at /home/user/MPS-Audio-Studio-Claude-LAS51/tests/e2e/LAS51-layout.spec.js:170:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    <scratch>/run-newtest-on-baseline-css/pw/LAS51-layout-LAS-51-empty-layout-survives-viewport-changes-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: <scratch>/run-newtest-on-baseline-css/pw/LAS51-layout-LAS-51-empty-layout-survives-viewport-changes-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    <scratch>/run-newtest-on-baseline-css/pw/LAS51-layout-LAS-51-empty-layout-survives-viewport-changes-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace <scratch>/run-newtest-on-baseline-css/pw/LAS51-layout-LAS-51-empty-layout-survives-viewport-changes-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests/e2e/LAS51-layout.spec.js:161:3 › LAS-51: WAV-loaded layout survives viewport changes › WAV-loaded 990x661
+
+    Error: WAV-loaded 990x661: Mixer needs no inner scroll
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 141
+    Received:    145
+
+      151 |   const mixer = await scrollState(strips);
+      152 |   expect(mixer.clientHeight, `${label}: Mixer visible height`).toBeGreaterThanOrEqual(Math.min(mixer.scrollHeight, 64));
+    > 153 |   if (height >= 640) expect(mixer.scrollHeight, `${label}: Mixer needs no inner scroll`).toBeLessThanOrEqual(mixer.clientHeight + 1);
+          |                                                                                          ^
+      154 |
+      155 |   await checkKeyboardScroll(page, masterBody, outputStage, levelNote, `${label} Master keyboard`);
+      156 |   await checkKeyboardScroll(page, strips, stripTitles[0], stripButtons[3], `${label} Mixer keyboard`);
+        at checkLayout (/home/user/MPS-Audio-Studio-Claude-LAS51/tests/e2e/LAS51-layout.spec.js:153:90)
+        at /home/user/MPS-Audio-Studio-Claude-LAS51/tests/e2e/LAS51-layout.spec.js:178:9
+        at /home/user/MPS-Audio-Studio-Claude-LAS51/tests/e2e/LAS51-layout.spec.js:170:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    <scratch>/run-newtest-on-baseline-css/pw/LAS51-layout-LAS-51-WAV-lo-1050b-t-survives-viewport-changes-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: <scratch>/run-newtest-on-baseline-css/pw/LAS51-layout-LAS-51-WAV-lo-1050b-t-survives-viewport-changes-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    <scratch>/run-newtest-on-baseline-css/pw/LAS51-layout-LAS-51-WAV-lo-1050b-t-survives-viewport-changes-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace <scratch>/run-newtest-on-baseline-css/pw/LAS51-layout-LAS-51-WAV-lo-1050b-t-survives-viewport-changes-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › tests/e2e/LAS51-layout.spec.js:161:3 › LAS-51: empty layout survives viewport changes
+    [chromium] › tests/e2e/LAS51-layout.spec.js:161:3 › LAS-51: WAV-loaded layout survives viewport changes
+  1 passed (23.5s)

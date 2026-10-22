@@ -1,0 +1,95 @@
+
+Running 6 tests using 1 worker
+
+  ✘  1 [chromium] › tests/e2e/LAS51-layout.spec.js:60:3 › LAS-51: empty layout survives viewport changes (8.2s)
+  ✘  2 [chromium] › tests/e2e/LAS51-layout.spec.js:60:3 › LAS-51: WAV-loaded layout survives viewport changes (7.6s)
+  ✓  3 [chromium] › tests/e2e/LAS51-responsive.spec.js:3:1 › LAS-51: Import WAV stays fully visible after resizing to 785x520 (1.0s)
+  ✓  4 [chromium] › tests/e2e/mixer.spec.js:4:1 › TC-001: mixer loads and displays its main UI elements (1.2s)
+  ✓  5 [chromium] › tests/e2e/playback.spec.js:4:1 › WAV playback and recovery after a replacement cannot decode (1.8s)
+  ✓  6 [chromium] › tests/e2e/responsive.spec.js:3:1 › LAS48-TC-001: Initial empty workspace fits desktop viewports (931ms)
+
+
+  1) [chromium] › tests/e2e/LAS51-layout.spec.js:60:3 › LAS-51: empty layout survives viewport changes
+
+    Error: expect(locator).toBeInViewport() failed
+
+    Locator:  locator('.master-body').getByText('Level control unavailable')
+    Expected: in viewport
+    Received: viewport ratio 0.9665178656578064
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeInViewport" locator('.master-body').getByText('Level control unavailable') with timeout 5000ms
+      - waiting for locator('.master-body').getByText('Level control unavailable')
+        14 × locator resolved to <p class="fine-print">Level control unavailable</p>
+           - unexpected value "viewport ratio 0.9665178656578064"
+
+
+      32 |   const levelNote = body.getByText('Level control unavailable');
+      33 |   await levelNote.scrollIntoViewIfNeeded();
+    > 34 |   await expect(levelNote).toBeInViewport({ ratio: 1 });
+         |                           ^
+      35 |   const noteBox = await levelNote.boundingBox();
+      36 |   const buttonBox = await exportButton.boundingBox();
+      37 |   expect(noteBox.y + noteBox.height).toBeLessThanOrEqual(buttonBox.y + 1);
+        at checkLayout (/home/user/MPS-Audio-Studio-Claude-LAS51/tests/e2e/LAS51-layout.spec.js:34:27)
+        at /home/user/MPS-Audio-Studio-Claude-LAS51/tests/e2e/LAS51-layout.spec.js:68:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    <scratch>/baseline-run1/pw/LAS51-layout-LAS-51-empty-layout-survives-viewport-changes-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: <scratch>/baseline-run1/pw/LAS51-layout-LAS-51-empty-layout-survives-viewport-changes-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    <scratch>/baseline-run1/pw/LAS51-layout-LAS-51-empty-layout-survives-viewport-changes-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace <scratch>/baseline-run1/pw/LAS51-layout-LAS-51-empty-layout-survives-viewport-changes-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests/e2e/LAS51-layout.spec.js:60:3 › LAS-51: WAV-loaded layout survives viewport changes
+
+    Error: expect(locator).toBeInViewport() failed
+
+    Locator:  locator('.master-body').getByText('Level control unavailable')
+    Expected: in viewport
+    Received: viewport ratio 0.9665178656578064
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeInViewport" locator('.master-body').getByText('Level control unavailable') with timeout 5000ms
+      - waiting for locator('.master-body').getByText('Level control unavailable')
+        14 × locator resolved to <p class="fine-print">Level control unavailable</p>
+           - unexpected value "viewport ratio 0.9665178656578064"
+
+
+      32 |   const levelNote = body.getByText('Level control unavailable');
+      33 |   await levelNote.scrollIntoViewIfNeeded();
+    > 34 |   await expect(levelNote).toBeInViewport({ ratio: 1 });
+         |                           ^
+      35 |   const noteBox = await levelNote.boundingBox();
+      36 |   const buttonBox = await exportButton.boundingBox();
+      37 |   expect(noteBox.y + noteBox.height).toBeLessThanOrEqual(buttonBox.y + 1);
+        at checkLayout (/home/user/MPS-Audio-Studio-Claude-LAS51/tests/e2e/LAS51-layout.spec.js:34:27)
+        at /home/user/MPS-Audio-Studio-Claude-LAS51/tests/e2e/LAS51-layout.spec.js:68:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    <scratch>/baseline-run1/pw/LAS51-layout-LAS-51-WAV-lo-1050b-t-survives-viewport-changes-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: <scratch>/baseline-run1/pw/LAS51-layout-LAS-51-WAV-lo-1050b-t-survives-viewport-changes-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    <scratch>/baseline-run1/pw/LAS51-layout-LAS-51-WAV-lo-1050b-t-survives-viewport-changes-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace <scratch>/baseline-run1/pw/LAS51-layout-LAS-51-WAV-lo-1050b-t-survives-viewport-changes-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › tests/e2e/LAS51-layout.spec.js:60:3 › LAS-51: empty layout survives viewport changes
+    [chromium] › tests/e2e/LAS51-layout.spec.js:60:3 › LAS-51: WAV-loaded layout survives viewport changes
+  4 passed (26.7s)

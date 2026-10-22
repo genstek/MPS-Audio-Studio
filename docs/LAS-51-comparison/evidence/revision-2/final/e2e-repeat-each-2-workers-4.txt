@@ -1,0 +1,21 @@
+
+Running 16 tests using 4 workers
+
+  ✓   1 [chromium] › tests/e2e/LAS51-layout.spec.js:224:3 › LAS-51: essential controls visible before scrolling, height 471-1080 at width 1024 (23.9s)
+  ✓   4 [chromium] › tests/e2e/LAS51-layout.spec.js:224:3 › LAS-51: essential controls visible before scrolling, height 471-1080 at width 761 (23.2s)
+  ✓   6 [chromium] › tests/e2e/LAS51-layout.spec.js:224:3 › LAS-51: essential controls visible before scrolling, width 761-1440 at height 471 (7.1s)
+  ✓   7 [chromium] › tests/e2e/LAS51-layout.spec.js:236:1 › LAS-51: playback state survives viewport changes (2.5s)
+  ✓   8 [chromium] › tests/e2e/LAS51-responsive.spec.js:3:1 › LAS-51: Import WAV stays fully visible after resizing to 785x520 (1.3s)
+  ✓   5 [chromium] › tests/e2e/LAS51-layout.spec.js:224:3 › LAS-51: essential controls visible before scrolling, height 471-1080 at width 1440 (19.1s)
+  ✓   2 [chromium] › tests/e2e/LAS51-layout.spec.js:192:3 › LAS-51: WAV-loaded layout survives viewport changes (1.2m)
+  ✓   3 [chromium] › tests/e2e/LAS51-layout.spec.js:192:3 › LAS-51: empty layout survives viewport changes (1.2m)
+  ✓  11 [chromium] › tests/e2e/LAS51-layout.spec.js:224:3 › LAS-51: essential controls visible before scrolling, height 471-1080 at width 761 (19.7s)
+  ✓  12 [chromium] › tests/e2e/LAS51-layout.spec.js:224:3 › LAS-51: essential controls visible before scrolling, height 471-1080 at width 1024 (19.9s)
+  ✓  14 [chromium] › tests/e2e/LAS51-layout.spec.js:224:3 › LAS-51: essential controls visible before scrolling, width 761-1440 at height 471 (7.7s)
+  ✓  15 [chromium] › tests/e2e/LAS51-layout.spec.js:236:1 › LAS-51: playback state survives viewport changes (2.7s)
+  ✓  16 [chromium] › tests/e2e/LAS51-responsive.spec.js:3:1 › LAS-51: Import WAV stays fully visible after resizing to 785x520 (1.2s)
+  ✓   9 [chromium] › tests/e2e/LAS51-layout.spec.js:192:3 › LAS-51: empty layout survives viewport changes (1.2m)
+  ✓  13 [chromium] › tests/e2e/LAS51-layout.spec.js:224:3 › LAS-51: essential controls visible before scrolling, height 471-1080 at width 1440 (18.9s)
+  ✓  10 [chromium] › tests/e2e/LAS51-layout.spec.js:192:3 › LAS-51: WAV-loaded layout survives viewport changes (1.2m)
+
+  16 passed (2.0m)

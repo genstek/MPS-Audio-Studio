@@ -1,0 +1,3 @@
+Running 1 test using 1 worker
+  ✓  1 [chromium] › <scratch>/probe-specs/only-785520.spec.mjs:157:3 › LAS-51: empty layout survives viewport changes (4.1s)
+  1 passed (6.8s)

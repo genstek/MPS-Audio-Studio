@@ -1,0 +1,16 @@
+Running 1 test using 1 worker
+  ✘  1 [chromium] › <scratch>/probe-specs/only-817598.spec.mjs:157:3 › LAS-51: empty layout survives viewport changes (2.8s)
+  1) [chromium] › <scratch>/probe-specs/only-817598.spec.mjs:157:3 › LAS-51: empty layout survives viewport changes › empty 817x598
+    Error: empty 817x598: Mixer visible height
+    expect(received).toBeGreaterThanOrEqual(expected)
+    Expected: >= 64
+    Received:    60
+      146 |   for (const title of stripTitles) await expect(title, `${label}: strip titles visible initially`).toBeInViewport({ ratio: 1 });
+      147 |   const mixer = await scrollState(strips);
+    > 148 |   expect(mixer.clientHeight, `${label}: Mixer visible height`).toBeGreaterThanOrEqual(Math.min(mixer.scrollHeight, 64));
+          |                                                                ^
+      149 |   if (height >= 640) expect(mixer.scrollHeight, `${label}: Mixer needs no inner scroll`).toBeLessThanOrEqual(mixer.clientHeight + 1);
+      150 |
+      151 |   await checkKeyboardScroll(page, masterBody, outputStage, levelNote, `${label} Master keyboard`);
+  1 failed
+    [chromium] › <scratch>/probe-specs/only-817598.spec.mjs:157:3 › LAS-51: empty layout survives viewport changes

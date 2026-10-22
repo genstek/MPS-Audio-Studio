@@ -1,0 +1,7 @@
+Running 5 tests using 4 workers
+  ✓  1 [chromium] › <scratch>/probe-specs/only-804471.spec.mjs:187:3 › LAS-51: empty layout survives viewport changes (5.8s)
+  ✓  3 [chromium] › <scratch>/probe-specs/only-784626.spec.mjs:187:3 › LAS-51: empty layout survives viewport changes (5.3s)
+  ✓  4 [chromium] › <scratch>/probe-specs/only-971553.spec.mjs:187:3 › LAS-51: empty layout survives viewport changes (5.3s)
+  ✓  2 [chromium] › <scratch>/probe-specs/only-785520.spec.mjs:187:3 › LAS-51: empty layout survives viewport changes (5.6s)
+  ✓  5 [chromium] › <scratch>/probe-specs/only-989610.spec.mjs:187:3 › LAS-51: empty layout survives viewport changes (3.2s)
+  5 passed (11.8s)

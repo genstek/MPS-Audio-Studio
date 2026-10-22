@@ -1,0 +1,7 @@
+empty 804x471: document 500/471 footer 484-500 BELOW VIEWPORT | Tracks 220 Mixer 112 strips 73/123 | titles visible 4/4, buttons visible 0/4
+empty 989x610: document 610/610 footer 584.3-600.3 visible | Tracks 245.4 Mixer 174.6 strips 133/133 | titles visible 4/4, buttons visible 4/4
+empty 971x553: document 553/553 footer 528.2-544.2 visible | Tracks 228.6 Mixer 141.7 strips 102/128 | titles visible 4/4, buttons visible 0/4
+empty 784x626: document 626/626 footer 600-616 visible | Tracks 257 Mixer 176.8 strips 135/135 | titles visible 4/4, buttons visible 4/4
+empty 785x520: document 520/520 footer 495.7-511.7 visible | Tracks 223 Mixer 118.5 strips 80/125 | titles visible 4/4, buttons visible 0/4
+empty 900x560: document 560/560 footer 535-551 visible | Tracks 229.9 Mixer 146.5 strips 107/129 | titles visible 4/4, buttons visible 0/4
+empty 817x598: document 598/598 footer 572.4-588.4 visible | Tracks 236.8 Mixer 172.7 strips 132/132 | titles visible 4/4, buttons visible 4/4

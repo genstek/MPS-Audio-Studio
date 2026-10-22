@@ -1,0 +1,13 @@
+
+Running 8 tests using 4 workers
+
+  ✓  1 [chromium] › tests/e2e/LAS51-responsive.spec.js:3:1 › LAS-51: Import WAV stays fully visible after resizing to 785x520 (3.2s)
+  ✓  3 [chromium] › tests/e2e/LAS51-responsive.spec.js:3:1 › LAS-51: Import WAV stays fully visible after resizing to 785x520 (3.2s)
+  ✓  2 [chromium] › tests/e2e/LAS51-layout.spec.js:161:3 › LAS-51: empty layout survives viewport changes (54.0s)
+  ✓  4 [chromium] › tests/e2e/LAS51-layout.spec.js:161:3 › LAS-51: empty layout survives viewport changes (54.9s)
+  ✓  5 [chromium] › tests/e2e/LAS51-layout.spec.js:161:3 › LAS-51: WAV-loaded layout survives viewport changes (53.6s)
+  ✓  6 [chromium] › tests/e2e/LAS51-layout.spec.js:161:3 › LAS-51: WAV-loaded layout survives viewport changes (53.5s)
+  ✓  7 [chromium] › tests/e2e/LAS51-layout.spec.js:184:1 › LAS-51: playback state survives viewport changes (1.8s)
+  ✓  8 [chromium] › tests/e2e/LAS51-layout.spec.js:184:1 › LAS-51: playback state survives viewport changes (1.9s)
+
+  8 passed (1.9m)

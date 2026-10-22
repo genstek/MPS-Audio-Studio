@@ -1,0 +1,12 @@
+
+Running 7 tests using 2 workers
+
+  ✓  2 [chromium] › tests/e2e/LAS51-responsive.spec.js:3:1 › LAS-51: Import WAV stays fully visible after resizing to 785x520 (2.3s)
+  ✓  3 [chromium] › tests/e2e/mixer.spec.js:4:1 › TC-001: mixer loads and displays its main UI elements (1.9s)
+  ✓  4 [chromium] › tests/e2e/playback.spec.js:4:1 › WAV playback and recovery after a replacement cannot decode (2.5s)
+  ✓  5 [chromium] › tests/e2e/responsive.spec.js:3:1 › LAS48-TC-001: Initial empty workspace fits desktop viewports (1.2s)
+  ✓  1 [chromium] › tests/e2e/LAS51-layout.spec.js:161:3 › LAS-51: empty layout survives viewport changes (51.6s)
+  ✓  6 [chromium] › tests/e2e/LAS51-layout.spec.js:161:3 › LAS-51: WAV-loaded layout survives viewport changes (50.4s)
+  ✓  7 [chromium] › tests/e2e/LAS51-layout.spec.js:184:1 › LAS-51: playback state survives viewport changes (1.5s)
+
+  7 passed (1.8m)
