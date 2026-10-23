@@ -1,0 +1,65 @@
+Running 3 tests using 3 workers
+  ✘  1 [chromium] › <scratch>/probe-specs/only-804471.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes (7.3s)
+  ✘  2 [chromium] › <scratch>/probe-specs/only-761450.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes (7.4s)
+  ✘  3 [chromium] › <scratch>/probe-specs/only-776888.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes (7.4s)
+  1) [chromium] › <scratch>/probe-specs/only-761450.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes › empty 761x450
+    Error: empty 761x450: Input knob visible before scrolling
+    expect(locator).toBeInViewport() failed
+    Locator:  getByRole('group', { name: 'Processing modules' }).getByRole('region', { name: 'Input channel strip' }).locator('.knob')
+    Expected: in viewport
+    Received: viewport ratio 0
+    Timeout:  5000ms
+    Call log:
+      - empty 761x450: Input knob visible before scrolling getByRole('group', { name: 'Processing modules' }).getByRole('region', { name: 'Input channel strip' }).locator('.knob') with timeout 5000ms
+      - waiting for getByRole('group', { name: 'Processing modules' }).getByRole('region', { name: 'Input channel strip' }).locator('.knob')
+        14 × locator resolved to <div class="knob" aria-hidden="true"></div>
+           - unexpected value "viewport ratio 0"
+      44 |
+      45 | async function expectFullyVisible(locator, message) {
+    > 46 |   await expect(locator, message).toBeInViewport({ ratio: 1 });
+         |                                  ^
+      47 |   await expectUnobscured(locator, `${message} (not covered)`);
+      48 | }
+      49 |
+  2) [chromium] › <scratch>/probe-specs/only-776888.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes › empty 776x888
+    Error: empty 776x888: Input knob visible before scrolling
+    expect(locator).toBeInViewport() failed
+    Locator:  getByRole('group', { name: 'Processing modules' }).getByRole('region', { name: 'Input channel strip' }).locator('.knob')
+    Expected: in viewport
+    Received: viewport ratio 0
+    Timeout:  5000ms
+    Call log:
+      - empty 776x888: Input knob visible before scrolling getByRole('group', { name: 'Processing modules' }).getByRole('region', { name: 'Input channel strip' }).locator('.knob') with timeout 5000ms
+      - waiting for getByRole('group', { name: 'Processing modules' }).getByRole('region', { name: 'Input channel strip' }).locator('.knob')
+        14 × locator resolved to <div class="knob" aria-hidden="true"></div>
+           - unexpected value "viewport ratio 0"
+      44 |
+      45 | async function expectFullyVisible(locator, message) {
+    > 46 |   await expect(locator, message).toBeInViewport({ ratio: 1 });
+         |                                  ^
+      47 |   await expectUnobscured(locator, `${message} (not covered)`);
+      48 | }
+      49 |
+  3) [chromium] › <scratch>/probe-specs/only-804471.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes › empty 804x471
+    Error: empty 804x471: Input knob visible before scrolling
+    expect(locator).toBeInViewport() failed
+    Locator:  getByRole('group', { name: 'Processing modules' }).getByRole('region', { name: 'Input channel strip' }).locator('.knob')
+    Expected: in viewport
+    Received: viewport ratio 0
+    Timeout:  5000ms
+    Call log:
+      - empty 804x471: Input knob visible before scrolling getByRole('group', { name: 'Processing modules' }).getByRole('region', { name: 'Input channel strip' }).locator('.knob') with timeout 5000ms
+      - waiting for getByRole('group', { name: 'Processing modules' }).getByRole('region', { name: 'Input channel strip' }).locator('.knob')
+        14 × locator resolved to <div class="knob" aria-hidden="true"></div>
+           - unexpected value "viewport ratio 0"
+      44 |
+      45 | async function expectFullyVisible(locator, message) {
+    > 46 |   await expect(locator, message).toBeInViewport({ ratio: 1 });
+         |                                  ^
+      47 |   await expectUnobscured(locator, `${message} (not covered)`);
+      48 | }
+      49 |
+  3 failed
+    [chromium] › <scratch>/probe-specs/only-761450.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes
+    [chromium] › <scratch>/probe-specs/only-776888.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes
+    [chromium] › <scratch>/probe-specs/only-804471.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes

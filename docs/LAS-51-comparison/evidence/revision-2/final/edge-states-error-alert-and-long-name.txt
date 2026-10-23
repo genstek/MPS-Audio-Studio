@@ -1,0 +1,10 @@
+decode error alert 1280x720: document 720/720, footer bottom 708, Mixer buttons below the visible area: 0
+decode error alert 989x610: document 610/610, footer bottom 600, Mixer buttons below the visible area: 0
+decode error alert 817x598: document 598/598, footer bottom 588, Mixer buttons below the visible area: 0
+decode error alert 785x520: document 525/520, footer bottom 525, Mixer buttons below the visible area: 0
+decode error alert 804x471: document 510/471, footer bottom 510, Mixer buttons below the visible area: 4
+long file name 1280x720: document 720/720, footer bottom 708, Mixer buttons below the visible area: 0
+long file name 989x610: document 610/610, footer bottom 600, Mixer buttons below the visible area: 0
+long file name 817x598: document 598/598, footer bottom 588, Mixer buttons below the visible area: 0
+long file name 785x520: document 520/520, footer bottom 512, Mixer buttons below the visible area: 0
+long file name 804x471: document 479/471, footer bottom 479, Mixer buttons below the visible area: 0

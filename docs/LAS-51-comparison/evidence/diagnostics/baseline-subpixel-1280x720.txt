@@ -1,0 +1,24 @@
+before scrollIntoViewIfNeeded {
+  scrollTop: 0,
+  maxScroll: 13,
+  noteTop: 402.171875,
+  noteBottom: 416.171875,
+  clipBottom: 414.703125,
+  visibleRatio: 0.8951
+}
+after  scrollIntoViewIfNeeded {
+  scrollTop: 1,
+  maxScroll: 13,
+  noteTop: 401.171875,
+  noteBottom: 415.171875,
+  clipBottom: 414.703125,
+  visibleRatio: 0.9665
+}
+after scrollTop = scrollHeight {
+  scrollTop: 13,
+  maxScroll: 13,
+  noteTop: 389.171875,
+  noteBottom: 403.171875,
+  clipBottom: 414.703125,
+  visibleRatio: 1
+}

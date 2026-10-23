@@ -1,0 +1,16 @@
+Running 1 test using 1 worker
+  ✘  1 [chromium] › <scratch>/probe-specs/only-785520.spec.mjs:187:3 › LAS-51: empty layout survives viewport changes (1.0s)
+  1) [chromium] › <scratch>/probe-specs/only-785520.spec.mjs:187:3 › LAS-51: empty layout survives viewport changes › empty 785x520
+    Error: empty 785x520: no vertical page overflow
+    expect(received).toBeLessThanOrEqual(expected)
+    Expected: <= 520
+    Received:    536
+      104 |   expect(documentSize.scrollY, `${label}: page not scrolled`).toBe(0);
+      105 |   expect(documentSize.width, `${label}: no horizontal page overflow`).toBeLessThanOrEqual(width);
+    > 106 |   expect(documentSize.height, `${label}: no vertical page overflow`).toBeLessThanOrEqual(height);
+          |                                                                      ^
+      107 |   const transport = page.getByRole('region', { name: 'Transport' });
+      108 |   const strips = page.getByRole('group', { name: 'Processing modules' });
+      109 |   const essentials = [
+  1 failed
+    [chromium] › <scratch>/probe-specs/only-785520.spec.mjs:187:3 › LAS-51: empty layout survives viewport changes

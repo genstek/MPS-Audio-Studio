@@ -1,0 +1,23 @@
+Running 1 test using 1 worker
+  ✘  1 [chromium] › <scratch>/probe-specs/only-785520.spec.mjs:157:3 › LAS-51: empty layout survives viewport changes (7.0s)
+  1) [chromium] › <scratch>/probe-specs/only-785520.spec.mjs:157:3 › LAS-51: empty layout survives viewport changes › empty 785x520
+    Error: empty 785x520 Mixer: "Input" visible at the top
+    expect(locator).toBeInViewport() failed
+    Locator:  getByRole('group', { name: 'Processing modules' }).getByRole('heading', { name: 'Input', exact: true })
+    Expected: in viewport
+    Received: viewport ratio 0.9375
+    Timeout:  5000ms
+    Call log:
+      - empty 785x520 Mixer: "Input" visible at the top getByRole('group', { name: 'Processing modules' }).getByRole('heading', { name: 'Input', exact: true }) with timeout 5000ms
+      - waiting for getByRole('group', { name: 'Processing modules' }).getByRole('heading', { name: 'Input', exact: true })
+        14 × locator resolved to <h3>Input</h3>
+           - unexpected value "viewport ratio 0.9375"
+      31 |
+      32 | async function expectFullyVisible(locator, message) {
+    > 33 |   await expect(locator, message).toBeInViewport({ ratio: 1 });
+         |                                  ^
+      34 |   await expectUnobscured(locator, `${message} (not covered)`);
+      35 | }
+      36 |
+  1 failed
+    [chromium] › <scratch>/probe-specs/only-785520.spec.mjs:157:3 › LAS-51: empty layout survives viewport changes

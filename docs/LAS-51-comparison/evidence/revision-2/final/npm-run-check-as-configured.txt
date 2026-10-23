@@ -1,0 +1,232 @@
+
+> mps-audio-studio@0.1.0 check
+> npm run lint && npm run test:unit && npm run build && npm run test:e2e
+
+
+> mps-audio-studio@0.1.0 lint
+> eslint .
+
+
+> mps-audio-studio@0.1.0 test:unit
+> vitest run
+
+
+ RUN  v5.0.5 /home/user/MPS-Audio-Studio-Claude-LAS51
+
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  14:09:47
+   Duration  293ms (transform 42%, tests 27%, import 23%, worker 8%)
+
+
+> mps-audio-studio@0.1.0 build
+> vite build
+
+vite v8.3.4 building client environment for production...
+transforming...
+✓ 16 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.48 kB │ gzip:  0.30 kB
+dist/assets/index-BOMLjKLQ.css    6.03 kB │ gzip:  2.08 kB
+dist/assets/index-BWzYkxYF.js   226.07 kB │ gzip: 70.85 kB
+
+✓ built in 1.38s
+
+> mps-audio-studio@0.1.0 test:e2e
+> playwright test
+
+
+Running 11 tests using 2 workers
+
+  ✘   1 [chromium] › tests/e2e/LAS51-layout.spec.js:192:3 › LAS-51: empty layout survives viewport changes (5ms)
+  ✘   2 [chromium] › tests/e2e/LAS51-layout.spec.js:192:3 › LAS-51: WAV-loaded layout survives viewport changes (4ms)
+  ✘   3 [chromium] › tests/e2e/LAS51-layout.spec.js:224:3 › LAS-51: essential controls visible before scrolling, height 471-1080 at width 761 (7ms)
+  ✘   4 [chromium] › tests/e2e/LAS51-layout.spec.js:224:3 › LAS-51: essential controls visible before scrolling, height 471-1080 at width 1024 (4ms)
+  ✘   5 [chromium] › tests/e2e/LAS51-layout.spec.js:224:3 › LAS-51: essential controls visible before scrolling, width 761-1440 at height 471 (5ms)
+  ✘   6 [chromium] › tests/e2e/LAS51-layout.spec.js:224:3 › LAS-51: essential controls visible before scrolling, height 471-1080 at width 1440 (4ms)
+  ✘   7 [chromium] › tests/e2e/LAS51-layout.spec.js:236:1 › LAS-51: playback state survives viewport changes (8ms)
+  ✘   8 [chromium] › tests/e2e/LAS51-responsive.spec.js:3:1 › LAS-51: Import WAV stays fully visible after resizing to 785x520 (3ms)
+  ✘   9 [chromium] › tests/e2e/mixer.spec.js:4:1 › TC-001: mixer loads and displays its main UI elements (7ms)
+  ✘  10 [chromium] › tests/e2e/playback.spec.js:4:1 › WAV playback and recovery after a replacement cannot decode (5ms)
+  ✘  11 [chromium] › tests/e2e/responsive.spec.js:3:1 › LAS48-TC-001: Initial empty workspace fits desktop viewports (4ms)
+
+
+  1) [chromium] › tests/e2e/LAS51-layout.spec.js:192:3 › LAS-51: empty layout survives viewport changes
+
+    Error: browserType.launch: Chromium distribution 'chrome' is not found at /opt/google/chrome/chrome
+    Run "npx playwright install chrome"
+
+    Error Context: test-results/LAS51-layout-LAS-51-empty-layout-survives-viewport-changes-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/LAS51-layout-LAS-51-empty-layout-survives-viewport-changes-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/LAS51-layout-LAS-51-empty-layout-survives-viewport-changes-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests/e2e/LAS51-layout.spec.js:192:3 › LAS-51: WAV-loaded layout survives viewport changes
+
+    Error: browserType.launch: Chromium distribution 'chrome' is not found at /opt/google/chrome/chrome
+    Run "npx playwright install chrome"
+
+    Error Context: test-results/LAS51-layout-LAS-51-WAV-lo-1050b-t-survives-viewport-changes-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/LAS51-layout-LAS-51-WAV-lo-1050b-t-survives-viewport-changes-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/LAS51-layout-LAS-51-WAV-lo-1050b-t-survives-viewport-changes-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › tests/e2e/LAS51-layout.spec.js:224:3 › LAS-51: essential controls visible before scrolling, height 471-1080 at width 761
+
+    Error: browserType.launch: Chromium distribution 'chrome' is not found at /opt/google/chrome/chrome
+    Run "npx playwright install chrome"
+
+    Error Context: test-results/LAS51-layout-LAS-51-essent-dff5d-eight-471-1080-at-width-761-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/LAS51-layout-LAS-51-essent-dff5d-eight-471-1080-at-width-761-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/LAS51-layout-LAS-51-essent-dff5d-eight-471-1080-at-width-761-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [chromium] › tests/e2e/LAS51-layout.spec.js:224:3 › LAS-51: essential controls visible before scrolling, height 471-1080 at width 1024
+
+    Error: browserType.launch: Chromium distribution 'chrome' is not found at /opt/google/chrome/chrome
+    Run "npx playwright install chrome"
+
+    Error Context: test-results/LAS51-layout-LAS-51-essent-71de9-ight-471-1080-at-width-1024-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/LAS51-layout-LAS-51-essent-71de9-ight-471-1080-at-width-1024-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/LAS51-layout-LAS-51-essent-71de9-ight-471-1080-at-width-1024-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [chromium] › tests/e2e/LAS51-layout.spec.js:224:3 › LAS-51: essential controls visible before scrolling, height 471-1080 at width 1440
+
+    Error: browserType.launch: Chromium distribution 'chrome' is not found at /opt/google/chrome/chrome
+    Run "npx playwright install chrome"
+
+    Error Context: test-results/LAS51-layout-LAS-51-essent-8da12-ight-471-1080-at-width-1440-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/LAS51-layout-LAS-51-essent-8da12-ight-471-1080-at-width-1440-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/LAS51-layout-LAS-51-essent-8da12-ight-471-1080-at-width-1440-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) [chromium] › tests/e2e/LAS51-layout.spec.js:224:3 › LAS-51: essential controls visible before scrolling, width 761-1440 at height 471
+
+    Error: browserType.launch: Chromium distribution 'chrome' is not found at /opt/google/chrome/chrome
+    Run "npx playwright install chrome"
+
+    Error Context: test-results/LAS51-layout-LAS-51-essent-bf0ad-idth-761-1440-at-height-471-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/LAS51-layout-LAS-51-essent-bf0ad-idth-761-1440-at-height-471-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/LAS51-layout-LAS-51-essent-bf0ad-idth-761-1440-at-height-471-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  7) [chromium] › tests/e2e/LAS51-layout.spec.js:236:1 › LAS-51: playback state survives viewport changes
+
+    Error: browserType.launch: Chromium distribution 'chrome' is not found at /opt/google/chrome/chrome
+    Run "npx playwright install chrome"
+
+    Error Context: test-results/LAS51-layout-LAS-51-playback-state-survives-viewport-changes-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/LAS51-layout-LAS-51-playback-state-survives-viewport-changes-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/LAS51-layout-LAS-51-playback-state-survives-viewport-changes-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  8) [chromium] › tests/e2e/LAS51-responsive.spec.js:3:1 › LAS-51: Import WAV stays fully visible after resizing to 785x520
+
+    Error: browserType.launch: Chromium distribution 'chrome' is not found at /opt/google/chrome/chrome
+    Run "npx playwright install chrome"
+
+    Error Context: test-results/LAS51-responsive-LAS-51-Im-d34f4-e-after-resizing-to-785x520-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/LAS51-responsive-LAS-51-Im-d34f4-e-after-resizing-to-785x520-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/LAS51-responsive-LAS-51-Im-d34f4-e-after-resizing-to-785x520-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  9) [chromium] › tests/e2e/mixer.spec.js:4:1 › TC-001: mixer loads and displays its main UI elements
+
+    Error: browserType.launch: Chromium distribution 'chrome' is not found at /opt/google/chrome/chrome
+    Run "npx playwright install chrome"
+
+    Error Context: test-results/mixer-TC-001-mixer-loads-and-displays-its-main-UI-elements-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/mixer-TC-001-mixer-loads-and-displays-its-main-UI-elements-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/mixer-TC-001-mixer-loads-and-displays-its-main-UI-elements-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  10) [chromium] › tests/e2e/playback.spec.js:4:1 › WAV playback and recovery after a replacement cannot decode
+
+    Error: browserType.launch: Chromium distribution 'chrome' is not found at /opt/google/chrome/chrome
+    Run "npx playwright install chrome"
+
+    Error Context: test-results/playback-WAV-playback-and--06c1d-a-replacement-cannot-decode-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/playback-WAV-playback-and--06c1d-a-replacement-cannot-decode-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/playback-WAV-playback-and--06c1d-a-replacement-cannot-decode-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  11) [chromium] › tests/e2e/responsive.spec.js:3:1 › LAS48-TC-001: Initial empty workspace fits desktop viewports
+
+    Error: browserType.launch: Chromium distribution 'chrome' is not found at /opt/google/chrome/chrome
+    Run "npx playwright install chrome"
+
+    Error Context: test-results/responsive-LAS48-TC-001-In-30aee-pace-fits-desktop-viewports-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/responsive-LAS48-TC-001-In-30aee-pace-fits-desktop-viewports-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/responsive-LAS48-TC-001-In-30aee-pace-fits-desktop-viewports-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  11 failed
+    [chromium] › tests/e2e/LAS51-layout.spec.js:192:3 › LAS-51: empty layout survives viewport changes
+    [chromium] › tests/e2e/LAS51-layout.spec.js:192:3 › LAS-51: WAV-loaded layout survives viewport changes
+    [chromium] › tests/e2e/LAS51-layout.spec.js:224:3 › LAS-51: essential controls visible before scrolling, height 471-1080 at width 761
+    [chromium] › tests/e2e/LAS51-layout.spec.js:224:3 › LAS-51: essential controls visible before scrolling, height 471-1080 at width 1024
+    [chromium] › tests/e2e/LAS51-layout.spec.js:224:3 › LAS-51: essential controls visible before scrolling, height 471-1080 at width 1440
+    [chromium] › tests/e2e/LAS51-layout.spec.js:224:3 › LAS-51: essential controls visible before scrolling, width 761-1440 at height 471
+    [chromium] › tests/e2e/LAS51-layout.spec.js:236:1 › LAS-51: playback state survives viewport changes
+    [chromium] › tests/e2e/LAS51-responsive.spec.js:3:1 › LAS-51: Import WAV stays fully visible after resizing to 785x520
+    [chromium] › tests/e2e/mixer.spec.js:4:1 › TC-001: mixer loads and displays its main UI elements
+    [chromium] › tests/e2e/playback.spec.js:4:1 › WAV playback and recovery after a replacement cannot decode
+    [chromium] › tests/e2e/responsive.spec.js:3:1 › LAS48-TC-001: Initial empty workspace fits desktop viewports

@@ -1,0 +1,32 @@
+Running 3 tests using 3 workers
+  ✘  2 [chromium] › <scratch>/probe-specs/only-804471.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes (1.6s)
+  ✘  3 [chromium] › <scratch>/probe-specs/only-761450.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes (1.8s)
+  ✓  1 [chromium] › <scratch>/probe-specs/only-776888.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes (3.8s)
+  1) [chromium] › <scratch>/probe-specs/only-761450.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes › empty 761x450
+    Error: empty 761x450: no vertical page overflow
+    expect(received).toBeLessThanOrEqual(expected)
+    Expected: <= 450
+    Received:    483
+      86 |   expect(documentSize.scrollY, `${label}: page not scrolled`).toBe(0);
+      87 |   expect(documentSize.width, `${label}: no horizontal page overflow`).toBeLessThanOrEqual(width);
+    > 88 |   expect(documentSize.height, `${label}: no vertical page overflow`).toBeLessThanOrEqual(height);
+         |                                                                      ^
+      89 |   const transport = page.getByRole('region', { name: 'Transport' });
+      90 |   const tracks = page.getByRole('region', { name: 'Tracks', exact: true });
+      91 |   const master = page.getByRole('region', { name: 'Master', exact: true });
+  2) [chromium] › <scratch>/probe-specs/only-804471.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes › empty 804x471
+    Error: empty 804x471: no vertical page overflow
+    expect(received).toBeLessThanOrEqual(expected)
+    Expected: <= 471
+    Received:    489
+      86 |   expect(documentSize.scrollY, `${label}: page not scrolled`).toBe(0);
+      87 |   expect(documentSize.width, `${label}: no horizontal page overflow`).toBeLessThanOrEqual(width);
+    > 88 |   expect(documentSize.height, `${label}: no vertical page overflow`).toBeLessThanOrEqual(height);
+         |                                                                      ^
+      89 |   const transport = page.getByRole('region', { name: 'Transport' });
+      90 |   const tracks = page.getByRole('region', { name: 'Tracks', exact: true });
+      91 |   const master = page.getByRole('region', { name: 'Master', exact: true });
+  2 failed
+    [chromium] › <scratch>/probe-specs/only-761450.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes
+    [chromium] › <scratch>/probe-specs/only-804471.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes
+  1 passed (6.5s)

@@ -1,0 +1,1 @@
+listener pid=1342 cwd=/home/user/MPS-Audio-Studio-Claude-LAS51 cmd=node /home/user/MPS-Audio-Studio-Claude-LAS51/node_modules/.bin/vite --host 127.0.0.1 --port 5173 --strictPort

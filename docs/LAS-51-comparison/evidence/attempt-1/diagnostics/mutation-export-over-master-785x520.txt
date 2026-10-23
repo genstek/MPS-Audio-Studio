@@ -1,0 +1,16 @@
+Running 1 test using 1 worker
+  ✘  1 [chromium] › <scratch>/probe-specs/only-785520.spec.mjs:157:3 › LAS-51: empty layout survives viewport changes (1.7s)
+  1) [chromium] › <scratch>/probe-specs/only-785520.spec.mjs:157:3 › LAS-51: empty layout survives viewport changes › empty 785x520
+    Error: empty 785x520: Export starts below the Master content
+    expect(received).toBeGreaterThanOrEqual(expected)
+    Expected: >= 336.734375
+    Received:    297.234375
+      130 |   const bodyBox = await masterBody.boundingBox();
+      131 |   const exportBox = await exportButton.boundingBox();
+    > 132 |   expect(exportBox.y, `${label}: Export starts below the Master content`).toBeGreaterThanOrEqual(bodyBox.y + bodyBox.height - 0.5);
+          |                                                                           ^
+      133 |   expect(exportBox.y + exportBox.height, `${label}: Export stays inside Master`).toBeLessThanOrEqual(boxes.Master.y + boxes.Master.height + 0.5);
+      134 |
+      135 |   // Scrollable content is reachable at both ends and every control is unobscured.
+  1 failed
+    [chromium] › <scratch>/probe-specs/only-785520.spec.mjs:157:3 › LAS-51: empty layout survives viewport changes

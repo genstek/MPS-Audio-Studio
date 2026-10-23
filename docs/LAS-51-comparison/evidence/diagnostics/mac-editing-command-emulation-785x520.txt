@@ -1,0 +1,7 @@
+F2, no commands (control): scrollTop 0 -> 0 (max 45), strips focused=true, pageY=0
+F2 + scrollToEndOfDocument (Playwright mac "End"): scrollTop 0 -> 45 (max 45), strips focused=true, pageY=0
+F2 + scrollPageDown (Playwright mac "PageDown"): scrollTop 0 -> 0 (max 45), strips focused=true, pageY=0
+F2 + moveToEndOfDocument (Playwright mac "Meta+ArrowDown"): scrollTop 0 -> 45 (max 45), strips focused=true, pageY=0
+F2 + moveDown (Playwright mac "ArrowDown"): scrollTop 0 -> 0 (max 45), strips focused=true, pageY=0
+Ctrl+End, no commands (what mac Playwright sends for "Control+End"): scrollTop 0 -> 45 (max 45), strips focused=true, pageY=0
+userAgent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/141.0.0.0 Safari/537.36

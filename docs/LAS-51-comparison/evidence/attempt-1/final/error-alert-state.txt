@@ -1,0 +1,3 @@
+1280x720 with error alert: document 720 / viewport 720, Mixer strips 146/146
+817x598 with error alert: document 598 / viewport 598, Mixer strips 76/132
+785x520 with error alert: document 559 / viewport 520, Mixer strips 73/125

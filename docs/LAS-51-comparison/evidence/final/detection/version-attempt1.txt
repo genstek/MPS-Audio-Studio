@@ -1,0 +1,51 @@
+Running 3 tests using 3 workers
+  ✘  2 [chromium] › <scratch>/probe-specs/only-761450.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes (2.1s)
+  ✘  1 [chromium] › <scratch>/probe-specs/only-804471.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes (2.3s)
+  ✘  3 [chromium] › <scratch>/probe-specs/only-776888.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes (8.4s)
+  1) [chromium] › <scratch>/probe-specs/only-761450.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes › empty 761x450
+    Error: empty 761x450: no vertical page overflow
+    expect(received).toBeLessThanOrEqual(expected)
+    Expected: <= 450
+    Received:    500
+      86 |   expect(documentSize.scrollY, `${label}: page not scrolled`).toBe(0);
+      87 |   expect(documentSize.width, `${label}: no horizontal page overflow`).toBeLessThanOrEqual(width);
+    > 88 |   expect(documentSize.height, `${label}: no vertical page overflow`).toBeLessThanOrEqual(height);
+         |                                                                      ^
+      89 |   const transport = page.getByRole('region', { name: 'Transport' });
+      90 |   const tracks = page.getByRole('region', { name: 'Tracks', exact: true });
+      91 |   const master = page.getByRole('region', { name: 'Master', exact: true });
+  2) [chromium] › <scratch>/probe-specs/only-776888.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes › empty 776x888
+    Error: empty 776x888: Master level sits outside the details scroller
+    expect(locator).toHaveCount(expected) failed
+    Locator:  getByRole('region', { name: 'Master', exact: true }).getByRole('region', { name: 'Master details' }).getByRole('slider')
+    Expected: 0
+    Received: 1
+    Timeout:  5000ms
+    Call log:
+      - empty 776x888: Master level sits outside the details scroller getByRole('region', { name: 'Master', exact: true }).getByRole('region', { name: 'Master details' }).getByRole('slider') with timeout 5000ms
+      - waiting for getByRole('region', { name: 'Master', exact: true }).getByRole('region', { name: 'Master details' }).getByRole('slider')
+        14 × locator resolved to 1 element
+           - unexpected value "1"
+      115 |     await expectFullyVisible(element, `${label}: ${name} visible before scrolling`);
+      116 |   }
+    > 117 |   await expect(masterBody.getByRole('slider'), `${label}: Master level sits outside the details scroller`).toHaveCount(0);
+          |                                                                                                            ^
+      118 |   const mixer = await scrollState(strips);
+      119 |   expect(mixer.scrollTop, `${label}: Mixer not scrolled`).toBe(0);
+      120 |   expect(mixer.scrollHeight, `${label}: Mixer shows all its content without inner scrolling`).toBeLessThanOrEqual(mixer.clientHeight + 1);
+  3) [chromium] › <scratch>/probe-specs/only-804471.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes › empty 804x471
+    Error: empty 804x471: no vertical page overflow
+    expect(received).toBeLessThanOrEqual(expected)
+    Expected: <= 471
+    Received:    500
+      86 |   expect(documentSize.scrollY, `${label}: page not scrolled`).toBe(0);
+      87 |   expect(documentSize.width, `${label}: no horizontal page overflow`).toBeLessThanOrEqual(width);
+    > 88 |   expect(documentSize.height, `${label}: no vertical page overflow`).toBeLessThanOrEqual(height);
+         |                                                                      ^
+      89 |   const transport = page.getByRole('region', { name: 'Transport' });
+      90 |   const tracks = page.getByRole('region', { name: 'Tracks', exact: true });
+      91 |   const master = page.getByRole('region', { name: 'Master', exact: true });
+  3 failed
+    [chromium] › <scratch>/probe-specs/only-761450.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes
+    [chromium] › <scratch>/probe-specs/only-776888.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes
+    [chromium] › <scratch>/probe-specs/only-804471.spec.mjs:244:3 › LAS-51: empty layout survives viewport changes

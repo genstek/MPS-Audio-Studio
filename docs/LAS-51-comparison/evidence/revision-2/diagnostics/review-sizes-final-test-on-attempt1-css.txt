@@ -1,0 +1,61 @@
+Running 5 tests using 4 workers
+  ✘  1 [chromium] › <scratch>/probe-specs/only-804471.spec.mjs:187:3 › LAS-51: empty layout survives viewport changes (2.8s)
+  ✓  4 [chromium] › <scratch>/probe-specs/only-784626.spec.mjs:187:3 › LAS-51: empty layout survives viewport changes (4.4s)
+  ✓  5 [chromium] › <scratch>/probe-specs/only-989610.spec.mjs:187:3 › LAS-51: empty layout survives viewport changes (3.2s)
+  ✘  3 [chromium] › <scratch>/probe-specs/only-785520.spec.mjs:187:3 › LAS-51: empty layout survives viewport changes (8.3s)
+  ✘  2 [chromium] › <scratch>/probe-specs/only-971553.spec.mjs:187:3 › LAS-51: empty layout survives viewport changes (8.2s)
+  1) [chromium] › <scratch>/probe-specs/only-785520.spec.mjs:187:3 › LAS-51: empty layout survives viewport changes › empty 785x520
+    Error: empty 785x520: Input button visible before scrolling
+    expect(locator).toBeInViewport() failed
+    Locator:  getByRole('group', { name: 'Processing modules' }).getByRole('button', { name: 'Input processing unavailable' })
+    Expected: in viewport
+    Received: viewport ratio 0
+    Timeout:  5000ms
+    Call log:
+      - empty 785x520: Input button visible before scrolling getByRole('group', { name: 'Processing modules' }).getByRole('button', { name: 'Input processing unavailable' }) with timeout 5000ms
+      - waiting for getByRole('group', { name: 'Processing modules' }).getByRole('button', { name: 'Input processing unavailable' })
+        14 × locator resolved to <button disabled aria-label="Input processing unavailable">Unavailable</button>
+           - unexpected value "viewport ratio 0"
+      37 |
+      38 | async function expectFullyVisible(locator, message) {
+    > 39 |   await expect(locator, message).toBeInViewport({ ratio: 1 });
+         |                                  ^
+      40 |   await expectUnobscured(locator, `${message} (not covered)`);
+      41 | }
+      42 |
+  2) [chromium] › <scratch>/probe-specs/only-804471.spec.mjs:187:3 › LAS-51: empty layout survives viewport changes › empty 804x471
+    Error: empty 804x471: no vertical page overflow
+    expect(received).toBeLessThanOrEqual(expected)
+    Expected: <= 471
+    Received:    500
+      104 |   expect(documentSize.scrollY, `${label}: page not scrolled`).toBe(0);
+      105 |   expect(documentSize.width, `${label}: no horizontal page overflow`).toBeLessThanOrEqual(width);
+    > 106 |   expect(documentSize.height, `${label}: no vertical page overflow`).toBeLessThanOrEqual(height);
+          |                                                                      ^
+      107 |   const transport = page.getByRole('region', { name: 'Transport' });
+      108 |   const strips = page.getByRole('group', { name: 'Processing modules' });
+      109 |   const essentials = [
+  3) [chromium] › <scratch>/probe-specs/only-971553.spec.mjs:187:3 › LAS-51: empty layout survives viewport changes › empty 971x553
+    Error: empty 971x553: Input button visible before scrolling
+    expect(locator).toBeInViewport() failed
+    Locator:  getByRole('group', { name: 'Processing modules' }).getByRole('button', { name: 'Input processing unavailable' })
+    Expected: in viewport
+    Received: viewport ratio 0.27552083134651184
+    Timeout:  5000ms
+    Call log:
+      - empty 971x553: Input button visible before scrolling getByRole('group', { name: 'Processing modules' }).getByRole('button', { name: 'Input processing unavailable' }) with timeout 5000ms
+      - waiting for getByRole('group', { name: 'Processing modules' }).getByRole('button', { name: 'Input processing unavailable' })
+        14 × locator resolved to <button disabled aria-label="Input processing unavailable">Unavailable</button>
+           - unexpected value "viewport ratio 0.27552083134651184"
+      37 |
+      38 | async function expectFullyVisible(locator, message) {
+    > 39 |   await expect(locator, message).toBeInViewport({ ratio: 1 });
+         |                                  ^
+      40 |   await expectUnobscured(locator, `${message} (not covered)`);
+      41 | }
+      42 |
+  3 failed
+    [chromium] › <scratch>/probe-specs/only-785520.spec.mjs:187:3 › LAS-51: empty layout survives viewport changes
+    [chromium] › <scratch>/probe-specs/only-804471.spec.mjs:187:3 › LAS-51: empty layout survives viewport changes
+    [chromium] › <scratch>/probe-specs/only-971553.spec.mjs:187:3 › LAS-51: empty layout survives viewport changes
+  2 passed (12.4s)
