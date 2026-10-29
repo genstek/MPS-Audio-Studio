@@ -96,6 +96,15 @@ export function createAudioEngine(onEnded) {
       disconnect();
       offset = 0;
     },
+    // Removes the track but keeps the engine for the next import, unlike dispose() (LAS-12).
+    unload() {
+      latestLoad++; // an import still running cannot bring the removed audio back
+      disconnect();
+      buffer = null;
+      offset = 0;
+      // Nothing is left to play, so the audio device may idle until the next Play resumes it.
+      if (context && context.state === 'running') void context.suspend();
+    },
     dispose() {
       latestLoad++;
       disconnect();

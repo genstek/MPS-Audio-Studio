@@ -2,8 +2,23 @@
 // extra source playing or connected. It observes the engine's nodes; it does not measure sound.
 export async function installAudioProbe(page) {
   await page.addInitScript(() => {
-    const probe = { started: 0, offsets: [], mostPlaying: 0, playing: new Set(), connected: new Set() };
+    const probe = { started: 0, offsets: [], mostPlaying: 0, playing: new Set(), connected: new Set(), contexts: [] };
     window.__audioProbe = probe;
+    // Remember every AudioContext the page creates, to read its state later.
+    const PageAudioContext = window.AudioContext;
+    window.AudioContext = class extends PageAudioContext {
+      constructor(...args) {
+        super(...args);
+        probe.contexts.push(this);
+      }
+    };
+    // Decoding can be held back on request, to act while an import is still in progress.
+    const { decodeAudioData } = BaseAudioContext.prototype;
+    BaseAudioContext.prototype.decodeAudioData = async function (...args) {
+      const decoded = await decodeAudioData.apply(this, args);
+      if (probe.decodeGate) await probe.decodeGate;
+      return decoded;
+    };
     const node = AudioBufferSourceNode.prototype;
     const { start, stop, connect, disconnect } = node;
     node.start = function (...args) {
@@ -45,4 +60,25 @@ export function startOffsets(page) {
 // The largest number of sources that were playing at the same time.
 export function mostPlayingAtOnce(page) {
   return page.evaluate(() => window.__audioProbe.mostPlaying);
+}
+
+// States of the AudioContexts the page created ('running', 'suspended' or 'closed').
+export function contextStates(page) {
+  return page.evaluate(() => window.__audioProbe.contexts.map(context => context.state));
+}
+
+// Imports started after holdDecoding() wait until releaseDecoding() before they finish.
+export function holdDecoding(page) {
+  return page.evaluate(() => {
+    const probe = window.__audioProbe;
+    probe.decodeGate = new Promise(resolve => { probe.releaseDecode = resolve; });
+  });
+}
+
+export function releaseDecoding(page) {
+  return page.evaluate(() => {
+    const probe = window.__audioProbe;
+    probe.decodeGate = null;
+    probe.releaseDecode();
+  });
 }

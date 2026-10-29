@@ -19,6 +19,7 @@ function App() {
   const [busy, setBusy] = useState('');
   const [position, setPosition] = useState(0);
   const engine = useRef(null);
+  const importInput = useRef(null);
 
   useEffect(() => {
     engine.current = createAudioEngine(() => {
@@ -86,6 +87,17 @@ function App() {
     setStatus('Stopped');
   }
 
+  // Takes the track out of the session; the file on the device is never touched (LAS-12).
+  function removeTrack() {
+    engine.current.unload();
+    setTrack(null);
+    setPosition(0);
+    setError('');
+    setStatus('No audio loaded');
+    // The Remove button disappears, so keyboard focus moves to the import control.
+    importInput.current.focus();
+  }
+
   return (
     <main>
       <header className="masthead">
@@ -108,13 +120,13 @@ function App() {
 
       <div className="workspace">
         <section className="tracks panel" aria-labelledby="tracks-title">
-          <div className="panel-heading"><h2 id="tracks-title">Tracks</h2><span className="badge">{track ? '01 TRACK' : '00 TRACKS'}</span></div>
+          <div className="panel-heading"><h2 id="tracks-title">Tracks</h2><div className="heading-tools">{track && <button className="remove-track" onClick={removeTrack}>Remove track</button>}<span className="badge">{track ? '01 TRACK' : '00 TRACKS'}</span></div></div>
           <div className="track-space"><div className="track-content">
             <span className="audio-icon" aria-hidden="true"><span>♫</span></span>
             <h3 title={track ? track.name : undefined}>{track ? track.name : 'Your session starts here'}</h3>
             <p className="track-info">{track ? `${track.duration.toFixed(1)} seconds · ${track.channels} channel(s) · ${track.sampleRate.toLocaleString()} Hz decoded` : 'Import a WAV file to start listening.'}</p>
             <label className="file-picker">{track ? 'Replace WAV' : 'Import WAV'}
-              <input type="file" accept=".wav,audio/wav" aria-label="Import WAV" onChange={importAudio} disabled={busy} />
+              <input ref={importInput} type="file" accept=".wav,audio/wav" aria-label="Import WAV" onChange={importAudio} disabled={busy} />
             </label>
             <p className="fine-print">WAV up to 100 MiB · Files stay on your device</p>
           </div></div>
