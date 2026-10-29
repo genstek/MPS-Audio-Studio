@@ -1,0 +1,42 @@
+{
+  "issue": "LAS-7",
+  "applicationCommit": "655a959bc089a0d809caad0c73d8e74886bd8f41",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (lint, Vitest 4/4, build, Playwright 17/17) on Linux Chromium 141",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-655a959bc089a0d809caad0c73d8e74886bd8f41.log", "evidence/html-report-655a959bc089a0d809caad0c73d8e74886bd8f41.zip"]
+    },
+    {
+      "name": "LAS-7 shell smoke at 1280x720, 1440x900, 761x450 (no console/page/network errors, regions, disabled placeholders)",
+      "status": "PASS",
+      "command": "npm run test:e2e (part of npm run check)",
+      "exitCode": 0,
+      "evidence": ["evidence/screenshots/LAS-7-shell-1280x720.png", "evidence/screenshots/LAS-7-shell-1440x900.png", "evidence/screenshots/LAS-7-shell-761x450.png"]
+    },
+    {
+      "name": "Negative control: temporary console.error makes the smoke test fail (expected exit 1)",
+      "status": "PASS",
+      "command": "npx playwright test tests/e2e/shell-smoke.spec.js --grep 1280x720 (with a temporary, uncommitted console.error)",
+      "exitCode": 1,
+      "evidence": ["evidence/negative-control-console-error.log"]
+    },
+    {
+      "name": "Google Chrome on macOS",
+      "status": "NOT_RUN",
+      "command": "npm run check",
+      "exitCode": null,
+      "evidence": []
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],
+  "blockers": [],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "viewports": ["1280x720", "1440x900", "761x450"],
+  "branch": "test/LAS-7-shell-smoke"
+}
