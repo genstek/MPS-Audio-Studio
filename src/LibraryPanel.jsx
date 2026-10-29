@@ -11,6 +11,11 @@ export function LibraryPanel({ currentFile, onSessionEnded }) {
   const [status, setStatus] = useState('Loading your library…');
   const [error, setError] = useState('');
   const [confirming, setConfirming] = useState(null);
+  // External services the server offers (none unless configured) and the ones this user allowed.
+  const [recipients, setRecipients] = useState([]);
+  const [consents, setConsents] = useState([]);
+  // The consent question being shown: { asset, recipient }. Nothing is sent while it is open.
+  const [asking, setAsking] = useState(null);
 
   // Every library call goes through here: a 401 means the session ended, never a silent failure.
   const call = useCallback(async request => {
@@ -37,7 +42,12 @@ export function LibraryPanel({ currentFile, onSessionEnded }) {
       if (!current || cancelled) return;
       setProject(current);
       await refresh(current.id);
-      if (!cancelled) setStatus('');
+      const offered = await call(() => api('/external-recipients'));
+      const allowed = await call(() => api('/account/consents'));
+      if (cancelled) return;
+      setRecipients(offered?.data.recipients ?? []);
+      setConsents(allowed?.data.consents.map(consent => consent.recipient) ?? []);
+      setStatus('');
     })();
     return () => { cancelled = true; };
   }, [call, refresh]);
@@ -58,6 +68,28 @@ export function LibraryPanel({ currentFile, onSessionEnded }) {
     link.href = result.data.url;
     link.download = asset.name;
     link.click();
+  }
+
+  // Only after "Allow and send": record the consent for this recipient, then send this one file.
+  async function allowAndSend() {
+    const { asset, recipient } = asking;
+    setAsking(null);
+    setError('');
+    if (!consents.includes(recipient.id)) {
+      const granted = await call(() => api('/account/consents', { method: 'POST', body: { recipient: recipient.id } }));
+      if (!granted) return;
+      setConsents(list => [...list, recipient.id]);
+    }
+    const sent = await call(() => api(`/assets/${asset.id}/external-jobs`, { method: 'POST', body: { recipient: recipient.id } }));
+    if (sent) setStatus(`Sent ${asset.name} to ${recipient.name}.`);
+  }
+
+  async function withdraw(recipient) {
+    setError('');
+    if (await call(() => api(`/account/consents/${recipient.id}`, { method: 'DELETE' }))) {
+      setConsents(list => list.filter(id => id !== recipient.id));
+      setStatus(`Withdrew permission for ${recipient.name}.`);
+    }
   }
 
   async function remove(asset) {
@@ -87,6 +119,9 @@ export function LibraryPanel({ currentFile, onSessionEnded }) {
               <span className="fine-print">{asset.format.duration.toFixed(1)} s · {size(asset.size)}</span>
               <span className="library-actions">
                 <button type="button" onClick={() => download(asset)} aria-label={`Download ${asset.name}`}>Download</button>
+                {recipients.map(recipient => (
+                  <button type="button" key={recipient.id} onClick={() => setAsking({ asset, recipient })} aria-label={`Send ${asset.name} to ${recipient.name}`}>Send…</button>
+                ))}
                 {confirming === asset.id
                   ? <button type="button" className="danger" onClick={() => remove(asset)} aria-label={`Confirm delete ${asset.name}`}>Confirm delete</button>
                   : <button type="button" onClick={() => setConfirming(asset.id)} aria-label={`Delete ${asset.name}`}>Delete</button>}
@@ -95,6 +130,27 @@ export function LibraryPanel({ currentFile, onSessionEnded }) {
           ))}
         </ul>
       ))}
+      {asking && (
+        <div className="consent" role="group" aria-labelledby="consent-title">
+          <h4 id="consent-title">Send “{asking.asset.name}” to {asking.recipient.name}?</h4>
+          <p>A copy of this file leaves the studio server and goes to <strong>{asking.recipient.name}</strong>, located on {asking.recipient.location}. It is {asking.recipient.retention}. Purpose: {asking.recipient.purpose}.</p>
+          <p className="fine-print">Allowing this lets the studio send files you choose to this service until you withdraw it. Cancel sends nothing.</p>
+          <div className="library-actions">
+            <button type="button" className="primary" onClick={allowAndSend}>Allow and send</button>
+            <button type="button" onClick={() => setAsking(null)}>Cancel</button>
+          </div>
+        </div>
+      )}
+      {consents.length > 0 && (
+        <div className="consents">
+          <h4>External services you allowed</h4>
+          <ul aria-label="Allowed external services">
+            {recipients.filter(recipient => consents.includes(recipient.id)).map(recipient => (
+              <li key={recipient.id}>{recipient.name} <button type="button" className="link" onClick={() => withdraw(recipient)} aria-label={`Withdraw permission for ${recipient.name}`}>Withdraw</button></li>
+            ))}
+          </ul>
+        </div>
+      )}
     </section>
   );
 }

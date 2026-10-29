@@ -1,0 +1,41 @@
+{
+  "issue": "LAS-24",
+  "applicationCommit": "8cf70845db887661cf7aaed40f8f600fc67788ba",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (lint, Vitest 63/63 incl. 5 privacy tests, build, Playwright 47/47 incl. 2 privacy tests)",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-8cf70845db887661cf7aaed40f8f600fc67788ba.log", "evidence/html-report-8cf70845db887661cf7aaed40f8f600fc67788ba.zip"]
+    },
+    {
+      "name": "Privacy Playwright tests repeated 4 times before commit",
+      "status": "PASS",
+      "command": "npx playwright test tests/e2e/privacy.spec.js --repeat-each=4",
+      "exitCode": 0,
+      "evidence": []
+    },
+    {
+      "name": "Consent, library and delete-account screenshots",
+      "status": "PASS",
+      "command": "node shot-privacy.mjs (temporary API 8790 with MPS_TEST_RECIPIENT=1, Vite 5199)",
+      "exitCode": 0,
+      "evidence": ["evidence/screenshots/"]
+    },
+    {
+      "name": "Real external recipient over the network",
+      "status": "NOT_APPLICABLE",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["README.md (no external service exists)"]
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],
+  "blockers": [],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "feat/LAS-24-deletion-consent"
+}

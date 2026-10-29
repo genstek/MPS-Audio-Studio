@@ -56,7 +56,9 @@ export function libraryRoutes({ route, db, now, config, secret, requireUser, aud
 
   function cancelJob(id) {
     running.get(id)?.abort('cancelled');
-    db.prepare("UPDATE jobs SET status = 'cancelled', finished_at = ? WHERE id = ? AND status IN ('queued', 'running')").run(now(), id);
+    const job = db.prepare('SELECT owner_id FROM jobs WHERE id = ?').get(id);
+    const changed = db.prepare("UPDATE jobs SET status = 'cancelled', finished_at = ? WHERE id = ? AND status IN ('queued', 'running')").run(now(), id);
+    if (changed.changes) audit('job_cancelled', job.owner_id, id);
   }
 
   const sign = (assetId, ownerId, expires) => createHmac('sha256', secret).update(`${assetId}.${ownerId}.${expires}`).digest('base64url');
@@ -198,6 +200,8 @@ export function libraryRoutes({ route, db, now, config, secret, requireUser, aud
     running.set(jobId, controller);
     const timer = setTimeout(() => controller.abort('time limit'), config.jobTimeLimitMs ?? JOB_TIME_LIMIT_MS);
     setImmediate(async () => {
+      // Tests can hold jobs in the queue to act on them before they start.
+      if (config.jobGate) await config.jobGate;
       const started = db.prepare("UPDATE jobs SET status = 'running' WHERE id = ? AND status = 'queued'").run(jobId);
       try {
         if (started.changes === 0) return;
