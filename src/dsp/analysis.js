@@ -34,7 +34,7 @@ function clipping(channels) {
   return { clippedSamples: samples, clippedRuns: runs };
 }
 
-function stereo(left, right, fs) {
+function stereo(left, right, fs, stereoLoudness) {
   let lr = 0, ll = 0, rr = 0, mm = 0, ss = 0, meanL = 0, meanR = 0;
   for (let n = 0; n < left.length; n++) { meanL += left[n]; meanR += right[n]; }
   meanL /= left.length || 1;
@@ -45,8 +45,8 @@ function stereo(left, right, fs) {
     const m = (left[n] + right[n]) / 2, s = (left[n] - right[n]) / 2;
     mm += m * m; ss += s * s;
   }
-  const mono = Float64Array.from(left, (l, n) => (l + right[n]) / 2);
-  const stereoLoudness = measureLoudness([left, right], fs).integratedLufs;
+  const mono = new Float64Array(left.length);
+  for (let n = 0; n < left.length; n++) mono[n] = (left[n] + right[n]) / 2;
   const monoLoudness = measureLoudness([mono, mono], fs).integratedLufs;
   return {
     correlation: ll > 0 && rr > 0 ? lr / Math.sqrt(ll * rr) : null,
@@ -124,7 +124,7 @@ export function analyze(channels, fs, { start = 0, end } = {}) {
       dcOffset: perChannel.map(channel => channel.dcOffset),
     },
     clipping: clipping(audio),
-    stereo: audio.length === 2 ? stereo(audio[0], audio[1], fs) : null,
+    stereo: audio.length === 2 ? stereo(audio[0], audio[1], fs, loudness.integratedLufs) : null,
     spectrum: spectrum(audio, fs),
   };
 }

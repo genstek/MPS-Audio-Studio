@@ -151,3 +151,18 @@ describe('LAS-26 report', () => {
     expect(fromDbfs(-6.0206)).toBeCloseTo(0.5, 4);
   });
 });
+
+describe('LAS-26 FFT', () => {
+  test('matches a direct DFT', async () => {
+    const { fft } = await import('../../src/dsp/fft.js');
+    const input = noise({ seconds: 64 / 48000, seed: 9 });
+    const re = Float64Array.from(input), im = new Float64Array(64);
+    fft(re, im);
+    for (let k = 0; k < 64; k++) {
+      let r = 0, i = 0;
+      for (let n = 0; n < 64; n++) { r += input[n] * Math.cos((-2 * Math.PI * k * n) / 64); i += input[n] * Math.sin((-2 * Math.PI * k * n) / 64); }
+      expect(re[k]).toBeCloseTo(r, 9);
+      expect(im[k]).toBeCloseTo(i, 9);
+    }
+  });
+});

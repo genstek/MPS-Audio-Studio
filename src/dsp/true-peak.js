@@ -33,22 +33,27 @@ const BRANCHES = [1, 2, 3].map(p => {
   return Float64Array.from(branch, tap => tap / sum);
 });
 
+const [B1, B2, B3] = BRANCHES;
+
 export function truePeak(channel) {
+  // A copy with HALF silent samples on each side: the interpolation needs no bounds checks.
+  const padded = new Float64Array(channel.length + TAPS);
+  padded.set(channel, HALF);
   let peak = 0;
-  const last = channel.length - 1;
   for (let n = 0; n < channel.length; n++) {
     const magnitude = Math.abs(channel[n]);
     if (magnitude > peak) peak = magnitude;
-    if (n === last) break;
-    for (const branch of BRANCHES) {
-      let sum = 0;
-      for (let k = 0; k < TAPS; k++) {
-        const index = n + HALF - k;
-        if (index >= 0 && index <= last) sum += channel[index] * branch[k];
-      }
-      const interpolated = Math.abs(sum);
-      if (interpolated > peak) peak = interpolated;
+    if (n === channel.length - 1) break;
+    // Points n + 1/4, n + 1/2 and n + 3/4 in one pass over the samples n − 11 … n + 12.
+    let s1 = 0, s2 = 0, s3 = 0;
+    for (let k = 0, index = n + TAPS; k < TAPS; k++, index--) {
+      const x = padded[index];
+      s1 += x * B1[k];
+      s2 += x * B2[k];
+      s3 += x * B3[k];
     }
+    const largest = Math.max(Math.abs(s1), Math.abs(s2), Math.abs(s3));
+    if (largest > peak) peak = largest;
   }
   return peak;
 }

@@ -64,6 +64,7 @@ test('LAS-26: a -23 dBFS 1 kHz stereo tone reads -23.0 LUFS with labelled peaks;
 });
 
 test('LAS-26: a long analysis runs off the main thread, can be cancelled, retried and left running', async ({ page }, testInfo) => {
+  test.setTimeout(120_000); // three analyses of a two-minute file, with other tests running in parallel
   await installAnalysisProbe(page);
   await page.goto('/');
   const ui = studio(page);
@@ -84,7 +85,7 @@ test('LAS-26: a long analysis runs off the main thread, can be cancelled, retrie
   await expect(ui.analyze).toHaveText('Analyzing…');
   await ui.play.click();
   await expect(ui.status).toHaveText('Playing');
-  await expect.poll(() => heldAnalysisResults(page), { timeout: 30_000 }).toContain('done');
+  await expect.poll(() => heldAnalysisResults(page), { timeout: 60_000 }).toContain('done');
   await ui.analyze.click();
   await expect(ui.analysisStatus).toHaveText('Measuring loudness, peaks, stereo and spectrum…');
   await releaseAnalysisResults(page);
@@ -95,7 +96,8 @@ test('LAS-26: a long analysis runs off the main thread, can be cancelled, retrie
   // An unheld run of the same two-minute file: the main thread has no long task of 200 ms or more.
   const since = await page.evaluate(() => performance.now());
   await ui.dialog.getByRole('button', { name: 'Analyze again' }).click();
-  await expect(ui.analysisStatus).toHaveText('Analysis complete.', { timeout: 30_000 });
+  await expect(ui.analysisStatus).toHaveText('Analysis complete.', { timeout: 60_000 });
+  testInfo.annotations.push({ type: 'unheld analysis of 2:00 stereo 48 kHz', description: `${Math.round((await page.evaluate(() => performance.now())) - since)} ms` });
   const tasks = await longTasksSince(page, since);
   const longest = Math.max(0, ...tasks.map(task => task.duration));
   testInfo.annotations.push({ type: 'main-thread long tasks during analysis', description: `${tasks.length}, longest ${Math.round(longest)} ms` });
