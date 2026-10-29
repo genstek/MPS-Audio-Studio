@@ -1,6 +1,6 @@
 # LAS-48 acceptance trace
 
-Tested commit `8d7d6c849c1564d3c4918d8c470d034a7e8c5992` (Linux, Chromium 141). Developer results only; manual results are NOT_RUN.
+Tested commit `b06590ba02bf5209d67cbf6a5b0e5c83345ec5cd` (Linux, Chromium 141). Developer results only; manual results are NOT_RUN.
 
 | Trace ID | Criterion | Check | Developer result | Evidence |
 | --- | --- | --- | --- | --- |
@@ -11,4 +11,4 @@ Tested commit `8d7d6c849c1564d3c4918d8c470d034a7e8c5992` (Linux, Chromium 141). 
 | LAS-48-AC-05 | Resizing keeps audio, playhead, settings, project state | playing/paused/stopped across resizes with source probe | PASS for transport/track; settings BLOCKED (not implemented) | same |
 | LAS-48-AC-06 | Waveform/EQ/meters/high-DPI/pointer mapping | DPR 2 layout only; graphics absent | BLOCKED (controls not implemented); DPR layout PASS (emulated) | same |
 | LAS-48-AC-07 | Proposed matrix + continuous width/height resize | matrix round trip; LAS-51 height and width sweeps, 760/761/762 crossings | PASS (Chromium) | same |
-| LAS-48-AC-08 | Playwright resizing/overflow/core controls; manual evidence | 6 new + 9 LAS-51 tests; TC-001 traces recorded | PASS (automated); manual NOT_RUN; Firefox/WebKit BLOCKED | `evidence/tc001-traces/` |
+| LAS-48-AC-08 | Playwright resizing/overflow/core controls; manual evidence | 8 new + 9 LAS-51 tests; TC-001 traces recorded | PASS (automated); manual NOT_RUN; Firefox/WebKit BLOCKED | `evidence/tc001-traces/` |

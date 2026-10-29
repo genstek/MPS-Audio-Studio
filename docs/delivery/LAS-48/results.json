@@ -1,15 +1,15 @@
 {
   "issue": "LAS-48",
-  "applicationCommit": "8d7d6c849c1564d3c4918d8c470d034a7e8c5992",
+  "applicationCommit": "b06590ba02bf5209d67cbf6a5b0e5c83345ec5cd",
   "deliveryStatus": "READY_FOR_QA",
   "manualQa": "NOT_RUN",
   "checks": [
     {
-      "name": "npm run check (lint, Vitest 16/16, build, Playwright 32/32 incl. 6 new LAS-48 tests and 9 LAS-51 tests) on Linux Chromium 141",
+      "name": "npm run check (lint, Vitest 16/16, build, Playwright 34/34 incl. 8 new LAS-48 tests and 9 LAS-51 tests) on Linux Chromium 141",
       "status": "PASS",
       "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
       "exitCode": 0,
-      "evidence": ["evidence/npm-run-check-8d7d6c849c1564d3c4918d8c470d034a7e8c5992.log", "evidence/html-report-8d7d6c849c1564d3c4918d8c470d034a7e8c5992.zip"]
+      "evidence": ["evidence/npm-run-check-b06590ba02bf5209d67cbf6a5b0e5c83345ec5cd.log", "evidence/html-report-b06590ba02bf5209d67cbf6a5b0e5c83345ec5cd.zip"]
     },
     {
       "name": "Negative control: temporary 15rem strip buttons make the matrix test fail (expected exit 1)",
