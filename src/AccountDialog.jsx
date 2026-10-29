@@ -3,11 +3,15 @@ import { api } from './account-api.js';
 
 const UNAVAILABLE = 'Accounts are unavailable right now. Local playback still works.';
 
-// Account button and dialog (LAS-21). Talks to the server only when opened, or when the page was
-// opened from a verification link, so local-only use makes no network requests (LAS-20).
+const SESSION_ENDED = 'Your session has ended. Sign in again.';
+
+// Account button and dialog (LAS-21/22). Talks to the server only when opened, or when the page
+// was opened from an emailed link, so local-only use makes no network requests (LAS-20).
 export function AccountDialog() {
   const dialog = useRef(null);
-  const [view, setView] = useState('signin');
+  // A reset link's token is kept in memory only; the address bar is cleaned on mount.
+  const [resetToken] = useState(() => new URLSearchParams(window.location.search).get('reset'));
+  const [view, setView] = useState(resetToken ? 'reset' : 'signin');
   const [user, setUser] = useState(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,6 +26,12 @@ export function AccountDialog() {
     setError(problem);
     setPassword('');
   }
+
+  useEffect(() => {
+    if (!resetToken) return;
+    window.history.replaceState(null, '', window.location.pathname);
+    dialog.current.showModal();
+  }, [resetToken]);
 
   // Following the emailed link: remove the token from the address bar first (so a second effect
   // run finds nothing and the single-use token is sent once), then verify.
@@ -44,8 +54,10 @@ export function AccountDialog() {
     const result = await api('/auth/session');
     setBusy('');
     if (result.unavailable) return show('signin', { problem: UNAVAILABLE });
+    // Signed in earlier on this page but the server no longer knows the session: say so.
+    const ended = user && !result.data.user;
     setUser(result.data.user);
-    show(result.data.user ? 'account' : 'signin');
+    show(result.data.user ? 'account' : 'signin', { problem: ended ? SESSION_ENDED : '' });
   }
 
   async function submit(event, path, body, onSuccess) {
@@ -69,6 +81,8 @@ export function AccountDialog() {
   });
   const register = event => submit(event, '/auth/register', { email, password }, data => show('check-email', { note: data.message }));
   const resend = event => submit(event, '/auth/resend-verification', { email }, data => show('check-email', { note: data.message }));
+  const recover = event => submit(event, '/auth/recover', { email }, data => show('check-email', { note: data.message }));
+  const reset = event => submit(event, '/auth/reset', { token: resetToken, password }, data => show('signin', { note: data.message }));
 
   async function signOut() {
     setBusy('Signing out…');
@@ -79,12 +93,15 @@ export function AccountDialog() {
     show('signin', { note: 'Signed out.' });
   }
 
-  const titles = { signin: 'Sign in', register: 'Create account', 'check-email': 'Check your email', resend: 'Verify your email', account: 'Your account' };
+  const titles = {
+    signin: 'Sign in', register: 'Create account', 'check-email': 'Check your email', resend: 'Verify your email',
+    recover: 'Reset your password', reset: 'Choose a new password', account: 'Your account',
+  };
   const emailField = (
     <label>Email<input type="email" autoComplete="email" required value={email} onChange={e => setEmail(e.target.value)} /></label>
   );
-  const passwordField = autoComplete => (
-    <label>Password<input type="password" autoComplete={autoComplete} required minLength={autoComplete === 'new-password' ? 10 : undefined} maxLength={128} value={password} onChange={e => setPassword(e.target.value)} /></label>
+  const passwordField = (autoComplete, label = 'Password') => (
+    <label>{label}<input type="password" autoComplete={autoComplete} required minLength={autoComplete === 'new-password' ? 10 : undefined} maxLength={128} value={password} onChange={e => setPassword(e.target.value)} /></label>
   );
 
   return (
@@ -103,7 +120,25 @@ export function AccountDialog() {
             {emailField}
             {passwordField('current-password')}
             <button type="submit" className="primary" disabled={!!busy}>Sign in</button>
-            <p className="account-links"><button type="button" className="link" onClick={() => show('register')}>Create account</button></p>
+            <p className="account-links">
+              <button type="button" className="link" onClick={() => show('register')}>Create account</button>
+              <button type="button" className="link" onClick={() => show('recover')}>Forgot password?</button>
+            </p>
+          </form>
+        )}
+        {view === 'recover' && (
+          <form onSubmit={recover}>
+            {emailField}
+            <button type="submit" disabled={!!busy}>Send reset link</button>
+            <p className="account-links"><button type="button" className="link" onClick={() => show('signin')}>Back to sign in</button></p>
+          </form>
+        )}
+        {view === 'reset' && (
+          <form onSubmit={reset}>
+            {passwordField('new-password', 'New password')}
+            <p className="fine-print">10 to 128 characters. Changing it signs you out on every device.</p>
+            <button type="submit" className="primary" disabled={!!busy}>Set new password</button>
+            <p className="account-links"><button type="button" className="link" onClick={() => show('recover')}>Request a new reset link</button></p>
           </form>
         )}
         {view === 'register' && (
