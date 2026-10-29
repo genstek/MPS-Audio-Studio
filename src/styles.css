@@ -41,6 +41,14 @@ button[aria-pressed='true'] { border-color: #d7af6c; color: #e8c58d; }
 .account-error { margin: 0 0 10px; padding: 8px 10px; background: #4d2428; border: 1px solid #c17474; border-radius: 5px; font-size: 13px; }
 .account-links { margin: 0; display: flex; gap: 18px; flex-wrap: wrap; }
 button.link { background: none; border: 0; padding: 0; color: #80d1e0; text-decoration: underline; font-size: 13px; }
+.library { display: grid; gap: 10px; border-top: 1px solid #39434c; padding-top: 14px; margin-top: 4px; }
+.library h3 { font-size: 15px; }
+.library-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; max-height: 40vh; overflow: auto; }
+.library-list li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; align-items: center; padding: 8px 10px; background: #11161a; border-radius: 6px; }
+.library-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.library-actions { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: 6px; }
+.library-actions button { padding: 4px 10px; font-size: 12px; }
+button.danger { border-color: #c17474; background: #4d2428; }
 .panel { background: #1c2329; border: 1px solid #39434c; border-radius: 8px; }
 .transport { padding: var(--space) clamp(12px, 2vw, 24px); }
 .transport-buttons { display: flex; flex-wrap: wrap; gap: 8px; }

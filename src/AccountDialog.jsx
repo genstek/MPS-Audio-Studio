@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from './account-api.js';
+import { LibraryPanel } from './LibraryPanel.jsx';
 
 const UNAVAILABLE = 'Accounts are unavailable right now. Local playback still works.';
 
@@ -7,7 +8,7 @@ const SESSION_ENDED = 'Your session has ended. Sign in again.';
 
 // Account button and dialog (LAS-21/22). Talks to the server only when opened, or when the page
 // was opened from an emailed link, so local-only use makes no network requests (LAS-20).
-export function AccountDialog() {
+export function AccountDialog({ currentFile }) {
   const dialog = useRef(null);
   // A reset link's token is kept in memory only; the address bar is cleaned on mount.
   const [resetToken] = useState(() => new URLSearchParams(window.location.search).get('reset'));
@@ -83,6 +84,14 @@ export function AccountDialog() {
   const resend = event => submit(event, '/auth/resend-verification', { email }, data => show('check-email', { note: data.message }));
   const recover = event => submit(event, '/auth/recover', { email }, data => show('check-email', { note: data.message }));
   const reset = event => submit(event, '/auth/reset', { token: resetToken, password }, data => show('signin', { note: data.message }));
+
+  // A protected call was refused: the server no longer accepts this session.
+  const sessionEnded = useCallback(() => {
+    setUser(null);
+    setView('signin');
+    setMessage('');
+    setError(SESSION_ENDED);
+  }, []);
 
   async function signOut() {
     setBusy('Signing out…');
@@ -167,6 +176,7 @@ export function AccountDialog() {
           <div className="account-body">
             <p>Signed in as <strong>{user.email}</strong></p>
             <button type="button" onClick={signOut} disabled={!!busy}>Sign out</button>
+            <LibraryPanel currentFile={currentFile} onSessionEnded={sessionEnded} />
           </div>
         )}
       </dialog>

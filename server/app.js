@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { openDatabase } from './db.js';
 import { HttpError, parseCookies, readJson, send } from './http.js';
 import { LIMITS, createLimiter } from './limits.js';
+import { libraryRoutes } from './library.js';
 import { SCRYPT_COST, hashPassword, normalizeEmail, randomToken, sha256, validPassword, verifyPassword } from './security.js';
 
 const MINUTE = 60_000;
@@ -234,6 +235,8 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
     });
   }
 
+  const library = libraryRoutes({ route, db, now, config, secret, requireUser, audit });
+
   // Protected-route probe used by tests and the UI: proves the session is accepted server-side.
   route('GET', /^\/api\/account$/, ({ request }) => ({ body: { email: requireUser(request).email } }));
 
@@ -244,6 +247,22 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
     const origin = request.headers.origin;
     if (origin && !config.allowedOrigins.includes(origin)) throw new HttpError(403, 'csrf', 'Request blocked.');
     if (request.headers['sec-fetch-site'] === 'cross-site') throw new HttpError(403, 'csrf', 'Request blocked.');
+  }
+
+  // An error answer to a request whose body was not read yet: read and discard the body first, so
+  // the connection is not cut while a client or proxy is still sending (they would lose the
+  // answer). Bodies beyond the upload limit are not read; that answer closes the connection.
+  async function discardBody(request) {
+    if (request.complete || request.destroyed) return true;
+    const limit = config.maxUploadBytes ?? 100 * 1024 * 1024;
+    let size = Number(request.headers['content-length'] ?? 0);
+    if (size > limit) return false;
+    size = 0;
+    for await (const chunk of request) {
+      size += chunk.length;
+      if (size > limit) return false;
+    }
+    return true;
   }
 
   async function handle(request, response) {
@@ -262,12 +281,19 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
       status = result.status ?? 200;
       send(response, status, result.body, result.headers);
     } catch (error) {
-      if (error instanceof HttpError) {
-        status = error.status;
-        send(response, status, { error: error.code, message: error.message }, error.headers);
+      if (response.headersSent) {
+        // A streamed response failed part-way (for example the client went away): just end it.
+        log(`error after response started ${request.method} ${url.pathname}: ${error.code ?? error.name}`);
+        status = response.statusCode;
+        response.destroy();
       } else {
-        log(`error ${request.method} ${url.pathname}: ${error.name}`);
-        send(response, 500, { error: 'server_error', message: 'Something went wrong. Try again.' });
+        const known = error instanceof HttpError;
+        if (!known) log(`error ${request.method} ${url.pathname}: ${error.name}`);
+        status = known ? error.status : 500;
+        const drained = await discardBody(request).catch(() => false);
+        send(response, status,
+          known ? { error: error.code, message: error.message } : { error: 'server_error', message: 'Something went wrong. Try again.' },
+          { ...(known ? error.headers : {}), ...(drained ? {} : { Connection: 'close' }) });
       }
     } finally {
       // Method, path without query string, status and time only: no bodies, cookies or tokens.
@@ -285,7 +311,7 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
   }
 
   const server = createServer((request, response) => { void handle(request, response); });
-  return { server, db, sweep, routes: route };
+  return { server, db, sweep, routes: route, library };
 }
 
 // Starts the server and resolves with its base URL and a close function.

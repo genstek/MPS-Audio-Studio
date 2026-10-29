@@ -1,0 +1,21 @@
+Testing the app served from /home/user/MPS-Audio-Studio-delivery (pid 7260) at http://127.0.0.1:5173, accounts at http://127.0.0.1:8788
+
+Running 15 tests using 2 workers
+
+[1/15] [chromium] › tests/e2e/library.spec.js:31:1 › LAS-23: save the current track to the private library, download it unchanged and delete it
+[2/15] [chromium] › tests/e2e/library.spec.js:31:1 › LAS-23: save the current track to the private library, download it unchanged and delete it
+[3/15] [chromium] › tests/e2e/library.spec.js:52:1 › LAS-23: another account cannot see or reach the first account's files
+[4/15] [chromium] › tests/e2e/library.spec.js:52:1 › LAS-23: another account cannot see or reach the first account's files
+[5/15] [chromium] › tests/e2e/library.spec.js:71:1 › LAS-23/LAS-22: saving after the session ended shows that, never a false success
+[6/15] [chromium] › tests/e2e/library.spec.js:71:1 › LAS-23/LAS-22: saving after the session ended shows that, never a false success
+[7/15] [chromium] › tests/e2e/library.spec.js:31:1 › LAS-23: save the current track to the private library, download it unchanged and delete it
+[8/15] [chromium] › tests/e2e/library.spec.js:31:1 › LAS-23: save the current track to the private library, download it unchanged and delete it
+[9/15] [chromium] › tests/e2e/library.spec.js:52:1 › LAS-23: another account cannot see or reach the first account's files
+[10/15] [chromium] › tests/e2e/library.spec.js:52:1 › LAS-23: another account cannot see or reach the first account's files
+[11/15] [chromium] › tests/e2e/library.spec.js:71:1 › LAS-23/LAS-22: saving after the session ended shows that, never a false success
+[12/15] [chromium] › tests/e2e/library.spec.js:71:1 › LAS-23/LAS-22: saving after the session ended shows that, never a false success
+[13/15] [chromium] › tests/e2e/library.spec.js:31:1 › LAS-23: save the current track to the private library, download it unchanged and delete it
+[14/15] [chromium] › tests/e2e/library.spec.js:52:1 › LAS-23: another account cannot see or reach the first account's files
+[15/15] [chromium] › tests/e2e/library.spec.js:71:1 › LAS-23/LAS-22: saving after the session ended shows that, never a false success
+  15 passed (28.0s)
+exit=0

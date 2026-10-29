@@ -38,6 +38,40 @@ const MIGRATIONS = [
      item_id TEXT,
      created_at INTEGER NOT NULL
    );`,
+  // LAS-23: private projects, audio assets and processing jobs. Every row names its owner.
+  `CREATE TABLE projects (
+     id TEXT PRIMARY KEY,
+     owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+     name TEXT NOT NULL,
+     created_at INTEGER NOT NULL
+   );
+   CREATE INDEX projects_owner ON projects(owner_id);
+   CREATE TABLE assets (
+     id TEXT PRIMARY KEY,
+     project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+     owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+     kind TEXT NOT NULL CHECK (kind IN ('source', 'reference', 'stem', 'preview', 'export')),
+     name TEXT NOT NULL,
+     blob TEXT NOT NULL UNIQUE,
+     size INTEGER NOT NULL,
+     sha256 TEXT NOT NULL,
+     format TEXT NOT NULL,
+     created_at INTEGER NOT NULL
+   );
+   CREATE INDEX assets_owner ON assets(owner_id);
+   CREATE INDEX assets_project ON assets(project_id);
+   CREATE TABLE jobs (
+     id TEXT PRIMARY KEY,
+     owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+     asset_id TEXT NOT NULL REFERENCES assets(id) ON DELETE CASCADE,
+     kind TEXT NOT NULL CHECK (kind IN ('levels')),
+     status TEXT NOT NULL CHECK (status IN ('queued', 'running', 'done', 'failed', 'cancelled')),
+     result TEXT,
+     error TEXT,
+     created_at INTEGER NOT NULL,
+     finished_at INTEGER
+   );
+   CREATE INDEX jobs_owner ON jobs(owner_id);`,
 ];
 
 export function openDatabase(path) {
