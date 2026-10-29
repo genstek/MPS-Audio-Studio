@@ -1,0 +1,12 @@
++  // Every import gets a number. Only the newest one may replace the track, so a slow
++  // earlier import, or one still running when the engine is disposed, is discarded.
++  let latestLoad = 0;
++  function superseded() {
++    const error = new Error('A newer import replaced this one.');
++    error.name = 'SupersededError';
++    return error;
++  }
++      const load = ++latestLoad;
++      if (load !== latestLoad) throw superseded();
++        if (load !== latestLoad) throw superseded();
++      latestLoad++;
