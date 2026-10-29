@@ -178,3 +178,50 @@ test('position follows the audio clock, freezes on pause and resets on stop and 
   expect(engine.position()).toBe(0);
   engine.dispose();
 });
+
+// LAS-11: one start at a time; pause, stop or a new track cancels a start that is still waiting.
+function holdResume(context) {
+  let release;
+  context.resume.mockImplementationOnce(() => new Promise(resolve => { release = resolve; }));
+  return () => release();
+}
+
+test('a second Play while the first is starting does not add a source', async () => {
+  const { engine, context, sources, file } = setup();
+  await engine.load(file);
+  const release = holdResume(context);
+  const first = engine.play();
+  await expect(engine.play()).resolves.toBe(false);
+  release();
+  await expect(first).resolves.toBe(true);
+  await expect(engine.play()).resolves.toBe(false); // already playing
+  expect(sources).toHaveLength(1);
+  engine.dispose();
+});
+
+test('stop, pause or a new track while the context resumes cancels the start', async () => {
+  for (const cancel of ['stop', 'pause', 'load']) {
+    const { engine, context, sources, file } = setup();
+    await engine.load(file);
+    const release = holdResume(context);
+    const start = engine.play();
+    if (cancel === 'load') await engine.load({ ...file, name: 'next.wav' });
+    else engine[cancel]();
+    release();
+    await expect(start, cancel).resolves.toBe(false);
+    expect(sources, cancel).toHaveLength(0);
+    await expect(engine.play(), `${cancel}: Play works afterwards`).resolves.toBe(true);
+    expect(sources[0].start, cancel).toHaveBeenCalledWith(0, 0);
+    engine.dispose();
+  }
+});
+
+test('a failed resume can be retried', async () => {
+  const { engine, context, sources, file } = setup();
+  await engine.load(file);
+  context.resume.mockRejectedValueOnce(new Error('Not allowed'));
+  await expect(engine.play()).rejects.toThrow('Not allowed');
+  await expect(engine.play()).resolves.toBe(true);
+  expect(sources).toHaveLength(1);
+  engine.dispose();
+});
