@@ -1,0 +1,65 @@
+{
+  "issue": "LAS-27",
+  "applicationCommit": "23865e4a7e465a50b2f39f31782adb39f512c3f3",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (ESLint, Vitest 181/181, Vite build, Playwright 56/56)",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-23865e4a7e465a50b2f39f31782adb39f512c3f3.log", "evidence/html-report-23865e4a7e465a50b2f39f31782adb39f512c3f3.zip"]
+    },
+    {
+      "name": "Chain unit tests: schema, filter stability and response, compressor curve and timing, limiter ceiling at 44.1/48/96 kHz, latency, bypass, determinism, smoothing, guards (46 tests)",
+      "status": "PASS",
+      "command": "npx vitest run tests/unit/chain.test.js --reporter=verbose",
+      "exitCode": 0,
+      "evidence": ["evidence/vitest-chain-verbose.log"]
+    },
+    {
+      "name": "Numerical characterisation report (EQ deviation 0, limiter over-ceiling max 0.026 dB, 27x real time)",
+      "status": "PASS",
+      "command": "npm run characterize:chain -- <folder>",
+      "exitCode": 0,
+      "evidence": ["evidence/chain-report.md", "evidence/chain-report.json"]
+    },
+    {
+      "name": "AudioWorklet preview equals offline render in Chromium (difference 0 at 44.1/48/96 kHz); settings refusal",
+      "status": "PASS",
+      "command": "npx playwright test tests/e2e/chain-parity.spec.js --reporter=json",
+      "exitCode": 0,
+      "evidence": ["evidence/playwright-chain-parity.txt"]
+    },
+    {
+      "name": "Production-built worklet loads via vite preview and limits a -0.9 dBFS tone to -6.00 dBTP",
+      "status": "PASS",
+      "command": "vite build --config <temporary config adding src/dsp/chain-node.js as an entry>; vite preview; node <scratch>/built-worklet.mjs",
+      "exitCode": 0,
+      "evidence": ["evidence/production-build-worklet.md"]
+    },
+    {
+      "name": "Artifact, bundle and log scan (117 pieces, 0 findings)",
+      "status": "PASS",
+      "command": "npm run scan:artifacts",
+      "exitCode": 0,
+      "evidence": ["evidence/scan-artifacts-23865e4a7e465a50b2f39f31782adb39f512c3f3.json"]
+    },
+    {
+      "name": "Listening review and Mac/Chrome run",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["manual-qa.md"]
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],
+  "blockers": [],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "feat/LAS-27-processing-chain",
+  "defects": [
+    {"severity": "Medium", "summary": "createChainNode waited forever when the worklet processor failed to start (invalid settings)", "fixedIn": "23865e4a7e465a50b2f39f31782adb39f512c3f3"}
+  ]
+}
