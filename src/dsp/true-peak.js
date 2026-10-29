@@ -6,8 +6,8 @@
 // Like every 4× meter it can read a crest between quarter-sample points low, by up to
 // 20·log10(cos(π·f / (4·fs))): 0.17 dB at 12 kHz and 0.47 dB at 20 kHz for 48 kHz audio.
 export const OVERSAMPLING = 4;
-const TAPS = 24;
-const HALF = TAPS / 2;
+export const TAPS = 24;
+export const HALF = TAPS / 2;
 const BETA = 6;
 
 function besselI0(x) {
@@ -21,7 +21,7 @@ function besselI0(x) {
 }
 
 // BRANCHES[p - 1][k] weights sample n + HALF - k for the point n + p/4.
-const BRANCHES = [1, 2, 3].map(p => {
+export const BRANCHES = [1, 2, 3].map(p => {
   const branch = Array.from({ length: TAPS }, (_, k) => {
     const t = k - HALF + p / OVERSAMPLING;
     const sinc = Math.sin(Math.PI * t) / (Math.PI * t);
