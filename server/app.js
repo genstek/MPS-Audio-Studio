@@ -3,6 +3,7 @@ import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'n
 import { join } from 'node:path';
 import { openDatabase } from './db.js';
 import { HttpError, parseCookies, readJson, send } from './http.js';
+import { LIMITS, createLimiter } from './limits.js';
 import { SCRYPT_COST, hashPassword, normalizeEmail, randomToken, sha256, validPassword, verifyPassword } from './security.js';
 
 const MINUTE = 60_000;
@@ -10,6 +11,7 @@ const HOUR = 60 * MINUTE;
 export const SESSION_IDLE_MS = 24 * HOUR;
 export const SESSION_MAX_MS = 7 * 24 * HOUR;
 export const VERIFY_TOKEN_MS = 24 * HOUR;
+export const RESET_TOKEN_MS = 30 * MINUTE;
 const OUTBOX_KEEP_MS = 24 * HOUR;
 const AUDIT_KEEP_MS = 90 * 24 * HOUR;
 const COOKIE = 'mps_session';
@@ -29,6 +31,20 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
   // A password hash to compare against when the email is unknown, so both paths take as long.
   const decoy = hashPassword(randomToken(), scryptCost);
   const userHash = id => (id ? sha256(`${secret}:${id}`).slice(0, 16) : null);
+  const limiter = createLimiter({ now, scale: config.limitScale });
+
+  // Throws 429 when any of the (rule, key) pairs is exhausted; `count` also records this request.
+  function limit(request, checks, { count = true } = {}) {
+    const keyed = checks.map(([rule, key]) => [rule, `${key}:${rule.perIp ? request.socket.remoteAddress : ''}`]);
+    const wait = Math.max(...keyed.map(([rule, key]) => limiter.retryAfter(rule, key)));
+    if (wait > 0) {
+      const error = new HttpError(429, 'rate_limited', `Too many attempts. Try again in ${Math.ceil(wait / 60)} minute${wait > 60 ? 's' : ''}.`);
+      error.headers = { 'Retry-After': String(wait) };
+      throw error;
+    }
+    if (count) for (const [, key] of keyed) limiter.hit(key);
+    return keyed;
+  }
 
   const audit = (event, userId = null, itemId = null) => db.prepare(
     'INSERT INTO audit (event, user_hash, item_id, created_at) VALUES (?, ?, ?, ?)',
@@ -103,6 +119,7 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
     const email = normalizeEmail(input.email);
     if (!email) throw new HttpError(400, 'invalid_email', 'Enter a valid email address.');
     if (!validPassword(input.password)) throw new HttpError(400, 'invalid_password', 'Use a password of 10 to 128 characters.');
+    limit(request, [[LIMITS.registerPerIp, 'register'], [LIMITS.registerPerEmail, `register:${email}`]]);
     const existing = db.prepare('SELECT id, verified_at FROM users WHERE email = ?').get(email);
     const link = appUrl(request);
     if (existing?.verified_at) {
@@ -124,6 +141,7 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
 
   route('POST', /^\/api\/auth\/verify$/, async ({ request }) => {
     const { token } = await readJson(request);
+    limit(request, [[LIMITS.tokenPerIp, 'token']]);
     const userId = consumeToken(token, 'verify');
     if (!userId) throw new HttpError(400, 'invalid_token', 'This verification link is invalid or has expired. Request a new one.');
     db.prepare('UPDATE users SET verified_at = COALESCE(verified_at, ?) WHERE id = ?').run(now(), userId);
@@ -133,7 +151,9 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
 
   route('POST', /^\/api\/auth\/resend-verification$/, async ({ request }) => {
     const email = normalizeEmail((await readJson(request)).email);
-    const user = email && db.prepare('SELECT id, verified_at FROM users WHERE email = ?').get(email);
+    if (!email) throw new HttpError(400, 'invalid_email', 'Enter a valid email address.');
+    limit(request, [[LIMITS.mailPerIp, 'mail'], [LIMITS.mailPerEmail, `mail:${email}`]]);
+    const user = db.prepare('SELECT id, verified_at FROM users WHERE email = ?').get(email);
     if (user && !user.verified_at) {
       const token = issueToken(user.id, 'verify', VERIFY_TOKEN_MS);
       mail(email, 'Verify your MPS Audio Studio email', `Open this link to verify your email: ${appUrl(request)}/?verify=${token}\nThe link works once and expires in 24 hours.`);
@@ -145,12 +165,15 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
     const input = await readJson(request);
     const email = normalizeEmail(input.email);
     const password = typeof input.password === 'string' ? input.password : '';
+    // Only failed attempts count; after five for one address that address waits 15 minutes.
+    const failureKeys = limit(request, [[LIMITS.loginFailuresPerIp, 'login'], [LIMITS.loginFailuresPerEmail, `login:${email ?? 'invalid'}`]], { count: false });
     const user = email && db.prepare('SELECT id, email, password_hash, password_salt, verified_at FROM users WHERE email = ?').get(email);
     const decoyHash = await decoy;
     const passwordOk = user
       ? await verifyPassword(password, user.password_hash, user.password_salt)
       : (await verifyPassword(password, decoyHash.hash, decoyHash.salt), false);
     if (!passwordOk) {
+      for (const [, key] of failureKeys) limiter.hit(key);
       audit('login_failed', user?.id);
       throw new HttpError(401, 'invalid_credentials', 'Email or password is incorrect.');
     }
@@ -170,6 +193,37 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
       audit('logout', user.id);
     }
     return { status: 204, headers: { 'Set-Cookie': sessionCookie('', 0) } };
+  });
+
+  route('POST', /^\/api\/auth\/recover$/, async ({ request }) => {
+    const email = normalizeEmail((await readJson(request)).email);
+    if (!email) throw new HttpError(400, 'invalid_email', 'Enter a valid email address.');
+    limit(request, [[LIMITS.mailPerIp, 'mail'], [LIMITS.mailPerEmail, `mail:${email}`]]);
+    const user = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
+    if (user) {
+      const token = issueToken(user.id, 'reset', RESET_TOKEN_MS);
+      mail(email, 'Reset your MPS Audio Studio password', `Open this link to choose a new password: ${appUrl(request)}/?reset=${token}\nThe link works once and expires in 30 minutes. If you did not ask for this, ignore this email.`);
+      audit('recover_requested', user.id);
+    }
+    // The same answer whether or not the address has an account.
+    return { status: 202, body: { message: 'If this email has an account, a reset link is on its way.' } };
+  });
+
+  route('POST', /^\/api\/auth\/reset$/, async ({ request }) => {
+    const input = await readJson(request);
+    // Check the new password first, so a typo does not use up the single-use link.
+    if (!validPassword(input.password)) throw new HttpError(400, 'invalid_password', 'Use a password of 10 to 128 characters.');
+    limit(request, [[LIMITS.tokenPerIp, 'token']]);
+    const userId = consumeToken(input.token, 'reset');
+    if (!userId) throw new HttpError(400, 'invalid_token', 'This reset link is invalid or has expired. Request a new one.');
+    const { hash, salt } = await hashPassword(input.password, scryptCost);
+    // Opening the emailed link proves the address, so a reset also verifies it.
+    db.prepare('UPDATE users SET password_hash = ?, password_salt = ?, verified_at = COALESCE(verified_at, ?) WHERE id = ?').run(hash, salt, now(), userId);
+    db.prepare('DELETE FROM sessions WHERE user_id = ?').run(userId);
+    const { email } = db.prepare('SELECT email FROM users WHERE id = ?').get(userId);
+    mail(email, 'Your MPS Audio Studio password was changed', 'Your password was just changed and every signed-in session was signed out. If this was not you, reset your password again now.');
+    audit('password_reset', userId);
+    return { body: { message: 'Password changed. Sign in with your new password. You were signed out everywhere else.' } };
   });
 
   if (config.devEndpoints) {
@@ -227,6 +281,7 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
     db.prepare('DELETE FROM email_tokens WHERE expires_at <= ?').run(time);
     db.prepare('DELETE FROM mail_outbox WHERE created_at <= ?').run(time - OUTBOX_KEEP_MS);
     db.prepare('DELETE FROM audit WHERE created_at <= ?').run(time - AUDIT_KEEP_MS);
+    limiter.prune();
   }
 
   const server = createServer((request, response) => { void handle(request, response); });
