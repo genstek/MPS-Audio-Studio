@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createAudioEngine } from './audio-engine.js';
+import { AccountDialog } from './AccountDialog.jsx';
 import './styles.css';
 
 // Seconds as mm:ss.t, rounded to a tenth of a second.
@@ -102,7 +103,7 @@ function App() {
     <main>
       <header className="masthead">
         <div className="brand"><span className="brand-mark" aria-hidden="true">MPS</span><div><p className="eyebrow">LOCAL AUDIO WORKSPACE</p><h1>MPS Audio Studio</h1></div></div>
-        <span className="version">SPRINT 0 <span aria-hidden="true">/</span> WEB MIXER</span>
+        <div className="masthead-tools"><span className="version">SPRINT 0 <span aria-hidden="true">/</span> WEB MIXER</span><AccountDialog /></div>
       </header>
 
       <section className="transport panel" aria-label="Transport">
