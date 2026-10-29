@@ -1,0 +1,48 @@
+{
+  "issue": "LAS-9",
+  "applicationCommit": "9e9d8174fc932269e8b6911754f4f2255da1af2e",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (lint, Vitest 11/11, build, Playwright 21/21) on Linux Chromium 141",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-9e9d8174fc932269e8b6911754f4f2255da1af2e.log", "evidence/html-report-9e9d8174fc932269e8b6911754f4f2255da1af2e.zip"]
+    },
+    {
+      "name": "LAS-9 Playwright test repeated 8 times before commit",
+      "status": "PASS",
+      "command": "npx playwright test tests/e2e/transport-position.spec.js --repeat-each=8",
+      "exitCode": 0,
+      "evidence": []
+    },
+    {
+      "name": "LAS-51 geometry with the new time read-out (part of npm run check)",
+      "status": "PASS",
+      "command": "npm run test:e2e",
+      "exitCode": 0,
+      "evidence": ["evidence/screenshots/transport-loaded-761x450.png", "evidence/screenshots/transport-loaded-1280x720.png"]
+    },
+    {
+      "name": "Google Chrome on macOS, Safari, Firefox",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": []
+    },
+    {
+      "name": "Listening check of resume position",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": []
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],
+  "blockers": [],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "feat/LAS-9-elapsed-position"
+}
