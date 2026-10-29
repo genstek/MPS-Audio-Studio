@@ -9,6 +9,7 @@ function setup() {
     destination: {},
     decodeAudioData: vi.fn().mockResolvedValue({ duration: 10, numberOfChannels: 1, sampleRate: 44100 }),
     resume: vi.fn().mockResolvedValue(),
+    suspend: vi.fn().mockResolvedValue(),
     close: vi.fn().mockResolvedValue(),
     createBufferSource() {
       const source = { connect: vi.fn(), disconnect: vi.fn(), start: vi.fn(), stop: vi.fn() };
@@ -223,5 +224,47 @@ test('a failed resume can be retried', async () => {
   await expect(engine.play()).rejects.toThrow('Not allowed');
   await expect(engine.play()).resolves.toBe(true);
   expect(sources).toHaveLength(1);
+  engine.dispose();
+});
+
+// LAS-12: unload removes the track but keeps the engine usable.
+test('unload stops playback, forgets the track and keeps the engine for the next import', async () => {
+  const { engine, context, sources, file } = setup();
+  await engine.load(file);
+  await engine.play();
+  context.currentTime = 4;
+  engine.unload();
+  expect(sources[0].stop).toHaveBeenCalledOnce();
+  expect(sources[0].disconnect).toHaveBeenCalledOnce();
+  expect(sources[0].onended).toBeNull();
+  expect(engine.position()).toBe(0);
+  await expect(engine.play()).resolves.toBe(false);
+  expect(sources).toHaveLength(1);
+  expect(context.suspend).toHaveBeenCalledOnce();
+  expect(context.close).not.toHaveBeenCalled();
+  await engine.load(file);
+  await expect(engine.play()).resolves.toBe(true);
+  expect(sources[1].start).toHaveBeenCalledWith(0, 0);
+  engine.dispose();
+});
+
+test('unload cancels an import in progress and a start waiting for the context', async () => {
+  const { engine, context, sources, file } = setup();
+  let finishDecode;
+  context.decodeAudioData.mockImplementationOnce(() => new Promise(resolve => { finishDecode = resolve; }));
+  const pending = engine.load(file);
+  await vi.waitFor(() => expect(finishDecode).toBeTypeOf('function'));
+  engine.unload();
+  finishDecode(decoded(10));
+  await expect(pending).rejects.toMatchObject({ name: 'SupersededError' });
+  await expect(engine.play()).resolves.toBe(false);
+
+  await engine.load(file);
+  const release = holdResume(context);
+  const start = engine.play();
+  engine.unload();
+  release();
+  await expect(start).resolves.toBe(false);
+  expect(sources).toHaveLength(0);
   engine.dispose();
 });

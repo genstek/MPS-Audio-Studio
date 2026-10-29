@@ -1,0 +1,39 @@
+
+ RUN  v5.0.5 /home/user/MPS-Audio-Studio-delivery
+
+ ❯ tests/unit/audio-engine.test.js (16 tests | 1 failed) 143ms
+   × unload cancels an import in progress and a start waiting for the context 63ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/audio-engine.test.js > unload cancels an import in progress and a start waiting for the context
+AssertionError: promise resolved "{ duration: 10, channels: 1, …(1) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "channels": 1,
++   "duration": 10,
++   "sampleRate": 44100,
+  }
+
+ ❯ tests/unit/audio-engine.test.js:259:24
+    257|   engine.unload();
+    258|   finishDecode(decoded(10));
+    259|   await expect(pending).rejects.toMatchObject({ name: 'SupersededError…
+       |                        ^
+    260|   await expect(engine.play()).resolves.toBe(false);
+    261|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 15 passed (16)
+   Start at  17:36:54
+   Duration  401ms (tests 68%, transform 19%, import 9%, worker 4%)
+
+exit=1
