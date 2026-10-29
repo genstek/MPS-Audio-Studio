@@ -51,6 +51,7 @@ function stereo(left, right, fs, stereoLoudness) {
   return {
     correlation: ll > 0 && rr > 0 ? lr / Math.sqrt(ll * rr) : null,
     sideToMidDb: mm > 0 && ss > 0 ? 10 * Math.log10(ss / mm) : null,
+    channelsIdentical: ss === 0,
     balanceDb: ll > 0 && rr > 0 ? 10 * Math.log10(meanSquare(left) / meanSquare(right)) : null,
     monoLoudnessChangeDb: stereoLoudness !== null && monoLoudness !== null ? monoLoudness - stereoLoudness : null,
   };

@@ -97,7 +97,7 @@ describe('LAS-26 report', () => {
     expect(report.levels.crestFactorDb).toBeCloseTo(3.01, 1);
     expect(Math.abs(report.levels.plrDb)).toBeLessThanOrEqual(0.15);
     expect(report.clipping).toEqual({ clippedSamples: 0, clippedRuns: 0 });
-    expect(report.stereo).toMatchObject({ correlation: 1, sideToMidDb: null, balanceDb: 0 });
+    expect(report.stereo).toMatchObject({ correlation: 1, sideToMidDb: null, channelsIdentical: true, balanceDb: 0 });
     expect(Math.abs(report.stereo.monoLoudnessChangeDb)).toBeLessThanOrEqual(0.01);
     expect(report.spectrum.bands.find(band => band.centreHz === 1000).share).toBeGreaterThan(0.99);
   });
@@ -110,6 +110,7 @@ describe('LAS-26 report', () => {
     const uncorrelated = analyze([noise({ seconds: 5, seed: 1 }), noise({ seconds: 5, seed: 2 })], 48000);
     expect(Math.abs(uncorrelated.stereo.correlation)).toBeLessThan(0.05);
     expect(uncorrelated.stereo.sideToMidDb).toBeCloseTo(0, 0);
+    expect(uncorrelated.stereo.channelsIdentical).toBe(false);
     const unbalanced = analyze([sine({ dbfs: -26, seconds: 5 }), sine({ dbfs: -20, seconds: 5 })], 48000);
     expect(unbalanced.stereo.balanceDb).toBeCloseTo(-6, 1);
   });

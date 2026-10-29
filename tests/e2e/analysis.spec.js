@@ -46,6 +46,8 @@ test('LAS-26: a -23 dBFS 1 kHz stereo tone reads -23.0 LUFS with labelled peaks;
   await expect(ui.row('Clipping')).toHaveText('None detected');
   await expect(ui.row('Correlation')).toHaveText('+1.00');
   await expect(ui.row('Loudness change in mono')).toHaveText('0.0 LU');
+  await expect(ui.row('Side relative to mid')).toHaveText('No side signal (left = right)');
+  await expect(ui.row('Peak to loudness ratio')).toHaveText('0.0 dB');
   await expect(ui.dialog.getByRole('row', { name: /^1 kHz/ })).toContainText('100.0 %');
   await expect(ui.dialog.getByText(`mps-analysis-1 · 48,000 Hz · stereo · 16-bit PCM · whole file 0:00.0–0:20.0`)).toBeVisible();
   await expect(ui.dialog.locator('code')).toHaveText(before); // the hash of the file on disk
@@ -139,4 +141,23 @@ test('LAS-26: unsupported audio fails clearly and the session keeps working', as
   await ui.close.click();
   await ui.play.click();
   await expect(ui.status).toHaveText('Playing');
+});
+
+test('LAS-26: the Analyze button fits the Tracks heading from 320 px wide', async ({ page }) => {
+  await page.goto('/');
+  const ui = studio(page);
+  await ui.upload.setInputFiles({ name: 'tone.wav', mimeType: 'audio/wav', buffer: makeWav() });
+  await expect(ui.status).toHaveText('Ready');
+  for (const width of [320, 360, 768, 1280]) {
+    await page.setViewportSize({ width, height: 800 });
+    const overflow = await ui.tracks.locator('.panel-heading').evaluate(heading => {
+      const box = heading.getBoundingClientRect();
+      const padding = parseFloat(getComputedStyle(heading).paddingRight);
+      return [...heading.querySelectorAll('h2, :scope .heading-tools > button, .badge')]
+        .filter(element => element.getClientRects().length)
+        .map(element => ({ text: element.textContent, right: element.getBoundingClientRect().right, limit: box.right - padding + 0.5 }))
+        .filter(item => item.right > item.limit);
+    });
+    expect(overflow, `${width}px: heading items beyond the panel's padding`).toEqual([]);
+  }
 });

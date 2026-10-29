@@ -2,7 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { startAnalysis } from './analysis-client.js';
 
 // Number formatting: one decimal for levels, a sign for values that can be either side of zero.
-const fixed = (value, digits = 1) => value.toFixed(digits).replace('-', '−');
+const fixed = (value, digits = 1) => {
+  const text = value.toFixed(digits);
+  return Number(text) === 0 ? text.replace('-', '') : text.replace('-', '−'); // no "−0.0"
+};
 const signed = (value, digits = 1) => `${value > 0 ? '+' : ''}${fixed(value, digits)}`;
 const level = (value, unit, digits = 1) => (value === null ? '—' : `${fixed(value, digits)} ${unit}`);
 const clock = seconds => `${Math.floor(seconds / 60)}:${(seconds % 60).toFixed(1).padStart(4, '0')}`;
@@ -31,7 +34,7 @@ function Report({ report }) {
   ];
   const stereoRows = stereo && [
     ['Correlation (L/R)', stereo.correlation === null ? '—' : signed(stereo.correlation, 2)],
-    ['Side relative to mid', level(stereo.sideToMidDb, 'dB')],
+    ['Side relative to mid', stereo.channelsIdentical ? 'No side signal (left = right)' : level(stereo.sideToMidDb, 'dB')],
     ['Balance (left − right)', stereo.balanceDb === null ? '—' : `${signed(stereo.balanceDb)} dB`],
     ['Loudness change in mono', stereo.monoLoudnessChangeDb === null ? (stereo.correlation !== null && stereo.correlation < -0.9 ? 'Cancels to silence' : '—') : `${signed(stereo.monoLoudnessChangeDb)} LU`],
   ];
@@ -49,12 +52,12 @@ function Report({ report }) {
       {spectrum.bands.length ? (
         <table className="analysis-table spectrum-table">
           <caption>Spectrum: share of energy per octave band</caption>
-          <thead><tr><th scope="col">Band</th><th scope="col">Share</th><th scope="col">Level</th></tr></thead>
+          <thead><tr><th scope="col">Band</th><th scope="col">Share</th><th scope="col">Relative to total</th></tr></thead>
           <tbody>{spectrum.bands.map(band => (
             <tr key={band.centreHz}>
               <th scope="row">{band.centreHz >= 1000 ? `${band.centreHz / 1000} kHz` : `${band.centreHz} Hz`}</th>
               <td><span className="spectrum-bar" aria-hidden="true"><span style={{ width: `${Math.round(band.share * 100)}%` }} /></span>{(band.share * 100).toFixed(1)} %</td>
-              <td>{level(band.levelDb, 'dB')}</td>
+              <td>{band.levelDb === null || band.levelDb < -90 ? 'below −90 dB' : level(band.levelDb, 'dB')}</td>
             </tr>
           ))}</tbody>
         </table>
