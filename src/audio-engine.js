@@ -68,10 +68,12 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage } 
         throw new Error('Unable to decode this WAV. Try another WAV file.');
       }
       if (load !== latestLoad) throw superseded();
+      // The chain is mono or stereo; files with more channels play as a stereo downmix.
+      const channels = Math.min(2, decoded.numberOfChannels);
       let stage = output;
-      if (!stage || stage.channelCount !== decoded.numberOfChannels) {
+      if (!stage || stage.channelCount !== channels) {
         try {
-          stage = await createOutput(context, decoded.numberOfChannels, chainParams);
+          stage = await createOutput(context, channels, chainParams);
         } catch {
           if (load !== latestLoad) throw superseded();
           throw new Error('Audio processing could not start. Reload the page and try again.');

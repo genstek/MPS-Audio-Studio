@@ -368,3 +368,11 @@ test('a stage built for a superseded import is disposed; a stage failure is repo
   await expect(failing.engine.load(failing.file)).rejects.toThrow('Audio processing could not start');
   failing.engine.dispose();
 });
+
+test('files with more than two channels get a stereo output stage (played as a downmix)', async () => {
+  const { engine, context, file, createOutput } = setup();
+  context.decodeAudioData.mockResolvedValueOnce({ duration: 2, numberOfChannels: 4, sampleRate: 48000 });
+  await expect(engine.load(file)).resolves.toMatchObject({ channels: 4 });
+  expect(createOutput.mock.calls[0][1]).toBe(2);
+  engine.dispose();
+});

@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { makeWav } from '../fixtures/wav.js';
+import { STRIP_BUTTONS } from './helpers/layout.js';
 
 // Every test opens its own page, so they can share workers.
 test.describe.configure({ mode: 'parallel' });
@@ -24,7 +25,8 @@ const STATE_VIEWPORTS = [
   [776, 888], [1440, 900], [1280, 720], [989, 610], [784, 626], [817, 598], [971, 553], [785, 520],
   [804, 471], [761, 450], [1440, 450], [760, 520], [600, 650], [761, 520],
 ];
-const STRIPS = ['Input', 'EQ', 'Dynamics', 'Space'];
+// Strip names and buttons follow the LAS-28 modules (EQ, Dynamics, Limiter) and the Space placeholder.
+const STRIPS = Object.keys(STRIP_BUTTONS);
 const LONG_NAME = 'Final master for the album release - extended club version (24-bit, 2026 remaster).wav';
 
 const describe = locator => locator.evaluate(e => e.getAttribute('aria-label') || e.textContent.trim());
@@ -75,7 +77,7 @@ async function checkPanels(page, label) {
     for (const b of names.slice(index + 1)) expect(overlaps(boxes[a], boxes[b]), `${label}: ${a} overlaps ${b}`).toBe(false);
   }
   const bodyBox = await master.getByRole('region', { name: 'Master details' }).boundingBox();
-  const exportBox = await master.getByRole('button', { name: 'Export WAV — coming soon' }).boundingBox();
+  const exportBox = await master.getByRole('button', { name: 'Export WAV' }).boundingBox();
   expect(exportBox.y, `${label}: Export starts below the Master details`).toBeGreaterThanOrEqual(bodyBox.y + bodyBox.height - 0.5);
   expect(exportBox.y + exportBox.height, `${label}: Export stays inside Master`).toBeLessThanOrEqual(boxes.Master.y + boxes.Master.height + 0.5);
 }
@@ -103,13 +105,13 @@ async function checkEssentialsBeforeScrolling(page, label) {
     ['Import/Replace WAV', tracks.getByRole('button', { name: 'Import WAV', exact: true })],
     ['Master heading', master.getByRole('heading', { name: 'Master', exact: true })],
     ['Master level', master.getByRole('slider', { name: 'Master level' })],
-    ['Export WAV', master.getByRole('button', { name: 'Export WAV — coming soon' })],
+    ['Export WAV', master.getByRole('button', { name: 'Export WAV' })],
     ...STRIPS.flatMap(name => {
       const strip = strips.getByRole('region', { name: `${name} channel strip` });
       return [
         [`${name} heading`, strip.getByRole('heading', { name, exact: true })],
-        [`${name} knob`, strip.locator('.knob')],
-        [`${name} button`, strip.getByRole('button', { name: `${name} processing unavailable` })],
+        [`${name} indicator`, strip.locator('.knob, .strip-visual')],
+        [`${name} button`, strip.getByRole('button', { name: STRIP_BUTTONS[name] })],
       ];
     }),
     ['footer', page.locator('footer')],
@@ -155,9 +157,11 @@ async function checkScrollerEnds(scroller, firstItems, lastItems, stacked, label
 // End is the platform-neutral key: Playwright sends it with the macOS scrollToEndOfDocument:
 // editing command, and Chromium on Windows/Linux scrolls with it natively. Control+End is a
 // Windows/Linux document shortcut, not a macOS scrolling key.
+// Since LAS-28 real controls sit between Import WAV and the mixer (Original/Processed, Match
+// loudness, Export, Undo/Redo, Settings), so the Tab budget is 12 instead of 4.
 async function checkKeyboardScroll(page, scroller, first, last, label) {
   await page.getByRole('button', { name: 'Import WAV', exact: true }).focus();
-  for (let presses = 0; presses < 4 && !(await scroller.evaluate(e => e === document.activeElement)); presses++) {
+  for (let presses = 0; presses < 12 && !(await scroller.evaluate(e => e === document.activeElement)); presses++) {
     await page.keyboard.press('Tab');
   }
   await expect(scroller, `${label}: reachable with Tab`).toBeFocused();
@@ -188,9 +192,9 @@ async function checkLayout(page, label) {
   const masterBody = master.getByRole('region', { name: 'Master details' });
   const strips = page.getByRole('group', { name: 'Processing modules' });
   const outputStage = masterBody.getByText('OUTPUT STAGE');
-  const lastDetail = masterBody.getByText('Output trim and measured meters coming soon.');
+  const lastDetail = masterBody.locator('.loudness-match p'); // the last line of the details (LAS-28)
   const stripTitles = STRIPS.map(name => strips.getByRole('heading', { name, exact: true }));
-  const stripButtons = STRIPS.map(name => strips.getByRole('button', { name: `${name} processing unavailable` }));
+  const stripButtons = STRIPS.map(name => strips.getByRole('button', { name: STRIP_BUTTONS[name] }));
 
   if (stacked) {
     // Stacked layout: the page scrolls, Transport stays at the top and the rest must be reachable.
@@ -203,7 +207,7 @@ async function checkLayout(page, label) {
     const reachable = [
       ['Import WAV', page.getByRole('button', { name: 'Import WAV', exact: true })],
       ['Master level', master.getByRole('slider', { name: 'Master level' })],
-      ['Export WAV', master.getByRole('button', { name: 'Export WAV — coming soon' })],
+      ['Export WAV', master.getByRole('button', { name: 'Export WAV' })],
       ['footer', page.locator('footer')],
     ];
     if (await page.getByRole('alert').count()) reachable.push(['load error message', page.getByRole('alert')]);
