@@ -312,7 +312,8 @@ export function createChain(initialParams, sampleRate, channelCount) {
 
 // Offline render (export): the whole input through a chain created with fixed settings, in blocks.
 // The chain's latency is compensated, so output sample n lines up with input sample n.
-export function renderChain(params, inputs, sampleRate, { blockSize = 128 } = {}) {
+// onProgress(fraction) is called about every 64 blocks.
+export function renderChain(params, inputs, sampleRate, { blockSize = 128, onProgress } = {}) {
   const channelCount = inputs.length;
   const chain = createChain(params, sampleRate, channelCount);
   const frames = inputs[0].length;
@@ -328,6 +329,7 @@ export function renderChain(params, inputs, sampleRate, { blockSize = 128 } = {}
       if (start < frames) inBlock[c].set(inputs[c].subarray(start, Math.min(frames, start + count)));
     }
     chain.process(inBlock, outBlock, count);
+    if (onProgress && (start / blockSize) % 64 === 0) onProgress(Math.min(1, start / total));
     maxCompressor = Math.max(maxCompressor, chain.meters.compressorGainReductionDb);
     maxLimiter = Math.max(maxLimiter, chain.meters.limiterGainReductionDb);
     for (let i = 0; i < count; i++) {
