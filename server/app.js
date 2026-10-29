@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { openDatabase } from './db.js';
 import { HttpError, parseCookies, readJson, send } from './http.js';
 import { LIMITS, createLimiter } from './limits.js';
+import { libraryRoutes } from './library.js';
 import { SCRYPT_COST, hashPassword, normalizeEmail, randomToken, sha256, validPassword, verifyPassword } from './security.js';
 
 const MINUTE = 60_000;
@@ -234,6 +235,8 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
     });
   }
 
+  const library = libraryRoutes({ route, db, now, config, secret, requireUser, audit });
+
   // Protected-route probe used by tests and the UI: proves the session is accepted server-side.
   route('GET', /^\/api\/account$/, ({ request }) => ({ body: { email: requireUser(request).email } }));
 
@@ -262,7 +265,12 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
       status = result.status ?? 200;
       send(response, status, result.body, result.headers);
     } catch (error) {
-      if (error instanceof HttpError) {
+      if (response.headersSent) {
+        // A streamed response failed part-way (for example the client went away): just end it.
+        log(`error after response started ${request.method} ${url.pathname}: ${error.code ?? error.name}`);
+        status = response.statusCode;
+        response.destroy();
+      } else if (error instanceof HttpError) {
         status = error.status;
         send(response, status, { error: error.code, message: error.message }, error.headers);
       } else {
@@ -285,7 +293,7 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
   }
 
   const server = createServer((request, response) => { void handle(request, response); });
-  return { server, db, sweep, routes: route };
+  return { server, db, sweep, routes: route, library };
 }
 
 // Starts the server and resolves with its base URL and a close function.

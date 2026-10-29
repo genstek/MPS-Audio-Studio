@@ -16,3 +16,20 @@ export async function api(path, { method = 'GET', body } = {}) {
     return { unavailable: true };
   }
 }
+
+// Sends a file's bytes as the request body (private library upload).
+export async function uploadFile(path, file) {
+  try {
+    const response = await fetch(`/api${path}`, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'X-MPS-Request': '1', 'Content-Type': 'audio/wav' },
+      body: file,
+    });
+    const data = await response.json().catch(() => null);
+    if (response.status >= 500 && !data?.error) return { unavailable: true };
+    return { ok: response.ok, status: response.status, data: data ?? {} };
+  } catch {
+    return { unavailable: true };
+  }
+}

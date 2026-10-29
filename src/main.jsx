@@ -19,6 +19,8 @@ function App() {
   // What the app is waiting for ('' when idle); shown instead of the status meanwhile.
   const [busy, setBusy] = useState('');
   const [position, setPosition] = useState(0);
+  // The imported File, kept only so a signed-in user can choose to save it (LAS-23).
+  const [currentFile, setCurrentFile] = useState(null);
   const engine = useRef(null);
   const importInput = useRef(null);
 
@@ -45,6 +47,7 @@ function App() {
     try {
       const metadata = await engine.current.load(file);
       setTrack({ name: file.name, ...metadata });
+      setCurrentFile(file);
       setStatus('Ready');
       setPosition(0);
     } catch (failure) {
@@ -92,6 +95,7 @@ function App() {
   function removeTrack() {
     engine.current.unload();
     setTrack(null);
+    setCurrentFile(null);
     setPosition(0);
     setError('');
     setStatus('No audio loaded');
@@ -103,7 +107,7 @@ function App() {
     <main>
       <header className="masthead">
         <div className="brand"><span className="brand-mark" aria-hidden="true">MPS</span><div><p className="eyebrow">LOCAL AUDIO WORKSPACE</p><h1>MPS Audio Studio</h1></div></div>
-        <div className="masthead-tools"><span className="version">SPRINT 0 <span aria-hidden="true">/</span> WEB MIXER</span><AccountDialog /></div>
+        <div className="masthead-tools"><span className="version">SPRINT 0 <span aria-hidden="true">/</span> WEB MIXER</span><AccountDialog currentFile={currentFile} /></div>
       </header>
 
       <section className="transport panel" aria-label="Transport">

@@ -14,5 +14,6 @@ export function configFromEnv(env = process.env) {
       .split(',').map(origin => origin.trim()).filter(Boolean),
     appUrl: env.MPS_APP_URL ?? 'http://127.0.0.1:5174',
     limitScale: Number(env.MPS_LIMIT_SCALE ?? 1),
+    maxUploadBytes: Number(env.MPS_MAX_UPLOAD_BYTES ?? 100 * 1024 * 1024),
   };
 }
