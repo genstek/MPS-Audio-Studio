@@ -1,22 +1,48 @@
 {
   "issue": "LAS-8",
-  "applicationCommit": "2325073ba12b29e2e4de00f6e36dcb17da5bfcda",
+  "applicationCommit": "fa48f3463babae6b1d27070ac06884a3649bd27f",
   "deliveryStatus": "READY_FOR_QA",
   "manualQa": "NOT_RUN",
   "checks": [
+    {
+      "name": "Header defect fix: npm run check (Vitest 17/17, Playwright 35/35)",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": [
+        "evidence/header-fix/npm-run-check-fa48f3463babae6b1d27070ac06884a3649bd27f.log",
+        "evidence/header-fix/html-report-fa48f3463babae6b1d27070ac06884a3649bd27f.zip"
+      ]
+    },
+    {
+      "name": "Header regression tests on the old check (expected to fail, exit 1)",
+      "status": "PASS",
+      "command": "npx vitest run; npx playwright test tests/e2e/import-lifecycle.spec.js --grep 5-second (old src/audio-engine.js temporarily restored)",
+      "exitCode": 1,
+      "evidence": [
+        "evidence/header-fix/old-check-vitest.log",
+        "evidence/header-fix/old-check-playwright.log"
+      ]
+    },
     {
       "name": "npm run check (lint, Vitest 10/10, build, Playwright 20/20) on Linux Chromium 141",
       "status": "PASS",
       "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
       "exitCode": 0,
-      "evidence": ["evidence/npm-run-check-2325073ba12b29e2e4de00f6e36dcb17da5bfcda.log", "evidence/html-report-2325073ba12b29e2e4de00f6e36dcb17da5bfcda.zip"]
+      "evidence": [
+        "evidence/npm-run-check-2325073ba12b29e2e4de00f6e36dcb17da5bfcda.log",
+        "evidence/html-report-2325073ba12b29e2e4de00f6e36dcb17da5bfcda.zip"
+      ]
     },
     {
       "name": "Mutation: without the post-decode guard the overlapping-import unit test fails (expected exit 1)",
       "status": "PASS",
       "command": "npx vitest run (with the guard temporarily removed; restored before commit)",
       "exitCode": 1,
-      "evidence": ["evidence/mutation/mutation.txt", "evidence/mutation/vitest.log"]
+      "evidence": [
+        "evidence/mutation/mutation.txt",
+        "evidence/mutation/vitest.log"
+      ]
     },
     {
       "name": "Large-file (near 100 MiB) import responsiveness in the browser",
@@ -33,9 +59,24 @@
       "evidence": []
     }
   ],
-  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],
+  "artifacts": [
+    "README.md",
+    "acceptance.md",
+    "manual-qa.md",
+    "jira-update.md",
+    "evidence/"
+  ],
   "blockers": [],
   "jiraSync": "SYNC_PENDING",
   "environment": "../ENVIRONMENT.md",
-  "branch": "feat/LAS-8-import-lifecycle"
+  "branch": "feat/LAS-8-import-lifecycle",
+  "defects": [
+    {
+      "severity": "Major",
+      "summary": "Valid WAV rejected when RIFF size bytes decode as UTF-8",
+      "foundIn": "main 364d863 (pre-existing)",
+      "fixedIn": "fa48f3463babae6b1d27070ac06884a3649bd27f",
+      "branch": "fix/LAS-8-riff-header-bytes"
+    }
+  ]
 }

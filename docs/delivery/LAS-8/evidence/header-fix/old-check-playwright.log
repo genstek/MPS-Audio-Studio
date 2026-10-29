@@ -1,0 +1,49 @@
+Testing the app served from /home/user/MPS-Audio-Studio-delivery (pid 23006) at http://127.0.0.1:5173
+
+Running 1 test using 1 worker
+
+  ✘  1 [chromium] › tests/e2e/import-lifecycle.spec.js:62:1 › LAS-8: a 5-second mono WAV imports (size bytes that look like text) (5.9s)
+
+
+  1) [chromium] › tests/e2e/import-lifecycle.spec.js:62:1 › LAS-8: a 5-second mono WAV imports (size bytes that look like text)
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator:  getByRole('status')
+    Expected: "Ready"
+    Received: "No audio loaded"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveText" getByRole('status') with timeout 5000ms
+      - waiting for getByRole('status')
+        14 × locator resolved to <p role="status" class="status">No audio loaded</p>
+           - unexpected value "No audio loaded"
+
+
+      63 |   await page.goto('/');
+      64 |   await page.getByLabel('Import WAV').setInputFiles({ name: 'five-seconds.wav', mimeType: 'audio/wav', buffer: makeWav({ seconds: 5 }) });
+    > 65 |   await expect(page.getByRole('status')).toHaveText('Ready');
+         |                                          ^
+      66 |   await expect(page.getByRole('alert')).toHaveCount(0);
+      67 |   await expect(page.getByText(/^5\.0 seconds · 1 channel\(s\)/)).toBeVisible();
+      68 | });
+        at /home/user/MPS-Audio-Studio-delivery/tests/e2e/import-lifecycle.spec.js:65:42
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/import-lifecycle-LAS-8-a-5-d8552--bytes-that-look-like-text--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/import-lifecycle-LAS-8-a-5-d8552--bytes-that-look-like-text--chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/import-lifecycle-LAS-8-a-5-d8552--bytes-that-look-like-text--chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/import-lifecycle-LAS-8-a-5-d8552--bytes-that-look-like-text--chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests/e2e/import-lifecycle.spec.js:62:1 › LAS-8: a 5-second mono WAV imports (size bytes that look like text)
+exit=1

@@ -41,8 +41,11 @@ export function createAudioEngine(onEnded) {
       if (file.size > 100 * 1024 * 1024) throw new Error('Choose a WAV smaller than 100 MiB.');
       const bytes = await file.arrayBuffer();
       if (load !== latestLoad) throw superseded();
-      const header = new TextDecoder().decode(bytes.slice(0, 12));
-      if (header.slice(0, 4) !== 'RIFF' || header.slice(8, 12) !== 'WAVE') {
+      // Compare raw bytes: the four size bytes between the tags are a number, not text, and
+      // decoding them as UTF-8 could merge them into fewer characters and shift 'WAVE'.
+      const header = new Uint8Array(bytes, 0, Math.min(12, bytes.byteLength));
+      const tag = (from, to) => String.fromCharCode(...header.subarray(from, to));
+      if (tag(0, 4) !== 'RIFF' || tag(8, 12) !== 'WAVE') {
         throw new Error('This file is not a valid WAV. Choose another file.');
       }
       context ??= new AudioContext();

@@ -18,4 +18,5 @@ Material: docs/delivery/LAS-8/
 
 Commands: `PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check` exit 0 (Vitest 10/10, Playwright 20/20).
 Manual QA: NOT_RUN. Not measured: large-file UI responsiveness. Linux Chromium only.
-Disposition: READY_FOR_QA.
+Defect found later and fixed (Major): valid WAVs rejected when the RIFF size bytes look like UTF-8 text (~9.3 % of sizes 100 KB–100 MiB; present on main since the first import slice). Fix: compare tag bytes; branch fix/LAS-8-riff-header-bytes, tested SHA fa48f3463babae6b1d27070ac06884a3649bd27f; regression tests fail on old code and pass on the fix; npm run check exit 0 (Vitest 17/17, Playwright 35/35). Evidence: evidence/header-fix/.
+Disposition: READY_FOR_QA (candidate fa48f3463babae6b1d27070ac06884a3649bd27f).
