@@ -93,6 +93,21 @@ export function AccountDialog({ currentFile }) {
     setError(SESSION_ENDED);
   }, []);
 
+  const [deleting, setDeleting] = useState(false);
+  async function deleteAccount(event) {
+    event.preventDefault();
+    setBusy('Deleting your account…');
+    setError('');
+    const result = await api('/account', { method: 'DELETE', body: { password } });
+    setBusy('');
+    setDeleting(false);
+    if (result.unavailable) return setError(UNAVAILABLE);
+    if (result.status === 401) return sessionEnded();
+    if (!result.ok) return setError(result.data.message ?? 'Something went wrong. Nothing was deleted.');
+    setUser(null);
+    show('signin', { note: 'Your account, your library and all saved files were deleted from the studio server.' });
+  }
+
   async function signOut() {
     setBusy('Signing out…');
     const result = await api('/auth/logout', { method: 'POST' });
@@ -177,6 +192,19 @@ export function AccountDialog({ currentFile }) {
             <p>Signed in as <strong>{user.email}</strong></p>
             <button type="button" onClick={signOut} disabled={!!busy}>Sign out</button>
             <LibraryPanel currentFile={currentFile} onSessionEnded={sessionEnded} />
+            <section className="danger-zone" aria-labelledby="delete-account-title">
+              <h3 id="delete-account-title">Delete account</h3>
+              <p className="fine-print">Deletes your account, private library and every saved file from the studio server right away. Files on your computer are not touched. This cannot be undone.</p>
+              {deleting ? (
+                <form onSubmit={deleteAccount}>
+                  {passwordField('current-password', 'Password to confirm')}
+                  <div className="library-actions">
+                    <button type="submit" className="danger" disabled={!!busy}>Delete my account</button>
+                    <button type="button" onClick={() => setDeleting(false)}>Keep my account</button>
+                  </div>
+                </form>
+              ) : <button type="button" onClick={() => setDeleting(true)}>Delete account…</button>}
+            </section>
           </div>
         )}
       </dialog>

@@ -5,6 +5,7 @@ import { openDatabase } from './db.js';
 import { HttpError, parseCookies, readJson, send } from './http.js';
 import { LIMITS, createLimiter } from './limits.js';
 import { libraryRoutes } from './library.js';
+import { privacyRoutes } from './privacy.js';
 import { SCRYPT_COST, hashPassword, normalizeEmail, randomToken, sha256, validPassword, verifyPassword } from './security.js';
 
 const MINUTE = 60_000;
@@ -46,6 +47,7 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
     if (count) for (const [, key] of keyed) limiter.hit(key);
     return keyed;
   }
+  limit.hit = key => limiter.hit(key);
 
   const audit = (event, userId = null, itemId = null) => db.prepare(
     'INSERT INTO audit (event, user_hash, item_id, created_at) VALUES (?, ?, ?, ?)',
@@ -236,6 +238,7 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
   }
 
   const library = libraryRoutes({ route, db, now, config, secret, requireUser, audit });
+  privacyRoutes({ route, db, now, config, requireUser, audit, library, limit, clearSessionCookie: () => sessionCookie('', 0) });
 
   // Protected-route probe used by tests and the UI: proves the session is accepted server-side.
   route('GET', /^\/api\/account$/, ({ request }) => ({ body: { email: requireUser(request).email } }));

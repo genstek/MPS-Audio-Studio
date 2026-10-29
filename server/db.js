@@ -72,6 +72,22 @@ const MIGRATIONS = [
      finished_at INTEGER
    );
    CREATE INDEX jobs_owner ON jobs(owner_id);`,
+  // LAS-24: recipient-specific consent for external processing, and what was sent under it.
+  `CREATE TABLE consents (
+     user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+     recipient TEXT NOT NULL,
+     granted_at INTEGER NOT NULL,
+     PRIMARY KEY (user_id, recipient)
+   );
+   CREATE TABLE external_transmissions (
+     id TEXT PRIMARY KEY,
+     user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+     asset_id TEXT REFERENCES assets(id) ON DELETE SET NULL,
+     recipient TEXT NOT NULL,
+     bytes INTEGER NOT NULL,
+     sha256 TEXT NOT NULL,
+     created_at INTEGER NOT NULL
+   );`,
 ];
 
 export function openDatabase(path) {
