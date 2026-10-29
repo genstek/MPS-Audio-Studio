@@ -1,0 +1,42 @@
+LOUDNESS, PEAKS AND DYNAMICS
+Integrated loudness	−23.0 LUFS
+Loudness range	0.0 LU
+Max momentary loudness (400 ms)	−23.0 LUFS
+Max short-term loudness (3 s)	−23.0 LUFS
+True peak (4× oversampled)	−23.00 dBTP
+Sample peak	−23.00 dBFS
+RMS level	−26.0 dBFS
+Crest factor (sample peak − RMS)	3.0 dB
+Peak to loudness ratio (true peak − integrated)	0.0 dB
+DC offset	0.000 % / 0.000 %
+Clipping (full-scale runs of 3+ samples)	None detected
+STEREO
+Correlation (L/R)	+1.00
+Side relative to mid	No side signal (left = right)
+Balance (left − right)	0.0 dB
+Loudness change in mono	0.0 LU
+SPECTRUM: SHARE OF ENERGY PER OCTAVE BAND
+Band	Share	Relative to total
+31.5 Hz
+0.0 %	below −90 dB
+63 Hz
+0.0 %	below −90 dB
+125 Hz
+0.0 %	below −90 dB
+250 Hz
+0.0 %	below −90 dB
+500 Hz
+0.0 %	below −90 dB
+1 kHz
+100.0 %	0.0 dB
+2 kHz
+0.0 %	below −90 dB
+4 kHz
+0.0 %	−81.2 dB
+8 kHz
+0.0 %	−85.2 dB
+16 kHz
+0.0 %	−80.0 dB
+
+mps-analysis-1 · 48,000 Hz · stereo · 16-bit PCM · whole file 0:00.0–0:20.0
+Source SHA-256 d47a40705aa244b4bf708315b68e21a0c2b4009e0dccfd3d3e875c578800bfde
