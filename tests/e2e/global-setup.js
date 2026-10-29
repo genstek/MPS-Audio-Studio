@@ -20,5 +20,9 @@ export default async function globalSetup(config) {
   if (served !== expected) {
     throw new Error(`The server at ${baseURL} serves ${served} (pid ${identity.pid}), not this checkout ${expected}. Stop that server or run the tests from that folder.`);
   }
-  console.log(`Testing the app served from ${served} (pid ${identity.pid}) at ${baseURL}`);
+  const expectedApi = 'http://127.0.0.1:8788';
+  if (identity.api !== expectedApi) {
+    throw new Error(`The server at ${baseURL} forwards /api to ${identity.api}, not the test account server ${expectedApi}. Stop it so the tests can start their own.`);
+  }
+  console.log(`Testing the app served from ${served} (pid ${identity.pid}) at ${baseURL}, accounts at ${identity.api}`);
 }
