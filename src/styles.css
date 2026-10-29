@@ -30,7 +30,23 @@ button[aria-pressed='true'] { border-color: #d7af6c; color: #e8c58d; }
 .account-button { padding: 5px 14px; font-size: 13px; }
 /* Account dialog (LAS-21): native modal dialog, readable sizes, visible errors. */
 .account-dialog { width: min(420px, calc(100vw - 32px)); background: #1c2329; color: #ecedf0; border: 1px solid #52616c; border-radius: 10px; padding: 20px 22px; }
-.account-dialog::backdrop { background: #0009; }
+.account-dialog::backdrop, .analysis-dialog::backdrop { background: #0009; }
+.analysis-dialog { width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow: auto; background: #1c2329; color: #ecedf0; border: 1px solid #52616c; border-radius: 10px; padding: 20px 22px; }
+.analysis-dialog > * + * { margin-top: 10px; }
+.analysis-file { font-size: 13px; color: #aebac4; overflow-wrap: anywhere; }
+.analysis-report { display: grid; gap: 14px; }
+.analysis-note { padding: 8px 10px; border-radius: 6px; background: #2a2416; color: #f0d79a; font-size: 13px; }
+.analysis-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.analysis-table caption { text-align: left; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #a7b2bc; padding-bottom: 4px; }
+.analysis-table th, .analysis-table td { padding: 4px 6px; border-bottom: 1px solid #2c353d; text-align: left; vertical-align: top; }
+.analysis-table th { font-weight: 400; color: #c5ced6; }
+.analysis-table td { font-variant-numeric: tabular-nums; white-space: nowrap; text-align: right; }
+.spectrum-table thead th { font-size: 11px; color: #a7b2bc; }
+.spectrum-table thead th + th { text-align: right; }
+.spectrum-bar { display: inline-block; width: 64px; height: 6px; margin-right: 8px; background: #11161a; border-radius: 3px; vertical-align: middle; overflow: hidden; }
+.spectrum-bar > span { display: block; height: 100%; background: #6fc3b2; }
+.analysis-meta { font-size: 11px; color: #a7b2bc; line-height: 1.6; overflow-wrap: anywhere; }
+.analysis-meta code { font-size: 10px; }
 .account-heading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .account-heading h2 { font-size: 18px; }
 .dialog-close { padding: 2px 10px; font-size: 18px; line-height: 1; }
@@ -69,7 +85,7 @@ button.danger { border-color: #c17474; background: #4d2428; }
 .badge { font-size: 9px; letter-spacing: 1px; }
 .heading-tools { display: flex; align-items: center; gap: 12px; }
 /* Small enough that the Tracks heading row keeps its height. */
-.remove-track { padding: 2px 10px; font-size: 11px; }
+.remove-track, .analyze-track { padding: 2px 10px; font-size: 11px; }
 .tracks { display: flex; flex-direction: column; min-height: min-content; }
 .tracks > .panel-heading, .track-footer { flex-shrink: 0; }
 /* Tracks content is a size container: stacked by default, a compact row (text beside the

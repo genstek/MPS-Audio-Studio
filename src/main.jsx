@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createAudioEngine } from './audio-engine.js';
 import { AccountDialog } from './AccountDialog.jsx';
+import { AnalysisDialog } from './AnalysisDialog.jsx';
 import './styles.css';
 
 // Seconds as mm:ss.t, rounded to a tenth of a second.
@@ -125,7 +126,7 @@ function App() {
 
       <div className="workspace">
         <section className="tracks panel" aria-labelledby="tracks-title">
-          <div className="panel-heading"><h2 id="tracks-title">Tracks</h2><div className="heading-tools">{track && <button className="remove-track" onClick={removeTrack}>Remove track</button>}<span className="badge">{track ? '01 TRACK' : '00 TRACKS'}</span></div></div>
+          <div className="panel-heading"><h2 id="tracks-title">Tracks</h2><div className="heading-tools">{track && <><AnalysisDialog file={currentFile} /><button className="remove-track" onClick={removeTrack}>Remove track</button></>}<span className="badge">{track ? '01 TRACK' : '00 TRACKS'}</span></div></div>
           <div className="track-space"><div className="track-content">
             <span className="audio-icon" aria-hidden="true"><span>♫</span></span>
             <h3 title={track ? track.name : undefined}>{track ? track.name : 'Your session starts here'}</h3>
