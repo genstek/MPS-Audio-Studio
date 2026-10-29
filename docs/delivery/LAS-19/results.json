@@ -1,0 +1,34 @@
+{
+  "issue": "LAS-19",
+  "applicationCommit": null,
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "ADR-003 covers options, decision, ownership, setup, costs and rollback (document review)",
+      "status": "PASS",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["../../ADR-003-accounts-and-private-storage.md"]
+    },
+    {
+      "name": "Flow diagram and endpoint x caller matrix (document review)",
+      "status": "PASS",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["README.md"]
+    },
+    {
+      "name": "Behaviour of the documented rules",
+      "status": "NOT_APPLICABLE",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["../LAS-21/", "../LAS-22/", "../LAS-23/", "../LAS-24/", "../LAS-25/"]
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "../../ADR-003-accounts-and-private-storage.md"],
+  "blockers": ["Production hosting, HTTPS, mail provider credentials and backups are external setup items"],
+  "jiraSync": "SYNC_PENDING",
+  "decisionStatus": "proposed, awaiting Gennady's review",
+  "branch": "docs/LAS-19-auth-architecture"
+}
