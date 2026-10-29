@@ -1,0 +1,14 @@
+Error: The server at http://127.0.0.1:5173 forwards /api to http://127.0.0.1:8787, not the test account server http://127.0.0.1:8788. Stop it so the tests can start their own.
+
+   at global-setup.js:25
+
+  23 |   const expectedApi = 'http://127.0.0.1:8788';
+  24 |   if (identity.api !== expectedApi) {
+> 25 |     throw new Error(`The server at ${baseURL} forwards /api to ${identity.api}, not the test account server ${expectedApi}. Stop it so the tests can start their own.`);
+     |           ^
+  26 |   }
+  27 |   console.log(`Testing the app served from ${served} (pid ${identity.pid}) at ${baseURL}, accounts at ${identity.api}`);
+  28 | }
+    at globalSetup (/home/user/MPS-Audio-Studio-delivery/tests/e2e/global-setup.js:25:11)
+
+exit=1

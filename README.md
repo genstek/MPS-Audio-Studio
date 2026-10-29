@@ -4,7 +4,7 @@ Approved direction: **React + Vite + JavaScript + Web Audio API**, with JavaScri
 
 ## Run on your Mac
 
-Requires Node.js 22.12+ (verified with 22.17.0), npm and Google Chrome in Applications.
+Requires Node.js 22.13+ (verified with 22.17.0; the optional account server uses Node's built-in SQLite), npm and Google Chrome in Applications.
 
 ```sh
 cd "/Users/g_lab/Documents/ChatGPT/LoVerse OS - Mastering/MPS-Audio-Studio"
@@ -12,7 +12,9 @@ npm ci
 npm run dev -- --port 5174 --strictPort
 ```
 
-Open <http://127.0.0.1:5174>. Keep the Terminal window open; Control-C stops the app. To use another checkout, change the `cd` path. No server account or audio upload is involved.
+Open <http://127.0.0.1:5174>. Keep the Terminal window open; Control-C stops the app. To use another checkout, change the `cd` path. Playing audio needs no account, server or upload.
+
+Optional accounts ([ADR-003](docs/ADR-003-accounts-and-private-storage.md)): in a second Terminal run `npm run server` (account server on port 8787, data in `.data/dev`, ignored by Git). The **Account** button then lets you create an account, verify it and sign in. In development, emails are not sent: open `http://127.0.0.1:5174/api/dev/outbox?to=<your test email>` to read the verification link. Without the server the studio works as before and the Account dialog says accounts are unavailable.
 
 The JavaScript React/Vite app has an empty session, transport, track area, planned processing strips and master section. Import a WAV (up to 100 MiB) for local decoding and single-track Play / Pause / Stop. Decoded sample rate may differ from the original because AudioContext may resample. Replacement decode errors preserve the previous track. EQ, dynamics, multitrack, waveform/seek, level controls, meters and export are visibly unavailable; no mastering processing is claimed.
 
@@ -27,7 +29,7 @@ npm run test:e2e:report                # open the latest HTML results
 npm run check                         # lint + unit tests + build + browser tests
 ```
 
-Run these from the same repository directory. Test runs use port **5173**; the app you open manually uses **5174**, so they can run together. If something already listens on 5173, the tests reuse it only after it proves it serves this same folder: the app's dev server answers `http://127.0.0.1:5173/__mps-checkout` with its folder, and `tests/e2e/global-setup.js` stops the run with a clear message when it is another checkout (or an older build without that answer). The first line of a run prints which folder and process served the app. UI mode opens an explorer: select a test and press Run. The HTML report contains the last completed run, not the current app state. Terminal output gives the pass/fail summary and exits nonzero on failure. Failure screenshots and traces are kept in `test-results/`; the report links to them. To keep a report, zip the `playwright-report/` folder before the next run. Generated results are ignored by Git.
+Run these from the same repository directory. Test runs use port **5173** and start their own account server on **8788** with fresh data; the app you open manually uses **5174** (and 8787), so they can run together. If something already listens on 5173, the tests reuse it only after it proves it serves this same folder: the app's dev server answers `http://127.0.0.1:5173/__mps-checkout` with its folder, and `tests/e2e/global-setup.js` stops the run with a clear message when it is another checkout (or an older build without that answer). The first line of a run prints which folder and process served the app. UI mode opens an explorer: select a test and press Run. The HTML report contains the last completed run, not the current app state. Terminal output gives the pass/fail summary and exits nonzero on failure. Failure screenshots and traces are kept in `test-results/`; the report links to them. To keep a report, zip the `playwright-report/` folder before the next run. Generated results are ignored by Git.
 
 This configuration uses installed Google Chrome (Chromium engine) via `channel: 'chrome'`. On this macOS 13.7.8 machine, the current Playwright managed Chromium download was unsupported; no `npx playwright install` is needed for the Chrome channel. If Chrome is missing, install it in Applications first. On a machine without Chrome, point the tests at another Chromium build: `PLAYWRIGHT_EXECUTABLE_PATH=/path/to/chromium npm run check`.
 
