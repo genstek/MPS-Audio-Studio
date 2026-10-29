@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LoVerse issue delivery evidence",
+  "type": "object",
+  "required": [
+    "issue",
+    "applicationCommit",
+    "deliveryStatus",
+    "manualQa",
+    "checks",
+    "artifacts",
+    "blockers",
+    "jiraSync"
+  ],
+  "properties": {
+    "issue": {
+      "type": "string",
+      "pattern": "^LAS-[0-9]+$"
+    },
+    "applicationCommit": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "deliveryStatus": {
+      "enum": [
+        "NOT_STARTED",
+        "IN_PROGRESS",
+        "BLOCKED",
+        "READY_FOR_QA"
+      ]
+    },
+    "manualQa": {
+      "enum": [
+        "NOT_RUN",
+        "PASS",
+        "FAIL",
+        "BLOCKED",
+        "NOT_APPLICABLE"
+      ]
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "status",
+          "command",
+          "exitCode",
+          "evidence"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "NOT_RUN",
+              "NOT_APPLICABLE"
+            ]
+          },
+          "command": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "exitCode": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "jiraSync": {
+      "enum": [
+        "NOT_ATTEMPTED",
+        "SYNC_PENDING",
+        "POSTED"
+      ]
+    }
+  },
+  "additionalProperties": true
+}

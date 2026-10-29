@@ -1,0 +1,73 @@
+[
+  {
+    "id": 2,
+    "state": "active",
+    "name": "SCRUM Sprint 0",
+    "startDate": "2026-10-19T07:23:23.563Z",
+    "endDate": "2026-11-02T07:23:23.563Z",
+    "originBoardId": 1
+  },
+  {
+    "id": 1,
+    "state": "future",
+    "name": "LAS Sprint 01",
+    "originBoardId": 1,
+    "goal": "Accounts, privacy rules and agreed UI/UX direction. Scope and acceptance criteria: LAS-40."
+  },
+  {
+    "id": 3,
+    "state": "future",
+    "name": "LAS Sprint 02",
+    "originBoardId": 1,
+    "goal": "Recovery, private files, data isolation, deletion/consent, security tests and UX wireframes. See LAS-40."
+  },
+  {
+    "id": 4,
+    "state": "future",
+    "name": "LAS Sprint 03",
+    "originBoardId": 1,
+    "goal": "Audio analysis, validated DSP chain and approved design system. See LAS-40."
+  },
+  {
+    "id": 5,
+    "state": "future",
+    "name": "LAS Sprint 04",
+    "originBoardId": 1,
+    "goal": "Mastering controls, level-matched A/B, WAV export and redesigned studio shell. See LAS-40."
+  },
+  {
+    "id": 6,
+    "state": "future",
+    "name": "LAS Sprint 05",
+    "originBoardId": 1,
+    "goal": "Reference audio profiles and level-matched comparison. See LAS-40."
+  },
+  {
+    "id": 7,
+    "state": "future",
+    "name": "LAS Sprint 06",
+    "originBoardId": 1,
+    "goal": "Explainable processing proposals, preferences and reusable presets. See LAS-40."
+  },
+  {
+    "id": 8,
+    "state": "future",
+    "name": "LAS Sprint 07",
+    "originBoardId": 1,
+    "goal": "Synchronized stems, per-channel processing, advanced workflows and UX validation. See LAS-40."
+  },
+  {
+    "id": 9,
+    "state": "future",
+    "name": "LAS Sprint 08",
+    "originBoardId": 1,
+    "goal": "Evaluate AI stem separation and native plugin-host feasibility. See LAS-40."
+  },
+  {
+    "id": 10,
+    "state": "future",
+    "name": "LAS Sprint 09",
+    "originBoardId": 1,
+    "goal": "Gated plugin-host prototype and feasibility of training an audio model. See LAS-40."
+  }
+]

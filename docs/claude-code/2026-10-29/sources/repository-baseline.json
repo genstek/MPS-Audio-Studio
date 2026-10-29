@@ -1,0 +1,27 @@
+{
+  "main": "364d863de109d1e474bff0635bc0b451224e8860",
+  "repository": "genstek/MPS-Audio-Studio",
+  "inspected_files": [
+    "AGENTS.md",
+    "README.md",
+    "docs/PRD.md",
+    "docs/ARCHITECTURE.md",
+    "docs/ADR-002-web-first.md",
+    "docs/SCRUM-6_AUDIT.md",
+    "docs/UX_DESIGN.md",
+    "docs/DSP_SPEC.md",
+    "docs/QA_ACCEPTANCE.md",
+    "docs/IMPLEMENTATION_PLAN.md",
+    "docs/PRESETS_AND_PLUGINS.md",
+    "reference/REFERENCE_BASELINE.md",
+    "src/main.jsx",
+    "src/audio-engine.js",
+    "package.json",
+    "playwright.config.js",
+    "tests/unit/audio-engine.test.js",
+    "tests/e2e/playback.spec.js"
+  ],
+  "retrieved_at": "2026-10-29",
+  "application_tests_executed": false,
+  "claude_session_started": false
+}

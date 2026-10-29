@@ -1,0 +1,1521 @@
+{
+  "packageVersion": 1,
+  "snapshotDate": "2026-10-29",
+  "timezone": "Asia/Jerusalem",
+  "repository": "genstek/MPS-Audio-Studio",
+  "mainCommit": "364d863de109d1e474bff0635bc0b451224e8860",
+  "branch": "docs/LAS-40-claude-code-handoff-2026-10-29",
+  "jiraIssueCount": 56,
+  "workOrderCount": 36,
+  "futureSprintWorkOrderCount": 27,
+  "claudeDispatched": false,
+  "claudeDispatchBlocker": "No Claude CLI in the current execution environment; browser is at Claude sign-in. No session/job receipt exists.",
+  "applicationTestsRunDuringPreparation": false,
+  "orders": [
+    {
+      "key": "LAS-7",
+      "title": "Build runnable web mixer shell with Fostex-inspired channel strips",
+      "kind": "VERIFY_EXISTING",
+      "jiraStatus": "In Progress",
+      "sprint": "SCRUM Sprint 0",
+      "parent": "LAS-5",
+      "dependencies": [],
+      "effectiveDependencies": [],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Audit the current React shell against this story; reuse the merged implementation rather than scaffold a second app.",
+        "Check console/network errors, empty-state accessibility and disabled future processors. Capture the exact tested commit and current smaller-window behavior."
+      ],
+      "scenarios": [
+        "Clean session → open the app at 1280×720 and 1440×900 → named Transport/Tracks/Master/Mixer regions and Import appear, without runtime errors.",
+        "Inspect unavailable processing controls → they remain disabled and clearly labeled until their real engine implementation lands."
+      ],
+      "path": "tasks/LAS-7.md",
+      "resultPath": "docs/delivery/LAS-7/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-8",
+      "title": "Import WAV audio and display a track in the mixer",
+      "kind": "VERIFY_AND_CLOSE_GAPS",
+      "jiraStatus": "To Do",
+      "sprint": "Unscheduled foundation work; do not assign a sprint silently.",
+      "parent": "LAS-5",
+      "dependencies": [],
+      "effectiveDependencies": [],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Retain local WAV import, the current 100 MiB boundary and decoded-rate labeling; browser AudioContext can resample.",
+        "Cover RIFF/WAVE header validation, valid-header/invalid-payload decode errors, replacement failure, same-file reimport and overlapping-load lifecycle. Do not implement drag/drop unless separately justified by the story."
+      ],
+      "scenarios": [
+        "Import a synthetic PCM16 44.1 kHz WAV → correct name, channels, decoded duration/rate and Ready appear.",
+        "While a valid track exists, replace it with valid-header undecodable audio → actionable error; previous track remains usable.",
+        "Try empty, wrong extension, disguised/corrupt data and documented size boundaries → recoverable rejection; a later valid import succeeds."
+      ],
+      "path": "tasks/LAS-8.md",
+      "resultPath": "docs/delivery/LAS-8/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-9",
+      "title": "Implement real Play/Pause transport for imported WAV",
+      "kind": "VERIFY_AND_CLOSE_GAPS",
+      "jiraStatus": "To Do",
+      "sprint": "Unscheduled foundation work; do not assign a sprint silently.",
+      "parent": "LAS-5",
+      "dependencies": [],
+      "effectiveDependencies": [],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Keep engine-owned source/context lifecycle and user-gesture playback. Existing unit tests check saved offset and stop reset; visible status alone does not prove output timing.",
+        "Reconcile the existing comment requesting elapsed time/playhead: add a minimal real engine time display if needed to satisfy observability, without treating a full waveform editor as already implemented."
+      ],
+      "scenarios": [
+        "Known recognizable track → Play to a marked segment → Pause, wait, Play → resumes from the stored position.",
+        "Stop then Play → starts at zero; natural end resets to the documented state.",
+        "Rapid actions and a failed replacement decode → no overlapping sources, stale onended callback or UI freeze."
+      ],
+      "path": "tasks/LAS-9.md",
+      "resultPath": "docs/delivery/LAS-9/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-10",
+      "title": "Set up Playwright JS and first browser smoke tests",
+      "kind": "VERIFY_AND_COMPLETE_TEST_COVERAGE",
+      "jiraStatus": "In Progress",
+      "sprint": "SCRUM Sprint 0",
+      "parent": "LAS-5",
+      "dependencies": [],
+      "effectiveDependencies": [],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Preserve the JavaScript Playwright/Vitest setup and existing tests. Map TC-001 to LAS-53 and valid-WAV TC-002 to LAS-57; do not create duplicate test cases.",
+        "Keep role/label locators, synthetic fixtures, real expected states and beginner-readable comments. Do not weaken geometry assertions. Document HTML ZIP, trace and exact run commands.",
+        "Reconcile README port 5174 with current Playwright 5173. Prove which checkout owns the server when reuseExistingServer is true. CI is proposed as a separate follow-on in the original AC, not a fabricated existing workflow."
+      ],
+      "scenarios": [
+        "Run the current suite against the intended commit/server → report actual pass/fail/skip and environment.",
+        "Trigger a controlled assertion failure on a throwaway test branch → actionable trace/screenshot/HTML report, without altering product expectations to make it green.",
+        "Map each browser assertion to the source manual case and give Gennady the command and report path."
+      ],
+      "path": "tasks/LAS-10.md",
+      "resultPath": "docs/delivery/LAS-10/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-11",
+      "title": "Resume paused audio with either Pause or Play",
+      "kind": "IMPLEMENT",
+      "jiraStatus": "To Do",
+      "sprint": "Unscheduled foundation work; do not assign a sprint silently.",
+      "parent": "LAS-5",
+      "dependencies": [],
+      "effectiveDependencies": [],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Make Pause toggle playing↔paused using the real engine; Play must also resume from pause. Keep Stop resetting to zero.",
+        "Use explicit transport state and guards for pending resume/load operations; repeated gestures must never create two active sources."
+      ],
+      "scenarios": [
+        "Playing → Pause → Pause → resumes at the same offset.",
+        "Playing → Pause → Play → resumes at the same offset.",
+        "Repeated toggles and Stop → no overlapping playback; empty/decoding controls stay consistent."
+      ],
+      "path": "tasks/LAS-11.md",
+      "resultPath": "docs/delivery/LAS-11/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-12",
+      "title": "Unload the imported track and return the mixer to its empty state",
+      "kind": "IMPLEMENT",
+      "jiraStatus": "To Do",
+      "sprint": "Unscheduled foundation work; do not assign a sprint silently.",
+      "parent": "LAS-5",
+      "dependencies": [],
+      "effectiveDependencies": [],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Add one accessible Remove track/Unload action for the current single-track session. Implement engine unload distinct from permanent engine disposal.",
+        "Stop/disconnect active nodes, clear decoded buffer/metadata/offset and invalidate pending loads so removed audio cannot reappear. Preserve the source file."
+      ],
+      "scenarios": [
+        "Unload while Playing, Paused and Stopped → silence, empty metadata, zero position and empty-state controls.",
+        "Unload during an in-flight replacement when the action is supported → a late decode cannot restore the removed track.",
+        "Reimport the same WAV and a different WAV → normal playback, with resources released and original bytes unchanged."
+      ],
+      "path": "tasks/LAS-12.md",
+      "resultPath": "docs/delivery/LAS-12/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-19",
+      "title": "Choose authentication architecture and define account/session flows",
+      "kind": "ARCHITECTURE",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 01",
+      "parent": "LAS-13",
+      "dependencies": [],
+      "effectiveDependencies": [],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Inspect the repository: it is currently a local browser app with no auth backend. Add a concrete ADR before introducing the backend/provider boundary.",
+        "Prefer a runnable development environment with verification/recovery test mail; document provider costs, production credentials and deployment as external setup blockers. No fake localStorage authentication.",
+        "Keep guest/local playback runnable and testable without a paid provider."
+      ],
+      "scenarios": [
+        "Follow the ADR setup from clean configuration → local guest playback works and chosen development auth is reproducible.",
+        "Review the endpoint/session matrix → anonymous, verified owner, unverified and expired/revoked sessions have explicit rules."
+      ],
+      "path": "tasks/LAS-19.md",
+      "resultPath": "docs/delivery/LAS-19/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-20",
+      "title": "Define privacy rules, data lifecycle and threat model for studio assets",
+      "kind": "ARCHITECTURE",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 01",
+      "parent": "LAS-14",
+      "dependencies": [],
+      "effectiveDependencies": [],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Inventory source audio, references, stems, profiles, projects, jobs, exports, logs and backups. Document local/server/external trust boundaries and ownership.",
+        "Specify retention and deletion propagation, backup expiry, opt-in consent and a verifiable local-only no-upload mode before enabling storage."
+      ],
+      "scenarios": [
+        "Trace import→analysis→preview→export in local-only mode → no audio network transmission.",
+        "Review threat scenarios → takeover, ID guessing, shared links, parser abuse, logs and backups each have a control and a test owner."
+      ],
+      "path": "tasks/LAS-20.md",
+      "resultPath": "docs/delivery/LAS-20/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-21",
+      "title": "Add registration, verified login and logout to the studio",
+      "kind": "IMPLEMENT",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 01",
+      "parent": "LAS-13",
+      "dependencies": [
+        "LAS-19"
+      ],
+      "effectiveDependencies": [
+        "LAS-19"
+      ],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Implement registration/verification/login/logout with the LAS-19 decision and development mail infrastructure. Server/provider validates sessions.",
+        "Separate backend-enforced auth from route presentation; redact credentials/tokens from all test traces and logs. Keep guest audio available according to ADR."
+      ],
+      "scenarios": [
+        "Register a new test account → verify email → valid login grants the intended access.",
+        "Invalid credentials/unverified login → safe errors and no protected access.",
+        "Logout → old session fails direct protected API requests as well as UI routing."
+      ],
+      "path": "tasks/LAS-21.md",
+      "resultPath": "docs/delivery/LAS-21/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-22",
+      "title": "Add password recovery, session expiry and authentication abuse controls",
+      "kind": "IMPLEMENT",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 02",
+      "parent": "LAS-13",
+      "dependencies": [
+        "LAS-21"
+      ],
+      "effectiveDependencies": [
+        "LAS-21"
+      ],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Use provider-backed recovery, bounded token lifetime/single use, session revocation policy and tested rate limits.",
+        "Test time deterministically where possible; do not use long sleeps or expose account existence in recovery responses."
+      ],
+      "scenarios": [
+        "Reset with a valid token → password changes and old sessions obey the documented revocation rule.",
+        "Expired, reused or forged token → denied; repeated attempts → throttled with a safe recovery path.",
+        "Expired session during a protected operation → clear state, no data leak or false save success."
+      ],
+      "path": "tasks/LAS-22.md",
+      "resultPath": "docs/delivery/LAS-22/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-23",
+      "title": "Enforce private audio storage, ownership checks and safe uploads",
+      "kind": "IMPLEMENT",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 02",
+      "parent": "LAS-14",
+      "dependencies": [
+        "LAS-21",
+        "LAS-20"
+      ],
+      "effectiveDependencies": [
+        "LAS-21",
+        "LAS-20"
+      ],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Enforce owner checks for every operation on projects/audio/references/stems/jobs/exports. Use private storage and scoped expiring downloads.",
+        "Validate actual file content/size and isolate parsing with time/memory bounds. Test API/storage access independently of the UI."
+      ],
+      "scenarios": [
+        "Account B guesses A’s IDs for list/read/write/delete/process/download → every unauthorized operation fails.",
+        "Anonymous and expired signed-link access → rejected under policy.",
+        "Disguised, malformed, oversized and path-manipulating uploads → rejected; valid authorized upload still succeeds."
+      ],
+      "path": "tasks/LAS-23.md",
+      "resultPath": "docs/delivery/LAS-23/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-24",
+      "title": "Add project/account deletion and explicit external-processing consent",
+      "kind": "IMPLEMENT",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 02",
+      "parent": "LAS-14",
+      "dependencies": [
+        "LAS-23"
+      ],
+      "effectiveDependencies": [
+        "LAS-23"
+      ],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Make project/account deletion propagate to derived audio, jobs, metadata and access permissions according to the LAS-20 policy.",
+        "Require recipient/location-specific consent before external transmission; cancellation before upload must send no audio. Do not auto-enable an external service for convenience."
+      ],
+      "scenarios": [
+        "Delete a disposable project → source/derived access revoked and applicable jobs cancelled.",
+        "Delete a test account → purge/backup-expiry behavior and exceptions match policy.",
+        "Cancel or withhold external-processing consent → network evidence shows zero audio upload."
+      ],
+      "path": "tasks/LAS-24.md",
+      "resultPath": "docs/delivery/LAS-24/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-25",
+      "title": "Verify authentication, cross-user isolation and sensitive-data handling",
+      "kind": "VALIDATE_IMPLEMENTATION",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 02",
+      "parent": "LAS-14",
+      "dependencies": [
+        "LAS-22",
+        "LAS-23",
+        "LAS-24"
+      ],
+      "effectiveDependencies": [
+        "LAS-22",
+        "LAS-23",
+        "LAS-24"
+      ],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Create a two-account authorization matrix and direct API/storage regression suite alongside UI coverage.",
+        "Inspect sanitized bundles, logs, artifacts, dependency/configuration results; classify findings and exact limits. This technical validation is not Gennady’s later manual sign-off."
+      ],
+      "scenarios": [
+        "Run anonymous/owner/other-user/expired-session matrix for each operation → expected allow/deny results with evidence.",
+        "Repeat logout/reset, invalid upload, deletion and consent tests → no regressions and no secrets in artifacts."
+      ],
+      "path": "tasks/LAS-25.md",
+      "resultPath": "docs/delivery/LAS-25/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-26",
+      "title": "Analyze WAV loudness, true peaks, spectrum, dynamics and stereo behavior",
+      "kind": "IMPLEMENT",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 03",
+      "parent": "LAS-15",
+      "dependencies": [],
+      "effectiveDependencies": [],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Build actual analysis with algorithm/version/sample-rate/segment metadata; workers or a documented non-blocking path handle long data.",
+        "Validate integrated loudness, sample peak, oversampled true peak, dynamics, spectrum and stereo indicators against independent fixtures/tools. Define silence/mono/unsupported states."
+      ],
+      "scenarios": [
+        "Silence, tones, impulses, mono/stereo, clipped and intersample-peak fixtures → finite, correctly labeled values within declared tolerances.",
+        "Analyze a representative long WAV → UI stays usable; cancel/retry and corrupt input recover safely.",
+        "Compare an identical file/segment twice → reproducible measurements; source hash unchanged."
+      ],
+      "path": "tasks/LAS-26.md",
+      "resultPath": "docs/delivery/LAS-26/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-27",
+      "title": "Implement a reproducible EQ, compressor and limiter processing chain",
+      "kind": "IMPLEMENT",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 03",
+      "parent": "LAS-15",
+      "dependencies": [
+        "LAS-26"
+      ],
+      "effectiveDependencies": [
+        "LAS-26"
+      ],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Create a versioned parameter schema and a validated EQ→compressor→limiter chain with documented preview/offline semantics. Do not turn unavailable controls into decorations.",
+        "Preserve the user-requested 24 independent parametric bands per L and per R, Left/Right/Link, 20 Hz–min(20 kHz,0.45×sampleRate), gain/Q/type. See REQUIREMENT_RECONCILIATION.md; introduce in small testable slices within this task.",
+        "Use stable/smoothed parameters and a verified transfer response, not a Gaussian UI curve. Characterize compressor timing and limiter latency/oversampled true-peak detection. Optional reverb/saturation remain deferred by this ticket."
+      ],
+      "scenarios": [
+        "Change one left-channel EQ band → measured left response changes; right response stays unchanged; Link edits both according to documented semantics.",
+        "Impulse/sweep/level-step fixtures → response, attack/release, limiter ceiling, latency, bypass and no-NaN guards pass at supported sample rates.",
+        "Serialize/reload the chain → same parameters and deterministic output within tolerance."
+      ],
+      "path": "tasks/LAS-27.md",
+      "resultPath": "docs/delivery/LAS-27/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-28",
+      "title": "Add editable mastering controls, level-matched A/B and processed WAV export",
+      "kind": "IMPLEMENT",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 04",
+      "parent": "LAS-15",
+      "dependencies": [
+        "LAS-27"
+      ],
+      "effectiveDependencies": [
+        "LAS-27"
+      ],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Connect editable controls to the real LAS-27 parameter model; implement per-module bypass, undo, saved snapshots and position-preserving level-matched original/processed A/B.",
+        "Expose the interactive 24-band L/R/Link EQ with drag Frequency/Gain, Q control, numeric/keyboard editing and real response plot. Live spectrum must measure actual samples.",
+        "Export actual processed 24-bit PCM WAV using equivalent offline DSP; record sample rate/channels/bit depth, render cancellation/tail/latency/dither policy. Independently inspect duration/header/peaks/parity."
+      ],
+      "scenarios": [
+        "Drag/numerically edit an EQ point and Q at supported sizes → correct engine parameter/channel; keyboard access works; undo restores prior state.",
+        "Toggle original/processed at the same musical position → documented constant gain matching and no unexpected state reset.",
+        "Export then independently decode/analyze → valid processed WAV, expected duration/channels/rate/depth, original unchanged and preview/export parity within tolerance."
+      ],
+      "path": "tasks/LAS-28.md",
+      "resultPath": "docs/delivery/LAS-28/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-29",
+      "title": "Establish DSP regression fixtures and a mastering listening-review protocol",
+      "kind": "VALIDATE_IMPLEMENTATION",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 04",
+      "parent": "LAS-15",
+      "dependencies": [
+        "LAS-28"
+      ],
+      "effectiveDependencies": [
+        "LAS-28"
+      ],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Create deterministic synthetic DSP fixtures and an independent measurement/parity harness. Record the actual algorithms/tolerances and golden versioning policy.",
+        "Prepare a matched-loudness listening protocol for Gennady. Lia v6 is an approved sonic target; obtain the real authorized file/checksum before matching. Historical loudness figures are not measurements of current files."
+      ],
+      "scenarios": [
+        "Run filter/compressor/limiter/mono/correlation/parity fixtures → measured outputs and explicit tolerances, including negative tests.",
+        "Prepare original/processed/reference listening examples → same segment/time alignment, documented constant gain, blind labels if feasible; human verdict remains Not Run until listened."
+      ],
+      "path": "tasks/LAS-29.md",
+      "resultPath": "docs/delivery/LAS-29/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-30",
+      "title": "Import reference audio and save versioned sound profiles",
+      "kind": "IMPLEMENT",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 05",
+      "parent": "LAS-16",
+      "dependencies": [
+        "LAS-26",
+        "LAS-23"
+      ],
+      "effectiveDependencies": [
+        "LAS-26",
+        "LAS-23"
+      ],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Import an owner-private reference, choose a segment and store versioned measured profiles with file identity/checksum, analysis version and units.",
+        "Persist profile metadata and file ownership/deletion behavior with LAS-23; keep styles/versions separate and handle silence/invalid segments."
+      ],
+      "scenarios": [
+        "Import reference and select segment → profile identifies exact source/segment and actual measurements.",
+        "Reanalyze unchanged file/segment → stable profile within tolerance; other user cannot access it.",
+        "Delete source/project according to policy → no orphan accessible reference derivatives."
+      ],
+      "path": "tasks/LAS-30.md",
+      "resultPath": "docs/delivery/LAS-30/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-31",
+      "title": "Compare a mix with its reference at matched loudness",
+      "kind": "IMPLEMENT",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 05",
+      "parent": "LAS-16",
+      "dependencies": [
+        "LAS-30",
+        "LAS-28"
+      ],
+      "effectiveDependencies": [
+        "LAS-30",
+        "LAS-28"
+      ],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Compare matched source/reference segments using the LAS-26/30 metrics and LAS-28 monitor path. Keep comparison separate from processing.",
+        "Display units, uncertainty and unsupported conditions. Selecting a reference must not silently alter audio."
+      ],
+      "scenarios": [
+        "Switch comparable source/reference segments → measured spectral/dynamic/stereo differences and level-matched monitor.",
+        "Different lengths, mono/stereo and silent segments → honest supported/unsupported outcomes with no divide-by-zero.",
+        "Select another reference → no DSP parameters change until a proposal is explicitly applied."
+      ],
+      "path": "tasks/LAS-31.md",
+      "resultPath": "docs/delivery/LAS-31/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-32",
+      "title": "Generate and apply an explainable reference-guided mastering proposal",
+      "kind": "IMPLEMENT",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 06",
+      "parent": "LAS-16",
+      "dependencies": [
+        "LAS-31",
+        "LAS-29"
+      ],
+      "effectiveDependencies": [
+        "LAS-31",
+        "LAS-29"
+      ],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Derive a bounded explainable parameter proposal from actual measured differences and the validated processors, with editable strength and rationale per module.",
+        "Preview/reduce/edit/reject/undo the whole chain, preserve original and accepted baseline, and do not pretend to recover proprietary mastering settings."
+      ],
+      "scenarios": [
+        "Measured source/reference pair → reproducible recipe with numeric settings, reasons and uncertainty.",
+        "Adversarial tonal/width/dynamics differences → boost/compression/mono/headroom guards bound the proposal.",
+        "Reject/undo → previous complete chain restored; listening improvement is recorded only after a real matched comparison."
+      ],
+      "path": "tasks/LAS-32.md",
+      "resultPath": "docs/delivery/LAS-32/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-33",
+      "title": "Save mastering preferences and reusable reference-based presets",
+      "kind": "IMPLEMENT",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 06",
+      "parent": "LAS-16",
+      "dependencies": [
+        "LAS-32"
+      ],
+      "effectiveDependencies": [
+        "LAS-32"
+      ],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Persist versioned presets/preferences, rename/apply/export/delete and migration/invalid-data handling under owner control. Include all 24 EQ bands per channel.",
+        "Separate reference targets from explicit user preferences and accepted/rejected variants. Do not silently train/upload music."
+      ],
+      "scenarios": [
+        "Save customized chain→reload→apply → complete state restored, including L/R/Link bands and chain order.",
+        "Import old/invalid/newer schema → documented migration or actionable rejection without corrupting the current project.",
+        "Reset preference influence → reference target retained; other-user access denied."
+      ],
+      "path": "tasks/LAS-33.md",
+      "resultPath": "docs/delivery/LAS-33/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-34",
+      "title": "Import original stems and play them through synchronized mixer channels",
+      "kind": "IMPLEMENT",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 07",
+      "parent": "LAS-17",
+      "dependencies": [
+        "LAS-27"
+      ],
+      "effectiveDependencies": [
+        "LAS-27"
+      ],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Use a shared audio clock and explicit offset/sample-rate/length policy for aligned stems. Reuse current transport state and resource cleanup.",
+        "Add per-channel gain/pan/mute/solo with actual individual/master metering and no accumulating drift. Include seek as required by this ticket, without claiming a full DAW."
+      ],
+      "scenarios": [
+        "Aligned known impulses/stems → simultaneous start/pause/resume/seek/stop and measured alignment after repeated operations.",
+        "Adjust gain/pan/mute/solo → only intended routing changes; expected summing and mono behavior.",
+        "Mismatched rate/offset/length and reimport/unload → explicit policy, no silent timing shift or regression in single-track flows."
+      ],
+      "path": "tasks/LAS-34.md",
+      "resultPath": "docs/delivery/LAS-34/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-35",
+      "title": "Process individual stems and render a synchronized stem master",
+      "kind": "IMPLEMENT",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 07",
+      "parent": "LAS-17",
+      "dependencies": [
+        "LAS-34",
+        "LAS-28"
+      ],
+      "effectiveDependencies": [
+        "LAS-34",
+        "LAS-28"
+      ],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Route independent versioned stem processing through the master chain. Measure and compensate processor latency; preserve original alignment and recall.",
+        "Define combined/per-stem export headroom, tails, clipping and error recovery rather than silently normalizing every stem."
+      ],
+      "scenarios": [
+        "Different chains on vocal/drums/bass fixtures → only intended channels change; bypass and recall are repeatable.",
+        "Latency-inducing processing → sample alignment preserved in monitored and offline summed output.",
+        "Render supported combined/per-stem WAVs → expected duration/rate/channels and routing, unchanged source bytes."
+      ],
+      "path": "tasks/LAS-35.md",
+      "resultPath": "docs/delivery/LAS-35/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-36",
+      "title": "Evaluate AI stem separation quality, runtime and deployment options",
+      "kind": "RESEARCH",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 08",
+      "parent": "LAS-17",
+      "dependencies": [
+        "LAS-35"
+      ],
+      "effectiveDependencies": [
+        "LAS-35"
+      ],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Compare at least two feasible authorized source-separation approaches when resources allow, with licenses, model versions, hardware/runtime/memory and privacy/cost assumptions.",
+        "Use available ground-truth stems for residual comparisons; record bleed, transients, warble, phase/mono and recombination. Deliver go/no-go plus scoped next step, not an invented production feature."
+      ],
+      "scenarios": [
+        "Authorized mixture and known stems → run feasible candidates; record actual runtime and artifacts or precise resource blockers.",
+        "Matched listening/numerical comparison → limitations and go/no-go; unexecuted comparisons remain Not Run."
+      ],
+      "path": "tasks/LAS-36.md",
+      "resultPath": "docs/delivery/LAS-36/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-37",
+      "title": "Design and evaluate a native VST3/AU host bridge for the web studio",
+      "kind": "RESEARCH",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 08",
+      "parent": "LAS-18",
+      "dependencies": [
+        "LAS-29"
+      ],
+      "effectiveDependencies": [
+        "LAS-29"
+      ],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Inspect native code availability: current main has historical JUCE documents, not a working native host. Keep the browser app intact.",
+        "Evaluate an authenticated local host bridge, discovery, parameter/state control, crash/resource containment, formats/architectures/licenses and preview/export parity with a permitted plugin.",
+        "If macOS/AU, SDK/plugin or host build is unavailable, deliver design/prototype evidence for the feasible subset and explicit blockers; no support claim from a diagram."
+      ],
+      "scenarios": [
+        "Permitted plugin on available platform → actual routed processing and parameter/state evidence, or exact unexecuted blocker.",
+        "Unauthorized bridge client and host/plugin crash → isolation/control design and executable evidence where available; no loss of source/project."
+      ],
+      "path": "tasks/LAS-37.md",
+      "resultPath": "docs/delivery/LAS-37/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-38",
+      "title": "Prototype application-controlled plugin processing after host feasibility passes",
+      "kind": "GATED_PROTOTYPE",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 09",
+      "parent": "LAS-18",
+      "dependencies": [
+        "LAS-37"
+      ],
+      "effectiveDependencies": [
+        "LAS-37"
+      ],
+      "gate": "A positive LAS-37 decision and a permitted available plugin/host are required.",
+      "implementation": [
+        "Run only after a positive LAS-37 feasibility decision and available permitted plugin/host. Otherwise deliver a documented Blocked result and the scoped plan.",
+        "Prototype app-controlled selection/parameters/state/bypass, numerical processing, missing/crash handling and authenticated bridge; no arbitrary plugin installation/purchase."
+      ],
+      "scenarios": [
+        "Supported test plugin→process known fixture→save/reload parameters → measurable change and recall.",
+        "Missing/incompatible/crashing plugin or unauthorized client → safe denial/recovery, preserved project and stated parity limits."
+      ],
+      "path": "tasks/LAS-38.md",
+      "resultPath": "docs/delivery/LAS-38/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-39",
+      "title": "Assess training a separate audio model from references and user feedback",
+      "kind": "RESEARCH",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 09",
+      "parent": "LAS-16",
+      "dependencies": [
+        "LAS-33",
+        "LAS-29"
+      ],
+      "effectiveDependencies": [
+        "LAS-33",
+        "LAS-29"
+      ],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Separate profile extraction, preference rules, parameter prediction, style transfer and actual model training. Start with data permissions and leakage-safe train/validation/test protocol.",
+        "Compare a small deterministic/reference-matching baseline when feasible; report data/compute blockers honestly. Deliver quality/cost/privacy go/no-go, not production training."
+      ],
+      "scenarios": [
+        "Review data inventory/splits → provenance/permissions and leakage checks recorded before experiments.",
+        "Run feasible baseline/held-out evaluation → measured performance and listening status, or precise Not Run blockers with resource assumptions."
+      ],
+      "path": "tasks/LAS-39.md",
+      "resultPath": "docs/delivery/LAS-39/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-42",
+      "title": "Audit the prototype UI and agree the studio's visual direction with Gennady",
+      "kind": "DESIGN_REVIEW_REQUIRED",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 01",
+      "parent": "LAS-41",
+      "dependencies": [],
+      "effectiveDependencies": [],
+      "gate": "Preserve the explicit Gennady design/review gate from Jira. Prepare the artifact, record Pending, and continue unrelated ready work; do not invent user approval.",
+      "implementation": [
+        "Audit current screens/workflows with reproduction context and prepare a design brief. The accepted LAS-51 responsive patch does not approve the final visual theme.",
+        "Offer at least two distinct directions when references do not already determine one; prepare reviewable local/browser artifacts and record Gennady’s real choice when supplied. Continue independent backend/DSP work while choice is pending."
+      ],
+      "scenarios": [
+        "Review audit at baseline/compact viewports → concrete hierarchy/readability/control issues and annotated screenshots.",
+        "Compare proposed directions and brief → user choice is recorded or explicitly Pending; no invented approval."
+      ],
+      "path": "tasks/LAS-42.md",
+      "resultPath": "docs/delivery/LAS-42/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-43",
+      "title": "Design studio navigation and interactive wireframes for the core user journeys",
+      "kind": "DESIGN_REVIEW_REQUIRED",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 02",
+      "parent": "LAS-41",
+      "dependencies": [
+        "LAS-42",
+        "LAS-19",
+        "LAS-20"
+      ],
+      "effectiveDependencies": [
+        "LAS-42",
+        "LAS-19",
+        "LAS-20"
+      ],
+      "gate": "Preserve the explicit Gennady design/review gate from Jira. Prepare the artifact, record Pending, and continue unrelated ready work; do not invent user approval.",
+      "implementation": [
+        "Build information architecture and a clickable prototype covering project/audio/reference/stem/export and account/privacy journeys, using LAS-19/20 rules.",
+        "Cover all loading/error/unsaved/empty/play/paused/export states. Present for Gennady’s walkthrough; do not let a missing walkthrough block independent DSP work."
+      ],
+      "scenarios": [
+        "Walk import→play→analysis→reference→export and account recovery → navigation/state/error paths understandable in a clickable artifact.",
+        "Pending feedback stays Pending; decisions are recorded before declaring design accepted."
+      ],
+      "path": "tasks/LAS-43.md",
+      "resultPath": "docs/delivery/LAS-43/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-44",
+      "title": "Create a design system and approved high-fidelity studio screen designs",
+      "kind": "DESIGN_REVIEW_REQUIRED",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 03",
+      "parent": "LAS-41",
+      "dependencies": [
+        "LAS-43"
+      ],
+      "effectiveDependencies": [
+        "LAS-43"
+      ],
+      "gate": "Preserve the explicit Gennady design/review gate from Jira. Prepare the artifact, record Pending, and continue unrelated ready work; do not invent user approval.",
+      "implementation": [
+        "Specify tokens/components/accessibility/keyboard behavior and high-fidelity screens based on the chosen LAS-42/43 direction.",
+        "Document width/height rules, breakpoint boundaries, zoom/DPI, real control hit areas and 24-band EQ pointer mapping. Gennady’s explicit visual approval is a gate for final reskin, not for existing responsive maintenance."
+      ],
+      "scenarios": [
+        "Inspect default/hover/focus/disabled/error/loading states and key screens → complete reusable specifications at agreed viewports.",
+        "Review approval record → accepted design version identified, or Pending with independent work continuing."
+      ],
+      "path": "tasks/LAS-44.md",
+      "resultPath": "docs/delivery/LAS-44/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-45",
+      "title": "Implement the approved studio shell, mixer controls and shared account components",
+      "kind": "GATED_IMPLEMENTATION",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 04",
+      "parent": "LAS-41",
+      "dependencies": [
+        "LAS-44",
+        "LAS-21"
+      ],
+      "effectiveDependencies": [
+        "LAS-44",
+        "LAS-21"
+      ],
+      "gate": "Preserve the explicit Gennady design/review gate from Jira. Prepare the artifact, record Pending, and continue unrelated ready work; do not invent user approval.",
+      "implementation": [
+        "Implement approved shell/account/shared controls; preserve accessible names and real engine behavior. Reuse LAS-48 responsive layout rather than writing an unrelated second layout.",
+        "Start final reskin after LAS-44 approval. Functional nonvisual controls can proceed under their own tickets; do not silently treat existing prototype or an agent’s mockup as approved."
+      ],
+      "scenarios": [
+        "Approved designs vs actual shell at supported sizes → critical controls fit and component states match.",
+        "Keyboard/pointer faders and transport/import/Pause toggle/unload → existing behavior and state persist through navigation/resize."
+      ],
+      "path": "tasks/LAS-45.md",
+      "resultPath": "docs/delivery/LAS-45/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-46",
+      "title": "Implement the approved mastering, reference, stem and export workflows",
+      "kind": "GATED_IMPLEMENTATION",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 07",
+      "parent": "LAS-41",
+      "dependencies": [
+        "LAS-45",
+        "LAS-28",
+        "LAS-33",
+        "LAS-35"
+      ],
+      "effectiveDependencies": [
+        "LAS-45",
+        "LAS-28",
+        "LAS-33",
+        "LAS-35"
+      ],
+      "gate": "Preserve the explicit Gennady design/review gate from Jira. Prepare the artifact, record Pending, and continue unrelated ready work; do not invent user approval.",
+      "implementation": [
+        "Integrate working analysis/EQ/dynamics/reference/proposals/stems/export into the approved navigation and shared components.",
+        "Keep original/processed/reference identity, level matching, undo, progress/errors and supported local/external boundaries visible to users."
+      ],
+      "scenarios": [
+        "Import→analyze→proposal→edit/undo→reference A/B→stem mix→export → correct actual engine state and clear completion/error feedback.",
+        "Cancel/retry/return to project → recoverable workflow, no lost source/settings/playback state."
+      ],
+      "path": "tasks/LAS-46.md",
+      "resultPath": "docs/delivery/LAS-46/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-47",
+      "title": "Review usability, accessibility and visual consistency across the redesigned studio",
+      "kind": "QA_REVIEW_REQUIRED",
+      "jiraStatus": "To Do",
+      "sprint": "LAS Sprint 07",
+      "parent": "LAS-41",
+      "dependencies": [
+        "LAS-46",
+        "LAS-48"
+      ],
+      "effectiveDependencies": [
+        "LAS-46",
+        "LAS-48"
+      ],
+      "gate": "Preserve the explicit Gennady design/review gate from Jira. Prepare the artifact, record Pending, and continue unrelated ready work; do not invent user approval.",
+      "implementation": [
+        "Run task-based accessibility, keyboard/focus/contrast/target and visual consistency checks against the approved brief.",
+        "Stabilize/mask only real dynamic time/meters in snapshots; verify continuous resize, 100/125/200% zoom, breakpoints and manual DPI checks. Gennady’s final review is not prefilled by Claude."
+      ],
+      "scenarios": [
+        "Perform representative complete journeys using keyboard and pointer → usable focus/names/errors with no critical overlap/clipping.",
+        "Compare screenshots across states/sizes → static differences reviewed; Gennady’s verdict and open defects recorded after actual review."
+      ],
+      "path": "tasks/LAS-47.md",
+      "resultPath": "docs/delivery/LAS-47/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-48",
+      "title": "Make the studio workspace responsive to window and screen resizing",
+      "kind": "VERIFY_AND_CLOSE_COVERAGE_GAPS",
+      "jiraStatus": "In Progress",
+      "sprint": "SCRUM Sprint 0",
+      "parent": "LAS-41",
+      "dependencies": [
+        "LAS-44"
+      ],
+      "effectiveDependencies": [],
+      "gate": "LAS-44 does not block the urgent current-layout verification; see the explicit waiver in the source issue. Final redesign remains subject to approved design.",
+      "implementation": [
+        "Keep the accepted PR #8 layout. LAS-50/51 are Done; do not restart their rejected alternatives or broaden a spacing preference into a confirmed bug.",
+        "Use 761×450 desktop lower boundary and ≤760 stacked scrolling behavior from closure evidence; expand tests for source LAS-48 criteria still uncovered: zoom/DPI, new waveform/EQ/meters/settings, additional browser/manual checks.",
+        "The native LAS-44 Blocks link is stale for the urgent existing-layout fix: its description explicitly waives that dependency. Preserve and explain the distinction; no need to wait for a full redesign to verify the current patch."
+      ],
+      "scenarios": [
+        "Empty/loaded/error/long name → 817×598→785×520 without reload/scroll; essential controls visible, hit-testable and separated.",
+        "Continuous width/height and 760/761/762 breakpoint crossings → no forbidden desktop scrolling; stacked behavior remains deliberate.",
+        "Resize while playing and after future controls are added → actual audio/position/settings persist; record listening/DPI/browser limits."
+      ],
+      "path": "tasks/LAS-48.md",
+      "resultPath": "docs/delivery/LAS-48/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-49",
+      "title": "Test plan — LAS-48 responsive workspace (24 test cases)",
+      "kind": "TEST_PLAN_RECONCILIATION",
+      "jiraStatus": "In Progress",
+      "sprint": "Unscheduled foundation work; do not assign a sprint silently.",
+      "parent": "LAS-41",
+      "dependencies": [],
+      "effectiveDependencies": [],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Preserve the original 24 manual cases and trace them to current implementations/automated tests. Treat the old header saying only four issue types exist as historical: native Test Plan/Case/Execution types now exist.",
+        "Map historical passing coverage from LAS-50/51 to exact builds; do not automatically mark the 24 cases Pass. Future EQ/stem/hardware cases remain Blocked/Not Run until executable."
+      ],
+      "scenarios": [
+        "Reconcile all 24 source case IDs → each has build/environment/status/evidence or explicit blocker.",
+        "Compare source acceptance matrix to current tests → remaining gaps and planned test owners visible, without duplicate test cases."
+      ],
+      "path": "tasks/LAS-49.md",
+      "resultPath": "docs/delivery/LAS-49/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    },
+    {
+      "key": "LAS-57",
+      "title": "LAS-10-TC-002: Verify that a valid WAV file is imported successfully",
+      "kind": "AUTOMATION_AND_QA_HANDOFF",
+      "jiraStatus": "To Do",
+      "sprint": "SCRUM Sprint 0",
+      "parent": "LAS-5",
+      "dependencies": [],
+      "effectiveDependencies": [],
+      "gate": "None beyond prerequisites and successful development validation.",
+      "implementation": [
+        "Reuse LAS-57 as TC-002 under LAS-10/LAS-52; implement or map a focused valid-WAV test using tests/fixtures/wav.js.",
+        "Preserve its real expected rule: Play and Stop enabled in Ready, Pause disabled until playback. Decoded sample rate may be resampled; verify decoded metadata honestly. Manual execution belongs to Gennady later."
+      ],
+      "scenarios": [
+        "Clean empty session→import LAS-TC002-tone.wav (3s mono PCM16 44.1 kHz) → Ready, 01 TRACK, filename/duration/decoded metadata, Replace WAV.",
+        "Inspect Ready controls → Play/Stop enabled, Pause disabled; no alert. Record automated run separately from manual Not Run."
+      ],
+      "path": "tasks/LAS-57.md",
+      "resultPath": "docs/delivery/LAS-57/",
+      "deliveryStatus": "NOT_STARTED",
+      "manualQa": "NOT_RUN"
+    }
+  ],
+  "allIssues": [
+    {
+      "key": "LAS-1",
+      "summary": "Task 1",
+      "status": "Done",
+      "type": "Task",
+      "classification": "CLOSED_BASELINE",
+      "sprints": [
+        "SCRUM Sprint 0"
+      ]
+    },
+    {
+      "key": "LAS-2",
+      "summary": "Task 2",
+      "status": "In Progress",
+      "type": "Story",
+      "classification": "UNSPECIFIED_PLACEHOLDER",
+      "sprints": [
+        "SCRUM Sprint 0"
+      ]
+    },
+    {
+      "key": "LAS-3",
+      "summary": "Task 3",
+      "status": "In Progress",
+      "type": "Task",
+      "classification": "UNSPECIFIED_PLACEHOLDER",
+      "sprints": []
+    },
+    {
+      "key": "LAS-4",
+      "summary": "Subtask 2.1",
+      "status": "To Do",
+      "type": "Subtask",
+      "classification": "UNSPECIFIED_PLACEHOLDER",
+      "sprints": []
+    },
+    {
+      "key": "LAS-5",
+      "summary": "MPS Audio Studio — Web Mixer & QA Automation",
+      "status": "To Do",
+      "type": "Epic",
+      "classification": "EPIC_ROLLUP",
+      "sprints": []
+    },
+    {
+      "key": "LAS-6",
+      "summary": "Audit MPS repository and align web-first architecture",
+      "status": "QA Done",
+      "type": "Task",
+      "classification": "CLOSED_BASELINE",
+      "sprints": []
+    },
+    {
+      "key": "LAS-7",
+      "summary": "Build runnable web mixer shell with Fostex-inspired channel strips",
+      "status": "In Progress",
+      "type": "Story",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "SCRUM Sprint 0"
+      ]
+    },
+    {
+      "key": "LAS-8",
+      "summary": "Import WAV audio and display a track in the mixer",
+      "status": "To Do",
+      "type": "Story",
+      "classification": "WORK_ORDER",
+      "sprints": []
+    },
+    {
+      "key": "LAS-9",
+      "summary": "Implement real Play/Pause transport for imported WAV",
+      "status": "To Do",
+      "type": "Story",
+      "classification": "WORK_ORDER",
+      "sprints": []
+    },
+    {
+      "key": "LAS-10",
+      "summary": "Set up Playwright JS and first browser smoke tests",
+      "status": "In Progress",
+      "type": "Task",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "SCRUM Sprint 0"
+      ]
+    },
+    {
+      "key": "LAS-11",
+      "summary": "Resume paused audio with either Pause or Play",
+      "status": "To Do",
+      "type": "Story",
+      "classification": "WORK_ORDER",
+      "sprints": []
+    },
+    {
+      "key": "LAS-12",
+      "summary": "Unload the imported track and return the mixer to its empty state",
+      "status": "To Do",
+      "type": "Story",
+      "classification": "WORK_ORDER",
+      "sprints": []
+    },
+    {
+      "key": "LAS-13",
+      "summary": "User accounts — registration, login and account recovery",
+      "status": "To Do",
+      "type": "Epic",
+      "classification": "EPIC_ROLLUP",
+      "sprints": []
+    },
+    {
+      "key": "LAS-14",
+      "summary": "Protect user projects, audio files and personal data",
+      "status": "To Do",
+      "type": "Epic",
+      "classification": "EPIC_ROLLUP",
+      "sprints": []
+    },
+    {
+      "key": "LAS-15",
+      "summary": "Build a measurable mastering engine with preview and WAV export",
+      "status": "To Do",
+      "type": "Epic",
+      "classification": "EPIC_ROLLUP",
+      "sprints": []
+    },
+    {
+      "key": "LAS-16",
+      "summary": "Reference-guided mastering and reusable sound profiles",
+      "status": "To Do",
+      "type": "Epic",
+      "classification": "EPIC_ROLLUP",
+      "sprints": []
+    },
+    {
+      "key": "LAS-17",
+      "summary": "Stem mixing, stem mastering and AI separation research",
+      "status": "To Do",
+      "type": "Epic",
+      "classification": "EPIC_ROLLUP",
+      "sprints": []
+    },
+    {
+      "key": "LAS-18",
+      "summary": "Research and prototype native VST3/AU plugin hosting",
+      "status": "To Do",
+      "type": "Epic",
+      "classification": "EPIC_ROLLUP",
+      "sprints": []
+    },
+    {
+      "key": "LAS-19",
+      "summary": "Choose authentication architecture and define account/session flows",
+      "status": "To Do",
+      "type": "Task",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 01"
+      ]
+    },
+    {
+      "key": "LAS-20",
+      "summary": "Define privacy rules, data lifecycle and threat model for studio assets",
+      "status": "To Do",
+      "type": "Task",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 01"
+      ]
+    },
+    {
+      "key": "LAS-21",
+      "summary": "Add registration, verified login and logout to the studio",
+      "status": "To Do",
+      "type": "Story",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 01"
+      ]
+    },
+    {
+      "key": "LAS-22",
+      "summary": "Add password recovery, session expiry and authentication abuse controls",
+      "status": "To Do",
+      "type": "Story",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 02"
+      ]
+    },
+    {
+      "key": "LAS-23",
+      "summary": "Enforce private audio storage, ownership checks and safe uploads",
+      "status": "To Do",
+      "type": "Story",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 02"
+      ]
+    },
+    {
+      "key": "LAS-24",
+      "summary": "Add project/account deletion and explicit external-processing consent",
+      "status": "To Do",
+      "type": "Story",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 02"
+      ]
+    },
+    {
+      "key": "LAS-25",
+      "summary": "Verify authentication, cross-user isolation and sensitive-data handling",
+      "status": "To Do",
+      "type": "Task",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 02"
+      ]
+    },
+    {
+      "key": "LAS-26",
+      "summary": "Analyze WAV loudness, true peaks, spectrum, dynamics and stereo behavior",
+      "status": "To Do",
+      "type": "Story",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 03"
+      ]
+    },
+    {
+      "key": "LAS-27",
+      "summary": "Implement a reproducible EQ, compressor and limiter processing chain",
+      "status": "To Do",
+      "type": "Task",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 03"
+      ]
+    },
+    {
+      "key": "LAS-28",
+      "summary": "Add editable mastering controls, level-matched A/B and processed WAV export",
+      "status": "To Do",
+      "type": "Story",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 04"
+      ]
+    },
+    {
+      "key": "LAS-29",
+      "summary": "Establish DSP regression fixtures and a mastering listening-review protocol",
+      "status": "To Do",
+      "type": "Task",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 04"
+      ]
+    },
+    {
+      "key": "LAS-30",
+      "summary": "Import reference audio and save versioned sound profiles",
+      "status": "To Do",
+      "type": "Story",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 05"
+      ]
+    },
+    {
+      "key": "LAS-31",
+      "summary": "Compare a mix with its reference at matched loudness",
+      "status": "To Do",
+      "type": "Story",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 05"
+      ]
+    },
+    {
+      "key": "LAS-32",
+      "summary": "Generate and apply an explainable reference-guided mastering proposal",
+      "status": "To Do",
+      "type": "Story",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 06"
+      ]
+    },
+    {
+      "key": "LAS-33",
+      "summary": "Save mastering preferences and reusable reference-based presets",
+      "status": "To Do",
+      "type": "Story",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 06"
+      ]
+    },
+    {
+      "key": "LAS-34",
+      "summary": "Import original stems and play them through synchronized mixer channels",
+      "status": "To Do",
+      "type": "Story",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 07"
+      ]
+    },
+    {
+      "key": "LAS-35",
+      "summary": "Process individual stems and render a synchronized stem master",
+      "status": "To Do",
+      "type": "Story",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 07"
+      ]
+    },
+    {
+      "key": "LAS-36",
+      "summary": "Evaluate AI stem separation quality, runtime and deployment options",
+      "status": "To Do",
+      "type": "Task",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 08"
+      ]
+    },
+    {
+      "key": "LAS-37",
+      "summary": "Design and evaluate a native VST3/AU host bridge for the web studio",
+      "status": "To Do",
+      "type": "Task",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 08"
+      ]
+    },
+    {
+      "key": "LAS-38",
+      "summary": "Prototype application-controlled plugin processing after host feasibility passes",
+      "status": "To Do",
+      "type": "Task",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 09"
+      ]
+    },
+    {
+      "key": "LAS-39",
+      "summary": "Assess training a separate audio model from references and user feedback",
+      "status": "To Do",
+      "type": "Task",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 09"
+      ]
+    },
+    {
+      "key": "LAS-40",
+      "summary": "Product roadmap — 7 feature epics and LAS Sprints 01–09",
+      "status": "To Do",
+      "type": "Task",
+      "classification": "COORDINATION",
+      "sprints": []
+    },
+    {
+      "key": "LAS-41",
+      "summary": "UI/UX redesign — define and build the intended LoVerse OS studio experience",
+      "status": "To Do",
+      "type": "Epic",
+      "classification": "EPIC_ROLLUP",
+      "sprints": []
+    },
+    {
+      "key": "LAS-42",
+      "summary": "Audit the prototype UI and agree the studio's visual direction with Gennady",
+      "status": "To Do",
+      "type": "Task",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 01"
+      ]
+    },
+    {
+      "key": "LAS-43",
+      "summary": "Design studio navigation and interactive wireframes for the core user journeys",
+      "status": "To Do",
+      "type": "Task",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 02"
+      ]
+    },
+    {
+      "key": "LAS-44",
+      "summary": "Create a design system and approved high-fidelity studio screen designs",
+      "status": "To Do",
+      "type": "Task",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 03"
+      ]
+    },
+    {
+      "key": "LAS-45",
+      "summary": "Implement the approved studio shell, mixer controls and shared account components",
+      "status": "To Do",
+      "type": "Story",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 04"
+      ]
+    },
+    {
+      "key": "LAS-46",
+      "summary": "Implement the approved mastering, reference, stem and export workflows",
+      "status": "To Do",
+      "type": "Story",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 07"
+      ]
+    },
+    {
+      "key": "LAS-47",
+      "summary": "Review usability, accessibility and visual consistency across the redesigned studio",
+      "status": "To Do",
+      "type": "Task",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "LAS Sprint 07"
+      ]
+    },
+    {
+      "key": "LAS-48",
+      "summary": "Make the studio workspace responsive to window and screen resizing",
+      "status": "In Progress",
+      "type": "Story",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "SCRUM Sprint 0"
+      ]
+    },
+    {
+      "key": "LAS-49",
+      "summary": "Test plan — LAS-48 responsive workspace (24 test cases)",
+      "status": "In Progress",
+      "type": "Task",
+      "classification": "WORK_ORDER",
+      "sprints": []
+    },
+    {
+      "key": "LAS-50",
+      "summary": "Mixer is partially outside the viewport at 1280×720 in an empty workspace",
+      "status": "Done",
+      "type": "Bug",
+      "classification": "CLOSED_BASELINE",
+      "sprints": [
+        "SCRUM Sprint 0"
+      ]
+    },
+    {
+      "key": "LAS-51",
+      "summary": "MPS Audio Studio - Tracks content is clipped, and Export WAV overlaps Master content at smaller viewport sizes",
+      "status": "Done",
+      "type": "Bug",
+      "classification": "CLOSED_BASELINE",
+      "sprints": [
+        "SCRUM Sprint 0"
+      ]
+    },
+    {
+      "key": "LAS-52",
+      "summary": "LAS-10 — Playwright JS Setup & Browser Smoke Tests — Test Plan",
+      "status": "Done",
+      "type": "Test Plan",
+      "classification": "CLOSED_BASELINE",
+      "sprints": [
+        "SCRUM Sprint 0"
+      ]
+    },
+    {
+      "key": "LAS-53",
+      "summary": "LAS-10-TC-001: Verify that the mixer application loads correctly",
+      "status": "Done",
+      "type": "Test Case",
+      "classification": "CLOSED_BASELINE",
+      "sprints": [
+        "SCRUM Sprint 0"
+      ]
+    },
+    {
+      "key": "LAS-55",
+      "summary": "TC-001 — Manual Smoke Execution — 2026-10-25",
+      "status": "Done",
+      "type": "Test Execution",
+      "classification": "CLOSED_BASELINE",
+      "sprints": [
+        "SCRUM Sprint 0"
+      ]
+    },
+    {
+      "key": "LAS-56",
+      "summary": "TC-001 — Playwright Chromium Execution — 2026-10-25",
+      "status": "Done",
+      "type": "Test Execution",
+      "classification": "CLOSED_BASELINE",
+      "sprints": [
+        "SCRUM Sprint 0"
+      ]
+    },
+    {
+      "key": "LAS-57",
+      "summary": "LAS-10-TC-002: Verify that a valid WAV file is imported successfully",
+      "status": "To Do",
+      "type": "Test Case",
+      "classification": "WORK_ORDER",
+      "sprints": [
+        "SCRUM Sprint 0"
+      ]
+    }
+  ]
+}
