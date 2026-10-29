@@ -1,0 +1,27 @@
+{
+  "issue": "LAS-22",
+  "applicationCommit": "dd277058b443fba083d93ea029982e2008bf6456",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (lint, Vitest 35/35 incl. 9 recovery/expiry/limit tests, build, Playwright 42/42 incl. 3 recovery tests)",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-dd277058b443fba083d93ea029982e2008bf6456.log", "evidence/html-report-dd277058b443fba083d93ea029982e2008bf6456.zip"]
+    },
+    {
+      "name": "Real 24 h / 7 day waiting, multi-process limits, macOS Chrome",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": []
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],
+  "blockers": [],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "feat/LAS-22-recovery-limits"
+}
