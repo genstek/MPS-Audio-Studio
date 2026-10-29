@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { readdirSync } from 'node:fs';
+import { createServer, request as httpRequest } from 'node:http';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { makeWav } from '../fixtures/wav.js';
@@ -191,5 +192,47 @@ describe('LAS-23 level analysis jobs', () => {
     const slow = (await user.request(`/api/assets/${stored.id}/jobs`, { method: 'POST', body: { kind: 'levels' } })).data;
     expect(await waitForJob(user, slow.id)).toMatchObject({ status: 'failed', error: 'The analysis took too long.' });
     await limited.stop();
+  });
+});
+
+// A pass-through proxy like Vite's dev proxy: it streams the request body to the server and
+// answers 502 if the server cuts the connection before the body is sent.
+async function startProxy(target) {
+  const proxy = createServer((incoming, outgoing) => {
+    const upstream = httpRequest(`${target}${incoming.url}`, { method: incoming.method, headers: { ...incoming.headers, connection: 'close' } }, answer => {
+      outgoing.writeHead(answer.statusCode, answer.headers);
+      answer.pipe(outgoing);
+    });
+    upstream.on('error', () => {
+      if (!outgoing.headersSent) outgoing.writeHead(502);
+      outgoing.end();
+    });
+    incoming.pipe(upstream);
+  });
+  await new Promise(resolve => proxy.listen(0, '127.0.0.1', resolve));
+  return {
+    url: `http://127.0.0.1:${proxy.address().port}`,
+    close: () => new Promise(resolve => { proxy.closeAllConnections(); proxy.close(resolve); }),
+  };
+}
+
+describe('LAS-23 refused uploads still get their answer', () => {
+  // The server refuses before reading the body; it must still read and discard it, or the
+  // connection is cut while the proxy is sending and the browser gets 502 instead of 401/404.
+  test('through a proxy, an unauthenticated or misdirected upload receives 401/404', async () => {
+    const { owner, project } = await ownerWithAsset();
+    const proxy = await startProxy(server.url);
+    const viaProxy = { url: proxy.url };
+    const body = wav({ frames: 900_000 }); // 1.8 MB, inside the limit
+    try {
+      for (let attempt = 0; attempt < 5; attempt++) {
+        expect((await upload(client(viaProxy), project.id, body)).status, `anonymous #${attempt}`).toBe(401);
+        const misdirected = client(viaProxy);
+        misdirected.cookie = owner.cookie;
+        expect((await upload(misdirected, 'no-such-project', body)).status, `missing project #${attempt}`).toBe(404);
+      }
+    } finally {
+      await proxy.close();
+    }
   });
 });

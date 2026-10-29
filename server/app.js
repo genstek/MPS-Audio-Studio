@@ -249,6 +249,22 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
     if (request.headers['sec-fetch-site'] === 'cross-site') throw new HttpError(403, 'csrf', 'Request blocked.');
   }
 
+  // An error answer to a request whose body was not read yet: read and discard the body first, so
+  // the connection is not cut while a client or proxy is still sending (they would lose the
+  // answer). Bodies beyond the upload limit are not read; that answer closes the connection.
+  async function discardBody(request) {
+    if (request.complete || request.destroyed) return true;
+    const limit = config.maxUploadBytes ?? 100 * 1024 * 1024;
+    let size = Number(request.headers['content-length'] ?? 0);
+    if (size > limit) return false;
+    size = 0;
+    for await (const chunk of request) {
+      size += chunk.length;
+      if (size > limit) return false;
+    }
+    return true;
+  }
+
   async function handle(request, response) {
     const started = now();
     const url = new URL(request.url, 'http://localhost');
@@ -270,12 +286,14 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
         log(`error after response started ${request.method} ${url.pathname}: ${error.code ?? error.name}`);
         status = response.statusCode;
         response.destroy();
-      } else if (error instanceof HttpError) {
-        status = error.status;
-        send(response, status, { error: error.code, message: error.message }, error.headers);
       } else {
-        log(`error ${request.method} ${url.pathname}: ${error.name}`);
-        send(response, 500, { error: 'server_error', message: 'Something went wrong. Try again.' });
+        const known = error instanceof HttpError;
+        if (!known) log(`error ${request.method} ${url.pathname}: ${error.name}`);
+        status = known ? error.status : 500;
+        const drained = await discardBody(request).catch(() => false);
+        send(response, status,
+          known ? { error: error.code, message: error.message } : { error: 'server_error', message: 'Something went wrong. Try again.' },
+          { ...(known ? error.headers : {}), ...(drained ? {} : { Connection: 'close' }) });
       }
     } finally {
       // Method, path without query string, status and time only: no bodies, cookies or tokens.
