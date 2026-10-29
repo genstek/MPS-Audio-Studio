@@ -10,10 +10,26 @@ import { defaultChain, editBand, validateChain } from '../src/dsp/chain-params.j
 import { createChain, renderChain } from '../src/dsp/chain.js';
 import { designBand } from '../src/dsp/eq-design.js';
 import { fft } from '../src/dsp/fft.js';
-import { truePeak } from '../src/dsp/true-peak.js';
+import { HALF, TAPS, interpolationBranches, truePeak } from '../src/dsp/true-peak.js';
 import { noise, sine } from '../tests/fixtures/signals.js';
 
 const db = value => 20 * Math.log10(value);
+// A 32× reference meter, finer than both the 4× BS.1770 meter and the limiter's 8× detector.
+const fineBranches = interpolationBranches(32);
+function finePeak(channel) {
+  const padded = new Float64Array(channel.length + TAPS);
+  padded.set(channel, HALF);
+  let peak = 0;
+  for (let n = 0; n + 1 < channel.length; n++) {
+    peak = Math.max(peak, Math.abs(channel[n]));
+    for (const branch of fineBranches) {
+      let sum = 0;
+      for (let k = 0; k < TAPS; k++) sum += padded[n + TAPS - k] * branch[k];
+      if (Math.abs(sum) > peak) peak = Math.abs(sum);
+    }
+  }
+  return peak;
+}
 const round = (value, digits = 3) => Number(value.toFixed(digits));
 const peakOf = signal => signal.reduce((max, value) => Math.max(max, Math.abs(value)), 0);
 function neutral(changes = {}) {
@@ -92,7 +108,8 @@ for (const rate of [44100, 48000, 96000]) {
       const input = make(rate).map(channel => Float32Array.from(channel));
       const result = renderChain(neutral({ limiter: { enabled: true, ceiling, release: 100 } }), input, rate);
       const outPeak = Math.max(...result.channels.map(channel => db(truePeak(channel))));
-      report.limiter.push({ rate, signal: name, ceilingDbtp: ceiling, inputTruePeakDbtp: round(Math.max(...input.map(channel => db(truePeak(channel)))), 2), outputTruePeakDbtp: round(outPeak), overCeilingDb: round(Math.max(0, outPeak - ceiling)), maxGainReductionDb: round(result.meters.maxLimiterGainReductionDb, 2) });
+      const outFine = Math.max(...result.channels.map(channel => db(finePeak(channel))));
+      report.limiter.push({ rate, signal: name, ceilingDbtp: ceiling, inputTruePeakDbtp: round(Math.max(...input.map(channel => db(truePeak(channel)))), 2), outputTruePeakDbtp: round(outPeak), overCeilingDb: round(Math.max(0, outPeak - ceiling)), output32xPeakDbtp: round(outFine), over32xDb: round(Math.max(0, outFine - ceiling)), maxGainReductionDb: round(result.meters.maxLimiterGainReductionDb, 2) });
     }
   }
   const chain = createChain(neutral({ limiter: { enabled: true } }), rate, 2);
@@ -117,12 +134,13 @@ const md = [
   '## EQ: measured impulse response vs transfer function', table(report.eq, ['rate', 'type', 'frequency', 'gain', 'q', 'largestDeviationDb']), '',
   '## Compressor static curve (threshold −20 dBFS, ratio 4:1)', table(report.compressorCurve, ['inputDbfs', 'kneeDb', 'expectedGainDb', 'measuredGainDb']), '',
   '## Compressor timing (63 % of a 30 dB step)', table(report.compressorTiming, ['attackMs', 'measured63PercentAttackMs', 'releaseMs', 'measured63PercentReleaseMs']), '',
-  '## Limiter true-peak ceiling', table(report.limiter, ['rate', 'signal', 'ceilingDbtp', 'inputTruePeakDbtp', 'outputTruePeakDbtp', 'overCeilingDb', 'maxGainReductionDb']), '',
+  '## Limiter true-peak ceiling (4× BS.1770 meter and 32× reference meter; the limiter detects at 8×)', table(report.limiter, ['rate', 'signal', 'ceilingDbtp', 'inputTruePeakDbtp', 'outputTruePeakDbtp', 'overCeilingDb', 'output32xPeakDbtp', 'over32xDb', 'maxGainReductionDb']), '',
   '## Latency', table(report.latency, ['rate', 'samples', 'ms']), '',
   '## Throughput', table([report.throughput], Object.keys(report.throughput)), '',
 ].join('\n');
 writeFileSync(path.join(folder, 'chain-report.md'), md);
 const worstOver = Math.max(...report.limiter.map(row => row.overCeilingDb));
+const worstFine = Math.max(...report.limiter.map(row => row.over32xDb));
 const worstEq = Math.max(...report.eq.map(row => row.largestDeviationDb));
-console.log(`EQ largest deviation ${worstEq} dB; limiter largest over-ceiling ${worstOver} dB; throughput ${report.throughput.realTimeFactor}× real time`);
-process.exitCode = worstOver <= 0.2 && worstEq <= 0.01 ? 0 : 1;
+console.log(`EQ largest deviation ${worstEq} dB; limiter largest over-ceiling ${worstOver} dB (4× meter), ${worstFine} dB (32× meter); throughput ${report.throughput.realTimeFactor}× real time`);
+process.exitCode = worstOver <= 0.2 && worstFine <= 0.2 && worstEq <= 0.01 ? 0 : 1;

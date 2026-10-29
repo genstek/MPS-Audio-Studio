@@ -1,6 +1,6 @@
 import { resolveForSampleRate, validateChain } from './chain-params.js';
 import { designBand, IDENTITY } from './eq-design.js';
-import { BRANCHES, HALF, TAPS } from './true-peak.js';
+import { HALF, TAPS, interpolationBranches } from './true-peak.js';
 
 // The mastering chain (LAS-27): EQ → compressor → limiter, processed sample by sample with state
 // carried between blocks, so any block size gives the same output. The same code runs in the
@@ -17,7 +17,13 @@ const RMS_SECONDS = 0.01;
 const TINY = 1e-30; // filter states below this are set to zero (no subnormal slow-downs)
 
 const dbToGain = db => 10 ** (db / 20);
-const B1 = BRANCHES[0], B2 = BRANCHES[1], B3 = BRANCHES[2];
+// The limiter detects peaks at 8× oversampling, finer than the 4× BS.1770 meter, so that peaks
+// between quarter-sample points of high-frequency content are also held below the ceiling (an
+// independent FFmpeg meter read 4×-detected limiting up to 0.2 dB over the ceiling, LAS-28).
+export const LIMITER_OVERSAMPLING = 8;
+const DETECTOR_BRANCHES = interpolationBranches(LIMITER_OVERSAMPLING);
+const BRANCH_COUNT = DETECTOR_BRANCHES.length;
+const DETECTOR_TAPS = Float64Array.from({ length: TAPS * BRANCH_COUNT }, (_, i) => DETECTOR_BRANCHES[i % BRANCH_COUNT][Math.floor(i / BRANCH_COUNT)]);
 
 // ---------- EQ ----------
 function bandState(band, sampleRate) {
@@ -93,6 +99,7 @@ export function createChain(initialParams, sampleRate, channelCount) {
   const comp = { gainDb: 0, envelope: 0, threshold: 0, ratio: 1, knee: 0, makeup: 0, attack: 0, release: 0, levelsSet: false };
   // Limiter state: per channel a history for the true-peak detector and two delay lines.
   const historyLength = TAPS + 1;
+  const sums = new Float64Array(BRANCH_COUNT); // detector work area (no allocation per sample)
   const lim = {
     history: Array.from({ length: channelCount }, () => new Float64Array(historyLength)),
     historyAt: 0,
@@ -250,12 +257,13 @@ export function createChain(initialParams, sampleRate, channelCount) {
           const newest = h; // sample m + HALF
           const m = (newest - HALF + historyLength) % historyLength;
           const sample = Math.abs(hist[m]);
-          let s1 = 0, s2 = 0, s3 = 0;
+          sums.fill(0);
           for (let k = 0; k < TAPS; k++) {
             const x = hist[(newest - 1 - k + 2 * historyLength) % historyLength]; // j + HALF − k with j = m − 1
-            s1 += x * B1[k]; s2 += x * B2[k]; s3 += x * B3[k];
+            for (let b = 0, at = k * BRANCH_COUNT; b < BRANCH_COUNT; b++, at++) sums[b] += x * DETECTOR_TAPS[at];
           }
-          peak = Math.max(peak, sample, Math.abs(s1), Math.abs(s2), Math.abs(s3));
+          peak = Math.max(peak, sample);
+          for (let b = 0; b < BRANCH_COUNT; b++) if (Math.abs(sums[b]) > peak) peak = Math.abs(sums[b]);
         }
         const required = peak > lim.ceiling ? lim.ceiling / peak : 1;
         // Sliding minimum over the last `lookahead` required gains.

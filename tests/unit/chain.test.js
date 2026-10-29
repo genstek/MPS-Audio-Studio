@@ -6,7 +6,7 @@ import { createChain, renderChain } from '../../src/dsp/chain.js';
 import { designBand, isStable } from '../../src/dsp/eq-design.js';
 import { biquadResponseDb } from '../../src/dsp/biquad.js';
 import { fft } from '../../src/dsp/fft.js';
-import { truePeak } from '../../src/dsp/true-peak.js';
+import { HALF, TAPS, interpolationBranches, truePeak } from '../../src/dsp/true-peak.js';
 import { noise, sine } from '../fixtures/signals.js';
 
 const db = value => 20 * Math.log10(value);
@@ -202,6 +202,34 @@ describe('LAS-27 limiter', () => {
       expect(result.meters.maxLimiterGainReductionDb).toBeGreaterThan(0.5);
     });
   }
+
+  // A much finer meter than the limiter's own 8× detector: peaks between its points must stay below too.
+  const fineBranches = interpolationBranches(32);
+  const finePeak = channel => {
+    const padded = new Float64Array(channel.length + TAPS);
+    padded.set(channel, HALF);
+    let peak = 0;
+    for (let n = 0; n + 1 < channel.length; n++) {
+      peak = Math.max(peak, Math.abs(channel[n]));
+      for (const branch of fineBranches) {
+        let sum = 0;
+        for (let k = 0; k < TAPS; k++) sum += padded[n + TAPS - k] * branch[k];
+        peak = Math.max(peak, Math.abs(sum));
+      }
+    }
+    return peak;
+  };
+  // The settings of the LAS-28 export that an independent FFmpeg meter read at −0.8 dBTP with a 4×
+  // detector (ceiling −1): EQ +4 dB at 3 kHz, compressor −20 dB 3:1, +8 dB into the limiter, noise.
+  test('measured with a 32× reference meter, limited noise stays within +0.1 dB of the ceiling (44.1 kHz)', () => {
+    let params = editBand(neutral({ eq: { enabled: true }, compressor: { enabled: true, threshold: -20, ratio: 3 }, limiter: { enabled: true, ceiling: -1, inputGain: 8 } }),
+      'left', 10, { enabled: true, type: 'bell', frequency: 3000, gain: 4, q: 1 });
+    params = validateChain(params);
+    const input = [f32(noise({ seconds: 12, rate: 44100, amplitude: 0.4, seed: 21 }))];
+    const [out] = renderChain(params, input, 44100).channels;
+    expect(db(truePeak(out))).toBeLessThanOrEqual(-1 + 0.03); // the BS.1770 4× reading (characterised overshoot ≤ 0.026 dB)
+    expect(db(finePeak(out))).toBeLessThanOrEqual(-1 + 0.1);
+  }, 60_000);
 
   test('latency: the delay is look-ahead + 12 samples, compensated in offline renders', () => {
     for (const [rate, expected] of [[44100, 77], [48000, 83], [96000, 155]]) {
