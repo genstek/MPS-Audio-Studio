@@ -1,0 +1,12 @@
+
+> mps-audio-studio@0.1.0 test:unit
+> vitest run
+
+
+ RUN  v5.0.5 /home/user/MPS-Audio-Studio-delivery
+
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  16:50:31
+   Duration  382ms (transform 71%, import 12%, tests 12%, worker 4%)

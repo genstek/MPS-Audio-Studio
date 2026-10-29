@@ -1,0 +1,12 @@
+Error: The server at http://127.0.0.1:5173 did not report its checkout. Stop the program using that port and run the tests again.
+
+   at global-setup.js:17
+
+  15 |   }
+  16 |   if (!identity) {
+> 17 |     throw new Error(`The server at ${baseURL} did not report its checkout. Stop the program using that port and run the tests again.`);
+     |           ^
+  18 |   }
+  19 |   const served = realpathSync(identity.root);
+  20 |   if (served !== expected) {
+    at globalSetup (/home/user/MPS-Audio-Studio-delivery/tests/e2e/global-setup.js:17:11)

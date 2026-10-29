@@ -1,0 +1,7 @@
+Testing the app served from /home/user/MPS-Audio-Studio-delivery (pid 1139) at http://127.0.0.1:5173
+
+Running 1 test using 1 worker
+
+  ✓  1 [chromium] › tests/e2e/mixer.spec.js:4:1 › TC-001: mixer loads and displays its main UI elements (1.3s)
+
+  1 passed (3.7s)
