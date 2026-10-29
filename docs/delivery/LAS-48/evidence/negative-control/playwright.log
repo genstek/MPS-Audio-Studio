@@ -1,0 +1,55 @@
+Testing the app served from /home/user/MPS-Audio-Studio-delivery (pid 16435) at http://127.0.0.1:5173
+
+Running 1 test using 1 worker
+
+  ✘  1 [chromium] › tests/e2e/LAS48-coverage.spec.js:20:3 › LAS48-TC-001..004, 007: proposed QA matrix, empty (7.7s)
+
+
+  1) [chromium] › tests/e2e/LAS48-coverage.spec.js:20:3 › LAS48-TC-001..004, 007: proposed QA matrix, empty › empty 768x1024
+
+    Error: empty 768x1024: Input button fully visible
+
+    expect(locator).toBeInViewport() failed
+
+    Locator:  getByRole('group', { name: 'Processing modules' }).getByRole('button', { name: 'Input processing unavailable' })
+    Expected: in viewport
+    Received: viewport ratio 0.8768880367279053
+    Timeout:  5000ms
+
+    Call log:
+      - empty 768x1024: Input button fully visible getByRole('group', { name: 'Processing modules' }).getByRole('button', { name: 'Input processing unavailable' }) with timeout 5000ms
+      - waiting for getByRole('group', { name: 'Processing modules' }).getByRole('button', { name: 'Input processing unavailable' })
+        14 × locator resolved to <button disabled aria-label="Input processing unavailable">Unavailable</button>
+           - unexpected value "viewport ratio 0.8768880367279053"
+
+
+       at helpers/layout.js:36
+
+      34 |   for (const [name, element] of essentials(page)) {
+      35 |     if (!desktop) await element.evaluate(e => e.scrollIntoView({ block: 'center' }));
+    > 36 |     await expect(element, `${label}: ${name} fully visible`).toBeInViewport({ ratio: 1 });
+         |                                                              ^
+      37 |     const uncovered = await element.evaluate(e => {
+      38 |       const box = e.getBoundingClientRect();
+      39 |       return e.contains(document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2));
+        at checkLayout (/home/user/MPS-Audio-Studio-delivery/tests/e2e/helpers/layout.js:36:62)
+        at /home/user/MPS-Audio-Studio-delivery/tests/e2e/LAS48-coverage.spec.js:30:9
+        at /home/user/MPS-Audio-Studio-delivery/tests/e2e/LAS48-coverage.spec.js:28:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/LAS48-coverage-LAS48-TC-001-004-007-proposed-QA-matrix-empty-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/LAS48-coverage-LAS48-TC-001-004-007-proposed-QA-matrix-empty-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/LAS48-coverage-LAS48-TC-001-004-007-proposed-QA-matrix-empty-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/LAS48-coverage-LAS48-TC-001-004-007-proposed-QA-matrix-empty-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests/e2e/LAS48-coverage.spec.js:20:3 › LAS48-TC-001..004, 007: proposed QA matrix, empty
+exit=1
