@@ -27,8 +27,11 @@ button.primary { background: #d7af6c; color: #14191d; border-color: #d7af6c; fon
 .panel { background: #1c2329; border: 1px solid #39434c; border-radius: 8px; }
 .transport { padding: var(--space) clamp(12px, 2vw, 24px); }
 .transport-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
-.status { color: #d9ba86; min-width: 135px; font-size: 13px; }
+.transport-state { min-width: 135px; display: grid; row-gap: 2px; }
+.status { color: #d9ba86; font-size: 13px; }
 .status::before { content: '●'; margin-right: 9px; }
+/* Elapsed / total time, aligned with the status text after its dot. */
+.position { padding-left: 1.45em; font-size: 12px; color: #aebac4; font-variant-numeric: tabular-nums; }
 .workspace { display: grid; grid-template-columns: minmax(0, 1fr) clamp(220px, 22vw, 280px); gap: var(--space); min-height: min-content; }
 .panel-heading { padding: clamp(6px, 1.5dvh, 17px) 16px; border-bottom: 1px solid #39434c; }
 .badge { font-size: 9px; letter-spacing: 1px; }

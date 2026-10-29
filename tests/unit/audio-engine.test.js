@@ -151,3 +151,30 @@ test('a failed first import leaves nothing to play', async () => {
   expect(sources).toHaveLength(0);
   engine.dispose();
 });
+
+// LAS-9: elapsed position comes from the audio clock.
+test('position follows the audio clock, freezes on pause and resets on stop and natural end', async () => {
+  const { engine, context, sources, file } = setup();
+  expect(engine.position()).toBe(0);
+  await engine.load(file);
+  context.currentTime = 2;
+  await engine.play();
+  context.currentTime = 3.5;
+  expect(engine.position()).toBe(1.5);
+  engine.pause();
+  context.currentTime = 9;
+  expect(engine.position()).toBe(1.5);
+  await engine.play();
+  expect(sources[1].start).toHaveBeenCalledWith(0, 1.5);
+  context.currentTime = 10;
+  expect(engine.position()).toBe(2.5);
+  context.currentTime = 30;
+  expect(engine.position()).toBe(10); // never past the decoded duration
+  engine.stop();
+  expect(engine.position()).toBe(0);
+  await engine.play();
+  context.currentTime = 31;
+  sources[2].onended();
+  expect(engine.position()).toBe(0);
+  engine.dispose();
+});

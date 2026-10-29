@@ -23,6 +23,13 @@ export function createAudioEngine(onEnded) {
     source = null;
   }
 
+  // Seconds into the track, read from the audio clock while playing (LAS-9).
+  function position() {
+    if (!buffer) return 0;
+    if (!source) return offset;
+    return Math.min(offset + context.currentTime - startedAt, buffer.duration);
+  }
+
   return {
     async load(file) {
       const load = ++latestLoad;
@@ -66,9 +73,10 @@ export function createAudioEngine(onEnded) {
     },
     pause() {
       if (!source) return;
-      offset = Math.min(offset + context.currentTime - startedAt, buffer.duration);
+      offset = position();
       disconnect();
     },
+    position,
     stop() {
       disconnect();
       offset = 0;

@@ -3,17 +3,36 @@ import { createRoot } from 'react-dom/client';
 import { createAudioEngine } from './audio-engine.js';
 import './styles.css';
 
+// Seconds as mm:ss.t, rounded to a tenth of a second.
+function clock(seconds) {
+  const tenths = Math.round(seconds * 10);
+  const minutes = String(Math.floor(tenths / 600)).padStart(2, '0');
+  const rest = ((tenths % 600) / 10).toFixed(1).padStart(4, '0');
+  return `${minutes}:${rest}`;
+}
+
 function App() {
   const [track, setTrack] = useState(null);
   const [status, setStatus] = useState('No audio loaded');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [position, setPosition] = useState(0);
   const engine = useRef(null);
 
   useEffect(() => {
-    engine.current = createAudioEngine(() => setStatus('Stopped'));
+    engine.current = createAudioEngine(() => {
+      setStatus('Stopped');
+      setPosition(0);
+    });
     return () => engine.current.dispose();
   }, []);
+
+  // While playing, the elapsed time is read from the engine's audio clock ten times a second.
+  useEffect(() => {
+    if (status !== 'Playing') return;
+    const timer = setInterval(() => setPosition(engine.current.position()), 100);
+    return () => clearInterval(timer);
+  }, [status]);
 
   async function importAudio(event) {
     const file = event.target.files[0];
@@ -24,6 +43,7 @@ function App() {
       const metadata = await engine.current.load(file);
       setTrack({ name: file.name, ...metadata });
       setStatus('Ready');
+      setPosition(0);
     } catch (failure) {
       // A superseded import was replaced by a newer choice, so it is not an error to show.
       if (failure.name !== 'SupersededError') setError(failure.message);
@@ -58,10 +78,13 @@ function App() {
         <div><p className="eyebrow">SESSION 001</p><h2>Untitled project</h2></div>
         <div className="transport-buttons">
           <button className="primary" onClick={play} disabled={!track || busy || status === 'Playing'}>▶ Play</button>
-          <button onClick={() => { engine.current.pause(); setStatus('Paused'); }} disabled={busy || status !== 'Playing'}>Ⅱ Pause</button>
-          <button onClick={() => { engine.current.stop(); setStatus('Stopped'); }} disabled={!track || busy}>■ Stop</button>
+          <button onClick={() => { engine.current.pause(); setPosition(engine.current.position()); setStatus('Paused'); }} disabled={busy || status !== 'Playing'}>Ⅱ Pause</button>
+          <button onClick={() => { engine.current.stop(); setPosition(0); setStatus('Stopped'); }} disabled={!track || busy}>■ Stop</button>
         </div>
-        <p role="status" className="status">{busy ? 'Loading audio…' : status}</p>
+        <div className="transport-state">
+          <p role="status" className="status">{busy ? 'Loading audio…' : status}</p>
+          <p role="timer" aria-label="Playback position" className="position">{clock(position)} / {clock(track ? track.duration : 0)}</p>
+        </div>
       </section>
 
       <div className="workspace">
