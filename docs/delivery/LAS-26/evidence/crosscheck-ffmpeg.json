@@ -1,0 +1,254 @@
+{
+  "tool": "ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers",
+  "filter": "ebur128=peak=true+sample",
+  "analysisVersion": "mps-analysis-1",
+  "tolerance": {
+    "integratedLufs": 0.15,
+    "rangeLu": 0.6,
+    "samplePeakDbfs": 0.06,
+    "truePeakDbtp": 0.25
+  },
+  "passed": true,
+  "rows": [
+    {
+      "fixture": "EBU 3341 test 1: 1 kHz −23 dBFS stereo",
+      "sampleRate": 48000,
+      "channels": 2,
+      "seconds": 20,
+      "checks": [
+        {
+          "measure": "integratedLufs",
+          "mps": -22.993,
+          "ffmpeg": -23,
+          "difference": 0.007,
+          "tolerance": 0.15,
+          "pass": true
+        },
+        {
+          "measure": "rangeLu",
+          "mps": 0,
+          "ffmpeg": 0,
+          "difference": 0,
+          "tolerance": 0.6,
+          "pass": true
+        },
+        {
+          "measure": "samplePeakDbfs",
+          "mps": -23,
+          "ffmpeg": -23,
+          "difference": 0,
+          "tolerance": 0.06,
+          "pass": true
+        },
+        {
+          "measure": "truePeakDbtp",
+          "mps": -23,
+          "ffmpeg": -23,
+          "difference": 0,
+          "tolerance": 0.25,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "fixture": "EBU 3342 test 4: five-step tone",
+      "sampleRate": 48000,
+      "channels": 2,
+      "seconds": 100,
+      "checks": [
+        {
+          "measure": "integratedLufs",
+          "mps": -24.492,
+          "ffmpeg": -24.5,
+          "difference": 0.008,
+          "tolerance": 0.15,
+          "pass": true
+        },
+        {
+          "measure": "rangeLu",
+          "mps": 15,
+          "ffmpeg": 15,
+          "difference": 0,
+          "tolerance": 0.6,
+          "pass": true
+        },
+        {
+          "measure": "samplePeakDbfs",
+          "mps": -20,
+          "ffmpeg": -20,
+          "difference": 0,
+          "tolerance": 0.06,
+          "pass": true
+        },
+        {
+          "measure": "truePeakDbtp",
+          "mps": -20,
+          "ffmpeg": -20,
+          "difference": 0,
+          "tolerance": 0.25,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "fixture": "Programme-like noise, stereo 44.1 kHz",
+      "sampleRate": 44100,
+      "channels": 2,
+      "seconds": 40,
+      "checks": [
+        {
+          "measure": "integratedLufs",
+          "mps": -19.53,
+          "ffmpeg": -19.5,
+          "difference": -0.03,
+          "tolerance": 0.15,
+          "pass": true
+        },
+        {
+          "measure": "rangeLu",
+          "mps": 15.975,
+          "ffmpeg": 16,
+          "difference": -0.025,
+          "tolerance": 0.6,
+          "pass": true
+        },
+        {
+          "measure": "samplePeakDbfs",
+          "mps": -8.125,
+          "ffmpeg": -8.1,
+          "difference": -0.025,
+          "tolerance": 0.06,
+          "pass": true
+        },
+        {
+          "measure": "truePeakDbtp",
+          "mps": -8.092,
+          "ffmpeg": -8.1,
+          "difference": 0.008,
+          "tolerance": 0.25,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "fixture": "Programme-like noise, mono 96 kHz",
+      "sampleRate": 96000,
+      "channels": 1,
+      "seconds": 30,
+      "checks": [
+        {
+          "measure": "integratedLufs",
+          "mps": -21.64,
+          "ffmpeg": -21.6,
+          "difference": -0.04,
+          "tolerance": 0.15,
+          "pass": true
+        },
+        {
+          "measure": "rangeLu",
+          "mps": 15.991,
+          "ffmpeg": 16,
+          "difference": -0.009,
+          "tolerance": 0.6,
+          "pass": true
+        },
+        {
+          "measure": "samplePeakDbfs",
+          "mps": -7.785,
+          "ffmpeg": -7.8,
+          "difference": 0.015,
+          "tolerance": 0.06,
+          "pass": true
+        },
+        {
+          "measure": "truePeakDbtp",
+          "mps": -7.704,
+          "ffmpeg": -7.8,
+          "difference": 0.096,
+          "tolerance": 0.25,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "fixture": "Intersample peak: 12 kHz at 45°",
+      "sampleRate": 48000,
+      "channels": 2,
+      "seconds": 5,
+      "checks": [
+        {
+          "measure": "integratedLufs",
+          "mps": -2.683,
+          "ffmpeg": -2.7,
+          "difference": 0.017,
+          "tolerance": 0.15,
+          "pass": true
+        },
+        {
+          "measure": "rangeLu",
+          "mps": 0,
+          "ffmpeg": 0,
+          "difference": 0,
+          "tolerance": 0.6,
+          "pass": true
+        },
+        {
+          "measure": "samplePeakDbfs",
+          "mps": -9.031,
+          "ffmpeg": -9,
+          "difference": -0.031,
+          "tolerance": 0.06,
+          "pass": true
+        },
+        {
+          "measure": "truePeakDbtp",
+          "mps": -6.02,
+          "ffmpeg": -6,
+          "difference": -0.02,
+          "tolerance": 0.25,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "fixture": "Chord with tremolo, wide stereo",
+      "sampleRate": 48000,
+      "channels": 2,
+      "seconds": 15,
+      "checks": [
+        {
+          "measure": "integratedLufs",
+          "mps": -24.231,
+          "ffmpeg": -24.2,
+          "difference": -0.031,
+          "tolerance": 0.15,
+          "pass": true
+        },
+        {
+          "measure": "rangeLu",
+          "mps": 1.983,
+          "ffmpeg": 2,
+          "difference": -0.017,
+          "tolerance": 0.6,
+          "pass": true
+        },
+        {
+          "measure": "samplePeakDbfs",
+          "mps": -16.668,
+          "ffmpeg": -16.7,
+          "difference": 0.032,
+          "tolerance": 0.06,
+          "pass": true
+        },
+        {
+          "measure": "truePeakDbtp",
+          "mps": -16.666,
+          "ffmpeg": -16.7,
+          "difference": 0.034,
+          "tolerance": 0.25,
+          "pass": true
+        }
+      ]
+    }
+  ]
+}

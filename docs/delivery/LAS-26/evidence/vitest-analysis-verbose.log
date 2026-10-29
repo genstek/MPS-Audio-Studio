@@ -1,0 +1,61 @@
+
+ RUN  v5.0.5 /home/user/MPS-Audio-Studio-delivery
+
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > 8-bit PCM keeps sample values, channels and rate 4ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > 16-bit PCM keeps sample values, channels and rate 1ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > 24-bit PCM keeps sample values, channels and rate 1ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > 32-bit PCM keeps sample values, channels and rate 1ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > 32-bit float keeps sample values, channels and rate 1ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > 64-bit float keeps sample values, channels and rate 1ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > extensible 24-bit PCM keeps sample values, channels and rate 1ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > extensible 32-bit float keeps sample values, channels and rate 0ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > a 96 kHz file is decoded at 96 kHz, not at a playback rate 1ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > chunks before fmt (such as LIST) are skipped and padding is respected 0ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > the project fixture decodes to its known tone 25ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > the file bytes are not changed by decoding 6ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > the default fixture is byte-identical to the original LAS-TC002 tone 9ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > too short fails with a clear message 2ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > not RIFF fails with a clear message 0ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > compressed (ADPCM) fails with a clear message 0ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > 12-bit PCM fails with a clear message 0ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > inconsistent block size fails with a clear message 0ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > data larger than the file fails with a clear message 0ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > partial frame fails with a clear message 0ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > no data chunk fails with a clear message 0ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > sample rate 4 kHz fails with a clear message 0ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > K-weighting at 48 kHz equals the coefficients printed in BS.1770-4 3ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > EBU Tech 3341 test 1: −23 dBFS sine, 20 s → -23 LUFS ±0.1 267ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > EBU Tech 3341 test 2: −33 dBFS sine, 20 s → -33 LUFS ±0.1 186ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > EBU Tech 3341 test 3: relative gate (−36 / −23 / −36 dBFS) → -23 LUFS ±0.1 791ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > EBU Tech 3341 test 4: absolute gate (−72 / −36 / −23 / −36 / −72 dBFS) → -23 LUFS ±0.1 913ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > the same −23 dBFS sine reads −23 LUFS ±0.1 at 44100 Hz 150ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > the same −23 dBFS sine reads −23 LUFS ±0.1 at 96000 Hz 349ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > EBU Tech 3342 sequence [[20,-20],[20,-30]] → LRA 10 LU ±1 358ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > EBU Tech 3342 sequence [[20,-20],[20,-15]] → LRA 5 LU ±1 388ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > EBU Tech 3342 sequence [[20,-40],[20,-20]] → LRA 20 LU ±1 378ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > EBU Tech 3342 sequence [[20,-50],[20,-35],[20,-20],[20,-35],[20,-50]] → LRA 15 LU ±1 897ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > silence and very short audio are labelled, not given numbers 9ms
+ ✓ tests/unit/analysis.test.js > LAS-26 peaks > true peak finds the intersample peak a sample peak misses 21ms
+ ✓ tests/unit/analysis.test.js > LAS-26 peaks > a 997 Hz sine reads its quarter-sample peak within 0.05 dB at any phase 36ms
+ ✓ tests/unit/analysis.test.js > LAS-26 peaks > a 6000 Hz sine reads its quarter-sample peak within 0.05 dB at any phase 20ms
+ ✓ tests/unit/analysis.test.js > LAS-26 peaks > a 12000 Hz sine reads its quarter-sample peak within 0.05 dB at any phase 15ms
+ ✓ tests/unit/analysis.test.js > LAS-26 peaks > a 15000 Hz sine reads its quarter-sample peak within 0.05 dB at any phase 17ms
+ ✓ tests/unit/analysis.test.js > LAS-26 peaks > a 18000 Hz sine reads its quarter-sample peak within 0.05 dB at any phase 16ms
+ ✓ tests/unit/analysis.test.js > LAS-26 peaks > a 20000 Hz sine reads its quarter-sample peak within 0.05 dB at any phase 17ms
+ ✓ tests/unit/analysis.test.js > LAS-26 peaks > audio is treated as starting and ending in silence, as on playback 4ms
+ ✓ tests/unit/analysis.test.js > LAS-26 peaks > sample peak of a single impulse is exact and labelled as a sample peak 62ms
+ ✓ tests/unit/analysis.test.js > LAS-26 report > levels, crest factor and PLR of the EBU −23 dBFS stereo sine 820ms
+ ✓ tests/unit/analysis.test.js > LAS-26 report > stereo indicators: inverted, uncorrelated and unbalanced channels 613ms
+ ✓ tests/unit/analysis.test.js > LAS-26 report > clipping is counted only for clipped audio 53ms
+ ✓ tests/unit/analysis.test.js > LAS-26 report > mono audio has no stereo indicators; silence has no peak levels 114ms
+ ✓ tests/unit/analysis.test.js > LAS-26 report > a segment is analysed on its own and reported with its bounds 828ms
+ ✓ tests/unit/analysis.test.js > LAS-26 report > analysis is reproducible and leaves the input untouched 2691ms
+ ✓ tests/unit/analysis.test.js > LAS-26 report > more than two channels are refused clearly 1ms
+ ✓ tests/unit/analysis.test.js > LAS-26 FFT > matches a direct DFT 3ms
+
+ Test Files  2 passed (2)
+      Tests  51 passed (51)
+   Start at  22:52:40
+   Duration  10.33s (tests 99%, import 1%, transform 1%)
+
+exit 0

@@ -1,0 +1,69 @@
+{
+  "issue": "LAS-26",
+  "applicationCommit": "a21e687624ae867b1b957256498552f9e2e0c430",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (ESLint, Vitest 135/135, Vite build, Playwright 52/52)",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-a21e687624ae867b1b957256498552f9e2e0c430.log", "evidence/html-report-a21e687624ae867b1b957256498552f9e2e0c430.zip"]
+    },
+    {
+      "name": "Analysis and WAV decoder unit tests: EBU Tech 3341 tests 1-4, EBU Tech 3342 tests 1-4, BS.1770-4 K-weighting, true-peak sweeps, fixtures (51 tests)",
+      "status": "PASS",
+      "command": "npx vitest run tests/unit/analysis.test.js tests/unit/wav-decode.test.js --reporter=verbose",
+      "exitCode": 0,
+      "evidence": ["evidence/vitest-analysis-verbose.log"]
+    },
+    {
+      "name": "Independent cross-check against FFmpeg 6.1.1 ebur128 (24/24 comparisons within tolerance; application code identical to d8143f0)",
+      "status": "PASS",
+      "command": "npm run crosscheck:analysis -- <folder>",
+      "exitCode": 0,
+      "evidence": ["evidence/crosscheck-ffmpeg.md", "evidence/crosscheck-ffmpeg.json"]
+    },
+    {
+      "name": "Browser analysis checks: report values, repeatability, source hash, worker responsiveness (0 long tasks), cancel/retry, stale result, unsupported input, heading fit",
+      "status": "PASS",
+      "command": "npx playwright test tests/e2e/analysis.spec.js --reporter=json",
+      "exitCode": 0,
+      "evidence": ["evidence/playwright-analysis-annotations.txt", "evidence/ui-report-ebu-tone.txt", "evidence/screenshots/"]
+    },
+    {
+      "name": "Heading-fit test on the code without the CSS change (expected to fail, exit 1)",
+      "status": "PASS",
+      "command": "npx playwright test tests/e2e/analysis.spec.js -g fits (narrow-screen heading rule temporarily removed)",
+      "exitCode": 1,
+      "evidence": ["evidence/heading-fit-without-css-fix.log"]
+    },
+    {
+      "name": "Artifact, bundle and log scan (116 pieces, 0 findings)",
+      "status": "PASS",
+      "command": "npm run scan:artifacts",
+      "exitCode": 0,
+      "evidence": ["evidence/scan-artifacts-a21e687624ae867b1b957256498552f9e2e0c430.json"]
+    },
+    {
+      "name": "Analysis performance, two minutes of stereo 48 kHz in Node (3.2 s)",
+      "status": "PASS",
+      "command": "node <scratch>/perf.mjs",
+      "exitCode": 0,
+      "evidence": ["evidence/performance.txt"]
+    },
+    {
+      "name": "Mac/Chrome and listening comparison",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["manual-qa.md"]
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],
+  "blockers": [],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "feat/LAS-26-analysis"
+}

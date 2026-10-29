@@ -1,0 +1,6 @@
+passed	3275 ms	LAS-26: a -23 dBFS 1 kHz stereo tone reads -23.0 LUFS with labelled peaks; repeatable, file unchanged
+passed	16040 ms	LAS-26: a long analysis runs off the main thread, can be cancelled, retried and left running	{'unheld analysis of 2:00 stereo 48 kHz': '3974 ms', 'main-thread long tasks during analysis': '0, longest 0 ms'}
+passed	3105 ms	LAS-26: replacing the track during analysis never shows the old file's report
+passed	1299 ms	LAS-26: unsupported audio fails clearly and the session keeps working
+passed	1112 ms	LAS-26: the Analyze button fits the Tracks heading from 320 px wide
+{"startTime": "2026-10-29T22:46:35.335Z", "duration": 27549.888000000003, "expected": 5, "skipped": 0, "unexpected": 0, "flaky": 0}
