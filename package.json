@@ -16,7 +16,8 @@
     "check": "npm run lint && npm run test:unit && npm run build && npm run test:e2e",
     "test:unit": "vitest run",
     "scan:artifacts": "node scripts/scan-artifacts.js",
-    "crosscheck:analysis": "node scripts/crosscheck-ffmpeg.js"
+    "crosscheck:analysis": "node scripts/crosscheck-ffmpeg.js",
+    "characterize:chain": "node scripts/characterize-chain.js"
   },
   "dependencies": {
     "react": "^19.3.1",
