@@ -1,0 +1,35 @@
+{
+  "issue": "LAS-57",
+  "applicationCommit": "f90adfc9bd3531125ec914d8f950b3b2013fe75a",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "TC-002 automated run (Linux Chromium 141, decoded rate 44100 Hz)",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npx playwright test tests/e2e/import-valid-wav.spec.js --reporter=json",
+      "exitCode": 0,
+      "evidence": ["evidence/tc002-run-f90adfc9bd3531125ec914d8f950b3b2013fe75a.json"]
+    },
+    {
+      "name": "npm run check (lint, Vitest 4/4, build, Playwright 18/18)",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-f90adfc9bd3531125ec914d8f950b3b2013fe75a.log", "evidence/html-report-f90adfc9bd3531125ec914d8f950b3b2013fe75a.zip"]
+    },
+    {
+      "name": "TC-002 on macOS Google Chrome",
+      "status": "NOT_RUN",
+      "command": "npx playwright test tests/e2e/import-valid-wav.spec.js",
+      "exitCode": null,
+      "evidence": []
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],
+  "blockers": [],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "test/LAS-57-tc002-valid-wav",
+  "findings": ["Replace WAV button keeps the accessible name 'Import WAV' (label-in-name mismatch); follow-up proposed"]
+}
