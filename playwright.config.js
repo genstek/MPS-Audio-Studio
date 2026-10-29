@@ -28,6 +28,7 @@ export default defineConfig({
       env: {
         MPS_PORT: '8788', MPS_DATA_DIR: '.data/e2e', MPS_RESET_DATA: '1', MPS_DEV_ENDPOINTS: '1',
         MPS_APP_URL: 'http://127.0.0.1:5173', MPS_LIMIT_SCALE: '20', MPS_TEST_RECIPIENT: '1',
+        MPS_LOG_FILE: '.data/e2e/server.log',
       },
     },
     // Starts the app from this folder, or reuses a running one after global setup has

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { accountDialog, emailLink, enterSecret, newEmail, newPassword, registerVerified } from './helpers/accounts.js';
+import { accountDialog, emailLink, enterSecret, newEmail, newPassword, openEmailLink, registerVerified } from './helpers/accounts.js';
 
 // Traces record typed values and cookies, so these account tests keep none.
 test.use({ trace: 'off' });
@@ -30,9 +30,9 @@ test('LAS-22: reset a forgotten password from the email link; other sessions are
   await phone.email.fill(email);
   await phone.dialog.getByRole('button', { name: 'Send reset link' }).click();
   await expect(phone.status).toHaveText('If this email has an account, a reset link is on its way.');
-  await phonePage.goto(await emailLink(request, email, 'reset'));
+  await openEmailLink(phonePage, await emailLink(request, email, 'reset'));
   await expect(phone.dialog.getByRole('heading', { name: 'Choose a new password' })).toBeVisible();
-  expect(new URL(phonePage.url()).search, 'token removed from the address bar').toBe('');
+  expect(new URL(phonePage.url()).hash, 'token removed from the address bar').toBe('');
   await enterSecret(phone.dialog.getByLabel('New password'), newPasswordValue);
   await phone.dialog.getByRole('button', { name: 'Set new password' }).click();
   await expect(phone.status).toHaveText('Password changed. Sign in with your new password. You were signed out everywhere else.');
@@ -60,13 +60,13 @@ test('LAS-22: used and forged reset links are refused with a way to ask again', 
   await expect(ui.dialog.getByRole('heading', { name: 'Check your email' })).toBeVisible();
   const link = await emailLink(request, email, 'reset');
 
-  await page.goto(link);
+  await openEmailLink(page, link);
   await enterSecret(ui.dialog.getByLabel('New password'), newPassword());
   await ui.dialog.getByRole('button', { name: 'Set new password' }).click();
   await expect(ui.dialog.getByRole('heading', { name: 'Sign in' })).toBeVisible();
 
-  for (const [label, url] of [['used link', link], ['forged link', '/?reset=forged-token']]) {
-    await page.goto(url);
+  for (const [label, url] of [['used link', link], ['forged link', 'http://127.0.0.1:5173/#reset=forged-token']]) {
+    await openEmailLink(page, url);
     await enterSecret(ui.dialog.getByLabel('New password'), newPassword());
     await ui.dialog.getByRole('button', { name: 'Set new password' }).click();
     await expect(ui.alert, label).toHaveText('This reset link is invalid or has expired. Request a new one.');

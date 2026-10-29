@@ -11,7 +11,7 @@ test('LAS-21: register, verify from the email link, sign in and sign out', async
   await page.goto('/');
   const ui = await registerVerified(page, request, email, password);
   // The token is removed from the address bar after use.
-  expect(new URL(page.url()).search).toBe('');
+  expect(new URL(page.url()).hash).toBe('');
 
   await ui.email.fill(email);
   await enterSecret(ui.password, password);

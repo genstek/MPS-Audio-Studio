@@ -180,10 +180,17 @@ describe('LAS-23 level analysis jobs', () => {
   });
 
   test('a cancelled job never runs, and the time limit stops a slow one', async () => {
-    const { owner, asset } = await ownerWithAsset();
+    // Jobs are held in the queue, so the cancel deterministically arrives before the job starts.
+    let releaseJobs;
+    const gated = await startTestServer({ jobGate: new Promise(resolve => { releaseJobs = resolve; }) });
+    const owner = await signedInUser(gated, 'gus@example.test');
+    const album = (await owner.request('/api/projects', { method: 'POST', body: {} })).data;
+    const asset = (await owner.request(`/api/projects/${album.id}/assets?name=a.wav`, { method: 'POST', body: makeWav(), headers: { 'Content-Type': 'audio/wav' } })).data;
     const job = (await owner.request(`/api/assets/${asset.id}/jobs`, { method: 'POST', body: { kind: 'levels' } })).data;
     expect((await owner.request(`/api/jobs/${job.id}`, { method: 'DELETE' })).data.status).toBe('cancelled');
-    expect((await waitForJob(owner, job.id)).status).toBe('cancelled');
+    releaseJobs();
+    expect(await waitForJob(owner, job.id)).toMatchObject({ status: 'cancelled', result: null });
+    await gated.stop();
 
     const limited = await startTestServer({ jobTimeLimitMs: 0 });
     const user = await signedInUser(limited, 'fay@example.test');

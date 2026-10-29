@@ -17,7 +17,7 @@ describe('LAS-21 registration, verification, login and logout', () => {
     expect(registered.status).toBe(202);
     const mail = await latestMail(server, 'ada@example.test');
     expect(mail.subject).toBe('Verify your MPS Audio Studio email');
-    expect(mail.body).toContain('http://studio.test/?verify=');
+    expect(mail.body).toContain('http://studio.test/#verify='); // fragment: never sent to a server
 
     const verified = await user.request('/api/auth/verify', { method: 'POST', body: { token: linkToken(mail, 'verify') } });
     expect(verified).toMatchObject({ status: 200, data: { verified: true } });

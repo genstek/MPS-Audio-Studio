@@ -6,20 +6,25 @@ const UNAVAILABLE = 'Accounts are unavailable right now. Local playback still wo
 
 const SESSION_ENDED = 'Your session has ended. Sign in again.';
 
+// Emailed links carry their token in the URL fragment (#verify=… or #reset=…): a fragment never
+// reaches a server, a proxy or their logs (LAS-25). It is removed from the address bar on use.
+const linkTokens = () => new URLSearchParams(window.location.hash.slice(1));
+const clearLinkTokens = () => window.history.replaceState(null, '', window.location.pathname + window.location.search);
+
 // Account button and dialog (LAS-21/22). Talks to the server only when opened, or when the page
 // was opened from an emailed link, so local-only use makes no network requests (LAS-20).
 export function AccountDialog({ currentFile }) {
   const dialog = useRef(null);
   // A reset link's token is kept in memory only; the address bar is cleaned on mount.
-  const [resetToken] = useState(() => new URLSearchParams(window.location.search).get('reset'));
-  const [view, setView] = useState(resetToken ? 'reset' : 'signin');
+  const [resetToken, setResetToken] = useState(() => linkTokens().get('reset'));
+  const [view, setView] = useState(() => (linkTokens().get('reset') ? 'reset' : 'signin'));
   const [user, setUser] = useState(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   // Opened from a verification link: show progress from the first render.
-  const [busy, setBusy] = useState(() => (new URLSearchParams(window.location.search).has('verify') ? 'Verifying your email…' : ''));
+  const [busy, setBusy] = useState(() => (linkTokens().has('verify') ? 'Verifying your email…' : ''));
 
   function show(nextView, { note = '', problem = '' } = {}) {
     setView(nextView);
@@ -28,25 +33,46 @@ export function AccountDialog({ currentFile }) {
     setPassword('');
   }
 
+  // Following an emailed link. The token is removed from the address bar before anything else, so
+  // a second effect run finds nothing and the single-use token is sent once.
   useEffect(() => {
-    if (!resetToken) return;
-    window.history.replaceState(null, '', window.location.pathname);
-    dialog.current.showModal();
-  }, [resetToken]);
-
-  // Following the emailed link: remove the token from the address bar first (so a second effect
-  // run finds nothing and the single-use token is sent once), then verify.
-  useEffect(() => {
-    const token = new URLSearchParams(window.location.search).get('verify');
-    if (!token) return;
-    window.history.replaceState(null, '', window.location.pathname);
-    dialog.current.showModal();
-    api('/auth/verify', { method: 'POST', body: { token } }).then(result => {
-      setBusy('');
-      setView(result.ok || result.unavailable ? 'signin' : 'resend');
-      setMessage(result.ok ? 'Email verified. You can sign in now.' : '');
-      setError(result.unavailable ? UNAVAILABLE : result.ok ? '' : result.data.message);
-    });
+    const openDialog = () => { if (!dialog.current.open) dialog.current.showModal(); };
+    function verify(token) {
+      openDialog();
+      api('/auth/verify', { method: 'POST', body: { token } }).then(result => {
+        setBusy('');
+        setView(result.ok || result.unavailable ? 'signin' : 'resend');
+        setMessage(result.ok ? 'Email verified. You can sign in now.' : '');
+        setError(result.unavailable ? UNAVAILABLE : result.ok ? '' : result.data.message);
+      });
+    }
+    // A link opened in a new tab: the initial state above already reflects it.
+    const initial = linkTokens();
+    if (initial.get('reset') || initial.get('verify')) clearLinkTokens();
+    if (initial.get('reset')) openDialog();
+    if (initial.get('verify')) verify(initial.get('verify'));
+    // A link opened in a tab where the studio is already running.
+    function followLink() {
+      const tokens = linkTokens();
+      const reset = tokens.get('reset');
+      const token = tokens.get('verify');
+      if (!reset && !token) return;
+      clearLinkTokens();
+      if (reset) {
+        setResetToken(reset);
+        setView('reset');
+        setMessage('');
+        setError('');
+        setPassword('');
+        openDialog();
+      }
+      if (token) {
+        setBusy('Verifying your email…');
+        verify(token);
+      }
+    }
+    window.addEventListener('hashchange', followLink);
+    return () => window.removeEventListener('hashchange', followLink);
   }, []);
 
   async function open() {

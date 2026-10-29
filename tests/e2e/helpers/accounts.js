@@ -22,8 +22,14 @@ export async function emailLink(request, email, name) {
   const [mail] = (await response.json()).messages;
   expect(mail, `mail for ${email}`).toBeTruthy();
   const link = mail.body.match(/https?:\/\/\S+/)[0];
-  expect(new URL(link).searchParams.get(name)).toBeTruthy();
+  expect(new URLSearchParams(new URL(link).hash.slice(1)).get(name), 'token in the URL fragment').toBeTruthy();
   return link;
+}
+
+// Opens an emailed link in the tab where the studio already runs (the studio follows the change of
+// URL fragment). page.goto(url) would copy the single-use token into report step titles (LAS-25).
+export async function openEmailLink(page, link) {
+  await page.evaluate(url => { window.location.href = url; }, link);
 }
 
 export function accountDialog(page) {
@@ -47,7 +53,7 @@ export async function registerVerified(page, request, email, password) {
   await enterSecret(ui.password, password);
   await ui.dialog.getByRole('button', { name: 'Create account' }).click();
   await expect(ui.dialog.getByRole('heading', { name: 'Check your email' })).toBeVisible();
-  await page.goto(await emailLink(request, email, 'verify'));
+  await openEmailLink(page, await emailLink(request, email, 'verify'));
   await expect(ui.status).toHaveText('Email verified. You can sign in now.');
   return ui;
 }
