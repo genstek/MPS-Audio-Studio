@@ -21,11 +21,11 @@ describe('LAS-26 loudness (ITU-R BS.1770-4, EBU R128)', () => {
 
   // EBU Tech 3341 minimum requirements, tests 1–4 (expected values from the specification, ±0.1 LU).
   test.each([
-    ['test 1: −23 dBFS sine, 20 s', [[20, -23]], -23],
-    ['test 2: −33 dBFS sine, 20 s', [[20, -33]], -33],
-    ['test 3: relative gate (−36 / −23 / −36 dBFS)', [[10, -36], [60, -23], [10, -36]], -23],
-    ['test 4: absolute gate (−72 / −36 / −23 / −36 / −72 dBFS)', [[10, -72], [10, -36], [60, -23], [10, -36], [10, -72]], -23],
-  ])('EBU Tech 3341 %s → %s LUFS ±0.1', (_name, steps, expected) => {
+    ['test 1: −23 dBFS sine, 20 s', -23, [[20, -23]]],
+    ['test 2: −33 dBFS sine, 20 s', -33, [[20, -33]]],
+    ['test 3: relative gate (−36 / −23 / −36 dBFS)', -23, [[10, -36], [60, -23], [10, -36]]],
+    ['test 4: absolute gate (−72 / −36 / −23 / −36 / −72 dBFS)', -23, [[10, -72], [10, -36], [60, -23], [10, -36], [10, -72]]],
+  ])('EBU Tech 3341 %s → %s LUFS ±0.1', (_name, expected, steps) => {
     const result = measureLoudness(stereo(toneSequence(steps)), 48000);
     expect(result.state).toBe('ok');
     expect(Math.abs(result.integratedLufs - expected)).toBeLessThanOrEqual(0.1);
