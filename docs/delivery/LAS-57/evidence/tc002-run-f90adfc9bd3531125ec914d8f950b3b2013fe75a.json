@@ -1,0 +1,24 @@
+{
+  "command": "npx playwright test tests/e2e/import-valid-wav.spec.js --reporter=json",
+  "stats": {
+    "startTime": "2026-10-29T17:12:46.867Z",
+    "duration": 3619.741,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "title": "TC-002 (LAS-57): a valid WAV file is imported successfully",
+      "status": "passed",
+      "durationMs": 1402,
+      "annotations": [
+        {
+          "type": "decoded sample rate",
+          "description": "44100 Hz"
+        }
+      ]
+    }
+  ]
+}
