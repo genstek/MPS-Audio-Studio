@@ -1,0 +1,4 @@
+66c66
+<       if (!buffer || source || pendingStart) return false;
+---
+>       if (!buffer || source) return false;

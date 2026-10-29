@@ -2,7 +2,7 @@
 // extra source playing or connected. It observes the engine's nodes; it does not measure sound.
 export async function installAudioProbe(page) {
   await page.addInitScript(() => {
-    const probe = { started: 0, offsets: [], playing: new Set(), connected: new Set() };
+    const probe = { started: 0, offsets: [], mostPlaying: 0, playing: new Set(), connected: new Set() };
     window.__audioProbe = probe;
     const node = AudioBufferSourceNode.prototype;
     const { start, stop, connect, disconnect } = node;
@@ -10,6 +10,7 @@ export async function installAudioProbe(page) {
       probe.started += 1;
       probe.offsets.push(args[1] ?? 0); // start(when, offset): where in the track it starts
       probe.playing.add(this);
+      probe.mostPlaying = Math.max(probe.mostPlaying, probe.playing.size);
       this.addEventListener('ended', () => probe.playing.delete(this));
       return start.apply(this, args);
     };
@@ -39,4 +40,9 @@ export function audioSources(page) {
 // The track offset, in seconds, passed to each start() call so far.
 export function startOffsets(page) {
   return page.evaluate(() => window.__audioProbe.offsets);
+}
+
+// The largest number of sources that were playing at the same time.
+export function mostPlayingAtOnce(page) {
+  return page.evaluate(() => window.__audioProbe.mostPlaying);
 }

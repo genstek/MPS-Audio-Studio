@@ -8,6 +8,9 @@ export function createAudioEngine(onEnded) {
   // Every import gets a number. Only the newest one may replace the track, so a slow
   // earlier import, or one still running when the engine is disposed, is discarded.
   let latestLoad = 0;
+  // A start that is waiting for the audio context to resume. Only one may wait at a time, and
+  // pause, stop, a new track or disposal cancels it, so repeated gestures never add a source.
+  let pendingStart = null;
 
   function superseded() {
     const error = new Error('A newer import replaced this one.');
@@ -16,6 +19,7 @@ export function createAudioEngine(onEnded) {
   }
 
   function disconnect() {
+    pendingStart = null;
     if (!source) return;
     source.onended = null;
     source.stop();
@@ -56,9 +60,20 @@ export function createAudioEngine(onEnded) {
       offset = 0;
       return { duration: buffer.duration, channels: buffer.numberOfChannels, sampleRate: buffer.sampleRate };
     },
+    // Resolves true when a source started, false when nothing started (no track, already
+    // playing, another start pending, or cancelled while the context resumed).
     async play() {
-      if (!buffer || source) return;
-      await context.resume();
+      if (!buffer || source || pendingStart) return false;
+      const start = {};
+      pendingStart = start;
+      try {
+        await context.resume();
+      } catch (error) {
+        if (pendingStart === start) pendingStart = null;
+        throw error;
+      }
+      if (pendingStart !== start) return false;
+      pendingStart = null;
       source = context.createBufferSource();
       source.buffer = buffer;
       source.connect(context.destination);
@@ -70,10 +85,10 @@ export function createAudioEngine(onEnded) {
       };
       startedAt = context.currentTime;
       source.start(0, offset);
+      return true;
     },
     pause() {
-      if (!source) return;
-      offset = position();
+      if (source) offset = position();
       disconnect();
     },
     position,

@@ -15,7 +15,8 @@ function App() {
   const [track, setTrack] = useState(null);
   const [status, setStatus] = useState('No audio loaded');
   const [error, setError] = useState('');
-  const [busy, setBusy] = useState(false);
+  // What the app is waiting for ('' when idle); shown instead of the status meanwhile.
+  const [busy, setBusy] = useState('');
   const [position, setPosition] = useState(0);
   const engine = useRef(null);
 
@@ -37,7 +38,7 @@ function App() {
   async function importAudio(event) {
     const file = event.target.files[0];
     if (!file) return;
-    setBusy(true);
+    setBusy('Loading audio…');
     setError('');
     try {
       const metadata = await engine.current.load(file);
@@ -48,23 +49,41 @@ function App() {
       // A superseded import was replaced by a newer choice, so it is not an error to show.
       if (failure.name !== 'SupersededError') setError(failure.message);
     } finally {
-      setBusy(false);
+      setBusy('');
       // Clearing the picker lets the same file be chosen again.
       event.target.value = '';
     }
   }
 
   async function play() {
-    setBusy(true);
+    setBusy('Starting playback…');
     setError('');
     try {
-      await engine.current.play();
-      setStatus('Playing');
+      // The engine resolves false when Stop, a new track or removal cancelled this start.
+      if (await engine.current.play()) setStatus('Playing');
     } catch {
       setError('Audio could not start. Try pressing Play again.');
     } finally {
-      setBusy(false);
+      setBusy('');
     }
+  }
+
+  function pause() {
+    engine.current.pause();
+    setPosition(engine.current.position());
+    setStatus('Paused');
+  }
+
+  // Pause is a toggle (LAS-11): it pauses while playing and resumes while paused.
+  function togglePause() {
+    if (status === 'Playing') pause();
+    else if (status === 'Paused') play();
+  }
+
+  function stop() {
+    engine.current.stop();
+    setPosition(0);
+    setStatus('Stopped');
   }
 
   return (
@@ -78,11 +97,11 @@ function App() {
         <div><p className="eyebrow">SESSION 001</p><h2>Untitled project</h2></div>
         <div className="transport-buttons">
           <button className="primary" onClick={play} disabled={!track || busy || status === 'Playing'}>▶ Play</button>
-          <button onClick={() => { engine.current.pause(); setPosition(engine.current.position()); setStatus('Paused'); }} disabled={busy || status !== 'Playing'}>Ⅱ Pause</button>
-          <button onClick={() => { engine.current.stop(); setPosition(0); setStatus('Stopped'); }} disabled={!track || busy}>■ Stop</button>
+          <button onClick={togglePause} aria-pressed={status === 'Paused'} disabled={busy || (status !== 'Playing' && status !== 'Paused')}>Ⅱ Pause</button>
+          <button onClick={stop} disabled={!track || busy}>■ Stop</button>
         </div>
         <div className="transport-state">
-          <p role="status" className="status">{busy ? 'Loading audio…' : status}</p>
+          <p role="status" className="status">{busy || status}</p>
           <p role="timer" aria-label="Playback position" className="position">{clock(position)} / {clock(track ? track.duration : 0)}</p>
         </div>
       </section>

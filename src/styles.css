@@ -16,6 +16,8 @@ button { border: 1px solid #52616c; border-radius: 5px; padding: clamp(7px, 1.25
 button:not(:disabled):hover { background: #44525e; }
 button:disabled { opacity: .58; cursor: not-allowed; }
 button.primary { background: #d7af6c; color: #14191d; border-color: #d7af6c; font-weight: 650; }
+/* A pressed toggle (Pause while paused) is marked by its border as well as by aria-pressed. */
+button[aria-pressed='true'] { border-color: #d7af6c; color: #e8c58d; }
 :focus-visible { outline: 3px solid #80d1e0; outline-offset: 4px; }
 .masthead, .brand, .transport, .panel-heading, .strip-title, footer, .track-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .masthead { min-width: 0; }
