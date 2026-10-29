@@ -34,6 +34,29 @@ for (const loaded of [false, true]) {
   });
 }
 
+// The exact LAS-49 sequences for width-only (TC-003) and height-only (TC-004) resizing.
+const SEQUENCES = {
+  'LAS48-TC-003: width-only resize at height 900': [1920, 1440, 1280, 1024, 800, 768, 390, 1920].map(width => [width, 900]),
+  'LAS48-TC-004: height-only resize at width 1280, then 1024x768 and 800x600': [[1280, 900], [1280, 720], [1280, 600], [1280, 900], [1024, 768], [800, 600]],
+};
+for (const [name, sizes] of Object.entries(SEQUENCES)) {
+  test(name, async ({ page }) => {
+    await page.setViewportSize({ width: sizes[0][0], height: sizes[0][1] });
+    await page.goto('/');
+    await page.getByLabel('Import WAV').setInputFiles({ name: 'WAV-A.wav', mimeType: 'audio/wav', buffer: makeWav({ seconds: 90, channels: 2, sampleRate: 48000 }) });
+    await expect(page.getByRole('status')).toHaveText('Ready');
+    for (const [width, height] of sizes) {
+      await test.step(`${width}x${height}`, async () => {
+        await page.setViewportSize({ width, height });
+        await checkLayout(page, `${width}x${height}`);
+      });
+    }
+    // Same track, same state: nothing was reloaded or re-imported.
+    await expect(page.getByRole('heading', { name: 'WAV-A.wav' })).toBeVisible();
+    await expect(page.getByRole('status')).toHaveText('Ready');
+  });
+}
+
 // Browser zoom shrinks the CSS viewport and raises the device pixel ratio. These sizes are what
 // 125% and 200% zoom give in 1280x720, 1440x900 and 1920x1080 windows. This is emulation;
 // real browser zoom is a manual check (LAS48-TC-010).
