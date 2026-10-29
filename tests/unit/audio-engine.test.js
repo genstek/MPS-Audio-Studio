@@ -268,3 +268,16 @@ test('unload cancels an import in progress and a start waiting for the context',
   expect(sources).toHaveLength(0);
   engine.dispose();
 });
+
+// LAS-8 defect found during LAS-20: the RIFF size bytes were decoded as UTF-8 text, so sizes whose
+// bytes form a UTF-8 character shifted 'WAVE' and valid files were rejected.
+test('a valid header is accepted whatever bytes its RIFF size field contains', async () => {
+  const { engine, file, context } = setup();
+  const sizeFields = [[0xcc, 0xba, 0x06, 0x00], [0xc3, 0xa9, 0x00, 0x00], [0xe2, 0x82, 0xac, 0x00], [0xf0, 0x9f, 0x98, 0x80], [0xff, 0xff, 0xff, 0xff]];
+  for (const size of sizeFields) {
+    const bytes = new Uint8Array([...new TextEncoder().encode('RIFF'), ...size, ...new TextEncoder().encode('WAVE')]).buffer;
+    await expect(engine.load({ ...file, arrayBuffer: async () => bytes }), size.join(' ')).resolves.toMatchObject({ duration: 10 });
+  }
+  expect(context.decodeAudioData).toHaveBeenCalledTimes(sizeFields.length);
+  engine.dispose();
+});

@@ -56,3 +56,13 @@ test('LAS-8: track information comes from the decoded file', async ({ page }) =>
   await expect(page.getByRole('status')).toHaveText('Ready');
   await expect(page.getByText(`1.5 seconds · 2 channel(s) · ${decodedRate.toLocaleString('en-US')} Hz decoded`)).toBeVisible();
 });
+
+// Regression for the RIFF size check: this 5-second mono file's size bytes (cc ba 06 00) form a
+// UTF-8 character and the file used to be rejected as "not a valid WAV".
+test('LAS-8: a 5-second mono WAV imports (size bytes that look like text)', async ({ page }) => {
+  await page.goto('/');
+  await page.getByLabel('Import WAV').setInputFiles({ name: 'five-seconds.wav', mimeType: 'audio/wav', buffer: makeWav({ seconds: 5 }) });
+  await expect(page.getByRole('status')).toHaveText('Ready');
+  await expect(page.getByRole('alert')).toHaveCount(0);
+  await expect(page.getByText(/^5\.0 seconds · 1 channel\(s\)/)).toBeVisible();
+});
