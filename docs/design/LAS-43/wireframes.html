@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MPS Audio Studio — wireframes (LAS-43)</title>
+<style>
+  /* Greyscale wireframes: structure and states only. No colour, theme or branding is implied (LAS-42 pending). */
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.4 system-ui, sans-serif; color: #111; background: #fff; }
+  a { color: #111; }
+  .frame { display: grid; grid-template-columns: 210px 1fr; grid-template-rows: 52px 1fr 56px; min-height: 100vh; }
+  header { grid-column: 1 / -1; display: flex; align-items: center; gap: 14px; padding: 0 16px; border-bottom: 2px solid #111; }
+  header .crumb { color: #555; }
+  header .spacer { flex: 1; }
+  nav { border-right: 2px solid #111; padding: 12px; display: grid; align-content: start; gap: 4px; }
+  nav a { display: block; padding: 8px 10px; border: 1px dashed transparent; text-decoration: none; }
+  nav a[aria-current="page"] { border-color: #111; font-weight: 700; }
+  nav h3 { font-size: 12px; text-transform: uppercase; color: #555; margin: 12px 10px 2px; }
+  main { padding: 16px; display: grid; gap: 14px; align-content: start; }
+  footer { grid-column: 1 / -1; border-top: 2px solid #111; display: flex; align-items: center; gap: 10px; padding: 0 16px; }
+  .box { border: 2px solid #111; padding: 12px; }
+  .box.dashed { border-style: dashed; }
+  .placeholder { background: repeating-linear-gradient(45deg, #eee 0 8px, #fff 8px 16px); border: 2px solid #111; display: grid; place-items: center; color: #444; min-height: 120px; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  button, .btn { font: inherit; border: 2px solid #111; background: #fff; padding: 6px 12px; border-radius: 0; cursor: pointer; text-decoration: none; display: inline-block; color: #111; }
+  button.primary, .btn.primary { background: #111; color: #fff; }
+  button:disabled { border-style: dashed; color: #888; cursor: not-allowed; }
+  label { display: grid; gap: 4px; }
+  input, select { font: inherit; border: 2px solid #111; padding: 6px 8px; }
+  .note { background: #f3f3f3; border-left: 6px solid #111; padding: 8px 12px; font-size: 13px; }
+  .note::before { content: 'Note — '; font-weight: 700; }
+  .states { display: flex; gap: 6px; flex-wrap: wrap; }
+  .states button[aria-pressed="true"] { background: #111; color: #fff; }
+  .status { font-weight: 700; }
+  .error { border: 3px double #111; padding: 8px 12px; }
+  .screen { display: none; }
+  .screen.active { display: contents; }
+  .dialog { border: 3px solid #111; padding: 16px; max-width: 460px; display: grid; gap: 10px; background: #fff; box-shadow: 8px 8px 0 #111; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border: 1px solid #111; padding: 6px 8px; text-align: left; }
+  @media (max-width: 760px) { .frame { grid-template-columns: 1fr; } nav { border-right: 0; border-bottom: 2px solid #111; } .grid2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="frame">
+  <header>
+    <strong>MPS Audio Studio</strong>
+    <span class="crumb" id="crumb">Projects</span>
+    <span class="spacer"></span>
+    <span id="save-state">All changes saved on this computer</span>
+    <a class="btn" href="#account">Account</a>
+  </header>
+  <nav aria-label="Workspace">
+    <a href="#projects">Projects</a>
+    <h3>Current project</h3>
+    <a href="#master">Master</a>
+    <a href="#references">References</a>
+    <a href="#stems">Stems</a>
+    <a href="#export">Export</a>
+    <h3>Account</h3>
+    <a href="#account">Account &amp; privacy</a>
+    <a href="#signin">Sign in</a>
+  </nav>
+  <main>
+    <!-- Projects -->
+    <section class="screen" id="projects" data-title="Projects">
+      <h1>Projects</h1>
+      <div class="row"><a class="btn primary" href="#master">New project from a WAV…</a><span>Projects live on this computer. Saving to the private library is optional.</span></div>
+      <table aria-label="Projects">
+        <tr><th>Project</th><th>Source</th><th>Last change</th><th>Where</th></tr>
+        <tr><td><a href="#master">Demo song</a></td><td>demo-song.wav · 3:41</td><td>today</td><td>This computer</td></tr>
+        <tr><td><a href="#master">Second mix</a></td><td>mix-v2.wav · 4:02</td><td>yesterday</td><td>This computer + private library</td></tr>
+      </table>
+      <div class="box dashed"><strong>Empty state:</strong> “No projects yet. Choose a WAV to start; nothing is uploaded.” [Choose WAV…]</div>
+      <p class="note">Opening a project restores its settings; the source WAV must be chosen again if the browser lost access to it (browser security). Unsaved changes are marked in the header.</p>
+    </section>
+
+    <!-- Master workspace with states -->
+    <section class="screen" id="master" data-title="Demo song / Master">
+      <div class="row"><h1>Master</h1><span class="spacer"></span><span>State to preview:</span>
+        <div class="states" role="group" aria-label="Preview state">
+          <button data-state="empty">Empty</button><button data-state="loading">Loading</button><button data-state="ready" aria-pressed="true">Ready</button>
+          <button data-state="playing">Playing</button><button data-state="paused">Paused</button><button data-state="error">Error</button>
+          <button data-state="unsaved">Unsaved changes</button>
+        </div>
+      </div>
+      <div class="box" id="waveform-box">
+        <div class="row"><strong id="file-line">demo-song.wav · 3:41 · 48 kHz decoded</strong><span class="spacer"></span>
+          <span role="group" aria-label="Listen to"><button aria-pressed="true">Processed</button><button>Original</button><button>Reference</button></span></div>
+        <div class="placeholder" id="waveform">Waveform with playhead, loop region, seek by click/drag/keyboard</div>
+        <p class="error" id="error-line" hidden>“This file could not be decoded. The previous track is still loaded.” [Choose another WAV] [Details]</p>
+      </div>
+      <div class="grid2">
+        <div class="box"><strong>Modules</strong>
+          <div class="row"><button aria-pressed="true">EQ</button><button>Dynamics</button><button>Limiter</button><button>Space</button><button>Loudness</button></div>
+          <div class="placeholder">EQ curve: 24 bands per channel, Link / Left / Right; drag points; double-click to type values</div>
+          <p class="note">Every control here changes the real audio engine (no pretend controls). Bypass and A/B compare at matched loudness.</p>
+        </div>
+        <div class="box"><strong>Inspector — selected band</strong>
+          <label>Frequency<input value="180 Hz"></label><label>Gain<input value="+1.5 dB"></label><label>Q<input value="0.9"></label>
+          <strong>Measured</strong><p>Integrated LUFS · True peak · Range — measured from the real output, “—” until measured</p>
+        </div>
+      </div>
+      <div class="row"><a class="btn" href="#presets-note">Presets…</a><span>Undo / Redo</span><span class="spacer"></span><a class="btn" href="#consent">Processing location: this computer ▾</a></div>
+      <p class="note" id="presets-note">Presets are starting points with editable values, never claims of a famous engineer’s settings (LAS-33).</p>
+    </section>
+
+    <!-- References -->
+    <section class="screen" id="references" data-title="Demo song / References">
+      <h1>References</h1>
+      <div class="box"><strong>Add a reference you are allowed to use</strong>
+        <div class="row"><button>Choose reference WAV…</button><span>Checksum and loudness are measured on this computer.</span></div></div>
+      <table aria-label="References"><tr><th>Reference</th><th>Checksum</th><th>Integrated LUFS</th><th>Use</th></tr>
+        <tr><td>reference-track.wav</td><td>sha256 3f2c…</td><td>measured</td><td><button>Compare level-matched</button></td></tr></table>
+      <div class="box dashed"><strong>Empty state:</strong> “No reference yet. Matching needs the actual file you are allowed to use; names alone are not enough.”</div>
+      <p class="note">Matching suggestions show what will change and by how much before applying (LAS-30/31/32).</p>
+    </section>
+
+    <!-- Stems -->
+    <section class="screen" id="stems" data-title="Demo song / Stems">
+      <h1>Stems</h1>
+      <p class="box dashed">Planned (LAS-34/35): stem lanes with name, gain, pan, mute, solo, shared playhead and seek; sum to the master chain.</p>
+      <div class="placeholder">Lane 1 · Vocals — Lane 2 · Drums — Lane 3 · Bass — Lane 4 · Music</div>
+    </section>
+
+    <!-- Export -->
+    <section class="screen" id="export" data-title="Demo song / Export">
+      <h1>Export</h1>
+      <div class="grid2">
+        <div class="box"><label>Format<select><option>WAV 24-bit</option><option>WAV 16-bit + dither</option></select></label>
+          <label>Sample rate<select><option>Same as source</option></select></label>
+          <p>Destination: a download on this computer. The original file is never overwritten.</p>
+          <button class="primary" id="export-button">Export WAV</button></div>
+        <div class="box"><strong>Progress</strong><div class="placeholder" id="export-progress">Idle → Rendering 0–100 % (cancel) → Done: file name, LUFS, true peak, checksum → [Show file] / Failed: reason + [Try again]</div></div>
+      </div>
+      <p class="note">Export uses the same settings and DSP as preview; parity is tested (non-negotiable 4).</p>
+    </section>
+
+    <!-- Account -->
+    <section class="screen" id="account" data-title="Account &amp; privacy">
+      <h1>Account &amp; privacy</h1>
+      <div class="grid2">
+        <div class="box"><strong>Signed in as you@example.test</strong> <button>Sign out</button>
+          <p>Private library: files you chose to save, only you can open them. [Download] [Delete]</p></div>
+        <div class="box"><strong>Processing &amp; consent</strong>
+          <p>Default: everything runs on this computer.</p>
+          <p>External services you allowed: none. <a href="#consent">How sending works</a></p></div>
+      </div>
+      <div class="box"><strong>Delete account</strong><p>Deletes your account and private library from the studio server right away; files on your computer stay.</p><button>Delete account…</button></div>
+    </section>
+
+    <section class="screen" id="signin" data-title="Sign in">
+      <div class="dialog" role="group" aria-label="Sign in">
+        <h2>Sign in</h2><label>Email<input></label><label>Password<input type="password"></label>
+        <button class="primary">Sign in</button>
+        <div class="row"><a href="#register">Create account</a><a href="#recover">Forgot password?</a></div>
+        <p class="note">Errors: “Email or password is incorrect.” (same for unknown emails) · “Verify your email first” + resend · “Too many attempts. Try again in 15 minutes.” · “Accounts are unavailable — local playback still works.”</p>
+      </div>
+    </section>
+    <section class="screen" id="register" data-title="Create account">
+      <div class="dialog" role="group" aria-label="Create account"><h2>Create account</h2><label>Email<input></label><label>Password (10–128 characters)<input type="password"></label>
+        <p>Your audio stays on this computer unless you choose to save it.</p><a class="btn primary" href="#check-email">Create account</a><a href="#signin">I already have an account</a></div>
+    </section>
+    <section class="screen" id="check-email" data-title="Check your email">
+      <div class="dialog" role="group" aria-label="Check your email"><h2>Check your email</h2><p>If this email can be registered, a verification link is on its way. Open it, then sign in.</p><a href="#signin">Back to sign in</a></div>
+    </section>
+    <section class="screen" id="recover" data-title="Reset your password">
+      <div class="dialog" role="group" aria-label="Reset your password"><h2>Reset your password</h2><label>Email<input></label><a class="btn" href="#reset">Send reset link</a>
+        <p class="note">Same answer for every address. The link works once for 30 minutes and signs you out everywhere after the change.</p></div>
+    </section>
+    <section class="screen" id="reset" data-title="Choose a new password">
+      <div class="dialog" role="group" aria-label="Choose a new password"><h2>Choose a new password</h2><label>New password<input type="password"></label><a class="btn primary" href="#signin">Set new password</a><a href="#recover">Request a new reset link</a></div>
+    </section>
+
+    <section class="screen" id="consent" data-title="Processing location">
+      <div class="dialog" role="group" aria-label="Send to an external service?">
+        <h2>Send “demo-song.wav” to an external service?</h2>
+        <p>Default: processing runs on <strong>this computer</strong> and nothing is uploaded.</p>
+        <p>An external service (for example stem separation, LAS-36) would receive a copy. Before anything is sent this dialog names the service, where it is, how long it keeps the file and why.</p>
+        <div class="row"><button class="primary">Allow and send</button><a class="btn" href="#master">Cancel — send nothing</a></div>
+        <p class="note">Consent is per service and can be withdrawn in Account &amp; privacy. No external service exists yet.</p>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <span>Transport:</span>
+    <button id="play">▶ Play</button><button id="pause" disabled aria-pressed="false">Ⅱ Pause</button><button id="stop">■ Stop</button>
+    <span class="status" id="status">Ready</span><span id="time">00:00.0 / 03:41.0</span>
+    <span class="spacer" style="flex:1"></span><span>Keyboard: Space play/pause · Home to start</span>
+  </footer>
+</div>
+<script>
+  // Hash navigation between screens and a state switcher for the Master screen. Wireframe only.
+  const screens = [...document.querySelectorAll('.screen')];
+  function show() {
+    const id = (location.hash || '#projects').slice(1);
+    const target = document.getElementById(id)?.classList.contains('screen') ? id : (id === 'presets-note' ? 'master' : 'projects');
+    for (const screen of screens) screen.classList.toggle('active', screen.id === target);
+    document.querySelectorAll('nav a').forEach(a => {
+      if (a.getAttribute('href') === `#${target}`) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
+    document.getElementById('crumb').textContent = document.getElementById(target).dataset.title.replace('&amp;', '&');
+  }
+  addEventListener('hashchange', show);
+  show();
+  const states = {
+    empty: { file: 'No WAV yet — Choose WAV… (nothing is uploaded)', wave: 'Empty: drop or choose a WAV', status: 'No audio loaded', play: false, pause: false, stop: false },
+    loading: { file: 'demo-song.wav — decoding…', wave: 'Loading: progress, Cancel', status: 'Loading audio…', play: false, pause: false, stop: false },
+    ready: { file: 'demo-song.wav · 3:41 · 48 kHz decoded', wave: 'Waveform with playhead, loop region, seek by click/drag/keyboard', status: 'Ready', play: true, pause: false, stop: true },
+    playing: { file: 'demo-song.wav · 3:41 · 48 kHz decoded', wave: 'Playhead moving; meters live', status: 'Playing', play: false, pause: true, stop: true },
+    paused: { file: 'demo-song.wav · 3:41 · 48 kHz decoded', wave: 'Playhead frozen at 01:12.4', status: 'Paused', play: true, pause: true, stop: true, pressed: true },
+    error: { file: 'demo-song.wav · 3:41 · 48 kHz decoded', wave: 'Previous track kept', status: 'Ready', play: true, pause: false, stop: true, error: true },
+    unsaved: { file: 'demo-song.wav · 3:41 · 48 kHz decoded', wave: 'EQ changed since last save', status: 'Ready', play: true, pause: false, stop: true, unsaved: true },
+  };
+  document.querySelectorAll('[data-state]').forEach(button => button.addEventListener('click', () => {
+    const s = states[button.dataset.state];
+    document.querySelectorAll('[data-state]').forEach(b => b.setAttribute('aria-pressed', b === button));
+    document.getElementById('file-line').textContent = s.file;
+    document.getElementById('waveform').textContent = s.wave;
+    document.getElementById('status').textContent = s.status;
+    document.getElementById('play').disabled = !s.play;
+    document.getElementById('pause').disabled = !s.pause;
+    document.getElementById('pause').setAttribute('aria-pressed', !!s.pressed);
+    document.getElementById('stop').disabled = !s.stop;
+    document.getElementById('error-line').hidden = !s.error;
+    document.getElementById('save-state').textContent = s.unsaved ? '● Unsaved changes — Save (⌘S)' : 'All changes saved on this computer';
+  }));
+</script>
+</body>
+</html>
