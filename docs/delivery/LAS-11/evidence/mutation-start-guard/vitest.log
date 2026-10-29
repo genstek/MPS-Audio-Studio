@@ -1,0 +1,34 @@
+
+ RUN  v5.0.5 /home/user/MPS-Audio-Studio-delivery
+
+ ❯ tests/unit/audio-engine.test.js (14 tests | 1 failed) 121ms
+   × a second Play while the first is starting does not add a source 11ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/audio-engine.test.js > a second Play while the first is starting does not add a source
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/unit/audio-engine.test.js:194:30
+    192|   const release = holdResume(context);
+    193|   const first = engine.play();
+    194|   await expect(engine.play()).resolves.toBe(false);
+       |                              ^
+    195|   release();
+    196|   await expect(first).resolves.toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 13 passed (14)
+   Start at  17:30:24
+   Duration  360ms (tests 62%, transform 26%, import 9%, worker 3%)
+
+exit=1

@@ -1,0 +1,34 @@
+
+ RUN  v5.0.5 /home/user/MPS-Audio-Studio-delivery
+
+ ❯ tests/unit/audio-engine.test.js (14 tests | 1 failed) 107ms
+   × stop, pause or a new track while the context resumes cancels the start 18ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/audio-engine.test.js > stop, pause or a new track while the context resumes cancels the start
+AssertionError: stop: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/unit/audio-engine.test.js:211:32
+    209|     else engine[cancel]();
+    210|     release();
+    211|     await expect(start, cancel).resolves.toBe(false);
+       |                                ^
+    212|     expect(sources, cancel).toHaveLength(0);
+    213|     await expect(engine.play(), `${cancel}: Play works afterwards`).re…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 13 passed (14)
+   Start at  17:30:33
+   Duration  353ms (tests 61%, transform 26%, import 9%, worker 3%)
+
+exit=1

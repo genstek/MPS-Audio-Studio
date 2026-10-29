@@ -1,0 +1,19 @@
+// Usage: node shot-transport.mjs <url> <outdir>  — screenshots Transport in Ready, Playing, Paused.
+import { chromium } from '/home/user/MPS-Audio-Studio-delivery/node_modules/@playwright/test/index.mjs';
+import { makeWav } from '/home/user/MPS-Audio-Studio-delivery/tests/fixtures/wav.js';
+const [url, out] = process.argv.slice(2);
+const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+await page.goto(url);
+await page.getByLabel('Import WAV').setInputFiles({ name: 'long-tone.wav', mimeType: 'audio/wav', buffer: makeWav({ seconds: 30 }) });
+const transport = page.getByRole('region', { name: 'Transport', exact: true });
+await transport.getByRole('status').filter({ hasText: 'Ready' }).waitFor();
+await transport.screenshot({ path: `${out}/transport-ready.png` });
+await transport.getByRole('button', { name: 'Play' }).click();
+await transport.getByRole('status').filter({ hasText: 'Playing' }).waitFor();
+await page.waitForFunction(() => !document.querySelector('[role=timer]').textContent.startsWith('00:00.'));
+await transport.screenshot({ path: `${out}/transport-playing.png` });
+await transport.getByRole('button', { name: 'Pause' }).click();
+await transport.getByRole('status').filter({ hasText: 'Paused' }).waitFor();
+await transport.screenshot({ path: `${out}/transport-paused.png` });
+await browser.close();
