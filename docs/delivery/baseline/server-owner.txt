@@ -1,0 +1,1 @@
+pid=484 cwd=/home/user/MPS-Audio-Studio-delivery cmd=node /home/user/MPS-Audio-Studio-delivery/node_modules/.bin/vite --host 127.0.0.1 --port 5173 --strictPort

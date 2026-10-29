@@ -19,7 +19,7 @@ The JavaScript React/Vite app has an empty session, transport, track area, plann
 ## Playwright for beginners
 
 ```sh
-npm run test:e2e                       # both browser tests; starts its own app
+npm run test:e2e                       # all browser tests; starts or reuses the app on 5173
 npm run test:e2e -- --grep TC-001       # just the mixer UI smoke test
 npm run test:e2e:headed                # watch Chrome run the tests
 npm run test:e2e:ui                    # interactive test explorer
@@ -27,9 +27,9 @@ npm run test:e2e:report                # open the latest HTML results
 npm run check                         # lint + unit tests + build + browser tests
 ```
 
-Run these from the same repository directory. Test runs use port **5173**; the app you open manually uses **5174**, so they can run together. Stop anything using 5173 before testing. UI mode opens an explorer: select a test and press Run. The HTML report contains the last completed run, not the current app state. Terminal output gives the pass/fail summary and exits nonzero on failure. Failure screenshots and traces are kept in `test-results/`; the report links to them. Generated results are ignored by Git.
+Run these from the same repository directory. Test runs use port **5173**; the app you open manually uses **5174**, so they can run together. If something already listens on 5173, the tests reuse it only after it proves it serves this same folder: the app's dev server answers `http://127.0.0.1:5173/__mps-checkout` with its folder, and `tests/e2e/global-setup.js` stops the run with a clear message when it is another checkout (or an older build without that answer). The first line of a run prints which folder and process served the app. UI mode opens an explorer: select a test and press Run. The HTML report contains the last completed run, not the current app state. Terminal output gives the pass/fail summary and exits nonzero on failure. Failure screenshots and traces are kept in `test-results/`; the report links to them. To keep a report, zip the `playwright-report/` folder before the next run. Generated results are ignored by Git.
 
-This configuration uses installed Google Chrome (Chromium engine) via `channel: 'chrome'`. On this macOS 13.7.8 machine, the current Playwright managed Chromium download was unsupported; no `npx playwright install` is needed for the Chrome channel. If Chrome is missing, install it in Applications first.
+This configuration uses installed Google Chrome (Chromium engine) via `channel: 'chrome'`. On this macOS 13.7.8 machine, the current Playwright managed Chromium download was unsupported; no `npx playwright install` is needed for the Chrome channel. If Chrome is missing, install it in Applications first. On a machine without Chrome, point the tests at another Chromium build: `PLAYWRIGHT_EXECUTABLE_PATH=/path/to/chromium npm run check`.
 
 Read [TC-001 and the executed results](docs/SPRINT-0.md). [The smoke test](tests/e2e/mixer.spec.js) introduces `test`, `page`, locators, `await` and `expect` in short comments. Each case gets a fresh page. Role/label locators use the names people and assistive technology see; assertions wait for actual UI state without sleeps. The separate playback regression imports an original generated PCM16 tone. Unit tests mock AudioContext and check lifecycle behavior; they do not measure sound quality.
 

@@ -1,0 +1,4 @@
+lint exit=0 start=2026-10-29T16:50:28Z end=2026-10-29T16:50:30Z
+test:unit exit=0 start=2026-10-29T16:50:30Z end=2026-10-29T16:50:32Z
+build exit=0 start=2026-10-29T16:50:32Z end=2026-10-29T16:50:33Z
+e2e(chromium141-override) exit=0 start=2026-10-29T16:50:33Z end=2026-10-29T16:53:00Z

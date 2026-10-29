@@ -1,0 +1,18 @@
+
+Running 13 tests using 2 workers
+
+  ✓   2 [chromium] › tests/e2e/LAS51-layout.spec.js:249:3 › LAS-51: empty layout survives viewport changes (59.1s)
+  ✓   1 [chromium] › tests/e2e/LAS51-layout.spec.js:249:3 › LAS-51: WAV-loaded layout survives viewport changes (59.8s)
+  ✓   3 [chromium] › tests/e2e/LAS51-layout.spec.js:260:1 › LAS-51: long file name keeps essential controls visible (28.0s)
+  ✓   4 [chromium] › tests/e2e/LAS51-layout.spec.js:270:1 › LAS-51: load error keeps essential controls visible (27.9s)
+  ✓   5 [chromium] › tests/e2e/LAS51-layout.spec.js:291:3 › LAS-51: essential controls visible before scrolling, height 450-1080 at width 761 (20.1s)
+  ✓   6 [chromium] › tests/e2e/LAS51-layout.spec.js:291:3 › LAS-51: essential controls visible before scrolling, height 450-1080 at width 1024 (19.8s)
+  ✓   8 [chromium] › tests/e2e/LAS51-layout.spec.js:291:3 › LAS-51: essential controls visible before scrolling, width 761-1440 at height 450 (7.6s)
+  ✓   9 [chromium] › tests/e2e/LAS51-layout.spec.js:303:1 › LAS-51: playback state survives viewport changes (1.5s)
+  ✓  10 [chromium] › tests/e2e/LAS51-responsive.spec.js:3:1 › LAS-51: Import WAV stays fully visible after resizing to 785x520 (776ms)
+  ✓  11 [chromium] › tests/e2e/mixer.spec.js:4:1 › TC-001: mixer loads and displays its main UI elements (1.2s)
+  ✓  12 [chromium] › tests/e2e/playback.spec.js:4:1 › WAV playback and recovery after a replacement cannot decode (1.4s)
+  ✓  13 [chromium] › tests/e2e/responsive.spec.js:3:1 › LAS48-TC-001: Initial empty workspace fits desktop viewports (920ms)
+  ✓   7 [chromium] › tests/e2e/LAS51-layout.spec.js:291:3 › LAS-51: essential controls visible before scrolling, height 450-1080 at width 1440 (20.4s)
+
+  13 passed (2.4m)
