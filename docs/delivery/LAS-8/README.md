@@ -2,7 +2,7 @@
 
 Jira: [LAS-8](https://genstek69.atlassian.net/browse/LAS-8) · Work order: `docs/claude-code/2026-10-29/tasks/LAS-8.md` · Mode: VERIFY_AND_CLOSE_GAPS
 
-Branch `feat/LAS-8-import-lifecycle` · tested application commit `2325073ba12b29e2e4de00f6e36dcb17da5bfcda`
+Branch `feat/LAS-8-import-lifecycle` · tested application commit `2325073ba12b29e2e4de00f6e36dcb17da5bfcda`; defect fix on `fix/LAS-8-riff-header-bytes` · tested commit `fa48f3463babae6b1d27070ac06884a3649bd27f` (current candidate)
 
 Developer status: **READY_FOR_QA** · Gennady manual QA: **NOT_RUN** · Jira sync: **SYNC_PENDING**
 
@@ -38,3 +38,8 @@ The probe wraps `AudioBufferSourceNode` start/stop/connect/disconnect in the pag
 - Drag and drop is out of scope (work order).
 - Accessibility follow-up from LAS-57: the Replace WAV button's accessible name stays "Import WAV".
 - Linux Chromium 141 only.
+
+## Defect found after the first READY_FOR_QA: valid WAVs rejected (fixed)
+**Severity: Major.** While writing the LAS-20 local-only test, a valid 5-second mono 44.1 kHz WAV was rejected with "This file is not a valid WAV". Cause: the RIFF/WAVE check decoded the first 12 bytes as UTF-8 text. The 4 size bytes between `RIFF` and `WAVE` are a number; when they form or truncate a UTF-8 sequence (here `cc ba 06 00`), the decoded string is shorter and `WAVE` is not at position 8. Sampling sizes between 100 KB and 100 MiB, **about 9.3 %** of valid files were rejected. The check came from `main` (present since the first import slice), so Gennady's earlier imports could have hit it with some files.
+
+Fix (`fa48f3463babae6b1d27070ac06884a3649bd27f`): compare the tag bytes directly (`src/audio-engine.js`). Regression tests: "a valid header is accepted whatever bytes its RIFF size field contains" (Vitest: valid and truncated UTF-8 sequences and `ff ff ff ff`) and "LAS-8: a 5-second mono WAV imports (size bytes that look like text)" (Playwright). Both fail on the old code (`evidence/header-fix/old-check-*.log`) and pass on the fix; full check exit 0 with Vitest 17/17 and Playwright 35/35 (`evidence/header-fix/`).

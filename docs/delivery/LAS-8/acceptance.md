@@ -11,3 +11,8 @@ Tested commit `2325073ba12b29e2e4de00f6e36dcb17da5bfcda`. Developer results only
 | LAS-8-AC-05 | Small committed synthetic fixtures | `tests/fixtures/wav.js` generates tones in memory; no audio files committed | PASS | source |
 | LAS-8-AC-06 | Manual test steps and evidence in PR | `manual-qa.md`, this folder, PR | PASS (prepared; execution NOT_RUN) | this folder |
 | Scope | Large-file performance without UI freeze | not measured | NOT_RUN | — |
+
+## Update after the header defect fix (tested commit `fa48f3463babae6b1d27070ac06884a3649bd27f`)
+| Trace ID | Check | Developer result | Evidence |
+| --- | --- | --- | --- |
+| LAS-8-AC-01 / AC-03 | valid WAVs of every size field accepted; invalid headers still rejected | PASS (regression tests fail on old code, pass on fix) | `evidence/header-fix/` |

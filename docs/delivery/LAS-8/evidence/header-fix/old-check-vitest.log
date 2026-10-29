@@ -1,0 +1,30 @@
+
+ RUN  v5.0.5 /home/user/MPS-Audio-Studio-delivery
+
+ ❯ tests/unit/audio-engine.test.js (17 tests | 1 failed) 157ms
+   × a valid header is accepted whatever bytes its RIFF size field contains 13ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/audio-engine.test.js > a valid header is accepted whatever bytes its RIFF size field contains
+AssertionError: promise rejected "Error: This file is not a valid WAV. Choo…" instead of resolving
+ ❯ tests/unit/audio-engine.test.js:279:91
+    277|   for (const size of sizeFields) {
+    278|     const bytes = new Uint8Array([...new TextEncoder().encode('RIFF'),…
+    279|     await expect(engine.load({ ...file, arrayBuffer: async () => bytes…
+       |                                                                                           ^
+    280|   }
+    281|   expect(context.decodeAudioData).toHaveBeenCalledTimes(sizeFields.len…
+
+Caused by: Error: This file is not a valid WAV. Choose another file.
+ ❯ Object.load src/audio-engine.js:46:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 16 passed (17)
+   Start at  18:03:22
+   Duration  346ms (tests 82%, import 9%, transform 6%, worker 3%)
+
+exit=1
