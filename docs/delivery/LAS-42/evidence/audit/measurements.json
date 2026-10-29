@@ -1,0 +1,1836 @@
+{
+  "app": "http://127.0.0.1:5199/",
+  "notes": [
+    {
+      "number": 1,
+      "selector": ".transport-buttons .primary",
+      "issue": "Disabled Play keeps the gold primary colour"
+    },
+    {
+      "number": 2,
+      "selector": ".status",
+      "issue": "One amber dot for every state; colour does not distinguish Playing/Paused/Stopped"
+    },
+    {
+      "number": 3,
+      "selector": ".version",
+      "issue": "Development label \"SPRINT 0 / WEB MIXER\" shown to users"
+    },
+    {
+      "number": 4,
+      "selector": ".track-space",
+      "issue": "Large empty Tracks area; no waveform or seek"
+    },
+    {
+      "number": 5,
+      "selector": ".master-symbol",
+      "issue": "Decorative \"L | R\" may read as a meter"
+    },
+    {
+      "number": 6,
+      "selector": ".strips",
+      "issue": "Four placeholder strips with decorative knobs take a whole row"
+    },
+    {
+      "number": 7,
+      "selector": "footer",
+      "issue": "Roadmap text in the product footer; 10 px"
+    }
+  ],
+  "results": {
+    "empty-1280x720": {
+      "texts": [
+        {
+          "text": "LOCAL AUDIO WORKSPACE",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 8.5,
+          "disabledOpacity": false
+        },
+        {
+          "text": "MPS Audio Studio",
+          "fontSize": 24,
+          "weight": "600",
+          "contrast": 15.66,
+          "disabledOpacity": false
+        },
+        {
+          "text": "SPRINT 0",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 9.88,
+          "disabledOpacity": false
+        },
+        {
+          "text": "WEB MIXER",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 9.88,
+          "disabledOpacity": false
+        },
+        {
+          "text": "SESSION 001",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Untitled project",
+          "fontSize": 16,
+          "weight": "600",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "▶ Play",
+          "fontSize": 16,
+          "weight": "650",
+          "contrast": 8.63,
+          "disabledOpacity": true
+        },
+        {
+          "text": "Ⅱ Pause",
+          "fontSize": 16,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "■ Stop",
+          "fontSize": 16,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "No audio loaded",
+          "fontSize": 13,
+          "weight": "400",
+          "contrast": 8.56,
+          "disabledOpacity": false
+        },
+        {
+          "text": "00:00.0",
+          "fontSize": 12,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "/",
+          "fontSize": 12,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "00:00.0",
+          "fontSize": 12,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Tracks",
+          "fontSize": 16,
+          "weight": "600",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "00 TRACKS",
+          "fontSize": 9,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Your session starts here",
+          "fontSize": 19,
+          "weight": "500",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Import a WAV file to start listening.",
+          "fontSize": 13,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Import WAV",
+          "fontSize": 13,
+          "weight": "650",
+          "contrast": 8.61,
+          "disabledOpacity": false
+        },
+        {
+          "text": "WAV up to 100 MiB · Files stay on your device",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.11,
+          "disabledOpacity": false
+        },
+        {
+          "text": "SINGLE-TRACK PLAYBACK",
+          "fontSize": 9,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Waveform & seeking coming soon",
+          "fontSize": 9,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Master",
+          "fontSize": 16,
+          "weight": "600",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "STEREO",
+          "fontSize": 9,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "OUTPUT STAGE",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Direct playback",
+          "fontSize": 13,
+          "weight": "400",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Output trim and measured meters coming soon.",
+          "fontSize": 13,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Master level",
+          "fontSize": 12,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Level control unavailable",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.11,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Export WAV — coming soon",
+          "fontSize": 12,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "Mixer",
+          "fontSize": 16,
+          "weight": "600",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "PROCESSING MODULES · COMING SOON",
+          "fontSize": 9,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "0",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "1",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Input",
+          "fontSize": 14,
+          "weight": "500",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Coming soon",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.79,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Unavailable",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "0",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "2",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "EQ",
+          "fontSize": 14,
+          "weight": "500",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Coming soon",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.79,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Unavailable",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "0",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "3",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Dynamics",
+          "fontSize": 14,
+          "weight": "500",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Coming soon",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.79,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Unavailable",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "0",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "4",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Space",
+          "fontSize": 14,
+          "weight": "500",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Coming soon",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.79,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Unavailable",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "LOCAL / WEB AUDIO",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 10.12,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Playback foundation · EQ, dynamics, multitrack and",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 8.5,
+          "disabledOpacity": false
+        }
+      ],
+      "targets": [
+        {
+          "name": "▶ Play",
+          "width": 90,
+          "height": 39,
+          "disabled": true
+        },
+        {
+          "name": "Ⅱ Pause",
+          "width": 98,
+          "height": 39,
+          "disabled": true
+        },
+        {
+          "name": "■ Stop",
+          "width": 92,
+          "height": 39,
+          "disabled": true
+        },
+        {
+          "name": "Import WAV",
+          "width": 124,
+          "height": 40,
+          "disabled": false
+        },
+        {
+          "name": "Master details",
+          "width": 278,
+          "height": 123,
+          "disabled": false
+        },
+        {
+          "name": "Master level",
+          "width": 246,
+          "height": 16,
+          "disabled": true
+        },
+        {
+          "name": "Export WAV — coming soon",
+          "width": 254,
+          "height": 34,
+          "disabled": true
+        },
+        {
+          "name": "Processing modules",
+          "width": 1214,
+          "height": 196,
+          "disabled": false
+        },
+        {
+          "name": "Input processing unavailable",
+          "width": 94,
+          "height": 29,
+          "disabled": true
+        },
+        {
+          "name": "EQ processing unavailable",
+          "width": 94,
+          "height": 29,
+          "disabled": true
+        },
+        {
+          "name": "Dynamics processing unavailable",
+          "width": 94,
+          "height": 29,
+          "disabled": true
+        },
+        {
+          "name": "Space processing unavailable",
+          "width": 94,
+          "height": 29,
+          "disabled": true
+        }
+      ]
+    },
+    "loaded-1280x720": {
+      "texts": [
+        {
+          "text": "LOCAL AUDIO WORKSPACE",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 8.5,
+          "disabledOpacity": false
+        },
+        {
+          "text": "MPS Audio Studio",
+          "fontSize": 24,
+          "weight": "600",
+          "contrast": 15.66,
+          "disabledOpacity": false
+        },
+        {
+          "text": "SPRINT 0",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 9.88,
+          "disabledOpacity": false
+        },
+        {
+          "text": "WEB MIXER",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 9.88,
+          "disabledOpacity": false
+        },
+        {
+          "text": "SESSION 001",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Untitled project",
+          "fontSize": 16,
+          "weight": "600",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "▶ Play",
+          "fontSize": 16,
+          "weight": "650",
+          "contrast": 8.63,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Ⅱ Pause",
+          "fontSize": 16,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "■ Stop",
+          "fontSize": 16,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Ready",
+          "fontSize": 13,
+          "weight": "400",
+          "contrast": 8.56,
+          "disabledOpacity": false
+        },
+        {
+          "text": "00:00.0",
+          "fontSize": 12,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "/",
+          "fontSize": 12,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "00:03.0",
+          "fontSize": 12,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Tracks",
+          "fontSize": 16,
+          "weight": "600",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Remove track",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": false
+        },
+        {
+          "text": "01 TRACK",
+          "fontSize": 9,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "tone.wav",
+          "fontSize": 19,
+          "weight": "500",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "3.0 seconds · 1 channel(s) · 44,100 Hz decoded",
+          "fontSize": 13,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Replace WAV",
+          "fontSize": 13,
+          "weight": "650",
+          "contrast": 8.61,
+          "disabledOpacity": false
+        },
+        {
+          "text": "WAV up to 100 MiB · Files stay on your device",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.11,
+          "disabledOpacity": false
+        },
+        {
+          "text": "SINGLE-TRACK PLAYBACK",
+          "fontSize": 9,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Waveform & seeking coming soon",
+          "fontSize": 9,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Master",
+          "fontSize": 16,
+          "weight": "600",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "STEREO",
+          "fontSize": 9,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "OUTPUT STAGE",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Direct playback",
+          "fontSize": 13,
+          "weight": "400",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Output trim and measured meters coming soon.",
+          "fontSize": 13,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Master level",
+          "fontSize": 12,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Level control unavailable",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.11,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Export WAV — coming soon",
+          "fontSize": 12,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "Mixer",
+          "fontSize": 16,
+          "weight": "600",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "PROCESSING MODULES · COMING SOON",
+          "fontSize": 9,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "0",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "1",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Input",
+          "fontSize": 14,
+          "weight": "500",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Coming soon",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.79,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Unavailable",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "0",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "2",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "EQ",
+          "fontSize": 14,
+          "weight": "500",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Coming soon",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.79,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Unavailable",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "0",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "3",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Dynamics",
+          "fontSize": 14,
+          "weight": "500",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Coming soon",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.79,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Unavailable",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "0",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "4",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Space",
+          "fontSize": 14,
+          "weight": "500",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Coming soon",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.79,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Unavailable",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "LOCAL / WEB AUDIO",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 10.12,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Playback foundation · EQ, dynamics, multitrack and",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 8.5,
+          "disabledOpacity": false
+        }
+      ],
+      "targets": [
+        {
+          "name": "▶ Play",
+          "width": 90,
+          "height": 39,
+          "disabled": false
+        },
+        {
+          "name": "Ⅱ Pause",
+          "width": 98,
+          "height": 39,
+          "disabled": true
+        },
+        {
+          "name": "■ Stop",
+          "width": 92,
+          "height": 39,
+          "disabled": false
+        },
+        {
+          "name": "Remove track",
+          "width": 93,
+          "height": 19,
+          "disabled": false
+        },
+        {
+          "name": "Replace WAV",
+          "width": 133,
+          "height": 40,
+          "disabled": false
+        },
+        {
+          "name": "Master details",
+          "width": 278,
+          "height": 123,
+          "disabled": false
+        },
+        {
+          "name": "Master level",
+          "width": 246,
+          "height": 16,
+          "disabled": true
+        },
+        {
+          "name": "Export WAV — coming soon",
+          "width": 254,
+          "height": 34,
+          "disabled": true
+        },
+        {
+          "name": "Processing modules",
+          "width": 1214,
+          "height": 196,
+          "disabled": false
+        },
+        {
+          "name": "Input processing unavailable",
+          "width": 94,
+          "height": 29,
+          "disabled": true
+        },
+        {
+          "name": "EQ processing unavailable",
+          "width": 94,
+          "height": 29,
+          "disabled": true
+        },
+        {
+          "name": "Dynamics processing unavailable",
+          "width": 94,
+          "height": 29,
+          "disabled": true
+        },
+        {
+          "name": "Space processing unavailable",
+          "width": 94,
+          "height": 29,
+          "disabled": true
+        }
+      ]
+    },
+    "loaded-761x450": {
+      "texts": [
+        {
+          "text": "LOCAL AUDIO WORKSPACE",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 8.5,
+          "disabledOpacity": false
+        },
+        {
+          "text": "MPS Audio Studio",
+          "fontSize": 24,
+          "weight": "600",
+          "contrast": 15.66,
+          "disabledOpacity": false
+        },
+        {
+          "text": "SPRINT 0",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 9.88,
+          "disabledOpacity": false
+        },
+        {
+          "text": "WEB MIXER",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 9.88,
+          "disabledOpacity": false
+        },
+        {
+          "text": "SESSION 001",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Untitled project",
+          "fontSize": 16,
+          "weight": "600",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "▶ Play",
+          "fontSize": 16,
+          "weight": "650",
+          "contrast": 8.63,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Ⅱ Pause",
+          "fontSize": 16,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "■ Stop",
+          "fontSize": 16,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Ready",
+          "fontSize": 13,
+          "weight": "400",
+          "contrast": 8.56,
+          "disabledOpacity": false
+        },
+        {
+          "text": "00:00.0",
+          "fontSize": 12,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "/",
+          "fontSize": 12,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "00:03.0",
+          "fontSize": 12,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Tracks",
+          "fontSize": 16,
+          "weight": "600",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Remove track",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": false
+        },
+        {
+          "text": "01 TRACK",
+          "fontSize": 9,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "tone.wav",
+          "fontSize": 19,
+          "weight": "500",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "3.0 seconds · 1 channel(s) · 44,100 Hz decoded",
+          "fontSize": 13,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Replace WAV",
+          "fontSize": 13,
+          "weight": "650",
+          "contrast": 8.61,
+          "disabledOpacity": false
+        },
+        {
+          "text": "WAV up to 100 MiB · Files stay on your device",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.11,
+          "disabledOpacity": false
+        },
+        {
+          "text": "SINGLE-TRACK PLAYBACK",
+          "fontSize": 9,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Waveform & seeking coming soon",
+          "fontSize": 9,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Master",
+          "fontSize": 16,
+          "weight": "600",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "STEREO",
+          "fontSize": 9,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "OUTPUT STAGE",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Direct playback",
+          "fontSize": 13,
+          "weight": "400",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Output trim and measured meters coming soon.",
+          "fontSize": 13,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Master level",
+          "fontSize": 12,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Level control unavailable",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.11,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Export WAV — coming soon",
+          "fontSize": 12,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "Mixer",
+          "fontSize": 16,
+          "weight": "600",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "PROCESSING MODULES · COMING SOON",
+          "fontSize": 9,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "0",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "1",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Input",
+          "fontSize": 14,
+          "weight": "500",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Unavailable",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "0",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "2",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "EQ",
+          "fontSize": 14,
+          "weight": "500",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Unavailable",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "0",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "3",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Dynamics",
+          "fontSize": 14,
+          "weight": "500",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Unavailable",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "0",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "4",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Space",
+          "fontSize": 14,
+          "weight": "500",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Unavailable",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "LOCAL / WEB AUDIO",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 10.12,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Playback foundation · EQ, dynamics, multitrack and",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 8.5,
+          "disabledOpacity": false
+        }
+      ],
+      "targets": [
+        {
+          "name": "▶ Play",
+          "width": 90,
+          "height": 35,
+          "disabled": false
+        },
+        {
+          "name": "Ⅱ Pause",
+          "width": 98,
+          "height": 35,
+          "disabled": true
+        },
+        {
+          "name": "■ Stop",
+          "width": 92,
+          "height": 35,
+          "disabled": false
+        },
+        {
+          "name": "Remove track",
+          "width": 93,
+          "height": 19,
+          "disabled": false
+        },
+        {
+          "name": "Replace WAV",
+          "width": 133,
+          "height": 40,
+          "disabled": false
+        },
+        {
+          "name": "Master details",
+          "width": 218,
+          "height": 53,
+          "disabled": false
+        },
+        {
+          "name": "Master level",
+          "width": 186,
+          "height": 16,
+          "disabled": true
+        },
+        {
+          "name": "Export WAV — coming soon",
+          "width": 194,
+          "height": 30,
+          "disabled": true
+        },
+        {
+          "name": "Processing modules",
+          "width": 721,
+          "height": 71,
+          "disabled": false
+        },
+        {
+          "name": "Input processing unavailable",
+          "width": 94,
+          "height": 30,
+          "disabled": true
+        },
+        {
+          "name": "EQ processing unavailable",
+          "width": 94,
+          "height": 30,
+          "disabled": true
+        },
+        {
+          "name": "Dynamics processing unavailable",
+          "width": 94,
+          "height": 30,
+          "disabled": true
+        },
+        {
+          "name": "Space processing unavailable",
+          "width": 94,
+          "height": 30,
+          "disabled": true
+        }
+      ]
+    },
+    "empty-390x844": {
+      "texts": [
+        {
+          "text": "LOCAL AUDIO WORKSPACE",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 8.5,
+          "disabledOpacity": false
+        },
+        {
+          "text": "MPS Audio Studio",
+          "fontSize": 24,
+          "weight": "600",
+          "contrast": 15.66,
+          "disabledOpacity": false
+        },
+        {
+          "text": "SPRINT 0",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 9.88,
+          "disabledOpacity": false
+        },
+        {
+          "text": "WEB MIXER",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 9.88,
+          "disabledOpacity": false
+        },
+        {
+          "text": "SESSION 001",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Untitled project",
+          "fontSize": 16,
+          "weight": "600",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "▶ Play",
+          "fontSize": 16,
+          "weight": "650",
+          "contrast": 8.63,
+          "disabledOpacity": true
+        },
+        {
+          "text": "Ⅱ Pause",
+          "fontSize": 16,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "■ Stop",
+          "fontSize": 16,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "No audio loaded",
+          "fontSize": 13,
+          "weight": "400",
+          "contrast": 8.56,
+          "disabledOpacity": false
+        },
+        {
+          "text": "00:00.0",
+          "fontSize": 12,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "/",
+          "fontSize": 12,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "00:00.0",
+          "fontSize": 12,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Tracks",
+          "fontSize": 16,
+          "weight": "600",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "00 TRACKS",
+          "fontSize": 9,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Your session starts here",
+          "fontSize": 19,
+          "weight": "500",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Import a WAV file to start listening.",
+          "fontSize": 13,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Import WAV",
+          "fontSize": 13,
+          "weight": "650",
+          "contrast": 8.61,
+          "disabledOpacity": false
+        },
+        {
+          "text": "WAV up to 100 MiB · Files stay on your device",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.11,
+          "disabledOpacity": false
+        },
+        {
+          "text": "SINGLE-TRACK PLAYBACK",
+          "fontSize": 9,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Waveform & seeking coming soon",
+          "fontSize": 9,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Master",
+          "fontSize": 16,
+          "weight": "600",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "STEREO",
+          "fontSize": 9,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "OUTPUT STAGE",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Direct playback",
+          "fontSize": 13,
+          "weight": "400",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Output trim and measured meters coming soon.",
+          "fontSize": 13,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Master level",
+          "fontSize": 12,
+          "weight": "400",
+          "contrast": 8.03,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Level control unavailable",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.11,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Export WAV — coming soon",
+          "fontSize": 12,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "Mixer",
+          "fontSize": 16,
+          "weight": "600",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "PROCESSING MODULES · COMING SOON",
+          "fontSize": 9,
+          "weight": "400",
+          "contrast": 7.37,
+          "disabledOpacity": false
+        },
+        {
+          "text": "0",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "1",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Input",
+          "fontSize": 14,
+          "weight": "500",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Coming soon",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.79,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Unavailable",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "0",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "2",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "EQ",
+          "fontSize": 14,
+          "weight": "500",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Coming soon",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.79,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Unavailable",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "0",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "3",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Dynamics",
+          "fontSize": 14,
+          "weight": "500",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Coming soon",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.79,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Unavailable",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "0",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "4",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.75,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Space",
+          "fontSize": 14,
+          "weight": "500",
+          "contrast": 13.57,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Coming soon",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 7.79,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Unavailable",
+          "fontSize": 11,
+          "weight": "400",
+          "contrast": 10.39,
+          "disabledOpacity": true
+        },
+        {
+          "text": "LOCAL / WEB AUDIO",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 10.12,
+          "disabledOpacity": false
+        },
+        {
+          "text": "Playback foundation · EQ, dynamics, multitrack and",
+          "fontSize": 10,
+          "weight": "400",
+          "contrast": 8.5,
+          "disabledOpacity": false
+        }
+      ],
+      "targets": [
+        {
+          "name": "▶ Play",
+          "width": 90,
+          "height": 42,
+          "disabled": true
+        },
+        {
+          "name": "Ⅱ Pause",
+          "width": 98,
+          "height": 42,
+          "disabled": true
+        },
+        {
+          "name": "■ Stop",
+          "width": 92,
+          "height": 42,
+          "disabled": true
+        },
+        {
+          "name": "Import WAV",
+          "width": 124,
+          "height": 40,
+          "disabled": false
+        },
+        {
+          "name": "Master details",
+          "width": 320,
+          "height": 137,
+          "disabled": false
+        },
+        {
+          "name": "Master level",
+          "width": 129,
+          "height": 16,
+          "disabled": true
+        },
+        {
+          "name": "Export WAV — coming soon",
+          "width": 332,
+          "height": 37,
+          "disabled": true
+        },
+        {
+          "name": "Processing modules",
+          "width": 356,
+          "height": 316,
+          "disabled": false
+        },
+        {
+          "name": "Input processing unavailable",
+          "width": 94,
+          "height": 29,
+          "disabled": true
+        },
+        {
+          "name": "EQ processing unavailable",
+          "width": 94,
+          "height": 29,
+          "disabled": true
+        },
+        {
+          "name": "Dynamics processing unavailable",
+          "width": 94,
+          "height": 29,
+          "disabled": true
+        },
+        {
+          "name": "Space processing unavailable",
+          "width": 94,
+          "height": 29,
+          "disabled": true
+        }
+      ]
+    }
+  }
+}

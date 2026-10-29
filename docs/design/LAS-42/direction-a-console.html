@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Direction A — Console (LAS-42 mockup)</title>
+<style>
+  /* Static design mockup for review. Nothing here is functional; numbers are placeholders, not measurements. */
+  :root { --chassis: #1b1d20; --panel: #24272b; --edge: #3a3f45; --text: #eceae4; --muted: #b3ada2; --amber: #e7a83e; --green: #6fcf7a; --red: #e45d50; --cyan: #5cc8d6; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: radial-gradient(circle at 30% 0, #2a2d31, var(--chassis) 60%); color: var(--text); font: 14px/1.35 -apple-system, "Segoe UI", sans-serif; }
+  .app { height: 100vh; display: grid; grid-template-rows: auto auto 1fr auto; gap: 10px; padding: 12px 18px; }
+  .note { position: fixed; right: 12px; bottom: 10px; background: #000c; color: #fff; font-size: 12px; padding: 6px 10px; border-radius: 6px; }
+  header { display: flex; align-items: center; gap: 18px; background: linear-gradient(#2c3035, #222529); border: 1px solid var(--edge); border-radius: 10px; padding: 10px 16px; box-shadow: inset 0 1px #ffffff14; }
+  .mark { font-weight: 800; letter-spacing: 3px; color: var(--amber); border: 2px solid var(--amber); padding: 4px 9px; border-radius: 6px; }
+  .project { font-size: 16px; font-weight: 600; }
+  .transport { display: flex; gap: 6px; margin-left: auto; }
+  .key { width: 54px; height: 40px; border-radius: 6px; border: 1px solid #555b62; background: linear-gradient(#41464c, #2d3135); color: var(--text); font-size: 18px; box-shadow: 0 3px 0 #111, inset 0 1px #ffffff26; }
+  .key.on { color: #1b1d20; background: linear-gradient(#f0be62, #d39328); }
+  .clock { font: 600 22px/1 ui-monospace, Menlo, monospace; background: #0d0f10; color: var(--amber); padding: 8px 12px; border-radius: 6px; border: 1px solid #000; letter-spacing: 1px; }
+  .wave { display: grid; grid-template-columns: 1fr auto; gap: 10px; background: var(--panel); border: 1px solid var(--edge); border-radius: 10px; padding: 10px 14px; }
+  .wave svg { width: 100%; height: 86px; display: block; }
+  .ab { display: grid; gap: 6px; align-content: center; }
+  .ab button { background: #30353a; color: var(--text); border: 1px solid #555b62; border-radius: 5px; padding: 6px 12px; font-weight: 600; }
+  .ab button.on { border-color: var(--cyan); color: var(--cyan); }
+  .desk { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)) 230px; gap: 8px; min-height: 0; }
+  .strip { background: linear-gradient(90deg, #26292d, #2b2f33 50%, #26292d); border: 1px solid var(--edge); border-radius: 10px; padding: 10px 8px; display: grid; grid-template-rows: auto auto 1fr auto auto; justify-items: center; gap: 8px; min-height: 0; }
+  .strip h2 { margin: 0; font-size: 13px; letter-spacing: 2px; color: var(--amber); }
+  .knobs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
+  .knob { display: grid; justify-items: center; font-size: 11px; color: var(--muted); gap: 3px; }
+  .knob i { width: 38px; height: 38px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #6a7077, #30353a 70%); border: 2px solid #15171a; position: relative; box-shadow: 0 2px 4px #000a; }
+  .knob i::after { content: ''; position: absolute; left: 50%; top: 4px; width: 2px; height: 12px; background: var(--amber); transform-origin: 50% 15px; transform: translateX(-50%) rotate(var(--a, 0deg)); }
+  .meter-fader { display: grid; grid-template-columns: 10px 34px; gap: 8px; align-self: stretch; min-height: 120px; }
+  .meter { background: linear-gradient(to top, var(--green) 0 60%, var(--amber) 60% 85%, var(--red) 85%); border-radius: 3px; position: relative; overflow: hidden; }
+  .meter::after { content: ''; position: absolute; inset: 0 0 auto; height: var(--empty, 45%); background: #101214; }
+  .fader { background: #101214; border-radius: 4px; position: relative; border: 1px solid #000; }
+  .fader b { position: absolute; left: -4px; right: -4px; top: var(--pos, 40%); height: 22px; background: linear-gradient(#d8d2c6, #8e887d); border-radius: 3px; }
+  .bypass { font-size: 11px; display: flex; gap: 6px; align-items: center; color: var(--muted); }
+  .led { width: 9px; height: 9px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .master { background: linear-gradient(#2e3237, #24272b); border: 1px solid var(--amber); border-radius: 10px; padding: 12px; display: grid; gap: 10px; align-content: start; }
+  .vu { background: #f1e5c4; color: #222; border-radius: 8px; height: 92px; position: relative; overflow: hidden; border: 3px solid #111; }
+  .vu::before { content: 'VU'; position: absolute; bottom: 6px; width: 100%; text-align: center; font-weight: 700; font-size: 12px; }
+  .vu::after { content: ''; position: absolute; left: 50%; bottom: -18px; width: 2px; height: 100px; background: #b02a1e; transform-origin: bottom; transform: rotate(18deg); }
+  .readouts { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 12px; }
+  .readouts div { background: #0d0f10; padding: 6px 8px; border-radius: 5px; color: var(--muted); }
+  .readouts strong { display: block; color: var(--amber); font: 600 16px ui-monospace, Menlo, monospace; }
+  .export { background: linear-gradient(#f0be62, #d39328); color: #1b1d20; border: 0; border-radius: 6px; padding: 10px; font-weight: 700; }
+  footer { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <span class="mark">MPS</span>
+    <span class="project">Demo song <span style="color:var(--muted);font-weight:400">· mastering session</span></span>
+    <div class="transport" aria-label="Transport (mockup)"><button class="key">⏮</button><button class="key on">▶</button><button class="key">Ⅱ</button><button class="key">■</button></div>
+    <span class="clock">01:12.4</span>
+  </header>
+  <section class="wave">
+    <svg viewBox="0 0 1000 86" preserveAspectRatio="none" aria-label="Waveform (mockup)"><rect width="1000" height="86" fill="#15171a" rx="6"/><path d="M0 43 Q 25 5 50 43 T 100 43 T 150 43 T 200 43 T 250 43 T 300 43 T 350 43 T 400 43 T 450 43 T 500 43 T 550 43 T 600 43 T 650 43 T 700 43 T 750 43 T 800 43 T 850 43 T 900 43 T 950 43 T 1000 43" stroke="#e7a83e" fill="none" stroke-width="22" opacity=".45"/><line x1="380" y1="0" x2="380" y2="86" stroke="#5cc8d6" stroke-width="2"/></svg>
+    <div class="ab"><button class="on">A · Mix</button><button>B · Master</button><button>REF · reference</button></div>
+  </section>
+  <section class="desk">
+    <div class="strip"><h2>INPUT</h2><div class="knobs"><span class="knob"><i style="--a:-20deg"></i>Trim</span><span class="knob"><i style="--a:0deg"></i>Width</span></div><div class="meter-fader"><div class="meter" style="--empty:35%"></div><div class="fader"><b style="--pos:38%"></b></div></div><span class="bypass"><span class="led"></span>ON</span><span style="font-size:12px;color:var(--muted)">−3.0 dB</span></div>
+    <div class="strip"><h2>EQ</h2><div class="knobs"><span class="knob"><i style="--a:30deg"></i>Low</span><span class="knob"><i style="--a:-10deg"></i>Mid</span><span class="knob"><i style="--a:20deg"></i>High</span><span class="knob"><i style="--a:0deg"></i>Q</span></div><div class="meter-fader"><div class="meter" style="--empty:40%"></div><div class="fader"><b style="--pos:45%"></b></div></div><span class="bypass"><span class="led"></span>ON</span><span style="font-size:12px;color:var(--muted)">24 bands · L/R</span></div>
+    <div class="strip"><h2>DYNAMICS</h2><div class="knobs"><span class="knob"><i style="--a:-40deg"></i>Thresh</span><span class="knob"><i style="--a:10deg"></i>Ratio</span><span class="knob"><i style="--a:-30deg"></i>Attack</span><span class="knob"><i style="--a:40deg"></i>Release</span></div><div class="meter-fader"><div class="meter" style="--empty:55%"></div><div class="fader"><b style="--pos:50%"></b></div></div><span class="bypass"><span class="led"></span>ON</span><span style="font-size:12px;color:var(--muted)">GR −2.1 dB</span></div>
+    <div class="strip"><h2>COLOR</h2><div class="knobs"><span class="knob"><i style="--a:-60deg"></i>Drive</span><span class="knob"><i style="--a:0deg"></i>Mix</span></div><div class="meter-fader"><div class="meter" style="--empty:50%"></div><div class="fader"><b style="--pos:52%"></b></div></div><span class="bypass"><span class="led" style="background:#555;box-shadow:none"></span>OFF</span><span style="font-size:12px;color:var(--muted)">bypassed</span></div>
+    <div class="strip"><h2>SPACE</h2><div class="knobs"><span class="knob"><i style="--a:-30deg"></i>Size</span><span class="knob"><i style="--a:-50deg"></i>Mix</span></div><div class="meter-fader"><div class="meter" style="--empty:60%"></div><div class="fader"><b style="--pos:55%"></b></div></div><span class="bypass"><span class="led"></span>ON</span><span style="font-size:12px;color:var(--muted)">plate · 1.4 s</span></div>
+    <div class="master"><strong style="letter-spacing:2px;color:var(--amber)">MASTER</strong><div class="vu"></div><div class="readouts"><div>Integrated<strong>−13.8</strong></div><div>True peak<strong>−1.1</strong></div><div>Short-term<strong>−12.9</strong></div><div>Correlation<strong>+0.42</strong></div></div><button class="export">Export WAV 24-bit</button></div>
+  </section>
+  <footer><span>Local processing · nothing uploaded</span><span>⌘Z undo · Space play/pause · A/B</span></footer>
+</div>
+<p class="note">Direction A mockup — not functional; all numbers are placeholders, not measurements.</p>
+</body>
+</html>
