@@ -1,0 +1,65 @@
+
+> mps-audio-studio@0.1.0 check
+> npm run lint && npm run test:unit && npm run build && npm run test:e2e
+
+
+> mps-audio-studio@0.1.0 lint
+> eslint .
+
+
+> mps-audio-studio@0.1.0 test:unit
+> vitest run
+
+
+ RUN  v5.0.5 /home/user/MPS-Audio-Studio-delivery
+
+
+ Test Files  1 passed (1)
+      Tests  10 passed (10)
+   Start at  17:17:04
+   Duration  288ms (tests 62%, transform 21%, import 13%, worker 4%)
+
+
+> mps-audio-studio@0.1.0 build
+> vite build
+
+vite v8.3.4 building client environment for production...
+transforming...
+✓ 16 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.48 kB │ gzip:  0.30 kB
+dist/assets/index-B6Fyy4By.css    7.25 kB │ gzip:  2.43 kB
+dist/assets/index-CsiT670p.js   226.37 kB │ gzip: 70.96 kB
+
+✓ built in 569ms
+
+> mps-audio-studio@0.1.0 test:e2e
+> playwright test
+
+Testing the app served from /home/user/MPS-Audio-Studio-delivery (pid 6937) at http://127.0.0.1:5173
+
+Running 20 tests using 2 workers
+
+  ✓   2 [chromium] › tests/e2e/import-errors.spec.js:12:1 › TC-003: unsupported or invalid files show a recoverable error (1.6s)
+  ✓   3 [chromium] › tests/e2e/import-valid-wav.spec.js:6:1 › TC-002 (LAS-57): a valid WAV file is imported successfully (1.3s)
+  ✓   1 [chromium] › tests/e2e/import-lifecycle.spec.js:7:1 › LAS-8: reimport, failed replacement and retry leave one audio source (3.1s)
+  ✓   5 [chromium] › tests/e2e/import-lifecycle.spec.js:45:1 › LAS-8: track information comes from the decoded file (892ms)
+  ✓   4 [chromium] › tests/e2e/LAS51-layout.spec.js:249:3 › LAS-51: empty layout survives viewport changes (51.6s)
+  ✓   6 [chromium] › tests/e2e/LAS51-layout.spec.js:249:3 › LAS-51: WAV-loaded layout survives viewport changes (52.2s)
+  ✓   7 [chromium] › tests/e2e/LAS51-layout.spec.js:260:1 › LAS-51: long file name keeps essential controls visible (24.7s)
+  ✓   8 [chromium] › tests/e2e/LAS51-layout.spec.js:270:1 › LAS-51: load error keeps essential controls visible (25.5s)
+  ✓   9 [chromium] › tests/e2e/LAS51-layout.spec.js:291:3 › LAS-51: essential controls visible before scrolling, height 450-1080 at width 761 (18.7s)
+  ✓  10 [chromium] › tests/e2e/LAS51-layout.spec.js:291:3 › LAS-51: essential controls visible before scrolling, height 450-1080 at width 1024 (18.9s)
+  ✓  12 [chromium] › tests/e2e/LAS51-layout.spec.js:291:3 › LAS-51: essential controls visible before scrolling, width 761-1440 at height 450 (7.3s)
+  ✓  13 [chromium] › tests/e2e/LAS51-layout.spec.js:303:1 › LAS-51: playback state survives viewport changes (1.4s)
+  ✓  14 [chromium] › tests/e2e/LAS51-responsive.spec.js:3:1 › LAS-51: Import WAV stays fully visible after resizing to 785x520 (781ms)
+  ✓  15 [chromium] › tests/e2e/mixer.spec.js:4:1 › TC-001: mixer loads and displays its main UI elements (1.1s)
+  ✓  16 [chromium] › tests/e2e/playback.spec.js:4:1 › WAV playback and recovery after a replacement cannot decode (1.4s)
+  ✓  17 [chromium] › tests/e2e/responsive.spec.js:3:1 › LAS48-TC-001: Initial empty workspace fits desktop viewports (834ms)
+  ✓  18 [chromium] › tests/e2e/shell-smoke.spec.js:14:3 › LAS-7: studio shell opens without console errors at 1280x720 (1.0s)
+  ✓  19 [chromium] › tests/e2e/shell-smoke.spec.js:14:3 › LAS-7: studio shell opens without console errors at 1440x900 (1.1s)
+  ✓  20 [chromium] › tests/e2e/shell-smoke.spec.js:14:3 › LAS-7: studio shell opens without console errors at 761x450 (965ms)
+  ✓  11 [chromium] › tests/e2e/LAS51-layout.spec.js:291:3 › LAS-51: essential controls visible before scrolling, height 450-1080 at width 1440 (19.1s)
+
+  20 passed (2.0m)

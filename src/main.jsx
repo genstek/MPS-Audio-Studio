@@ -25,9 +25,11 @@ function App() {
       setTrack({ name: file.name, ...metadata });
       setStatus('Ready');
     } catch (failure) {
-      setError(failure.message);
+      // A superseded import was replaced by a newer choice, so it is not an error to show.
+      if (failure.name !== 'SupersededError') setError(failure.message);
     } finally {
       setBusy(false);
+      // Clearing the picker lets the same file be chosen again.
       event.target.value = '';
     }
   }

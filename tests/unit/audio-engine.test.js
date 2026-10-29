@@ -77,3 +77,77 @@ test('unsupported names, oversized files and invalid headers are rejected', asyn
   expect(context.decodeAudioData).not.toHaveBeenCalled();
   engine.dispose();
 });
+
+// LAS-8: import lifecycle.
+const decoded = (duration) => ({ duration, numberOfChannels: 1, sampleRate: 44100 });
+
+test('a newer import wins over a slower earlier one', async () => {
+  const { engine, context, sources, file } = setup();
+  let finishFirst;
+  context.decodeAudioData
+    .mockImplementationOnce(() => new Promise(resolve => { finishFirst = resolve; }))
+    .mockResolvedValueOnce(decoded(5));
+  const first = engine.load(file);
+  // Start the second import only once the first one is decoding.
+  await vi.waitFor(() => expect(finishFirst).toBeTypeOf('function'));
+  const second = engine.load({ ...file, name: 'second.wav' });
+  await expect(second).resolves.toMatchObject({ duration: 5 });
+  finishFirst(decoded(10));
+  await expect(first).rejects.toMatchObject({ name: 'SupersededError' });
+  await engine.play();
+  expect(sources).toHaveLength(1);
+  expect(sources[0].buffer.duration).toBe(5);
+  engine.dispose();
+});
+
+test('disposing during an import discards it without creating an audio context', async () => {
+  const { engine, file } = setup();
+  let release;
+  const pending = engine.load({ ...file, arrayBuffer: () => new Promise(resolve => { release = resolve; }) });
+  engine.dispose();
+  release(new TextEncoder().encode('RIFF0000WAVE').buffer);
+  await expect(pending).rejects.toMatchObject({ name: 'SupersededError' });
+  expect(AudioContext).not.toHaveBeenCalled();
+});
+
+test('replacing a playing track stops and disconnects its source before the next play', async () => {
+  const { engine, sources, file } = setup();
+  await engine.load(file);
+  await engine.play();
+  await engine.load({ ...file, name: 'next.wav' });
+  expect(sources[0].stop).toHaveBeenCalledOnce();
+  expect(sources[0].disconnect).toHaveBeenCalledOnce();
+  expect(sources[0].onended).toBeNull();
+  await engine.play();
+  expect(sources).toHaveLength(2);
+  expect(sources[1].start).toHaveBeenCalledWith(0, 0);
+  engine.dispose();
+});
+
+test('100 MiB is the largest accepted file size', async () => {
+  const { engine, file } = setup();
+  const limit = 100 * 1024 * 1024;
+  await expect(engine.load({ ...file, size: limit })).resolves.toMatchObject({ duration: 10 });
+  await expect(engine.load({ ...file, size: limit + 1 })).rejects.toThrow('100 MiB');
+  engine.dispose();
+});
+
+test('files without a RIFF/WAVE header are rejected before decoding; the extension is case-insensitive', async () => {
+  const { engine, file, context } = setup();
+  for (const header of ['RIFF0000AVI ', 'RIFX0000WAVE', 'RIF', '']) {
+    const bytes = new TextEncoder().encode(header).buffer;
+    await expect(engine.load({ ...file, arrayBuffer: async () => bytes }), header).rejects.toThrow('not a valid WAV');
+  }
+  expect(context.decodeAudioData).not.toHaveBeenCalled();
+  await expect(engine.load({ ...file, name: 'TONE.WAV' })).resolves.toMatchObject({ duration: 10 });
+  engine.dispose();
+});
+
+test('a failed first import leaves nothing to play', async () => {
+  const { engine, context, sources, file } = setup();
+  context.decodeAudioData.mockRejectedValueOnce(new Error('Decode failed'));
+  await expect(engine.load(file)).rejects.toThrow('Unable to decode');
+  await engine.play();
+  expect(sources).toHaveLength(0);
+  engine.dispose();
+});

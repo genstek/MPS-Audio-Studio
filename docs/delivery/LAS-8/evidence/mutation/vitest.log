@@ -1,0 +1,39 @@
+
+ RUN  v5.0.5 /home/user/MPS-Audio-Studio-delivery
+
+ ❯ tests/unit/audio-engine.test.js (10 tests | 1 failed) 87ms
+   × a newer import wins over a slower earlier one 64ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/audio-engine.test.js > a newer import wins over a slower earlier one
+AssertionError: promise resolved "{ duration: 10, channels: 1, …(1) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "channels": 1,
++   "duration": 10,
++   "sampleRate": 44100,
+  }
+
+ ❯ tests/unit/audio-engine.test.js:96:22
+     94|   await expect(second).resolves.toMatchObject({ duration: 5 });
+     95|   finishFirst(decoded(10));
+     96|   await expect(first).rejects.toMatchObject({ name: 'SupersededError' …
+       |                      ^
+     97|   await engine.play();
+     98|   expect(sources).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  17:16:48
+   Duration  302ms (tests 65%, transform 18%, import 13%, worker 4%)
+
+exit=1

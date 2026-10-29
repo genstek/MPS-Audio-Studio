@@ -1,0 +1,41 @@
+{
+  "issue": "LAS-8",
+  "applicationCommit": "2325073ba12b29e2e4de00f6e36dcb17da5bfcda",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (lint, Vitest 10/10, build, Playwright 20/20) on Linux Chromium 141",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-2325073ba12b29e2e4de00f6e36dcb17da5bfcda.log", "evidence/html-report-2325073ba12b29e2e4de00f6e36dcb17da5bfcda.zip"]
+    },
+    {
+      "name": "Mutation: without the post-decode guard the overlapping-import unit test fails (expected exit 1)",
+      "status": "PASS",
+      "command": "npx vitest run (with the guard temporarily removed; restored before commit)",
+      "exitCode": 1,
+      "evidence": ["evidence/mutation/mutation.txt", "evidence/mutation/vitest.log"]
+    },
+    {
+      "name": "Large-file (near 100 MiB) import responsiveness in the browser",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": []
+    },
+    {
+      "name": "Google Chrome on macOS",
+      "status": "NOT_RUN",
+      "command": "npm run check",
+      "exitCode": null,
+      "evidence": []
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],
+  "blockers": [],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "feat/LAS-8-import-lifecycle"
+}
