@@ -123,6 +123,9 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
     if (!email) throw new HttpError(400, 'invalid_email', 'Enter a valid email address.');
     if (!validPassword(input.password)) throw new HttpError(400, 'invalid_password', 'Use a password of 10 to 128 characters.');
     limit(request, [[LIMITS.registerPerIp, 'register'], [LIMITS.registerPerEmail, `register:${email}`]]);
+    // Hash on every path, so registering an existing address takes as long as a new one and the
+    // timing does not reveal which addresses have accounts (found in LAS-25).
+    const { hash, salt } = await hashPassword(input.password, scryptCost);
     const existing = db.prepare('SELECT id, verified_at FROM users WHERE email = ?').get(email);
     const link = appUrl(request);
     if (existing?.verified_at) {
@@ -131,12 +134,11 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
       let userId = existing?.id;
       if (!userId) {
         userId = randomToken(16);
-        const { hash, salt } = await hashPassword(input.password, scryptCost);
         db.prepare('INSERT INTO users (id, email, password_hash, password_salt, created_at) VALUES (?, ?, ?, ?, ?)').run(userId, email, hash, salt, now());
         audit('register', userId);
       }
       const token = issueToken(userId, 'verify', VERIFY_TOKEN_MS);
-      mail(email, 'Verify your MPS Audio Studio email', `Open this link to verify your email: ${link}/?verify=${token}\nThe link works once and expires in 24 hours.`);
+      mail(email, 'Verify your MPS Audio Studio email', `Open this link to verify your email: ${link}/#verify=${token}\nThe link works once and expires in 24 hours.`);
     }
     // The same answer for new, unverified and existing addresses: no account enumeration.
     return { status: 202, body: { message: 'If this email can be registered, a verification link is on its way.' } };
@@ -159,7 +161,7 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
     const user = db.prepare('SELECT id, verified_at FROM users WHERE email = ?').get(email);
     if (user && !user.verified_at) {
       const token = issueToken(user.id, 'verify', VERIFY_TOKEN_MS);
-      mail(email, 'Verify your MPS Audio Studio email', `Open this link to verify your email: ${appUrl(request)}/?verify=${token}\nThe link works once and expires in 24 hours.`);
+      mail(email, 'Verify your MPS Audio Studio email', `Open this link to verify your email: ${appUrl(request)}/#verify=${token}\nThe link works once and expires in 24 hours.`);
     }
     return { status: 202, body: { message: 'If this email is waiting for verification, a new link is on its way.' } };
   });
@@ -205,7 +207,7 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
     const user = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
     if (user) {
       const token = issueToken(user.id, 'reset', RESET_TOKEN_MS);
-      mail(email, 'Reset your MPS Audio Studio password', `Open this link to choose a new password: ${appUrl(request)}/?reset=${token}\nThe link works once and expires in 30 minutes. If you did not ask for this, ignore this email.`);
+      mail(email, 'Reset your MPS Audio Studio password', `Open this link to choose a new password: ${appUrl(request)}/#reset=${token}\nThe link works once and expires in 30 minutes. If you did not ask for this, ignore this email.`);
       audit('recover_requested', user.id);
     }
     // The same answer whether or not the address has an account.

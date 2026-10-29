@@ -1,4 +1,5 @@
-import { realpathSync, rmSync } from 'node:fs';
+import { appendFileSync, mkdirSync, realpathSync, rmSync } from 'node:fs';
+import { dirname } from 'node:path';
 import { tmpdir } from 'node:os';
 import { resolve, sep } from 'node:path';
 import { configFromEnv } from './config.js';
@@ -20,5 +21,12 @@ if (config.resetData) {
   }
   rmSync(config.dataDir, { recursive: true, force: true });
 }
-const { url } = await startServer(config);
+// MPS_LOG_FILE also keeps the request log in a file (the LAS-25 artifact scan reads it).
+const logFile = process.env.MPS_LOG_FILE;
+if (logFile) mkdirSync(dirname(logFile), { recursive: true });
+const log = line => {
+  console.log(line);
+  if (logFile) appendFileSync(logFile, `${line}\n`);
+};
+const { url } = await startServer(config, { log });
 console.log(`MPS account server on ${url} (data: ${config.dataDir}${config.devEndpoints ? ', development endpoints on' : ''})`);

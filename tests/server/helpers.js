@@ -6,14 +6,14 @@ import { startServer } from '../../server/app.js';
 export const ORIGIN = 'http://studio.test';
 
 // A real server on a random port with its own data folder, a controllable clock and captured logs.
-export async function startTestServer(overrides = {}) {
+export async function startTestServer(overrides = {}, { scryptCost = 1024 } = {}) {
   const dataDir = mkdtempSync(join(tmpdir(), 'mps-server-'));
   const clock = { now: Date.UTC(2026, 9, 29, 12) };
   const logs = [];
   const server = await startServer({
     host: '127.0.0.1', port: 0, dataDir, resetData: false, devEndpoints: true, cookieSecure: false,
     allowedOrigins: [ORIGIN], appUrl: ORIGIN, limitScale: 1, ...overrides,
-  }, { now: () => clock.now, scryptCost: 1024, log: line => logs.push(line) });
+  }, { now: () => clock.now, scryptCost, log: line => logs.push(line) });
   return {
     ...server, clock, logs, dataDir,
     async stop() {
@@ -54,7 +54,8 @@ export function client(server, { origin = ORIGIN, studioHeader = true } = {}) {
 }
 
 export const latestMail = async (server, email) => (await client(server).request(`/api/dev/outbox?to=${encodeURIComponent(email)}`)).data.messages[0];
-export const linkToken = (mail, name) => new URL(mail.body.match(/https?:\/\/\S+/)[0]).searchParams.get(name);
+// Emailed links carry the token in the URL fragment (#verify=… / #reset=…).
+export const linkToken = (mail, name) => new URLSearchParams(new URL(mail.body.match(/https?:\/\/\S+/)[0]).hash.slice(1)).get(name);
 
 // Registers and verifies an account, then signs in; returns its signed-in client.
 export async function signedInUser(server, email, password = 'correct horse battery') {
