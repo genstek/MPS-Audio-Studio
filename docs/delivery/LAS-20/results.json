@@ -1,0 +1,34 @@
+{
+  "issue": "LAS-20",
+  "applicationCommit": "11a30581b26b5abcebda3ac597a87c859830b3eb",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (lint, Vitest 17/17, build, Playwright 36/36 incl. local-only test)",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-11a30581b26b5abcebda3ac597a87c859830b3eb.log"]
+    },
+    {
+      "name": "Negative control: upload-like POST in the import path fails the local-only test (expected exit 1)",
+      "status": "PASS",
+      "command": "npx playwright test tests/e2e/local-only.spec.js (temporary fetch in src/main.jsx)",
+      "exitCode": 1,
+      "evidence": ["evidence/negative-control/mutation.diff", "evidence/negative-control/playwright.log"]
+    },
+    {
+      "name": "Policy and threat model completeness (document review)",
+      "status": "PASS",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["../../PRIVACY_AND_THREAT_MODEL.md"]
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/", "../../PRIVACY_AND_THREAT_MODEL.md"],
+  "blockers": [],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "docs/LAS-20-privacy-threat-model"
+}

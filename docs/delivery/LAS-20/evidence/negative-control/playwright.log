@@ -1,0 +1,51 @@
+Testing the app served from /home/user/MPS-Audio-Studio-delivery (pid 24801) at http://127.0.0.1:5173
+
+Running 1 test using 1 worker
+
+  ✘  1 [chromium] › tests/e2e/local-only.spec.js:7:1 › LAS-20: local-only workflow sends no audio and no data to any server (1.4s)
+
+
+  1) [chromium] › tests/e2e/local-only.spec.js:7:1 › LAS-20: local-only workflow sends no audio and no data to any server
+
+    Error: requests that could carry audio or data
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 7
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "bodyBytes": 0,
+    +     "method": "POST",
+    +     "url": "http://127.0.0.1:5173/upload-test",
+    +   },
+    + ]
+
+      24 |   const origin = new URL(baseURL).origin;
+      25 |   const offending = requests.filter(r => r.method !== 'GET' || r.bodyBytes > 0 || new URL(r.url).origin !== origin);
+    > 26 |   expect(offending, 'requests that could carry audio or data').toEqual([]);
+         |                                                                ^
+      27 |   // Page assets only: nothing requested after the app had loaded mentions the file.
+      28 |   expect(requests.filter(r => r.url.includes('private-mix')), 'file name never sent').toEqual([]);
+      29 | });
+        at /home/user/MPS-Audio-Studio-delivery/tests/e2e/local-only.spec.js:26:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/local-only-LAS-20-local-on-cd2f2-o-and-no-data-to-any-server-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/local-only-LAS-20-local-on-cd2f2-o-and-no-data-to-any-server-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/local-only-LAS-20-local-on-cd2f2-o-and-no-data-to-any-server-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/local-only-LAS-20-local-on-cd2f2-o-and-no-data-to-any-server-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests/e2e/local-only.spec.js:7:1 › LAS-20: local-only workflow sends no audio and no data to any server
+exit=1
