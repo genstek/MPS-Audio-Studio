@@ -1,0 +1,58 @@
+{
+  "issue": "LAS-48",
+  "applicationCommit": "8d7d6c849c1564d3c4918d8c470d034a7e8c5992",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (lint, Vitest 16/16, build, Playwright 32/32 incl. 6 new LAS-48 tests and 9 LAS-51 tests) on Linux Chromium 141",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-8d7d6c849c1564d3c4918d8c470d034a7e8c5992.log", "evidence/html-report-8d7d6c849c1564d3c4918d8c470d034a7e8c5992.zip"]
+    },
+    {
+      "name": "Negative control: temporary 15rem strip buttons make the matrix test fail (expected exit 1)",
+      "status": "PASS",
+      "command": "npx playwright test tests/e2e/LAS48-coverage.spec.js --grep 'matrix, empty' (temporary CSS)",
+      "exitCode": 1,
+      "evidence": ["evidence/negative-control/mutation.diff", "evidence/negative-control/playwright.log"]
+    },
+    {
+      "name": "TC-001 traces at 1280x720 and 1440x900 (LAS48-TC-023 recording)",
+      "status": "PASS",
+      "command": "npx playwright test -c tc001-trace.config.mjs --grep 'TC-001: mixer' (temporary config with trace on)",
+      "exitCode": 0,
+      "evidence": ["evidence/tc001-traces/TC-001-1280x720-trace.zip", "evidence/tc001-traces/TC-001-1440x900-trace.zip", "evidence/tc001-traces/console.log"]
+    },
+    {
+      "name": "Firefox / WebKit / Safari (LAS48-TC-024)",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": []
+    },
+    {
+      "name": "Real browser zoom, maximize/restore, multi-display, listening during resize",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": []
+    },
+    {
+      "name": "Waveform / EQ / meters / fader pointer mapping, many tracks, channel settings persistence",
+      "status": "NOT_APPLICABLE",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["README.md (blocked: controls not implemented yet)"]
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],
+  "blockers": [
+    "Only Chromium is installed in the container; Firefox/WebKit cannot be downloaded (LAS48-TC-024)",
+    "Waveform, EQ graph, meters, faders and multitrack do not exist yet (AC-03, AC-06; LAS48-TC-008, 015-020)"
+  ],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "test/LAS-48-coverage-gaps"
+}
