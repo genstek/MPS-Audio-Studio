@@ -1,0 +1,41 @@
+{
+  "issue": "LAS-12",
+  "applicationCommit": "4e8a9038bb1393eeb1c6b4c1addb459b209a49d7",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (lint, Vitest 16/16, build, Playwright 26/26) on Linux Chromium 141",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-4e8a9038bb1393eeb1c6b4c1addb459b209a49d7.log", "evidence/html-report-4e8a9038bb1393eeb1c6b4c1addb459b209a49d7.zip"]
+    },
+    {
+      "name": "Mutation: unload() without invalidating imports -> unit and held-decode Playwright tests fail (expected exit 1)",
+      "status": "PASS",
+      "command": "npx vitest run; npx playwright test tests/e2e/unload-track.spec.js --grep 'replacement import' (mutation temporary)",
+      "exitCode": 1,
+      "evidence": ["evidence/mutation/mutation.diff", "evidence/mutation/vitest.log", "evidence/mutation/playwright.log"]
+    },
+    {
+      "name": "Memory release after removal",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": []
+    },
+    {
+      "name": "Google Chrome on macOS; listening check",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": []
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],
+  "blockers": [],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "feat/LAS-12-unload-track"
+}

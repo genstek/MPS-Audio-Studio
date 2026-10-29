@@ -1,0 +1,52 @@
+Testing the app served from /home/user/MPS-Audio-Studio-delivery (pid 14611) at http://127.0.0.1:5173
+
+Running 1 test using 1 worker
+
+  ✘  1 [chromium] › tests/e2e/unload-track.spec.js:67:1 › LAS-12: removing during a replacement import keeps the session empty (6.2s)
+
+
+  1) [chromium] › tests/e2e/unload-track.spec.js:67:1 › LAS-12: removing during a replacement import keeps the session empty
+
+    Error: after the late decode
+
+    expect(locator).toHaveText(expected) failed
+
+    Locator:  getByRole('region', { name: 'Transport', exact: true }).getByRole('status')
+    Expected: "No audio loaded"
+    Received: "Ready"
+    Timeout:  5000ms
+
+    Call log:
+      - after the late decode getByRole('region', { name: 'Transport', exact: true }).getByRole('status') with timeout 5000ms
+      - waiting for getByRole('region', { name: 'Transport', exact: true }).getByRole('status')
+        14 × locator resolved to <p role="status" class="status">Ready</p>
+           - unexpected value "Ready"
+
+
+      25 | async function expectEmptySession(page, label) {
+      26 |   const ui = studio(page);
+    > 27 |   await expect(ui.status, label).toHaveText('No audio loaded');
+         |                                  ^
+      28 |   await expect(ui.tracks.getByRole('heading', { name: 'Your session starts here' }), label).toBeVisible();
+      29 |   await expect(ui.tracks.getByText('00 TRACKS'), label).toBeVisible();
+      30 |   await expect(ui.tracks.getByText('Import WAV', { exact: true }), label).toBeVisible();
+        at expectEmptySession (/home/user/MPS-Audio-Studio-delivery/tests/e2e/unload-track.spec.js:27:34)
+        at /home/user/MPS-Audio-Studio-delivery/tests/e2e/unload-track.spec.js:80:9
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/unload-track-LAS-12-removi-61610-ort-keeps-the-session-empty-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/unload-track-LAS-12-removi-61610-ort-keeps-the-session-empty-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/unload-track-LAS-12-removi-61610-ort-keeps-the-session-empty-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/unload-track-LAS-12-removi-61610-ort-keeps-the-session-empty-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests/e2e/unload-track.spec.js:67:1 › LAS-12: removing during a replacement import keeps the session empty
+exit=1
