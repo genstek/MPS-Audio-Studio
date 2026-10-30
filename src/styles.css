@@ -285,3 +285,23 @@ dialog .file-picker { grid-area: auto; }
 /* Presets and decisions: the name above its buttons, so long names stay readable in a narrow dialog. */
 .preset-list li { grid-template-columns: minmax(0, 1fr); }
 .preset-list .library-actions { grid-column: 1; grid-row: auto; }
+
+/* LAS-34 stem session: provisional styling until the LAS-44/45 design gates. */
+.stems-dialog { width: min(980px, calc(100vw - 32px)); }
+.stems-dialog > .file-picker { display: inline-block; } /* a block box, so the notes below are not covered */
+.stems-master { display: inline-flex; align-items: center; gap: 6px; }
+.stems-transport { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.stems-seek { display: flex; align-items: center; gap: 8px; font-size: 13px; flex: 1 1 220px; }
+.stems-seek input { flex: 1; min-width: 120px; }
+.stem-strips { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.stem-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); align-items: center; gap: 6px 14px; padding: 10px 12px; background: #11161a; border-radius: 8px; font-size: 13px; }
+.stem-strip.is-silent { opacity: 0.6; }
+.stem-strip label { display: grid; gap: 2px; font-size: 12px; color: #aebac4; }
+.stem-strip input[type='number'] { width: 7rem; padding: 4px 6px; border-radius: 5px; border: 1px solid #52616c; background: #0c1013; color: #ecedf0; font: inherit; }
+.stem-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stem-toggles { display: flex; flex-wrap: wrap; gap: 6px; }
+.stem-toggles button { padding: 4px 10px; font-size: 12px; }
+.stem-toggles button[aria-pressed='true'] { background: #d7af6c; color: #14191d; border-color: #d7af6c; }
+.stem-meter { position: relative; display: inline-block; width: 150px; height: 16px; background: #0c1013; border: 1px solid #2c353d; border-radius: 3px; overflow: hidden; }
+.stem-meter > span { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, #4f9d69, #d7af6c 80%, #d0644f); }
+.stem-meter small { position: relative; padding-left: 4px; font-size: 10px; line-height: 16px; color: #ecedf0; font-variant-numeric: tabular-nums; }

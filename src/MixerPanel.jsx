@@ -15,7 +15,7 @@ function eqCaption(eq) {
 
 // The mixer (LAS-28): the mastering chain's modules in processing order, each with a real indicator
 // and an editor, plus undo/redo and saved settings. Space (reverb/width) is not built yet.
-export function MixerPanel({ chain, engine, track, sampleRate, listening, onListen }) {
+export function MixerPanel({ chain, engine, track, sampleRate, listening, onListen, tools }) {
   const [editor, setEditor] = useState(null);
   const { params, update, undo, redo, canUndo, canRedo, replace, warnings, problem } = chain;
   const active = Boolean(track);
@@ -52,6 +52,7 @@ export function MixerPanel({ chain, engine, track, sampleRate, listening, onList
         <div className="heading-tools">
           {history}
           <SettingsDialog params={params} replace={replace} />
+          {tools}
         </div>
       </div>
       {(problem || warnings.length > 0) && <p className="mixer-note" aria-live="polite">{problem || warnings.join(' ')}</p>}

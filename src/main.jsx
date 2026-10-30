@@ -9,6 +9,7 @@ import { ListenSwitch, LoudnessMatch } from './ListeningControls.jsx';
 import { useChainSettings } from './useChainSettings.js';
 import { ReferencesDialog } from './ReferencesDialog.jsx';
 import { CompareDialog } from './CompareDialog.jsx';
+import { StemsDialog } from './StemsDialog.jsx';
 import './styles.css';
 
 // Seconds as mm:ss.t, rounded to a tenth of a second.
@@ -172,7 +173,7 @@ function App() {
         </section>
       </div>
 
-      <MixerPanel chain={chain} engine={engine} track={track} sampleRate={track ? track.sampleRate : 48000} listening={listening} onListen={listen} />
+      <MixerPanel chain={chain} engine={engine} track={track} sampleRate={track ? track.sampleRate : 48000} listening={listening} onListen={listen} tools={<StemsDialog engine={engine} listening={listening} onListen={listen} onStemsPlay={monitorStarted} />} />
       <footer><span className="connection">LOCAL / WEB AUDIO</span><span>EQ, dynamics, limiter and WAV export run on this device · reference matching and multitrack are planned.</span></footer>
     </main>
   );
