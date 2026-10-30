@@ -1,0 +1,72 @@
+{
+  "issue": "LAS-29",
+  "applicationCommit": "0c961b92d61c45cdda40c3bf505d1ac63721243c",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (ESLint, Vitest 208/208 incl. golden regression and negative tests, Vite build, Playwright 63/63)",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-0c961b92d61c45cdda40c3bf505d1ac63721243c.log", "evidence/html-report-0c961b92d61c45cdda40c3bf505d1ac63721243c.zip"]
+    },
+    {
+      "name": "Full DSP regression (96 renders, both rates) against golden v1 with the FFmpeg ebur128 cross-check",
+      "status": "PASS",
+      "command": "npm run dsp:regression -- --out <folder> --ffmpeg",
+      "exitCode": 0,
+      "evidence": ["evidence/dsp-regression.md", "evidence/dsp-regression.json", "evidence/dsp-regression-stdout.txt"]
+    },
+    {
+      "name": "Blind listening-set tool on synthetic demo files (matched loudness, alignment, blind key, checksum refusal)",
+      "status": "PASS",
+      "command": "npm run listening:set -- demo-song.wav --settings master-settings.json --start 0.5 --duration 3 --reference demo-reference.wav --reference-sha256 <sha> --seed 7",
+      "exitCode": 0,
+      "evidence": ["evidence/listening-demo/"]
+    },
+    {
+      "name": "Wrong reference checksum refused (expected exit 1, nothing written)",
+      "status": "PASS",
+      "command": "npm run listening:set -- demo-song.wav --reference demo-reference.wav --reference-sha256 000…",
+      "exitCode": 1,
+      "evidence": ["evidence/listening-demo/run-bad-checksum.txt"]
+    },
+    {
+      "name": "Performance observations (Node and Chromium)",
+      "status": "PASS",
+      "command": "node <scratch>/perf-las29.mjs; npx playwright test tests/e2e/chain-parity.spec.js tests/e2e/analysis.spec.js --reporter=json",
+      "exitCode": 0,
+      "evidence": ["evidence/performance.txt"]
+    },
+    {
+      "name": "Artifact, bundle and log scan (124 pieces, 0 findings)",
+      "status": "PASS",
+      "command": "npm run scan:artifacts",
+      "exitCode": 0,
+      "evidence": ["evidence/scan-artifacts-0c961b92d61c45cdda40c3bf505d1ac63721243c.json"]
+    },
+    {
+      "name": "Listening review by Gennady",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["listening-protocol.md", "manual-qa.md"]
+    },
+    {
+      "name": "Lia v6 reference comparison",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": []
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "listening-protocol.md", "jira-update.md", "evidence/"],
+  "blockers": ["Authorized Lia v6 reference file and SHA-256 needed for the reference comparison", "No authorized representative music clips in the repository (synthetic programme used)"],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "test/LAS-29-dsp-fixtures",
+  "defects": [
+    {"severity": "Major", "summary": "Blind listening labels were predictable for small seeds (weak generator); found by unit test before shipping", "fixedIn": "0c961b92d61c45cdda40c3bf505d1ac63721243c"}
+  ]
+}

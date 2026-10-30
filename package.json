@@ -17,7 +17,9 @@
     "test:unit": "vitest run",
     "scan:artifacts": "node scripts/scan-artifacts.js",
     "crosscheck:analysis": "node scripts/crosscheck-ffmpeg.js",
-    "characterize:chain": "node scripts/characterize-chain.js"
+    "characterize:chain": "node scripts/characterize-chain.js",
+    "dsp:regression": "node scripts/dsp-regression.js",
+    "listening:set": "node scripts/listening-set.js"
   },
   "dependencies": {
     "react": "^19.3.1",
