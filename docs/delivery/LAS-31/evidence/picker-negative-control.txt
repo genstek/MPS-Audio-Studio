@@ -1,0 +1,29 @@
+Testing the app served from <worktree> (pid 17102) at http://127.0.0.1:5173, accounts at http://127.0.0.1:8788
+
+Running 1 test using 1 worker
+
+[1/1] [chromium] › tests/e2e/references.spec.js:117:1 › LAS-30: the reference file picker stays inside the dialog at 360 px
+  1) [chromium] › tests/e2e/references.spec.js:117:1 › LAS-30: the reference file picker stays inside the dialog at 360 px
+
+    Error: expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 341
+    Received:    389.1875
+
+      123 |   const picker = await ref.dialog.locator('.file-picker').boundingBox();
+      124 |   expect(picker.x).toBeGreaterThanOrEqual(dialog.x);
+    > 125 |   expect(picker.x + picker.width).toBeLessThanOrEqual(dialog.x + dialog.width);
+          |                                   ^
+      126 | });
+      127 |
+        at <worktree>/tests/e2e/references.spec.js:125:35
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/references-LAS-30-the-refe-0bae9-inside-the-dialog-at-360-px-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/references-LAS-30-the-refe-0bae9-inside-the-dialog-at-360-px-chromium/error-context.md
+
+
+  1 failed
+    [chromium] › tests/e2e/references.spec.js:117:1 › LAS-30: the reference file picker stays inside the dialog at 360 px

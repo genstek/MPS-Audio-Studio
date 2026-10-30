@@ -1,0 +1,32 @@
+// LAS-31 evidence: a section rendered with pre-roll versus the same section of the whole-track
+// render, and the no-pre-roll negative control. Prints Markdown.
+import { analyze } from '../src/dsp/analysis.js';
+import { renderChain } from '../src/dsp/chain.js';
+import { validateChain } from '../src/dsp/chain-params.js';
+import { preRollSeconds, renderSegment } from '../src/dsp/segment-render.js';
+import { FIXTURES } from '../tests/fixtures/dsp-fixtures.js';
+import { concat, noise } from '../tests/fixtures/signals.js';
+import { PRESETS } from '../tests/harness/presets.js';
+
+const rate = 44100;
+const f32 = s => Float32Array.from(s);
+const repeat = (channels, times) => channels.map(c => f32(concat(...Array.from({ length: times }, () => c))));
+const cut = (channels, a, b) => channels.map(c => c.subarray(a * rate, b * rate));
+const measure = ch => { const r = analyze(ch, rate); return { lufs: r.loudness.integratedLufs, tp: r.peaks.truePeakDbtp, crest: r.levels.crestFactorDb }; };
+const maxDiff = (a, b) => { let m = 0; for (let c = 0; c < a.length; c++) for (let n = 0; n < a[c].length; n++) m = Math.max(m, Math.abs(a[c][n] - b[c][n])); return m; };
+const row = (name, a, b) => `| ${name} | ${maxDiff(a, b).toExponential(2)} | ${Math.abs(measure(a).lufs - measure(b).lufs).toFixed(4)} | ${Math.abs(measure(a).tp - measure(b).tp).toFixed(4)} | ${Math.abs(measure(a).crest - measure(b).crest).toFixed(4)} |`;
+
+const lines = ['# LAS-31 section render accuracy', '', `Node ${process.version}. Programme = the LAS-29 music-like fixture. Differences against the same section cut from the whole-track render.`, '', '| Case | Largest sample difference | Loudness (LU) | True peak (dB) | Crest (dB) |', '| --- | --- | --- | --- | --- |'];
+const programme = repeat(FIXTURES.programme(rate), 4);
+for (const name of ['default', 'master']) {
+  const whole = cut(renderChain(PRESETS[name], programme, rate).channels, 9, 15);
+  lines.push(row(`${name} preset, section 9–15 s, pre-roll ${preRollSeconds(PRESETS[name])} s`, renderSegment(PRESETS[name], programme, rate, { start: 9, end: 15 }).channels, whole));
+}
+const slow = validateChain({ ...PRESETS.master, compressor: { ...PRESETS.master.compressor, release: 800, threshold: -30 } });
+const loud = [1, 2].map(seed => f32(noise({ seconds: 5, rate, amplitude: 0.9, seed })));
+const music = repeat(FIXTURES.programme(rate), 2);
+const audio = [0, 1].map(c => f32(concat(loud[c], music[c])));
+const whole = cut(renderChain(slow, audio, rate).channels, 6, 10);
+lines.push(row(`slow release (800 ms) after loud noise, section 6–10 s, pre-roll ${preRollSeconds(slow)} s`, renderSegment(slow, audio, rate, { start: 6, end: 10 }).channels, whole));
+lines.push(row('same, **no pre-roll (negative control)**', renderChain(slow, cut(audio, 6, 10), rate).channels, whole));
+console.log(lines.join('\n'));

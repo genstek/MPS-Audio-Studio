@@ -1,0 +1,15 @@
+Testing the app served from <worktree> (pid 16541) at http://127.0.0.1:5173, accounts at http://127.0.0.1:8788
+
+Running 9 tests using 2 workers
+
+  ✓  1 [chromium] › tests/e2e/references.spec.js:41:1 › LAS-30: measure a reference segment, save it privately, reanalyse it reproducibly and delete it (4.6s)
+  ✓  2 [chromium] › tests/e2e/compare.spec.js:58:1 › LAS-31: compare a mix section with a local reference, listen level-matched, no settings change (6.7s)
+  ✓  3 [chromium] › tests/e2e/references.spec.js:67:1 › LAS-30: without an account measuring works and saving asks to sign in (2.4s)
+  ✓  5 [chromium] › tests/e2e/references.spec.js:79:1 › LAS-30: short, outside and silent segments are refused clearly (2.3s)
+  ✓  6 [chromium] › tests/e2e/references.spec.js:94:1 › LAS-30: another account does not see the first account's references (4.9s)
+  ✓  7 [chromium] › tests/e2e/references.spec.js:117:1 › LAS-30: the reference file picker stays inside the dialog at 360 px (773ms)
+  ✓  4 [chromium] › tests/e2e/compare.spec.js:113:1 › LAS-31: mono, unequal, short and silent sections give honest outcomes (8.5s)
+  ✓  8 [chromium] › tests/e2e/compare.spec.js:173:1 › LAS-31: saved references use their stored measurements, switching them changes no settings, a mismatched file is refused (11.9s)
+  ✓  9 [chromium] › tests/e2e/compare.spec.js:206:1 › LAS-31: the comparison fits 360×780 and 1440×900; the table scrolls inside its own region (4.7s)
+
+  9 passed (34.9s)
