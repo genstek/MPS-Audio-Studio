@@ -1,0 +1,49 @@
+
+ RUN  v5.0.5 <worktree>
+
+ ✓ tests/unit/audio-engine.test.js > pause preserves the offset, stop resets it, and dispose closes the context 11ms
+ ✓ tests/unit/audio-engine.test.js > decode failure preserves the previously loaded track 3ms
+ ✓ tests/unit/audio-engine.test.js > natural end disconnects the source and permits playback from the start 1ms
+ ✓ tests/unit/audio-engine.test.js > unsupported names, oversized files and invalid headers are rejected 4ms
+ ✓ tests/unit/audio-engine.test.js > a newer import wins over a slower earlier one 57ms
+ ✓ tests/unit/audio-engine.test.js > disposing during an import discards it without creating an audio context 2ms
+ ✓ tests/unit/audio-engine.test.js > replacing a playing track stops and disconnects its source before the next play 1ms
+ ✓ tests/unit/audio-engine.test.js > 100 MiB is the largest accepted file size 1ms
+ ✓ tests/unit/audio-engine.test.js > files without a RIFF/WAVE header are rejected before decoding; the extension is case-insensitive 2ms
+ ✓ tests/unit/audio-engine.test.js > a failed first import leaves nothing to play 1ms
+ ✓ tests/unit/audio-engine.test.js > position follows the audio clock, freezes on pause and resets on stop and natural end 1ms
+ ✓ tests/unit/audio-engine.test.js > a second Play while the first is starting does not add a source 1ms
+ ✓ tests/unit/audio-engine.test.js > stop, pause or a new track while the context resumes cancels the start 7ms
+ ✓ tests/unit/audio-engine.test.js > a failed resume can be retried 1ms
+ ✓ tests/unit/audio-engine.test.js > unload stops playback, forgets the track and keeps the engine for the next import 1ms
+ ✓ tests/unit/audio-engine.test.js > unload cancels an import in progress and a start waiting for the context 52ms
+ ✓ tests/unit/audio-engine.test.js > a valid header is accepted whatever bytes its RIFF size field contains 2ms
+ ✓ tests/unit/audio-engine.test.js > playback feeds both output paths; one stage is reused until the channel count changes 1ms
+ ✓ tests/unit/audio-engine.test.js > chain settings, listening choice and loudness match reach the stage, also one built later 1ms
+ ✓ tests/unit/audio-engine.test.js > meters from the stage reach every listener until it unsubscribes 1ms
+ ✓ tests/unit/audio-engine.test.js > a stage built for a superseded import is disposed; a stage failure is reported clearly 54ms
+ ✓ tests/unit/audio-engine.test.js > files with more than two channels get a stereo output stage (played as a downmix) 1ms
+ ✓ tests/unit/audio-engine.test.js > the comparison monitor loops both sections, replaces playback and never touches the chain settings 2ms
+ ✓ tests/unit/audio-engine.test.js > play, stop, a new import and removal each end the comparison monitor 4ms
+ ✓ tests/unit/audio-engine.test.js > a comparison cancelled while the reference decodes never starts, and a bad reference is refused 2ms
+ ✓ tests/unit/reference-comparison.test.js > section render (pre-roll) > the pre-roll covers five of the slowest time constants and at least 3 s 3ms
+ ✓ tests/unit/reference-comparison.test.js > section render (pre-roll) > a rendered section measures as the same section of the whole-track render 3608ms
+ ✓ tests/unit/reference-comparison.test.js > section render (pre-roll) > with a slow compressor release the pre-roll is needed: without it the section measures differently 4130ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > the same audio: every difference is zero and nothing large is interpreted 468ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > a louder mix shows a level difference with units, not a quality judgement, and tonal shape is unchanged 888ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > a brighter and a duller mix: measured band differences and a cautious interpretation, kept apart 2179ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > sections of different length: compared, but flagged and interpretations marked uncertain 597ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > a short section is flagged as less reliable 162ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > mono against stereo: stereo measures are not compared, the rest is 1207ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > silent or too-short sections are refused with a reason, never divided by zero 1113ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > a band with no energy is "not measurable", not a number 460ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > different sample rates compare only the shared octave bands, renormalised 650ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > section selection: comparing the matching section of a track gives no level difference 384ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > reports from different analysis versions are refused 432ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > matched-loudness gains turn the louder versions down to the quietest, never up 1ms
+
+ Test Files  2 passed (2)
+      Tests  40 passed (40)
+   Start at  03:45:52
+   Duration  16.67s (tests 98%, import 1%)
+

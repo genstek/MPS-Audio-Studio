@@ -1,0 +1,62 @@
+{
+  "issue": "LAS-31",
+  "applicationCommit": "5ff67e91d5fe0282d880ee7a182714fe1ecef217",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (ESLint, Vitest 239/239, Vite build, Playwright 72/72) on the staged tree committed unchanged",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-5ff67e91d5fe0282d880ee7a182714fe1ecef217.log", "evidence/html-report-5ff67e91d5fe0282d880ee7a182714fe1ecef217.zip"]
+    },
+    {
+      "name": "Comparison and engine monitor unit tests (durations, mono/stereo, silence, sample rates, section selection, no settings change)",
+      "status": "PASS",
+      "command": "npx vitest run tests/unit/reference-comparison.test.js tests/unit/audio-engine.test.js --reporter=verbose",
+      "exitCode": 0,
+      "evidence": ["evidence/vitest-comparison-verbose.log"]
+    },
+    {
+      "name": "Section render vs whole-track render, with a no-pre-roll negative control",
+      "status": "PASS",
+      "command": "node .data/las31-section-accuracy.mjs",
+      "exitCode": 0,
+      "evidence": ["evidence/section-render-accuracy.md", "evidence/section-render-accuracy-script.mjs.txt"]
+    },
+    {
+      "name": "Comparison and references browser workflows (Chromium 141, 1280x720 default, 360x780 and 1440x900 layout)",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npx playwright test tests/e2e/compare.spec.js tests/e2e/references.spec.js --reporter=list",
+      "exitCode": 0,
+      "evidence": ["evidence/playwright-compare.txt", "evidence/screenshots/compare-dialog-360x780.png", "evidence/screenshots/compare-dialog-1440x900.png"]
+    },
+    {
+      "name": "Negative control: the 360 px picker test fails without the CSS fix",
+      "status": "PASS",
+      "command": "npx playwright test tests/e2e/references.spec.js -g \"360 px\" (with the fix line removed, then restored)",
+      "exitCode": 1,
+      "evidence": ["evidence/picker-negative-control.txt"]
+    },
+    {
+      "name": "Artifact, bundle and log scan (128 pieces, 0 findings)",
+      "status": "PASS",
+      "command": "npm run scan:artifacts",
+      "exitCode": 0,
+      "evidence": ["evidence/scan-artifacts-5ff67e91d5fe0282d880ee7a182714fe1ecef217.json"]
+    },
+    {
+      "name": "Listening judgement of the matched-loudness monitor and Mac/Chrome run",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["manual-qa.md"]
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],
+  "blockers": ["Lia v6 comparison needs the authorized file and its SHA-256 (BLOCKED, as in LAS-29/30)"],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "feat/LAS-31-reference-comparison"
+}

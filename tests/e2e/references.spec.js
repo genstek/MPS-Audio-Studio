@@ -111,3 +111,16 @@ test('LAS-30: another account does not see the first account\'s references', asy
   await expect(otherRef.dialog.getByText('No saved references yet.')).toBeVisible();
   await other.close();
 });
+
+// Defect found in LAS-31: the file picker took the Tracks panel's named grid area and sat in an
+// extra column outside the dialog on a 360 px screen.
+test('LAS-30: the reference file picker stays inside the dialog at 360 px', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 780 });
+  await page.goto('/');
+  const ref = references(page);
+  await ref.open();
+  const dialog = await ref.dialog.boundingBox();
+  const picker = await ref.dialog.locator('.file-picker').boundingBox();
+  expect(picker.x).toBeGreaterThanOrEqual(dialog.x);
+  expect(picker.x + picker.width).toBeLessThanOrEqual(dialog.x + dialog.width);
+});

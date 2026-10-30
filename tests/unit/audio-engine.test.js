@@ -22,7 +22,7 @@ function setup() {
   const stages = [];
   const createOutput = vi.fn(async (_context, channelCount, params) => {
     const stage = {
-      channelCount, params, latency: 83, inputs: ['chain', 'delay'], analyser: 'analyser', listening: [],
+      channelCount, params, latency: 83, inputs: ['chain', 'delay'], referenceInput: 'reference', analyser: 'analyser', listening: [],
       setParams: vi.fn(async next => { stage.params = next; return []; }),
       onMeters: vi.fn(listener => { stage.meters = listener; }),
       setListening: vi.fn((which, match) => stage.listening.push([which, match])),
@@ -375,4 +375,67 @@ test('files with more than two channels get a stereo output stage (played as a d
   await expect(engine.load(file)).resolves.toMatchObject({ channels: 4 });
   expect(createOutput.mock.calls[0][1]).toBe(2);
   engine.dispose();
+});
+
+// LAS-31: comparison monitor.
+const GAINS = { processedDb: -3, originalDb: 0, referenceDb: -1.5 };
+const SECTIONS = { mixSection: { start: 2, end: 8 }, referenceSection: { start: 1, end: 6 } };
+
+test('the comparison monitor loops both sections, replaces playback and never touches the chain settings', async () => {
+  const { engine, sources, stages, file } = setup();
+  await engine.load(file);
+  await engine.play();
+  const stage = stages[0];
+  const paramsBefore = stage.params;
+  await expect(engine.startComparison({ referenceBytes: new ArrayBuffer(8), ...SECTIONS, gains: GAINS, audible: 'reference' })).resolves.toBe(true);
+  expect(sources[0].stop).toHaveBeenCalledOnce(); // normal playback stopped
+  const [mix, reference] = sources.slice(1);
+  expect(mix).toMatchObject({ loop: true, loopStart: 2, loopEnd: 8 });
+  expect(mix.connect.mock.calls.map(call => call[0])).toEqual(['chain', 'delay']);
+  expect(mix.start).toHaveBeenCalledWith(0.05, 2);
+  expect(reference).toMatchObject({ loop: true, loopStart: 1, loopEnd: 6 });
+  expect(reference.connect.mock.calls.map(call => call[0])).toEqual(['reference']);
+  expect(stage.listening.at(-1)).toEqual(['reference', GAINS]);
+  engine.compareListen('processed');
+  expect(stage.listening.at(-1)).toEqual(['processed', GAINS]);
+  // Master listening and loudness matching are kept for later, not applied over the comparison.
+  engine.listen('original');
+  engine.setLoudnessMatch({ processedDb: -6, originalDb: 0 });
+  expect(stage.listening.at(-1)).toEqual(['processed', GAINS]);
+  expect(engine.comparing()).toBe(true);
+  engine.stopComparison();
+  expect(mix.stop).toHaveBeenCalledOnce();
+  expect(reference.stop).toHaveBeenCalledOnce();
+  expect(stage.listening.at(-1)).toEqual(['original', { processedDb: -6, originalDb: 0 }]);
+  expect(engine.comparing()).toBe(false);
+  expect(stage.setParams).not.toHaveBeenCalled();
+  expect(stage.params).toBe(paramsBefore);
+});
+
+test('play, stop, a new import and removal each end the comparison monitor', async () => {
+  for (const action of ['play', 'stop', 'load', 'unload']) {
+    const { engine, sources, file } = setup();
+    await engine.load(file);
+    await engine.startComparison({ referenceBytes: new ArrayBuffer(8), ...SECTIONS, gains: GAINS, audible: 'processed' });
+    const loops = sources.slice(0, 2);
+    await (action === 'load' ? engine.load(file) : engine[action]());
+    for (const loop of loops) expect(loop.stop, action).toHaveBeenCalledOnce();
+    expect(engine.comparing(), action).toBe(false);
+  }
+});
+
+test('a comparison cancelled while the reference decodes never starts, and a bad reference is refused', async () => {
+  const { engine, context, sources, file } = setup();
+  await engine.load(file);
+  let finishDecode;
+  context.decodeAudioData = vi.fn(() => new Promise(resolve => { finishDecode = resolve; }));
+  const starting = engine.startComparison({ referenceBytes: new ArrayBuffer(8), ...SECTIONS, gains: GAINS, audible: 'reference' });
+  engine.stopComparison();
+  finishDecode({ duration: 10, numberOfChannels: 2, sampleRate: 44100 });
+  await expect(starting).resolves.toBe(false);
+  expect(sources).toHaveLength(0);
+  context.decodeAudioData = vi.fn().mockRejectedValue(new Error('bad'));
+  await expect(engine.startComparison({ referenceBytes: new ArrayBuffer(8), ...SECTIONS, gains: GAINS, audible: 'reference' })).rejects.toThrow('Unable to decode the reference for listening.');
+  const empty = setup().engine;
+  await expect(empty.startComparison({ referenceBytes: new ArrayBuffer(8), ...SECTIONS, gains: GAINS, audible: 'reference' })).rejects.toThrow('Import a track first.');
 });

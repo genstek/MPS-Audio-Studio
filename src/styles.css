@@ -229,6 +229,9 @@ a.button-link:hover { background: #44525e; }
 .snapshot-list { list-style: none; display: grid; gap: 6px; padding: 0; margin: 0; }
 .snapshot-list li { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; }
 .file-picker.small { padding: 6px 12px; justify-self: start; }
+/* In dialogs the picker is an ordinary grid item, not the Tracks panel's named area (which put it
+   in an extra column outside the dialog at 360 px, LAS-31). */
+.analysis-dialog .file-picker { grid-area: auto; }
 
 /* LAS-30 reference profiles (provisional styling). */
 .reference-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 8px 12px; align-items: end; }
@@ -236,3 +239,21 @@ a.button-link:hover { background: #44525e; }
 .reference-form input { padding: 6px 8px; border-radius: 5px; border: 1px solid #52616c; background: #11161a; color: #ecedf0; font: inherit; }
 .reference-group h4 { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: #a7b2bc; margin: 6px 0; }
 .reference-check { grid-column: 1 / -1; }
+
+/* LAS-31 reference comparison: provisional styling until the LAS-44/45 design gates. */
+.compare-dialog { width: min(900px, calc(100vw - 32px)); }
+.compare-form { display: grid; gap: 10px; justify-items: start; }
+.compare-form select { max-width: 100%; }
+.compare-form input:not([type='radio']):not([type='file']), .compare-form select { padding: 6px 8px; border-radius: 5px; border: 1px solid #52616c; background: #11161a; color: #ecedf0; font: inherit; }
+.compare-range { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+.compare-range label, .compare-form > label:not(.file-picker) { display: grid; gap: 4px; font-size: 12px; color: #aebac4; max-width: 100%; }
+.compare-range input { width: 7rem; }
+.compare-monitor { display: grid; gap: 8px; justify-items: start; }
+.table-scroll { max-width: 100%; overflow-x: auto; }
+.table-scroll:focus-visible { outline: 2px solid #f0d79a; outline-offset: 2px; }
+.comparison-table { min-width: 640px; }
+.comparison-table td { text-align: right; white-space: nowrap; }
+.comparison-group th { padding-top: 10px; color: #f0d79a; text-align: left; }
+.comparison-explanation { display: block; font-weight: normal; }
+.comparison-small td { color: #9aa7b1; }
+.comparison-conditions, .comparison-interpretations { margin: 0; padding-left: 1.2rem; font-size: 13px; display: grid; gap: 4px; }

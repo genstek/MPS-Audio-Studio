@@ -22,6 +22,11 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage } 
   // A start that is waiting for the audio context to resume. Only one may wait at a time, and
   // pause, stop, a new track or disposal cancels it, so repeated gestures never add a source.
   let pendingStart = null;
+  // Reference comparison monitor (LAS-31): a looping mix section through the normal output paths
+  // and a looping reference section on the unprocessed reference path. It replaces normal
+  // playback while it runs; anything that touches the transport ends it.
+  let comparison = null;
+  let latestComparison = 0;
 
   function superseded() {
     const error = new Error('A newer import replaced this one.');
@@ -29,13 +34,34 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage } 
     return error;
   }
 
-  function disconnect() {
+  function clearComparison() {
+    if (!comparison) return;
+    for (const loop of comparison.loops) {
+      loop.stop();
+      loop.disconnect();
+    }
+    comparison = null;
+    output?.setListening(listening, match);
+  }
+
+  // Ends the comparison monitor and cancels one that is still starting.
+  function endComparison() {
+    latestComparison++;
+    clearComparison();
+  }
+
+  function stopSource() {
     pendingStart = null;
     if (!source) return;
     source.onended = null;
     source.stop();
     source.disconnect();
     source = null;
+  }
+
+  function disconnect() {
+    endComparison();
+    stopSource();
   }
 
   // Seconds into the track, read from the audio clock while playing (LAS-9).
@@ -98,6 +124,7 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage } 
     // Resolves true when a source started, false when nothing started (no track, already
     // playing, another start pending, or cancelled while the context resumed).
     async play() {
+      endComparison();
       if (!buffer || source || pendingStart) return false;
       const start = {};
       pendingStart = start;
@@ -157,13 +184,55 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage } 
     // A/B: 'processed' or 'original'. The same source keeps playing; only the audible path changes.
     listen(next) {
       listening = next;
-      output?.setListening(listening, match);
+      if (!comparison) output?.setListening(listening, match);
     },
     // Loudness matching gains in dB (each ≤ 0), or null for none.
     setLoudnessMatch(next) {
       match = next ?? { processedDb: 0, originalDb: 0 };
-      output?.setListening(listening, match);
+      if (!comparison) output?.setListening(listening, match); // kept for after a comparison
     },
+    // Starts the comparison monitor: referenceBytes (a WAV's ArrayBuffer, decoded here), the mix
+    // and reference sections { start, end } in seconds, gains { processedDb, originalDb,
+    // referenceDb } (each ≤ 0) and which one is audible. Each section loops on its own. Normal
+    // playback stops; the chain settings are not touched.
+    async startComparison({ referenceBytes, mixSection, referenceSection, gains, audible }) {
+      if (!buffer) throw new Error('Import a track first.');
+      const request = ++latestComparison;
+      let reference;
+      try {
+        reference = await context.decodeAudioData(referenceBytes.slice(0));
+      } catch {
+        throw new Error('Unable to decode the reference for listening.');
+      }
+      if (request !== latestComparison || !buffer) return false;
+      clearComparison();
+      stopSource();
+      offset = 0;
+      await context.resume();
+      if (request !== latestComparison) return false;
+      const loop = (audio, section, destinations) => {
+        const node = context.createBufferSource();
+        node.buffer = audio;
+        node.loop = true;
+        node.loopStart = section.start;
+        node.loopEnd = Math.min(section.end, audio.duration);
+        for (const destination of destinations) node.connect(destination);
+        return node;
+      };
+      const loops = [loop(buffer, mixSection, output.inputs), loop(reference, referenceSection, [output.referenceInput])];
+      const when = context.currentTime + 0.05;
+      loops[0].start(when, mixSection.start);
+      loops[1].start(when, referenceSection.start);
+      comparison = { loops, gains };
+      output.setListening(audible, gains);
+      return true;
+    },
+    // Which one the comparison monitor plays: 'processed' | 'original' | 'reference'.
+    compareListen(audible) {
+      if (comparison) output.setListening(audible, comparison.gains);
+    },
+    stopComparison: endComparison,
+    comparing: () => Boolean(comparison),
     onMeters(listener) {
       meterListeners.add(listener);
       return () => meterListeners.delete(listener);
