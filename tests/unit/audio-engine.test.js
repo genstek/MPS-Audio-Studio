@@ -32,9 +32,11 @@ function setup() {
     return stage;
   });
   const onEnded = vi.fn();
-  const engine = createAudioEngine(onEnded, { createOutput });
+  // A stand-in for a stem's own chain node (LAS-35).
+  const createStemChain = vi.fn(async (_context, params, channels) => ({ node: { connect: vi.fn(), disconnect: vi.fn() }, setParams: vi.fn(async () => []), latency: 83, params, channels }));
+  const engine = createAudioEngine(onEnded, { createOutput, createStemChain });
   const file = { name: 'tone.wav', size: 44, arrayBuffer: async () => new TextEncoder().encode('RIFF0000WAVE').buffer };
-  return { engine, context, sources, onEnded, file, stages, createOutput };
+  return { engine, context, sources, onEnded, file, stages, createOutput, createStemChain };
 }
 
 afterEach(() => vi.unstubAllGlobals());
@@ -517,4 +519,25 @@ test('LAS-34: a stem that is not a decodable WAV is refused with a reason', asyn
   context.decodeAudioData = vi.fn().mockRejectedValue(new Error('bad'));
   await expect(engine.addStem({ name: 'x.wav', size: wav.length, arrayBuffer: async () => wav.buffer.slice(wav.byteOffset, wav.byteOffset + wav.byteLength) })).rejects.toThrow('Unable to decode this WAV.');
   expect(engine.stemSession().stems()).toEqual([]);
+});
+
+test('LAS-35: each stem gets its own chain, bypassed and sized to its channels; new settings reach its live node', async () => {
+  const { makeWav } = await import('../fixtures/wav.js');
+  const { bypassChain } = await import('../../src/dsp/stem-render.js');
+  stubNodes();
+  const { engine, context, createStemChain } = setup();
+  context.sampleRate = 44100;
+  await engine.openStems();
+  const wav = makeWav({ seconds: 1, channels: 1, sampleRate: 44100 });
+  context.decodeAudioData = vi.fn().mockResolvedValue({ duration: 1, numberOfChannels: 1, sampleRate: 44100 });
+  const id = await engine.addStem({ name: 'vocal.wav', size: wav.length, arrayBuffer: async () => wav.buffer.slice(wav.byteOffset, wav.byteOffset + wav.byteLength) });
+  expect(createStemChain).toHaveBeenCalledWith(context, bypassChain(), 1);
+  const chain = await createStemChain.mock.results[0].value;
+  const stem = engine.stemSession().stems()[0];
+  expect(stem).toMatchObject({ chainLabel: 'bypass', params: bypassChain() });
+  expect(stem.sha256).toMatch(/^[0-9a-f]{64}$/);
+  const settings = { ...bypassChain(), limiter: { ...bypassChain().limiter, enabled: true } };
+  await engine.stemSession().setChain(id, settings, 'from limiter.json');
+  expect(chain.setParams).toHaveBeenCalledWith(settings);
+  expect(engine.stemSession().stems()[0]).toMatchObject({ chainLabel: 'from limiter.json', params: settings });
 });

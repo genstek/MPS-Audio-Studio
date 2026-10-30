@@ -173,7 +173,7 @@ function App() {
         </section>
       </div>
 
-      <MixerPanel chain={chain} engine={engine} track={track} sampleRate={track ? track.sampleRate : 48000} listening={listening} onListen={listen} tools={<StemsDialog engine={engine} listening={listening} onListen={listen} onStemsPlay={monitorStarted} />} />
+      <MixerPanel chain={chain} engine={engine} track={track} sampleRate={track ? track.sampleRate : 48000} listening={listening} onListen={listen} tools={<StemsDialog engine={engine} chain={chain} listening={listening} onListen={listen} onStemsPlay={monitorStarted} />} />
       <footer><span className="connection">LOCAL / WEB AUDIO</span><span>EQ, dynamics, limiter and WAV export run on this device · reference matching and multitrack are planned.</span></footer>
     </main>
   );

@@ -3,6 +3,7 @@ import { renderSegment } from './segment-render.js';
 import { analyze } from './analysis.js';
 import { proposeChain } from '../proposal.js';
 import { ComparisonError } from '../reference-comparison.js';
+import { renderStemMix, StemRenderError } from './stem-render.js';
 import { measureLoudness } from './loudness.js';
 import { truePeak } from './true-peak.js';
 import { encodeWav } from './wav-encode.js';
@@ -13,13 +14,18 @@ import { ChainParamsError } from './chain-params.js';
 //   mode 'export': render with the chain, encode PCM WAV, report format and measured levels;
 //   mode 'match':  render with the chain and measure the integrated loudness of both versions;
 //   mode 'compare': analyse one section of the original and of the processed render (LAS-31);
-//   mode 'propose': build a reference-guided proposal for one section (LAS-32).
+//   mode 'propose': build a reference-guided proposal for one section (LAS-32);
+//   mode 'stems':   render the stem master and each audible stem's strip output (LAS-35).
 // The page cancels by terminating the worker. The source file is only read.
 const db = value => (value > 0 ? 20 * Math.log10(value) : null);
 const peakOf = channel => channel.reduce((max, value) => Math.max(max, Math.abs(value)), 0);
 
-self.onmessage = async ({ data: { mode, file, params, bitDepth = 24, segment, reference } }) => {
+self.onmessage = async ({ data: { mode, file, params, bitDepth = 24, segment, reference, stems } }) => {
   try {
+    if (mode === 'stems') {
+      await renderStems(stems, params, bitDepth); // awaited, so its errors reach the catch below
+      return;
+    }
     self.postMessage({ type: 'progress', stage: 'Reading the file…', fraction: 0 });
     const source = decodeWav(await file.arrayBuffer());
     if (source.channels > 2) throw new WavDecodeError(`Processing supports mono and stereo audio. This file has ${source.channels} channels.`);
@@ -82,7 +88,31 @@ self.onmessage = async ({ data: { mode, file, params, bitDepth = 24, segment, re
     };
     self.postMessage({ type: 'done', report, bytes }, [bytes]);
   } catch (error) {
-    const known = error instanceof WavDecodeError || error instanceof ChainParamsError || error instanceof ComparisonError;
+    const known = error instanceof WavDecodeError || error instanceof ChainParamsError || error instanceof ComparisonError || error instanceof StemRenderError;
     self.postMessage({ type: 'error', message: known ? error.message : 'Rendering failed unexpectedly. Try again.' });
   }
 };
+
+// Stem master (LAS-35): every stem is decoded from its own file (never resampled), rendered through
+// its own chain, gain, pan and offset, summed and rendered through the master chain. Samples beyond
+// full scale are clipped and counted in the report, never normalised.
+async function renderStems(list, master, bitDepth) {
+  const decoded = [];
+  for (const [i, stem] of list.entries()) {
+    self.postMessage({ type: 'progress', stage: `Reading ${stem.name}…`, fraction: 0.05 * (i / list.length) });
+    const audio = decodeWav(await stem.file.arrayBuffer());
+    decoded.push({ ...stem, sampleRate: audio.sampleRate, channels: audio.samples, offsetFrames: Math.round(stem.offsetSeconds * audio.sampleRate) });
+  }
+  const mix = renderStemMix({ stems: decoded, master, onProgress: (stage, fraction) => self.postMessage({ type: 'progress', stage, fraction: 0.05 + 0.8 * fraction }) });
+  self.postMessage({ type: 'progress', stage: 'Writing the WAV files…', fraction: 0.9 });
+  const describe = (name, channels) => {
+    const { bytes, clippedSamples } = encodeWav(channels, mix.sampleRate, { bitDepth });
+    return {
+      name, bytes, clippedSamples, frames: mix.frames, duration: mix.frames / mix.sampleRate, sampleRate: mix.sampleRate, channels: channels.length, bitDepth,
+      samplePeakDbfs: db(Math.max(...channels.map(peakOf))), truePeakDbtp: db(Math.max(...channels.map(channel => truePeak(channel)))),
+      integratedLufs: measureLoudness(channels, mix.sampleRate).integratedLufs,
+    };
+  };
+  const files = [describe('stem-master.wav', mix.combined), ...mix.strips.map(strip => describe(`${strip.name.replace(/\.wav$/i, '')}-stem.wav`, strip.channels))];
+  self.postMessage({ type: 'done', report: { files: files.map(({ bytes, ...rest }) => ({ ...rest, bytes: bytes.byteLength })), silent: mix.silent, latencyCompensatedSamples: mix.latency }, bytes: files.map(f => f.bytes) }, files.map(f => f.bytes));
+}
