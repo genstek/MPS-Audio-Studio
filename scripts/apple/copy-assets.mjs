@@ -1,0 +1,10 @@
+import { cp, rm, readFile, access } from 'node:fs/promises';
+import { resolve } from 'node:path';
+const source = resolve('dist');
+const destination = resolve('apple/WebAssets');
+await access(resolve(source, 'index.html'));
+const html = await readFile(resolve(source, 'index.html'), 'utf8');
+if (/\b(?:src|href)=["']\/(?!\/)/.test(html)) throw new Error('Rebuild with --base=./ before Apple packaging.');
+await rm(destination, { recursive: true, force: true });
+await cp(source, destination, { recursive: true });
+console.log('Copied the built studio into the Apple bundle.');

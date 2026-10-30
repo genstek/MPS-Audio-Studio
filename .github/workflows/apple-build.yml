@@ -1,0 +1,42 @@
+name: Apple build validation
+on:
+  pull_request:
+    paths:
+      - 'apple/**'
+      - 'scripts/apple/**'
+      - '.github/workflows/apple-build.yml'
+      - 'src/**'
+      - 'package*.json'
+      - 'vite.config.js'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  apple-build:
+    runs-on: macos-14
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: brew install xcodegen
+      - run: bash scripts/apple/prepare.sh
+      - run: npm run lint && npm run test:unit
+      - name: Unsigned macOS build
+        run: xcodebuild -project apple/MPSAudioStudio.xcodeproj -scheme MPSMac -configuration Debug -destination 'platform=macOS' -derivedDataPath apple/build CODE_SIGNING_ALLOWED=NO build
+      - name: Local asset server tests
+        run: xcodebuild -project apple/MPSAudioStudio.xcodeproj -scheme AssetServerTests -destination 'platform=macOS' -derivedDataPath apple/test-build CODE_SIGNING_ALLOWED=NO test
+      - name: iOS simulator build
+        run: xcodebuild -project apple/MPSAudioStudio.xcodeproj -scheme MPSiOS -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath apple/ios-build CODE_SIGNING_ALLOWED=NO build
+      - name: Package development artifacts (not device installers)
+        run: |
+          mkdir -p artifacts/apple-ci
+          ditto -c -k --keepParent apple/build/Build/Products/Debug/MPSMac.app artifacts/apple-ci/MPSMac-unsigned.zip
+          ditto -c -k --keepParent apple/ios-build/Build/Products/Debug-iphonesimulator/MPSiOS.app artifacts/apple-ci/MPSiOS-simulator-only.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apple-development-builds
+          path: artifacts/apple-ci/
+          retention-days: 14
