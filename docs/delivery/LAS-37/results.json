@@ -1,0 +1,34 @@
+{
+  "issue": "LAS-37",
+  "applicationCommit": null,
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "Bridge prototype tests with stand-in plugins (auth, origin, PNA preflight, discovery, isolation, parameters, state, bypass, crash, hang, limits)",
+      "status": "PASS",
+      "command": "node --test --test-reporter=spec docs/delivery/LAS-37/prototype/bridge.test.js",
+      "exitCode": 0,
+      "evidence": ["evidence/bridge-tests.txt"]
+    },
+    {
+      "name": "Real permitted VST3 plugin (DISTRHO 3 Band EQ, LGPL-3+) through pedalboard: install and load denied by the session's permission policy (code from external sources)",
+      "status": "NOT_RUN",
+      "command": "pip install pedalboard; pedalboard.load_plugin(<3BandEQ.vst3>)",
+      "exitCode": null,
+      "evidence": ["README.md"]
+    },
+    {
+      "name": "AU hosting on macOS",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["README.md"]
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "prototype/", "evidence/"],
+  "blockers": ["Running third-party native plugin binaries and the pedalboard host was denied by this session's permission policy", "macOS unavailable (AU, signing, notarization)", "Licensing notes recalled, to verify"],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "research/LAS-37-plugin-host-bridge"
+}
