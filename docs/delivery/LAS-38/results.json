@@ -1,0 +1,19 @@
+{
+  "issue": "LAS-38",
+  "applicationCommit": null,
+  "deliveryStatus": "BLOCKED",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "Application-controlled processing through a real permitted plugin and host",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": []
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md"],
+  "blockers": ["LAS-37 real-plugin feasibility not yet run and the architecture not yet approved by Gennady", "Running a VST3 host and plugin binary was denied by this session's permission policy; no macOS for AU"],
+  "jiraSync": "SYNC_PENDING",
+  "branch": "delivery/LAS-40-all-sprints"
+}
