@@ -1,0 +1,48 @@
+{
+  "issue": "LAS-30",
+  "applicationCommit": "ad800eaef0c53355c2c75b00241fa5d4abf85db4",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (ESLint, Vitest 221/221, Vite build, Playwright 67/67)",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-ad800eaef0c53355c2c75b00241fa5d4abf85db4.log", "evidence/html-report-ad800eaef0c53355c2c75b00241fa5d4abf85db4.zip"]
+    },
+    {
+      "name": "Reference profile server tests (contents, refusals, silence, two-user isolation, deletion cascades, reproducibility, schema v3 to v4 upgrade)",
+      "status": "PASS",
+      "command": "npx vitest run tests/server/references.test.js --reporter=verbose",
+      "exitCode": 0,
+      "evidence": ["evidence/vitest-references-verbose.log"]
+    },
+    {
+      "name": "Reference browser workflows (measure/save/reanalyse/delete, signed out, unsuitable segments, second account)",
+      "status": "PASS",
+      "command": "npx playwright test tests/e2e/references.spec.js",
+      "exitCode": 0,
+      "evidence": ["evidence/playwright-references.txt"]
+    },
+    {
+      "name": "Artifact, bundle and log scan (125 pieces, 0 findings)",
+      "status": "PASS",
+      "command": "npm run scan:artifacts",
+      "exitCode": 0,
+      "evidence": ["evidence/scan-artifacts-ad800eaef0c53355c2c75b00241fa5d4abf85db4.json"]
+    },
+    {
+      "name": "Mac/Chrome run with Gennady's own reference",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["manual-qa.md"]
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],
+  "blockers": [],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "feat/LAS-30-reference-profiles"
+}
