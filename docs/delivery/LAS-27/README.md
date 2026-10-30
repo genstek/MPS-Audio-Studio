@@ -78,3 +78,11 @@ These are numerical checks of the engine. **No listening test has been run.** UI
 - Limiter look-ahead is fixed at 1.5 ms. The release is a single time constant; there is no adaptive or multi-stage release.
 - Rapid repeated switching of the same band during its 20 ms cross-fade drops the older fade (a small step is possible). Continuous edits ramp smoothly.
 - Measured on Linux Chromium 141 and Node 22 only; not run on Mac/Chrome.
+
+## Addendum (LAS-28, 2026-10-30): limiter detector changed from 4× to 8×
+The independent FFmpeg inspection of an exported file in LAS-28 found that the limiter, detecting at 4×, let peaks between its quarter-sample points through. The settings were EQ +4 dB at 3 kHz, compressor −20 dB 3:1 and +8 dB input gain on noise at 44.1 kHz. FFmpeg read −0.8 dBTP and a 32× reference meter read −0.77 dBTP against a −1 dBTP ceiling. The figures above (worst +0.026 dB) were measured with the same 4× meter the limiter used, so they could not show this. Since commit `c43345d` the limiter detects at 8×. Results:
+- the same export reads −1.0 dBTP on FFmpeg and −0.995 dBTP on the 32× meter;
+- the characterisation's 32× column shows at most +0.09 dB over the ceiling;
+- throughput is 16× real time with all 48 bands.
+
+Evidence: `docs/delivery/LAS-28/evidence/` (export inspection, 4× negative control, chain report with the 8× detector). The LAS-27 tested commit `23865e4` itself is unchanged.

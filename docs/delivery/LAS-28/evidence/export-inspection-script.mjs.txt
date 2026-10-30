@@ -1,0 +1,80 @@
+// Exports through the real UI, then inspects the file with FFmpeg/ffprobe (independent tools) and
+// with the project's decoder; compares with the app's report and with the offline chain.
+import { chromium } from '/home/user/MPS-Audio-Studio-delivery/node_modules/@playwright/test/index.mjs';
+import { execFileSync, spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { installChainProbe, lastChainParams } from '/home/user/MPS-Audio-Studio-delivery/tests/e2e/helpers/chain-probe.js';
+import { decodeWav } from '/home/user/MPS-Audio-Studio-delivery/src/dsp/wav-decode.js';
+import { renderChain } from '/home/user/MPS-Audio-Studio-delivery/src/dsp/chain.js';
+import { encodeWav } from '/home/user/MPS-Audio-Studio-delivery/src/dsp/wav-encode.js';
+import { noise, sine } from '/home/user/MPS-Audio-Studio-delivery/tests/fixtures/signals.js';
+
+const out = process.argv[2];
+mkdirSync(out, { recursive: true });
+const rate = 44100;
+const left = Float32Array.from(sine({ frequency: 220, dbfs: -10, seconds: 12, rate }), (v, n) => v + 0.15 * Math.sin(2 * Math.PI * 3000 * n / rate));
+const right = Float32Array.from(noise({ seconds: 12, rate, amplitude: 0.4, seed: 21 }));
+const sourcePath = `${out}/inspect-source.wav`;
+writeFileSync(sourcePath, new Uint8Array(encodeWav([left, right], rate, { bitDepth: 24 }).bytes));
+const sha = path => createHash('sha256').update(readFileSync(path)).digest('hex');
+const sourceSha = sha(sourcePath);
+
+const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, acceptDownloads: true });
+await installChainProbe(page);
+await page.goto('http://127.0.0.1:5199/');
+await page.getByLabel('Import WAV').setInputFiles(sourcePath);
+await page.getByText('Ready', { exact: true }).waitFor();
+const typeValue = async (field, value) => { await field.fill(String(value)); await field.press('Enter'); };
+await page.getByRole('button', { name: 'Edit EQ' }).click();
+const eq = page.getByRole('dialog', { name: 'EQ' });
+await eq.getByRole('button', { name: 'Band 11', exact: true }).click();
+await eq.getByLabel('Band 11 on').check();
+await typeValue(eq.getByRole('spinbutton', { name: 'Frequency (Hz)' }), 3000);
+await typeValue(eq.getByRole('spinbutton', { name: 'Gain (dB)' }), 4);
+await eq.getByRole('button', { name: 'Close EQ' }).click();
+await page.getByRole('button', { name: 'Edit dynamics' }).click();
+const dyn = page.getByRole('dialog', { name: 'Dynamics' });
+await dyn.getByLabel('Compressor on').check();
+await typeValue(dyn.getByRole('spinbutton', { name: 'Threshold (dB)' }), -20);
+await typeValue(dyn.getByRole('spinbutton', { name: 'Ratio (: 1)' }), 3);
+await dyn.getByRole('button', { name: 'Close Dynamics' }).click();
+await page.getByRole('button', { name: 'Edit limiter' }).click();
+const lim = page.getByRole('dialog', { name: 'Limiter' });
+await typeValue(lim.getByRole('spinbutton', { name: 'Input gain (dB)' }), 8);
+await lim.getByRole('button', { name: 'Close Limiter' }).click();
+await page.waitForTimeout(300);
+const params = await lastChainParams(page);
+await page.getByRole('button', { name: 'Export WAV' }).click();
+const dialog = page.getByRole('dialog', { name: 'Export processed WAV' });
+await dialog.getByRole('button', { name: 'Export', exact: true }).click();
+await dialog.getByText('Export ready.').waitFor({ timeout: 60000 });
+const report = Object.fromEntries(await dialog.locator('table tr').evaluateAll(rows => rows.map(r => [r.querySelector('th').textContent, r.querySelector('td').textContent])));
+await page.screenshot({ path: `${out}/export-dialog.png` });
+const download = page.waitForEvent('download');
+await dialog.getByRole('link', { name: /^Save / }).click();
+const exportedPath = `${out}/inspect-source-master.wav`;
+await (await download).saveAs(exportedPath);
+await browser.close();
+
+const probe = JSON.parse(execFileSync('ffprobe', ['-v', 'error', '-show_streams', '-show_format', '-of', 'json', exportedPath], { encoding: 'utf8' }));
+const stream = probe.streams[0];
+const ebur = spawnSync('ffmpeg', ['-hide_banner', '-nostats', '-i', exportedPath, '-af', 'ebur128=peak=true+sample:framelog=quiet', '-f', 'null', '-'], { encoding: 'utf8' }).stderr;
+const summary = ebur.slice(ebur.lastIndexOf('Summary:'));
+const peaks = [...summary.matchAll(/Peak:\s+(-?[\d.]+)\s+dBFS/g)].map(m => Number(m[1]));
+const decoded = decodeWav(readFileSync(exportedPath).buffer.slice(0));
+const source = decodeWav(readFileSync(sourcePath).buffer.slice(0));
+const expected = renderChain(params, source.samples, rate).channels;
+let largest = 0;
+for (let c = 0; c < 2; c++) for (let n = 0; n < source.frames; n++) largest = Math.max(largest, Math.abs(decoded.samples[c][n] - expected[c][n]));
+const result = {
+  settings: params,
+  appReport: report,
+  ffprobe: { codec: stream.codec_name, sampleRate: Number(stream.sample_rate), channels: stream.channels, bitsPerSample: stream.bits_per_sample, durationSeconds: Number(probe.format.duration), samples: Number(stream.duration_ts) },
+  ffmpegEbur128: { integratedLufs: Number(summary.match(/I:\s+(-?[\d.]+) LUFS/)[1]), samplePeakDbfs: peaks[0], truePeakDbtp: peaks[1] },
+  source: { frames: source.frames, sha256Before: sourceSha, sha256After: sha(sourcePath) },
+  exported: { frames: decoded.frames, bitsPerSample: decoded.bitsPerSample, largestDifferenceToOfflineRender: largest },
+};
+writeFileSync(`${out}/export-inspection.json`, `${JSON.stringify(result, null, 2)}\n`);
+console.log(JSON.stringify({ ...result, settings: undefined }, null, 1));

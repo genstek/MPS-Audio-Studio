@@ -1,0 +1,404 @@
+{
+  "settings": {
+    "schema": "mps-chain",
+    "version": 1,
+    "order": [
+      "eq",
+      "compressor",
+      "limiter"
+    ],
+    "eq": {
+      "enabled": true,
+      "mode": "link",
+      "left": [
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 30,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 39.42,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 51.79,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 68.05,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 89.41,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 117.5,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 154.4,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 202.8,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 266.5,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 350.1,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": true,
+          "type": "bell",
+          "frequency": 3000,
+          "gain": 4,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 604.4,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 794.2,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 1043,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 1371,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 1801,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 2367,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 3110,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 4086,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 5369,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 7054,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 9268,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 12180,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 16000,
+          "gain": 0,
+          "q": 1
+        }
+      ],
+      "right": [
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 30,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 39.42,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 51.79,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 68.05,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 89.41,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 117.5,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 154.4,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 202.8,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 266.5,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 350.1,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": true,
+          "type": "bell",
+          "frequency": 3000,
+          "gain": 4,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 604.4,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 794.2,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 1043,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 1371,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 1801,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 2367,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 3110,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 4086,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 5369,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 7054,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 9268,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 12180,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 16000,
+          "gain": 0,
+          "q": 1
+        }
+      ]
+    },
+    "compressor": {
+      "enabled": true,
+      "threshold": -20,
+      "ratio": 3,
+      "attack": 10,
+      "release": 150,
+      "knee": 6,
+      "makeup": 0,
+      "detector": "peak"
+    },
+    "limiter": {
+      "enabled": true,
+      "ceiling": -1,
+      "inputGain": 8,
+      "release": 100
+    }
+  },
+  "appReport": {
+    "Format": "24-bit PCM WAV, 44,100 Hz, stereo",
+    "Dither": "none (24-bit)",
+    "Length": "12.000 s (529,200 samples per channel)",
+    "Integrated loudness": "−6.65 LUFS",
+    "True peak (4× oversampled)": "−1.09 dBTP",
+    "Sample peak": "−1.11 dBFS",
+    "Clipped samples": "None",
+    "Latency compensated": "77 samples"
+  },
+  "ffprobe": {
+    "codec": "pcm_s24le",
+    "sampleRate": 44100,
+    "channels": 2,
+    "bitsPerSample": 24,
+    "durationSeconds": 12,
+    "samples": 529200
+  },
+  "ffmpegEbur128": {
+    "integratedLufs": -6.7,
+    "samplePeakDbfs": -1.1,
+    "truePeakDbtp": -1
+  },
+  "source": {
+    "frames": 529200,
+    "sha256Before": "f61222d838cfec459f88593b70933ff06fbdb9341d7060f400fb05da1701b416",
+    "sha256After": "f61222d838cfec459f88593b70933ff06fbdb9341d7060f400fb05da1701b416"
+  },
+  "exported": {
+    "frames": 529200,
+    "bitsPerSample": 24,
+    "largestDifferenceToOfflineRender": 5.960464477539063e-8
+  }
+}
