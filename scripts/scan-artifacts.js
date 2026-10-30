@@ -77,7 +77,7 @@ for (const [where, buffer] of pieces()) {
   if (where.startsWith('dist')) for (const marker of SERVER_ONLY) if (text.includes(marker)) findings.push({ rule: 'server-code-in-bundle', level: 'critical', where, sample: marker });
   if (where.endsWith('server.log')) {
     for (const line of text.split('\n').filter(Boolean)) {
-      if (!/^(GET|POST|PATCH|DELETE|HEAD|OPTIONS) \/[\w/.-]* \d{3} \d+ms$|^error |^MPS account server /.test(line)) findings.push({ rule: 'unexpected-log-line', level: 'warning', where, sample: line.slice(0, 60) });
+      if (!/^(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS) \/[\w/.-]* \d{3} \d+ms$|^error |^MPS account server /.test(line)) findings.push({ rule: 'unexpected-log-line', level: 'warning', where, sample: line.slice(0, 60) });
     }
   }
 }
