@@ -1,0 +1,21 @@
+{
+  "targets": [
+    "playwright-report",
+    "test-results",
+    "dist",
+    ".data/e2e/server.log"
+  ],
+  "scannedPieces": 136,
+  "serverSecretChecked": true,
+  "summary": {
+    "warning:unexpected-log-line": 1
+  },
+  "findings": [
+    {
+      "rule": "unexpected-log-line",
+      "level": "warning",
+      "where": ".data/e2e/server.log",
+      "sample": "PUT /api/preferences 200 6ms"
+    }
+  ]
+}

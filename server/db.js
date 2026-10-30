@@ -105,6 +105,42 @@ export const MIGRATIONS = [
      created_at INTEGER NOT NULL
    );
    CREATE INDEX reference_profiles_owner ON reference_profiles(owner_id, created_at);`,
+  // LAS-33: owner-private presets (complete chains with their versions), explicit mastering
+  // preferences (one row per user) and remembered proposal decisions. Settings only, no audio.
+  // Deleting the account deletes all of them; deleting a reference profile keeps the presets and
+  // decisions made from it but forgets the link.
+  `CREATE TABLE presets (
+     id TEXT PRIMARY KEY,
+     owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+     name TEXT NOT NULL,
+     chain TEXT NOT NULL,
+     chain_version INTEGER NOT NULL,
+     origin TEXT NOT NULL CHECK (origin IN ('manual', 'proposal', 'import')),
+     analysis_version TEXT,
+     proposal_version TEXT,
+     strength REAL,
+     reference_profile_id TEXT REFERENCES reference_profiles(id) ON DELETE SET NULL,
+     created_at INTEGER NOT NULL,
+     updated_at INTEGER NOT NULL
+   );
+   CREATE INDEX presets_owner ON presets(owner_id, created_at);
+   CREATE TABLE preferences (
+     owner_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+     data TEXT NOT NULL,
+     updated_at INTEGER NOT NULL
+   );
+   CREATE TABLE decisions (
+     id TEXT PRIMARY KEY,
+     owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+     reference_profile_id TEXT REFERENCES reference_profiles(id) ON DELETE SET NULL,
+     decision TEXT NOT NULL CHECK (decision IN ('accepted', 'rejected')),
+     rating INTEGER CHECK (rating BETWEEN 1 AND 5),
+     strength REAL NOT NULL,
+     proposal_version TEXT NOT NULL,
+     summary TEXT NOT NULL,
+     created_at INTEGER NOT NULL
+   );
+   CREATE INDEX decisions_owner ON decisions(owner_id, created_at);`,
 ];
 
 export function openDatabase(path) {
