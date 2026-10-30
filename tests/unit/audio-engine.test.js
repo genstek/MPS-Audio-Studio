@@ -439,3 +439,17 @@ test('a comparison cancelled while the reference decodes never starts, and a bad
   const empty = setup().engine;
   await expect(empty.startComparison({ referenceBytes: new ArrayBuffer(8), ...SECTIONS, gains: GAINS, audible: 'reference' })).rejects.toThrow('Import a track first.');
 });
+
+test('LAS-32: the monitor takes new matching gains after the previewed proposal was measured', async () => {
+  const { engine, stages, file } = setup();
+  await engine.load(file);
+  await engine.startComparison({ referenceBytes: new ArrayBuffer(8), ...SECTIONS, gains: GAINS, audible: 'processed' });
+  const updated = { processedDb: -5, originalDb: 0, referenceDb: -1.5 };
+  engine.compareListen('processed', updated);
+  expect(stages[0].listening.at(-1)).toEqual(['processed', updated]);
+  engine.compareListen('reference');
+  expect(stages[0].listening.at(-1)).toEqual(['reference', updated]); // kept for later switches
+  engine.stopComparison();
+  engine.compareListen('processed', GAINS); // ignored without a running monitor
+  expect(stages[0].listening.at(-1)).toEqual(['processed', { processedDb: 0, originalDb: 0 }]);
+});
