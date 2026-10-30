@@ -4,7 +4,9 @@ Integration branch: `delivery/LAS-40-all-sprints` (from `origin/main` 364d863; n
 
 Developer outcome uses NOT_STARTED / IN_PROGRESS / BLOCKED / READY_FOR_QA. Gennady's manual status stays **NOT_RUN** until he tests. Every Jira update is **SYNC_PENDING** (no authorized Jira connection in this session); the text to post is in each issue's `jira-update.md`.
 
-**Checkpoint status (in progress).** This table is updated as work proceeds; rows marked NOT_STARTED have not been worked on yet.
+**Final delivery state (2026-10-30).** All 36 work orders have a delivery record: **29 READY_FOR_QA**, **7 BLOCKED** on decisions only Gennady can make (no NOT_STARTED or IN_PROGRESS rows remain).
+- READY_FOR_QA means developer checks passed for the stated scope. It is not QA Done, Jira Done, owner acceptance or a merge into `main`.
+- Final integration check on `b16c0ba`: `npm run check` exit 0 (Vitest 275/275, Playwright 81/81) and the artifact scan with 0 findings. See [`final-check/`](final-check/).
 
 | Issue | Sprint group | Mode | Branch → PR | Candidate SHA | Evidence | Developer outcome | Gennady manual |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -31,10 +33,10 @@ Developer outcome uses NOT_STARTED / IN_PROGRESS / BLOCKED / READY_FOR_QA. Genna
 | LAS-33 | 06 | IMPLEMENT | `feat/LAS-33-presets-preferences` → [#36](https://github.com/genstek/MPS-Audio-Studio/pull/36) | d490a50 | [docs/delivery/LAS-33](LAS-33/) | READY_FOR_QA | NOT_RUN |
 | LAS-34 | 07 | IMPLEMENT | `feat/LAS-34-stems` → [#37](https://github.com/genstek/MPS-Audio-Studio/pull/37) | 98bf1c6 | [docs/delivery/LAS-34](LAS-34/) | READY_FOR_QA | NOT_RUN |
 | LAS-35 | 07 | IMPLEMENT | `feat/LAS-35-stem-processing` → [#38](https://github.com/genstek/MPS-Audio-Studio/pull/38) | 7fc3a59 | [docs/delivery/LAS-35](LAS-35/) | READY_FOR_QA | NOT_RUN |
-| LAS-36 | 08 | RESEARCH | — → — | — | — | NOT_STARTED | NOT_RUN |
-| LAS-37 | 08 | RESEARCH | — → — | — | — | NOT_STARTED | NOT_RUN |
-| LAS-38 | 09 | GATED_PROTOTYPE | — → — | — | — | NOT_STARTED | NOT_RUN |
-| LAS-39 | 09 | RESEARCH | — → — | — | — | NOT_STARTED | NOT_RUN |
+| LAS-36 | 08 | RESEARCH | `research/LAS-36-stem-separation` → [#39](https://github.com/genstek/MPS-Audio-Studio/pull/39) | 8a4b6d7 (report) | [docs/delivery/LAS-36](LAS-36/) | READY_FOR_QA (classical NO-GO; ML candidates blocked by network policy; listening NOT_RUN) | NOT_RUN |
+| LAS-37 | 08 | RESEARCH | `research/LAS-37-plugin-host-bridge` → [#40](https://github.com/genstek/MPS-Audio-Studio/pull/40) | 624df6c (report + prototype) | [docs/delivery/LAS-37](LAS-37/) | READY_FOR_QA (design + bridge prototype 7/7; real plugin NOT_RUN: not permitted here; no macOS) | NOT_RUN |
+| LAS-38 | 09 | GATED_PROTOTYPE | — (status documents) → — | — | [docs/delivery/LAS-38](LAS-38/) | BLOCKED (needs a real-plugin LAS-37 pass, Gennady's approval and a permitted host/plugin) | PENDING |
+| LAS-39 | 09 | RESEARCH | `research/LAS-39-model-training-assessment` → [#41](https://github.com/genstek/MPS-Audio-Studio/pull/41) | aa46bd5 (report + experiment) | [docs/delivery/LAS-39](LAS-39/) | READY_FOR_QA (protocol + synthetic experiment; production training NO-GO; real data and listening NOT_RUN) | NOT_RUN |
 | LAS-42 | 01 | DESIGN_REVIEW_REQUIRED | `design/LAS-42-ui-audit` → [#22](https://github.com/genstek/MPS-Audio-Studio/pull/22) | c7a705b (audited) | [docs/delivery/LAS-42](LAS-42/) | BLOCKED — direction choice pending | PENDING decision |
 | LAS-43 | 02 | DESIGN_REVIEW_REQUIRED | `design/LAS-43-wireframes` → [#27](https://github.com/genstek/MPS-Audio-Studio/pull/27) | — (design) | [docs/delivery/LAS-43](LAS-43/) | BLOCKED — walkthrough pending | PENDING walkthrough |
 | LAS-44 | 03 | DESIGN_REVIEW_REQUIRED | — (status documents only) → — | — | [docs/delivery/LAS-44](LAS-44/) | BLOCKED (LAS-42 direction, LAS-43 walkthrough pending) | PENDING |
@@ -45,13 +47,23 @@ Developer outcome uses NOT_STARTED / IN_PROGRESS / BLOCKED / READY_FOR_QA. Genna
 | LAS-49 | 00 (unscheduled) | TEST_PLAN_RECONCILIATION | `docs/LAS-49-test-plan-reconciliation` → [#18](https://github.com/genstek/MPS-Audio-Studio/pull/18) | b06590b | [docs/delivery/LAS-49](LAS-49/) | READY_FOR_QA (24 cases reconciled) | NOT_RUN (24) |
 | LAS-57 | 00 | AUTOMATION_AND_QA_HANDOFF | `test/LAS-57-tc002-valid-wav` → [#12](https://github.com/genstek/MPS-Audio-Studio/pull/12) | f90adfc | [docs/delivery/LAS-57](LAS-57/) | READY_FOR_QA | NOT_RUN |
 
-Sprint boundaries: [00 foundation](sprints/00-foundation/README.md) · [01](sprints/01/README.md) · [02](sprints/02/README.md) · [03](sprints/03/README.md) · [04](sprints/04/README.md) · [05](sprints/05/README.md) · [06](sprints/06/README.md) · [07](sprints/07/README.md).
+Sprint boundaries: [00 foundation](sprints/00-foundation/README.md) · [01](sprints/01/README.md) · [02](sprints/02/README.md) · [03](sprints/03/README.md) · [04](sprints/04/README.md) · [05](sprints/05/README.md) · [06](sprints/06/README.md) · [07](sprints/07/README.md) · [08](sprints/08/README.md) · [09](sprints/09/README.md). Final check: [final-check](final-check/README.md).
 
-## Next ready task and queue (checkpoint)
-1. **LAS-30** reference import and versioned sound profiles (sprint 05) — next; then LAS-31 matched-loudness reference comparison, LAS-32/33 (sprint 06), LAS-34/35 stems (sprint 07).
-2. Research: LAS-37 plugin-host feasibility (ready: LAS-29 done), LAS-36 AI separation (after LAS-35), LAS-39 model training (after LAS-33); LAS-38 gated on LAS-37.
-3. Gated on design approval: LAS-44, LAS-45, LAS-46, LAS-47.
-4. Final: INDEX completion, aggregate draft PR delivery → main (not merged), report.
+## Blockers and decisions for Gennady
+| Decision or input | Unblocks |
+| --- | --- |
+| Choose the LAS-42 visual direction → walk through the LAS-43 wireframes → approve LAS-44 | LAS-44 → LAS-45 → LAS-46 → LAS-47 (the redesign chain) |
+| Review ADR-003 (accounts, private storage) and the privacy policy (LAS-19, LAS-20) | Their status moves from *proposed* to accepted |
+| Provide the authorized Lia v6 file and its checksum | Lia v6 sonic-target benchmark (LAS-29). Matching needs the actual file; nothing is claimed without it |
+| Listening reviews (LAS-29 protocol) | Listening evidence for LAS-29, LAS-32, LAS-36 and LAS-39. Measurements and UI tests do not prove audio quality |
+| Permission or a machine with access to an ML model host | LAS-36 ML separator evaluation with the included scorer |
+| Decide on the LAS-37 bridge architecture; allow (or run on your Mac) a permitted real plugin | LAS-37 real-plugin validation, then LAS-38 |
+| Decide whether remembered decisions may be used for a local preference study (a new opt-in), and whether your projects can be a dataset | Any LAS-39 follow-up |
+| Run the manual QA on your Mac in Chrome | Every **Not Run** manual case. macOS, Safari, Firefox and real Chrome were not available here |
+| Restore Jira access for this tool, or post the prepared `jira-update.md` texts | Jira sync (all **SYNC_PENDING**) |
+
+## Suggested manual QA order
+Foundation (LAS-7 to LAS-12, LAS-57, LAS-48/49) → accounts and privacy (LAS-21 to LAS-25) → analysis, chain, controls and export (LAS-26 to LAS-29) → references and proposals (LAS-30 to LAS-33) → stems (LAS-34, LAS-35) → research reports (LAS-36, LAS-37, LAS-39). Each sprint README lists its cases; all are **Not Run**.
 
 ## Package notes
 - Handoff `CHECKSUMS.sha256`: `coverage.csv` **failed** its checksum when verified at the start of this session; all other listed files matched. The file was read for context only.
