@@ -1,0 +1,53 @@
+{
+ "approach": "external estimates",
+ "seconds": 0.0,
+ "realTimeFactor": 4922067.9,
+ "stems": {
+  "vocals": {
+   "siSdrDb": -9.8,
+   "bleedDb": {
+    "drums": -60.7,
+    "bass": -70.6,
+    "other": -12.5
+   },
+   "correlationEstimate": 1.0,
+   "correlationTruth": 1.0,
+   "monoLossDb": 0.0
+  },
+  "drums": {
+   "siSdrDb": 2.4,
+   "bleedDb": {
+    "vocals": -36.1,
+    "bass": -19.6,
+    "other": -32.0
+   },
+   "correlationEstimate": 0.998,
+   "correlationTruth": 0.999,
+   "monoLossDb": -0.0,
+   "transientPeakRatioDb": -0.4
+  },
+  "bass": {
+   "siSdrDb": 4.0,
+   "bleedDb": {
+    "vocals": -87.7,
+    "drums": -6.7,
+    "other": -46.2
+   },
+   "correlationEstimate": 1.0,
+   "correlationTruth": 1.0,
+   "monoLossDb": -0.0
+  },
+  "other": {
+   "siSdrDb": 7.0,
+   "bleedDb": {
+    "vocals": -41.6,
+    "drums": -25.1,
+    "bass": -10.0
+   },
+   "correlationEstimate": 0.996,
+   "correlationTruth": 1.0,
+   "monoLossDb": -0.04
+  }
+ },
+ "recombinationResidualDb": -149.7
+}
