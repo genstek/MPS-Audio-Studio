@@ -1,0 +1,4 @@
+  ✓  10 [chromium] › tests/e2e/references.spec.js:41:1 › LAS-30: measure a reference segment, save it privately, reanalyse it reproducibly and delete it (4.2s)
+  ✓  13 [chromium] › tests/e2e/references.spec.js:67:1 › LAS-30: without an account measuring works and saving asks to sign in (2.3s)
+  ✓  14 [chromium] › tests/e2e/references.spec.js:79:1 › LAS-30: short, outside and silent segments are refused clearly (2.2s)
+  ✓  15 [chromium] › tests/e2e/references.spec.js:94:1 › LAS-30: another account does not see the first account's references (5.2s)

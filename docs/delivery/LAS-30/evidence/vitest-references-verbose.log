@@ -1,0 +1,25 @@
+
+ RUN  v5.0.5 /home/user/MPS-Audio-Studio-delivery
+
+(node:11186) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > a profile records the source, segment, analysis version and measurement definitions 928ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > different source versions and styles stay separate profiles 1294ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > measurements of another file is refused 492ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > a segment outside the file is refused 409ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > a segment shorter than 5 s is refused 427ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > measurements of another segment is refused 390ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > another analysis version is refused 365ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > a silent segment is refused as unsuitable 222ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > only reference files can have profiles 438ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > another user cannot see, use or delete the profile or the reference 726ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > deleting the profile, the reference file or the account leaves no profile behind 1097ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > reanalysing the same file and segment gives an identical profile 662ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > a database from sprint 02 (schema v3) upgrades to v4 in place 44ms
+
+ Test Files  1 passed (1)
+      Tests  13 passed (13)
+   Start at  03:21:05
+   Duration  8.87s (tests 86%, import 13%, transform 1%)
+
+exit 0
