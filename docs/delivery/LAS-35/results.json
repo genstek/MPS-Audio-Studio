@@ -1,0 +1,48 @@
+{
+  "issue": "LAS-35",
+  "applicationCommit": "7fc3a59ad01fa3e2ad4048b02bd5c73ab24e7d82",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (ESLint, Vitest 275/275, Vite build, Playwright 81/81) on the staged tree committed unchanged",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-7fc3a59ad01fa3e2ad4048b02bd5c73ab24e7d82.log", "evidence/html-report-7fc3a59ad01fa3e2ad4048b02bd5c73ab24e7d82.zip"]
+    },
+    {
+      "name": "Live vs offline stem mix parity (1.19e-7) and dialog workflow (downloads equal the Node render to 5.96e-8; session recall; mixed-rate refusal), with the LAS-34 stem tests",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npx playwright test tests/e2e/stem-render.spec.js tests/e2e/stems.spec.js --reporter=json",
+      "exitCode": 0,
+      "evidence": ["evidence/playwright-stem-render.txt", "evidence/screenshots/stem-render-1280x720.png", "evidence/screenshots/stem-render-360x780.png"]
+    },
+    {
+      "name": "Stem renderer, session file and engine unit tests",
+      "status": "PASS",
+      "command": "npx vitest run tests/unit/stem-render.test.js tests/unit/stem-session-file.test.js tests/unit/audio-engine.test.js --reporter=verbose",
+      "exitCode": 0,
+      "evidence": ["evidence/vitest-stems-verbose.log"]
+    },
+    {
+      "name": "Artifact, bundle and log scan (145 pieces, 0 findings)",
+      "status": "PASS",
+      "command": "npm run scan:artifacts",
+      "exitCode": 0,
+      "evidence": ["evidence/scan-artifacts-7fc3a59ad01fa3e2ad4048b02bd5c73ab24e7d82.json"]
+    },
+    {
+      "name": "Listening review of rendered stems and Mac/Chrome run",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["manual-qa.md"]
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],
+  "blockers": [],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "feat/LAS-35-stem-processing"
+}

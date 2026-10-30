@@ -1,0 +1,9 @@
+PASSED  stem-render.spec.js:20 LAS-35: live stem playback through per-stem chains equals the offline render (latency compensated) (2.8s)
+        annotation parity: largest live/offline difference 1.19e-7 over 48510 frames (mix peak 0.658)
+PASSED  stem-render.spec.js:73 LAS-35: per-stem chains, stem master render, exact downloads, session recall and refusal of mixed rates (10.5s)
+        annotation render: master vs Node render 5.96e-8; vocal stem 5.96e-8
+PASSED  stems.spec.js:6 LAS-34: stems stay sample-aligned through repeated pause, resume and seek; summing and pan law as documented (1.5s)
+PASSED  stems.spec.js:52 LAS-34: gain, pan, mute, solo and offsets change only the intended stem; the sum is exact (1.2s)
+PASSED  stems.spec.js:112 LAS-34: the stem session loads, explains, plays, seeks and mixes; single-track playback is unaffected (8.9s)
+
+expected 5, unexpected 0, flaky 0
