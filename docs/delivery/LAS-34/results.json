@@ -1,0 +1,55 @@
+{
+  "issue": "LAS-34",
+  "applicationCommit": "98bf1c68e36edc70fa053cb71d41d6c19211e160",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (ESLint, Vitest 266/266, Vite build, Playwright 79/79) on the staged tree committed unchanged",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-98bf1c68e36edc70fa053cb71d41d6c19211e160.log", "evidence/html-report-98bf1c68e36edc70fa053cb71d41d6c19211e160.zip"]
+    },
+    {
+      "name": "First npm run check: 6 LAS-51 layout tests failed (masthead Stems button made the page 453 px at 761x450); entry moved to the mixer heading",
+      "status": "FAIL",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 1,
+      "evidence": ["evidence/npm-run-check-attempt1-failed.log"]
+    },
+    {
+      "name": "Stem timing, summing, routing and dialog workflows with LAS-51 layout, playback, pause toggle and removal regressions",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npx playwright test tests/e2e/stems.spec.js tests/e2e/LAS51-layout.spec.js tests/e2e/playback.spec.js tests/e2e/pause-toggle.spec.js tests/e2e/unload-track.spec.js --reporter=list",
+      "exitCode": 0,
+      "evidence": ["evidence/playwright-stems.txt", "evidence/screenshots/stems-1280x720.png", "evidence/screenshots/stems-360x780.png"]
+    },
+    {
+      "name": "Engine unit tests including the stem integration",
+      "status": "PASS",
+      "command": "npx vitest run tests/unit/audio-engine.test.js --reporter=verbose",
+      "exitCode": 0,
+      "evidence": ["evidence/vitest-engine-verbose.log"]
+    },
+    {
+      "name": "Artifact, bundle and log scan (139 pieces, 0 findings)",
+      "status": "PASS",
+      "command": "npm run scan:artifacts",
+      "exitCode": 0,
+      "evidence": ["evidence/scan-artifacts-98bf1c68e36edc70fa053cb71d41d6c19211e160.json"]
+    },
+    {
+      "name": "Mac/Chrome run with Gennady's own stems",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["manual-qa.md"]
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],
+  "blockers": [],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "feat/LAS-34-stems"
+}

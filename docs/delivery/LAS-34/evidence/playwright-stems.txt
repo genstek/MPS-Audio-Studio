@@ -1,0 +1,24 @@
+Testing the app served from <worktree> (pid 10096) at http://127.0.0.1:5173, accounts at http://127.0.0.1:8788
+
+Running 18 tests using 2 workers
+
+  ✓   2 [chromium] › tests/e2e/LAS51-layout.spec.js:253:3 › LAS-51: empty layout survives viewport changes (1.2m)
+  ✓   1 [chromium] › tests/e2e/LAS51-layout.spec.js:253:3 › LAS-51: WAV-loaded layout survives viewport changes (1.2m)
+  ✓   3 [chromium] › tests/e2e/LAS51-layout.spec.js:264:1 › LAS-51: long file name keeps essential controls visible (38.3s)
+  ✓   4 [chromium] › tests/e2e/LAS51-layout.spec.js:274:1 › LAS-51: load error keeps essential controls visible (39.6s)
+  ✓   5 [chromium] › tests/e2e/LAS51-layout.spec.js:295:3 › LAS-51: essential controls visible before scrolling, height 450-1080 at width 761 (29.6s)
+  ✓   6 [chromium] › tests/e2e/LAS51-layout.spec.js:295:3 › LAS-51: essential controls visible before scrolling, height 450-1080 at width 1024 (29.0s)
+  ✓   8 [chromium] › tests/e2e/LAS51-layout.spec.js:295:3 › LAS-51: essential controls visible before scrolling, width 761-1440 at height 450 (11.2s)
+  ✓   9 [chromium] › tests/e2e/LAS51-layout.spec.js:307:1 › LAS-51: playback state survives viewport changes (2.4s)
+  ✓  10 [chromium] › tests/e2e/pause-toggle.spec.js:31:1 › LAS-11: Pause toggles, and Play also resumes from the paused position (4.6s)
+  ✓  11 [chromium] › tests/e2e/pause-toggle.spec.js:77:1 › LAS-11: bursts of transport clicks never play two sources at once (2.7s)
+  ✓  12 [chromium] › tests/e2e/playback.spec.js:4:1 › WAV playback and recovery after a replacement cannot decode (2.4s)
+  ✓  13 [chromium] › tests/e2e/stems.spec.js:6:1 › LAS-34: stems stay sample-aligned through repeated pause, resume and seek; summing and pan law as documented (1.3s)
+  ✓  14 [chromium] › tests/e2e/stems.spec.js:52:1 › LAS-34: gain, pan, mute, solo and offsets change only the intended stem; the sum is exact (1.1s)
+  ✓   7 [chromium] › tests/e2e/LAS51-layout.spec.js:295:3 › LAS-51: essential controls visible before scrolling, height 450-1080 at width 1440 (30.9s)
+  ✓  15 [chromium] › tests/e2e/stems.spec.js:112:1 › LAS-34: the stem session loads, explains, plays, seeks and mixes; single-track playback is unaffected (6.3s)
+  ✓  16 [chromium] › tests/e2e/unload-track.spec.js:39:1 › LAS-12: Remove track empties the session from Playing, Paused and Stopped (6.7s)
+  ✓  17 [chromium] › tests/e2e/unload-track.spec.js:67:1 › LAS-12: removing during a replacement import keeps the session empty (1.8s)
+  ✓  18 [chromium] › tests/e2e/unload-track.spec.js:85:1 › LAS-12: the same and a different WAV import and play after removal; the file is unchanged (2.5s)
+
+  18 passed (3.1m)
