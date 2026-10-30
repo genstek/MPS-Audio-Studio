@@ -1,0 +1,9 @@
+# LAS-33 manual QA for Gennady
+
+Actual results stay **Not Run** until you test. Sign in first; presets, preferences and decisions live in your account.
+
+| Case | Steps | Expected | Actual | Outcome |
+| --- | --- | --- | --- | --- |
+| LAS-33-QA-01 | Import a song → set EQ to **Left/Right** with different bands on each side, switch the compressor on, change the limiter → **Settings…** → name a preset → **Save current settings as preset**. Reload the page, import the song again, **Settings…** → **Apply** on the preset. Then **Rename**, **Export** and open the downloaded file in a text editor. | After Apply the editors show exactly your settings (both channels, compressor, limiter); Undo returns to the defaults. The exported file is readable JSON starting with `"schema": "mps-preset"`. | Not Run | NOT_RUN |
+| LAS-33-QA-02 | **Import preset file…** with: a settings file downloaded earlier (Settings file → Download); a text file renamed to `.json`; a preset file whose `"version"` you change to 2. | The settings file appears as a preset with a "migrated from an mps-chain v1 settings file" message; the others are refused with a reason and "Nothing was changed"; what you hear does not change. | Not Run | NOT_RUN |
+| LAS-33-QA-03 | Compare with a reference → **Propose settings** → set **High shelf** to +2 dB → **Save my preferences** → **Preview proposal**; switch **Use reference targets** off and on; **Reset my preferences**. Tick **Remember my decision**, rate it, **Reject proposal**; check Settings → Remembered decisions → **Forget all decisions**. Sign in as a second test account and open Settings. | The preference is heard on top of the proposal and alone when reference targets are off; after Reset the proposal remains; the decision appears and can be forgotten; the second account sees no presets or decisions. | Not Run | NOT_RUN |
