@@ -6,6 +6,25 @@ import { OVERSAMPLING, truePeak } from './true-peak.js';
 // Definitions, units and tolerances are documented in docs/delivery/LAS-26/README.md.
 export const ANALYSIS_VERSION = 'mps-analysis-1';
 export const OCTAVE_CENTRES = [31.5, 63, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
+// Units and definitions of the report's measurements; saved reference profiles carry them (LAS-30).
+export const MEASUREMENTS = Object.freeze({
+  'loudness.integratedLufs': 'LUFS: ITU-R BS.1770-4 integrated loudness, EBU R128 gating (−70 LUFS absolute, −10 LU relative)',
+  'loudness.rangeLu': 'LU: EBU Tech 3342 loudness range (3 s windows, 95th − 10th percentile)',
+  'loudness.momentaryMaxLufs': 'LUFS: largest 400 ms window loudness',
+  'loudness.shortTermMaxLufs': 'LUFS: largest 3 s window loudness',
+  'peaks.truePeakDbtp': 'dBTP: 4× oversampled true peak (BS.1770-4 Annex 2 method)',
+  'peaks.samplePeakDbfs': 'dBFS: largest absolute sample value',
+  'levels.rmsDbfs': 'dBFS: RMS over all samples and channels (full-scale sine = −3.01)',
+  'levels.crestFactorDb': 'dB: sample peak − RMS',
+  'levels.plrDb': 'dB: true peak − integrated loudness',
+  'levels.dcOffset': 'fraction of full scale: mean sample value per channel',
+  'clipping.clippedRuns': 'count: runs of 3+ samples at |x| ≥ 32767/32768',
+  'stereo.correlation': 'Pearson correlation of mean-removed left and right (−1…+1)',
+  'stereo.sideToMidDb': 'dB: side energy relative to mid energy',
+  'stereo.balanceDb': 'dB: left mean square relative to right',
+  'stereo.monoLoudnessChangeDb': 'LU: loudness of the mono fold-down − stereo loudness',
+  'spectrum.bands': 'share of energy and dB relative to the total per octave band (Hann 8192-point FFT average)',
+});
 const CLIP_LEVEL = 32767 / 32768; // full scale of 16-bit audio
 const db = value => (value > 0 ? 20 * Math.log10(value) : null);
 const powerDb = value => (value > 0 ? 10 * Math.log10(value) : null);

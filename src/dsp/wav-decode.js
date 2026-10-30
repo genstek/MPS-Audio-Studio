@@ -75,3 +75,29 @@ export function decodeWav(bytes) {
   }
   throw new WavDecodeError('No audio data was found in the first 64 chunks of this file.');
 }
+
+// Format and length from the start of a file (at least its header) and the file's total size,
+// without reading the audio: for showing a duration before measuring (LAS-30).
+export function readWavHeader(head, fileSize) {
+  if (head.byteLength < 44) throw new WavDecodeError('This file is too short to be a WAV.');
+  const view = new DataView(head);
+  if (tag(view, 0) !== 'RIFF' || tag(view, 8) !== 'WAVE') throw new WavDecodeError('This file is not a WAV (RIFF/WAVE header missing).');
+  let offset = 12;
+  let format;
+  for (let chunk = 0; chunk < MAX_CHUNKS && offset + 8 <= head.byteLength; chunk++) {
+    const id = tag(view, offset);
+    const length = view.getUint32(offset + 4, true);
+    if (id === 'fmt ') {
+      if (offset + 8 + length > head.byteLength) break;
+      format = readFormat(view, offset + 8, length);
+    }
+    if (id === 'data') {
+      if (!format) throw new WavDecodeError('The audio data comes before its format description.');
+      const available = Math.min(length, fileSize - (offset + 8));
+      const frames = Math.floor(available / format.blockAlign);
+      return { ...format, frames, duration: frames / format.sampleRate };
+    }
+    offset += 8 + length + (length % 2);
+  }
+  throw new WavDecodeError('No audio data was found near the start of this file.');
+}

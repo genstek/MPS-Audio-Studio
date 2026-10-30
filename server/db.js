@@ -1,7 +1,7 @@
 import { DatabaseSync } from 'node:sqlite';
 
 // Forward-only migrations; PRAGMA user_version records how many have run.
-const MIGRATIONS = [
+export const MIGRATIONS = [
   `CREATE TABLE users (
      id TEXT PRIMARY KEY,
      email TEXT NOT NULL UNIQUE,
@@ -88,6 +88,23 @@ const MIGRATIONS = [
      sha256 TEXT NOT NULL,
      created_at INTEGER NOT NULL
    );`,
+  // LAS-30: measured sound profiles of owner-private reference files. Deleting the reference file
+  // (or its project, or the account) deletes its profiles.
+  `CREATE TABLE reference_profiles (
+     id TEXT PRIMARY KEY,
+     owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+     asset_id TEXT NOT NULL REFERENCES assets(id) ON DELETE CASCADE,
+     name TEXT NOT NULL,
+     style TEXT NOT NULL,
+     source_version TEXT NOT NULL,
+     segment_start REAL NOT NULL,
+     segment_end REAL NOT NULL,
+     analysis_version TEXT NOT NULL,
+     source_sha256 TEXT NOT NULL,
+     profile TEXT NOT NULL,
+     created_at INTEGER NOT NULL
+   );
+   CREATE INDEX reference_profiles_owner ON reference_profiles(owner_id, created_at);`,
 ];
 
 export function openDatabase(path) {

@@ -7,6 +7,7 @@ import { MixerPanel } from './MixerPanel.jsx';
 import { ExportDialog } from './ExportDialog.jsx';
 import { ListenSwitch, LoudnessMatch } from './ListeningControls.jsx';
 import { useChainSettings } from './useChainSettings.js';
+import { ReferencesDialog } from './ReferencesDialog.jsx';
 import './styles.css';
 
 // Seconds as mm:ss.t, rounded to a tenth of a second.
@@ -120,7 +121,7 @@ function App() {
     <main>
       <header className="masthead">
         <div className="brand"><span className="brand-mark" aria-hidden="true">MPS</span><div><p className="eyebrow">LOCAL AUDIO WORKSPACE</p><h1>MPS Audio Studio</h1></div></div>
-        <div className="masthead-tools"><span className="version">SPRINT 0 <span aria-hidden="true">/</span> WEB MIXER</span><AccountDialog currentFile={currentFile} /></div>
+        <div className="masthead-tools"><span className="version">SPRINT 0 <span aria-hidden="true">/</span> WEB MIXER</span><ReferencesDialog /><AccountDialog currentFile={currentFile} /></div>
       </header>
 
       <section className="transport panel" aria-label="Transport">
