@@ -453,3 +453,68 @@ test('LAS-32: the monitor takes new matching gains after the previewed proposal 
   engine.compareListen('processed', GAINS); // ignored without a running monitor
   expect(stages[0].listening.at(-1)).toEqual(['processed', { processedDb: 0, originalDb: 0 }]);
 });
+
+// LAS-34: the stem session's place in the engine (its own stereo stage, shared settings, one player
+// at a time). Web Audio nodes are replaced by recording stand-ins.
+function stubNodes() {
+  const param = () => ({ value: 1, setValueAtTime: vi.fn(), linearRampToValueAtTime: vi.fn(), cancelScheduledValues: vi.fn(), setTargetAtTime: vi.fn() });
+  const started = [];
+  class Node {
+    constructor(_context, options = {}) { this.options = options; this.connect = vi.fn(next => next); this.disconnect = vi.fn(); }
+  }
+  vi.stubGlobal('GainNode', class extends Node { constructor(c, o) { super(c, o); this.gain = param(); } });
+  vi.stubGlobal('StereoPannerNode', class extends Node { constructor(c, o) { super(c, o); this.pan = param(); } });
+  vi.stubGlobal('AnalyserNode', class extends Node { getFloatTimeDomainData() {} });
+  vi.stubGlobal('AudioBufferSourceNode', class extends Node {
+    constructor(c, o) { super(c, o); this.buffer = o.buffer; this.start = vi.fn(); this.stop = vi.fn(); started.push(this); }
+  });
+  return started;
+}
+
+test('LAS-34: stems get their own stereo stage, follow the chain settings and the listening switch, and take turns with the single track', async () => {
+  const { makeWav } = await import('../fixtures/wav.js');
+  const started = stubNodes();
+  const { engine, context, sources, stages, file, createOutput } = setup();
+  context.sampleRate = 44100;
+  await engine.load(file);
+  await engine.play();
+  await engine.openStems();
+  expect(createOutput).toHaveBeenLastCalledWith(context, 2, expect.any(Object));
+  const stemStage = stages.at(-1);
+  stemStage.analyser = { fftSize: 32, getFloatTimeDomainData: () => {} };
+  const wav = makeWav({ seconds: 2, channels: 1, sampleRate: 48000 });
+  const stemFile = { name: 'bass.wav', size: wav.length, arrayBuffer: async () => wav.buffer.slice(wav.byteOffset, wav.byteOffset + wav.byteLength) };
+  context.decodeAudioData = vi.fn().mockResolvedValue({ duration: 2, numberOfChannels: 1, sampleRate: 44100 });
+  await engine.addStem(stemFile);
+  expect(engine.stemSession().stems()[0]).toMatchObject({ name: 'bass.wav', fileSampleRate: 48000, fileChannels: 1, duration: 2 });
+  // Settings and the Processed/Original choice reach both stages; single-track loudness matching
+  // does not apply to the stems.
+  const next = { ...stages[0].params, limiter: { ...stages[0].params.limiter, inputGain: 3 } };
+  await engine.setChain(next);
+  expect(stemStage.params).toBe(next);
+  expect(stages[0].params).toBe(next);
+  engine.listen('original');
+  expect(stemStage.listening.at(-1)).toEqual(['original', { processedDb: 0, originalDb: 0 }]);
+  // Playing the stems stops the single track; playing the single track pauses the stems.
+  await expect(engine.playStems()).resolves.toBe(true);
+  expect(sources[0].stop).toHaveBeenCalledOnce();
+  expect(started).toHaveLength(1);
+  expect(engine.stemSession().playing()).toBe(true);
+  await engine.play();
+  expect(started[0].stop).toHaveBeenCalledOnce();
+  expect(engine.stemSession().playing()).toBe(false);
+  engine.dispose();
+  expect(stemStage.dispose).toHaveBeenCalledOnce();
+});
+
+test('LAS-34: a stem that is not a decodable WAV is refused with a reason', async () => {
+  stubNodes();
+  const { engine, context } = setup();
+  await engine.openStems();
+  await expect(engine.addStem({ name: 'notes.txt', size: 4, arrayBuffer: async () => new ArrayBuffer(4) })).rejects.toThrow('Choose a WAV file.');
+  const { makeWav } = await import('../fixtures/wav.js');
+  const wav = makeWav();
+  context.decodeAudioData = vi.fn().mockRejectedValue(new Error('bad'));
+  await expect(engine.addStem({ name: 'x.wav', size: wav.length, arrayBuffer: async () => wav.buffer.slice(wav.byteOffset, wav.byteOffset + wav.byteLength) })).rejects.toThrow('Unable to decode this WAV.');
+  expect(engine.stemSession().stems()).toEqual([]);
+});

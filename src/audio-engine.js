@@ -1,5 +1,7 @@
 import { defaultChain } from './dsp/chain-params.js';
+import { readWavHeader } from './dsp/wav-decode.js';
 import { createOutputStage } from './output-stage.js';
+import { createStemSession } from './stem-session.js';
 
 // One engine owns the audio context, the current source and the output stage (mastering chain
 // and original/processed switch, LAS-28), outside React state. createOutput can be replaced in
@@ -27,6 +29,12 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage } 
   // playback while it runs; anything that touches the transport ends it.
   let comparison = null;
   let latestComparison = 0;
+  // Stem session (LAS-34): its own stereo output stage (master chain and Processed/Original switch)
+  // on the same audio context, built when the session first opens. Only one of single-track
+  // playback and stem playback runs at a time.
+  let stemOutput = null;
+  let stemSession = null;
+  const NO_MATCH = { processedDb: 0, originalDb: 0 };
 
   function superseded() {
     const error = new Error('A newer import replaced this one.');
@@ -125,6 +133,7 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage } 
     // playing, another start pending, or cancelled while the context resumed).
     async play() {
       endComparison();
+      stemSession?.pause();
       if (!buffer || source || pendingStart) return false;
       const start = {};
       pendingStart = start;
@@ -170,6 +179,10 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage } 
     dispose() {
       latestLoad++;
       disconnect();
+      stemSession?.dispose();
+      stemSession = null;
+      stemOutput?.dispose();
+      stemOutput = null;
       output?.dispose();
       output = null;
       meterListeners.clear();
@@ -179,12 +192,14 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage } 
     // rejects with the reason the settings were refused. Kept for the next output stage.
     async setChain(params) {
       chainParams = params;
+      if (stemOutput) await stemOutput.setParams(params);
       return output ? output.setParams(params) : [];
     },
     // A/B: 'processed' or 'original'. The same source keeps playing; only the audible path changes.
     listen(next) {
       listening = next;
       if (!comparison) output?.setListening(listening, match);
+      stemOutput?.setListening(listening, NO_MATCH);
     },
     // Loudness matching gains in dB (each ≤ 0), or null for none.
     setLoudnessMatch(next) {
@@ -236,6 +251,57 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage } 
     },
     stopComparison: endComparison,
     comparing: () => Boolean(comparison),
+    // Opens (or returns) the stem session. onEnded runs when the last stem finishes.
+    async openStems(onEnded = () => {}) {
+      context ??= new AudioContext();
+      if (!stemOutput) {
+        try {
+          stemOutput = await createOutput(context, 2, chainParams);
+        } catch {
+          throw new Error('Audio processing could not start. Reload the page and try again.');
+        }
+        stemOutput.onMeters(meters => meterListeners.forEach(listener => listener(meters)));
+        stemOutput.setListening(listening, NO_MATCH);
+      }
+      stemSession ??= createStemSession(context, stemOutput, { onEnded: () => stemSession.onEnded?.() });
+      stemSession.onEnded = onEnded;
+      return stemSession;
+    },
+    stemSession: () => stemSession,
+    // Decodes a stem WAV at the playback rate and adds it; the file's own rate and channel count are
+    // read from its header so the alignment policy can be explained.
+    async addStem(file) {
+      if (!stemSession) throw new Error('Open the stem session first.');
+      if (!/\.wav$/i.test(file.name)) throw new Error('Choose a WAV file.');
+      if (file.size > 100 * 1024 * 1024) throw new Error('Choose a WAV smaller than 100 MiB.');
+      const bytes = await file.arrayBuffer();
+      const header = readWavHeader(bytes.slice(0, 65536), file.size);
+      let decoded;
+      try {
+        decoded = await context.decodeAudioData(bytes);
+      } catch {
+        throw new Error('Unable to decode this WAV.');
+      }
+      return stemSession.add(decoded, { name: file.name, sampleRate: header.sampleRate, channels: header.channels });
+    },
+    // Starts the stems together; single-track playback and any comparison stop first.
+    async playStems() {
+      if (!stemSession) return false;
+      endComparison();
+      stopSource();
+      offset = 0;
+      await context.resume();
+      return stemSession.play();
+    },
+    // Per-stem levels and the master level after the Processed/Original switch.
+    stemLevels() {
+      if (!stemSession) return { stems: [], master: null };
+      const data = new Float32Array(stemOutput.analyser.fftSize);
+      stemOutput.analyser.getFloatTimeDomainData(data);
+      let peak = 0;
+      for (const v of data) peak = Math.max(peak, Math.abs(v));
+      return { stems: stemSession.levels(), master: { peakDb: peak > 0 ? 20 * Math.log10(peak) : null } };
+    },
     onMeters(listener) {
       meterListeners.add(listener);
       return () => meterListeners.delete(listener);
