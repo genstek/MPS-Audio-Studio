@@ -83,7 +83,7 @@ test('LAS-32: propose, preview at a strength, check, reject, apply and undo', as
 
   // Preview at 50 %: the chain plays the scaled proposal; the settings themselves are unchanged.
   await panel.getByLabel('Proposal strength').fill('50');
-  await expect(panel.locator('output')).toHaveText('50 %');
+  await expect(panel.locator('label', { hasText: 'Proposal strength' }).locator('output')).toHaveText('50 %');
   await panel.getByRole('button', { name: 'Preview proposal' }).click();
   await expect(panel.getByRole('button', { name: 'Preview proposal' })).toHaveAttribute('aria-pressed', 'true');
   await expect.poll(async () => settingsOf(await lastChainParams(page))).toEqual(settingsOf(atStrength(expected.params, 0.5)));

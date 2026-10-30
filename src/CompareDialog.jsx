@@ -133,7 +133,7 @@ export function CompareDialog({ engine, file, track, chain, onMonitorStart }) {
       if (!(end > start && start >= 0 && end <= local.header.duration + 1e-9)) throw new Error(`Choose a reference section inside the file (0 to ${local.header.duration.toFixed(1)} s).`);
       const job = startAnalysis(local.file, onStage, { start, end });
       jobs.current.push(job);
-      return { report: await job.result, bytes: await local.file.arrayBuffer(), label: local.file.name };
+      return { report: await job.result, bytes: await local.file.arrayBuffer(), label: local.file.name, profileId: null };
     }
     const chosen = profiles.find(p => p.id === profileId);
     onStage('Reading the saved reference…');
@@ -146,7 +146,7 @@ export function CompareDialog({ engine, file, track, chain, onMonitorStart }) {
     const bytes = await response.arrayBuffer();
     // The stored measurements are used only for the exact file they were made from.
     if (await sha256(bytes) !== full.data.profile.input.sha256) throw new Error('The stored reference file does not match its profile (checksums differ); measure it again in References.');
-    return { report: full.data.profile, bytes, label: `${chosen.name} (${chosen.style}, ${chosen.sourceVersion})` };
+    return { report: full.data.profile, bytes, label: `${chosen.name} (${chosen.style}, ${chosen.sourceVersion})`, profileId: chosen.id };
   }
 
   async function compare(event) {

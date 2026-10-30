@@ -51,7 +51,7 @@ button[aria-pressed='true'] { border-color: #d7af6c; color: #e8c58d; }
 .account-heading h2 { font-size: 18px; }
 .dialog-close { padding: 2px 10px; font-size: 18px; line-height: 1; }
 .account-dialog form, .account-body { display: grid; gap: 12px; }
-.account-dialog label { display: grid; gap: 4px; font-size: 13px; color: #aebac4; }
+.account-dialog label:not(.file-picker) { display: grid; gap: 4px; font-size: 13px; color: #aebac4; }
 .account-dialog input { padding: 8px 10px; border-radius: 5px; border: 1px solid #52616c; background: #11161a; color: #ecedf0; }
 .account-status { min-height: 1.2em; font-size: 13px; color: #d9ba86; margin: 0 0 8px; }
 .account-error { margin: 0 0 10px; padding: 8px 10px; background: #4d2428; border: 1px solid #c17474; border-radius: 5px; font-size: 13px; }
@@ -230,8 +230,8 @@ a.button-link:hover { background: #44525e; }
 .snapshot-list li { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; }
 .file-picker.small { padding: 6px 12px; justify-self: start; }
 /* In dialogs the picker is an ordinary grid item, not the Tracks panel's named area (which put it
-   in an extra column outside the dialog at 360 px, LAS-31). */
-.analysis-dialog .file-picker { grid-area: auto; }
+   in an extra column outside the dialog at 360 px; LAS-31, and the Settings dialog in LAS-33). */
+dialog .file-picker { grid-area: auto; }
 
 /* LAS-30 reference profiles (provisional styling). */
 .reference-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 8px 12px; align-items: end; }
@@ -274,3 +274,14 @@ a.button-link:hover { background: #44525e; }
 .proposal-strength input { flex: 1 1 180px; max-width: 320px; }
 .proposal-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
 .proposal-buttons button[aria-pressed='true'] { outline: 2px solid #f0d79a; }
+
+/* LAS-33 presets and preferences: provisional styling until the LAS-44/45 design gates. */
+.preset-form { display: flex; flex-wrap: wrap; align-items: end; gap: 8px; }
+.preset-form label, .proposal-save label { display: grid; gap: 4px; font-size: 12px; color: #aebac4; }
+.preset-form input, .proposal-save input, .proposal-remember select { padding: 6px 8px; border-radius: 5px; border: 1px solid #52616c; background: #11161a; color: #ecedf0; font: inherit; }
+.proposal-parts { display: flex; flex-wrap: wrap; gap: 6px 16px; border: 0; padding: 0; margin: 0; font-size: 13px; }
+.proposal-parts legend { font-size: 11px; color: #a7b2bc; text-transform: uppercase; letter-spacing: 1px; padding: 0; margin-bottom: 4px; }
+.proposal-remember, .proposal-save { display: flex; flex-wrap: wrap; align-items: end; gap: 8px 14px; font-size: 13px; }
+/* Presets and decisions: the name above its buttons, so long names stay readable in a narrow dialog. */
+.preset-list li { grid-template-columns: minmax(0, 1fr); }
+.preset-list .library-actions { grid-column: 1; grid-row: auto; }
