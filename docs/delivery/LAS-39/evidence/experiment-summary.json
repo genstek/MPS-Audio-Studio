@@ -1,0 +1,311 @@
+{
+ "experiment": "LAS-39 parameter prediction vs constrained reference matching (synthetic, known truth)",
+ "versions": {
+  "analysis": "mps-analysis-1",
+  "proposal": "mps-proposal-1",
+  "node": "v22.22.0"
+ },
+ "config": {
+  "songs": 32,
+  "decisionsPerSong": 3,
+  "sectionsPerSong": 2,
+  "split": {
+   "train": 18,
+   "validation": 6,
+   "test": 8
+  },
+  "seed": 39,
+  "lambdas": [
+   0.01,
+   0.1,
+   1,
+   10,
+   100
+  ],
+  "rate": 44100,
+  "songSeconds": 8,
+  "sections": [
+   {
+    "start": 1,
+    "end": 4
+   },
+   {
+    "start": 4.5,
+    "end": 7.5
+   }
+  ],
+  "items": 192,
+  "features": [
+   "band 31.5 Hz difference",
+   "band 63 Hz difference",
+   "band 125 Hz difference",
+   "band 250 Hz difference",
+   "band 500 Hz difference",
+   "band 1000 Hz difference",
+   "band 2000 Hz difference",
+   "band 4000 Hz difference",
+   "band 8000 Hz difference",
+   "loudness difference",
+   "true-peak difference",
+   "mix loudness",
+   "mix true peak"
+  ],
+  "labels": "octave-average gain of the true EQ at each feature band, and the limiter input gain"
+ },
+ "splits": {
+  "grouped": {
+   "train": {
+    "songs": 18,
+    "items": 108
+   },
+   "validation": {
+    "songs": 6,
+    "items": 36
+   },
+   "test": {
+    "songs": 8,
+    "items": 48
+   }
+  },
+  "groupedTestSongs": [
+   8,
+   1,
+   30,
+   31,
+   2,
+   17,
+   24,
+   3
+  ],
+  "leaky": {
+   "train": {
+    "items": 108
+   },
+   "validation": {
+    "items": 36
+   },
+   "test": {
+    "items": 48
+   }
+  }
+ },
+ "leakage": {
+  "grouped": {
+   "sharedSongs": [],
+   "duplicateFeatures": [],
+   "clean": true
+  },
+  "leaky": {
+   "sharedSongs": [
+    {
+     "splits": [
+      "train",
+      "validation"
+     ],
+     "songs": 24
+    },
+    {
+     "splits": [
+      "train",
+      "test"
+     ],
+     "songs": 25
+    },
+    {
+     "splits": [
+      "validation",
+      "test"
+     ],
+     "songs": 18
+    }
+   ],
+   "duplicateFeatures": [],
+   "clean": false
+  }
+ },
+ "ridgeLambda": {
+  "grouped": 0.01,
+  "leaky": 0.01
+ },
+ "grouped": {
+  "no processing": {
+   "tonalMeanDb": 0.91,
+   "tonalMaxDb": 1.9,
+   "loudnessLu": 1.96,
+   "eqCurveDb": 1.03,
+   "eqShapeDb": 0.91,
+   "inputGainDb": 2.32
+  },
+  "LAS-32 deterministic": {
+   "tonalMeanDb": 0.11,
+   "tonalMaxDb": 0.26,
+   "loudnessLu": 0.23,
+   "eqCurveDb": 1.09,
+   "eqShapeDb": 0.4,
+   "inputGainDb": 0.89
+  },
+  "ridge (learned)": {
+   "tonalMeanDb": 0.21,
+   "tonalMaxDb": 0.54,
+   "loudnessLu": 0.16,
+   "eqCurveDb": 0.57,
+   "eqShapeDb": 0.45,
+   "inputGainDb": 0.4
+  },
+  "1-NN (learned)": {
+   "tonalMeanDb": 0.44,
+   "tonalMaxDb": 1.19,
+   "loudnessLu": 0.68,
+   "eqCurveDb": 0.84,
+   "eqShapeDb": 0.65,
+   "inputGainDb": 0.87
+  }
+ },
+ "baselineCompressorProposed": 0,
+ "leakyInflated": {
+  "ridge (learned)": {
+   "tonalMeanDb": 0.18,
+   "tonalMaxDb": 0.49,
+   "loudnessLu": 0.16,
+   "eqCurveDb": 0.62,
+   "eqShapeDb": 0.45,
+   "inputGainDb": 0.44
+  },
+  "1-NN (learned)": {
+   "tonalMeanDb": 0.23,
+   "tonalMaxDb": 0.68,
+   "loudnessLu": 0.24,
+   "eqCurveDb": 0.55,
+   "eqShapeDb": 0.5,
+   "inputGainDb": 0.25
+  }
+ },
+ "differences": {
+  "ridge (learned) − LAS-32, tonalMeanDb": {
+   "mean": 0.1,
+   "ci95": [
+    0.08,
+    0.12
+   ]
+  },
+  "ridge (learned) − LAS-32, loudnessLu": {
+   "mean": -0.07,
+   "ci95": [
+    -0.17,
+    0.01
+   ]
+  },
+  "ridge (learned) − LAS-32, eqCurveDb": {
+   "mean": -0.52,
+   "ci95": [
+    -0.73,
+    -0.35
+   ]
+  },
+  "ridge (learned) − LAS-32, eqShapeDb": {
+   "mean": 0.05,
+   "ci95": [
+    -0.05,
+    0.16
+   ]
+  },
+  "1-NN (learned) − LAS-32, tonalMeanDb": {
+   "mean": 0.33,
+   "ci95": [
+    0.27,
+    0.4
+   ]
+  },
+  "1-NN (learned) − LAS-32, loudnessLu": {
+   "mean": 0.45,
+   "ci95": [
+    0.21,
+    0.69
+   ]
+  },
+  "1-NN (learned) − LAS-32, eqCurveDb": {
+   "mean": -0.26,
+   "ci95": [
+    -0.46,
+    -0.1
+   ]
+  },
+  "1-NN (learned) − LAS-32, eqShapeDb": {
+   "mean": 0.25,
+   "ci95": [
+    0.13,
+    0.36
+   ]
+  }
+ },
+ "learningCurve": [
+  {
+   "trainingSongs": 3,
+   "trainingItems": 18,
+   "ridge": {
+    "eqCurveDb": 2.33,
+    "eqShapeDb": 1.04,
+    "inputGainDb": 1.58
+   },
+   "1-NN": {
+    "eqCurveDb": 1.09,
+    "eqShapeDb": 0.9,
+    "inputGainDb": 1.64
+   }
+  },
+  {
+   "trainingSongs": 6,
+   "trainingItems": 36,
+   "ridge": {
+    "eqCurveDb": 0.85,
+    "eqShapeDb": 0.64,
+    "inputGainDb": 0.56
+   },
+   "1-NN": {
+    "eqCurveDb": 0.95,
+    "eqShapeDb": 0.75,
+    "inputGainDb": 1.53
+   }
+  },
+  {
+   "trainingSongs": 12,
+   "trainingItems": 72,
+   "ridge": {
+    "eqCurveDb": 0.63,
+    "eqShapeDb": 0.46,
+    "inputGainDb": 0.41
+   },
+   "1-NN": {
+    "eqCurveDb": 0.83,
+    "eqShapeDb": 0.65,
+    "inputGainDb": 1.15
+   }
+  },
+  {
+   "trainingSongs": 18,
+   "trainingItems": 108,
+   "ridge": {
+    "eqCurveDb": 0.57,
+    "eqShapeDb": 0.45,
+    "inputGainDb": 0.4
+   },
+   "1-NN": {
+    "eqCurveDb": 0.8,
+    "eqShapeDb": 0.65,
+    "inputGainDb": 0.92
+   }
+  }
+ ],
+ "cost": {
+  "seconds": {
+   "data": 112.8,
+   "train grouped": 0,
+   "train leaky": 0,
+   "evaluate grouped": 247.5,
+   "evaluate leaky": 60.8,
+   "learning curve": 1
+  },
+  "totalSeconds": 422.2,
+  "peakMemoryMiB": 249
+ }
+}

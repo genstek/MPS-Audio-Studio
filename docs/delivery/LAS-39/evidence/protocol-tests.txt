@@ -1,0 +1,17 @@
+✔ the song split keeps every song in one split, and the leakage check confirms it (2.66512ms)
+✔ the item split leaks songs across splits and the check reports it (0.610159ms)
+✔ duplicate feature vectors across splits are reported (0.21158ms)
+✔ ridge recovers a known linear map; nearest copies the closest labels (1.652181ms)
+✔ labels of a flat decision are zero and its chain has no EQ bands (12.291455ms)
+✔ the true labels reproduce the true EQ closely through the proposal fitter (8.159075ms)
+✔ songs and decisions are deterministic per seed and differ between seeds (551.817171ms)
+✔ the song-level bootstrap interval contains the mean (1.371371ms)
+✔ the shape-only curve error ignores a broadband offset (1.429386ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 705.62869

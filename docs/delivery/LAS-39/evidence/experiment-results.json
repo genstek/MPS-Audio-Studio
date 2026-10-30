@@ -1,0 +1,3291 @@
+{
+ "experiment": "LAS-39 parameter prediction vs constrained reference matching (synthetic, known truth)",
+ "versions": {
+  "analysis": "mps-analysis-1",
+  "proposal": "mps-proposal-1",
+  "node": "v22.22.0"
+ },
+ "config": {
+  "songs": 32,
+  "decisionsPerSong": 3,
+  "sectionsPerSong": 2,
+  "split": {
+   "train": 18,
+   "validation": 6,
+   "test": 8
+  },
+  "seed": 39,
+  "lambdas": [
+   0.01,
+   0.1,
+   1,
+   10,
+   100
+  ],
+  "rate": 44100,
+  "songSeconds": 8,
+  "sections": [
+   {
+    "start": 1,
+    "end": 4
+   },
+   {
+    "start": 4.5,
+    "end": 7.5
+   }
+  ],
+  "items": 192,
+  "features": [
+   "band 31.5 Hz difference",
+   "band 63 Hz difference",
+   "band 125 Hz difference",
+   "band 250 Hz difference",
+   "band 500 Hz difference",
+   "band 1000 Hz difference",
+   "band 2000 Hz difference",
+   "band 4000 Hz difference",
+   "band 8000 Hz difference",
+   "loudness difference",
+   "true-peak difference",
+   "mix loudness",
+   "mix true peak"
+  ],
+  "labels": "octave-average gain of the true EQ at each feature band, and the limiter input gain"
+ },
+ "splits": {
+  "grouped": {
+   "train": {
+    "songs": 18,
+    "items": 108
+   },
+   "validation": {
+    "songs": 6,
+    "items": 36
+   },
+   "test": {
+    "songs": 8,
+    "items": 48
+   }
+  },
+  "groupedTestSongs": [
+   8,
+   1,
+   30,
+   31,
+   2,
+   17,
+   24,
+   3
+  ],
+  "leaky": {
+   "train": {
+    "items": 108
+   },
+   "validation": {
+    "items": 36
+   },
+   "test": {
+    "items": 48
+   }
+  }
+ },
+ "leakage": {
+  "grouped": {
+   "sharedSongs": [],
+   "duplicateFeatures": [],
+   "clean": true
+  },
+  "leaky": {
+   "sharedSongs": [
+    {
+     "splits": [
+      "train",
+      "validation"
+     ],
+     "songs": 24
+    },
+    {
+     "splits": [
+      "train",
+      "test"
+     ],
+     "songs": 25
+    },
+    {
+     "splits": [
+      "validation",
+      "test"
+     ],
+     "songs": 18
+    }
+   ],
+   "duplicateFeatures": [],
+   "clean": false
+  }
+ },
+ "ridgeLambda": {
+  "grouped": 0.01,
+  "leaky": 0.01
+ },
+ "grouped": {
+  "no processing": {
+   "tonalMeanDb": 0.91,
+   "tonalMaxDb": 1.9,
+   "loudnessLu": 1.96,
+   "eqCurveDb": 1.03,
+   "eqShapeDb": 0.91,
+   "inputGainDb": 2.32
+  },
+  "LAS-32 deterministic": {
+   "tonalMeanDb": 0.11,
+   "tonalMaxDb": 0.26,
+   "loudnessLu": 0.23,
+   "eqCurveDb": 1.09,
+   "eqShapeDb": 0.4,
+   "inputGainDb": 0.89
+  },
+  "ridge (learned)": {
+   "tonalMeanDb": 0.21,
+   "tonalMaxDb": 0.54,
+   "loudnessLu": 0.16,
+   "eqCurveDb": 0.57,
+   "eqShapeDb": 0.45,
+   "inputGainDb": 0.4
+  },
+  "1-NN (learned)": {
+   "tonalMeanDb": 0.44,
+   "tonalMaxDb": 1.19,
+   "loudnessLu": 0.68,
+   "eqCurveDb": 0.84,
+   "eqShapeDb": 0.65,
+   "inputGainDb": 0.87
+  }
+ },
+ "baselineCompressorProposed": 0,
+ "leakyInflated": {
+  "ridge (learned)": {
+   "tonalMeanDb": 0.18,
+   "tonalMaxDb": 0.49,
+   "loudnessLu": 0.16,
+   "eqCurveDb": 0.62,
+   "eqShapeDb": 0.45,
+   "inputGainDb": 0.44
+  },
+  "1-NN (learned)": {
+   "tonalMeanDb": 0.23,
+   "tonalMaxDb": 0.68,
+   "loudnessLu": 0.24,
+   "eqCurveDb": 0.55,
+   "eqShapeDb": 0.5,
+   "inputGainDb": 0.25
+  }
+ },
+ "differences": {
+  "ridge (learned) − LAS-32, tonalMeanDb": {
+   "mean": 0.1,
+   "ci95": [
+    0.08,
+    0.12
+   ]
+  },
+  "ridge (learned) − LAS-32, loudnessLu": {
+   "mean": -0.07,
+   "ci95": [
+    -0.17,
+    0.01
+   ]
+  },
+  "ridge (learned) − LAS-32, eqCurveDb": {
+   "mean": -0.52,
+   "ci95": [
+    -0.73,
+    -0.35
+   ]
+  },
+  "ridge (learned) − LAS-32, eqShapeDb": {
+   "mean": 0.05,
+   "ci95": [
+    -0.05,
+    0.16
+   ]
+  },
+  "1-NN (learned) − LAS-32, tonalMeanDb": {
+   "mean": 0.33,
+   "ci95": [
+    0.27,
+    0.4
+   ]
+  },
+  "1-NN (learned) − LAS-32, loudnessLu": {
+   "mean": 0.45,
+   "ci95": [
+    0.21,
+    0.69
+   ]
+  },
+  "1-NN (learned) − LAS-32, eqCurveDb": {
+   "mean": -0.26,
+   "ci95": [
+    -0.46,
+    -0.1
+   ]
+  },
+  "1-NN (learned) − LAS-32, eqShapeDb": {
+   "mean": 0.25,
+   "ci95": [
+    0.13,
+    0.36
+   ]
+  }
+ },
+ "learningCurve": [
+  {
+   "trainingSongs": 3,
+   "trainingItems": 18,
+   "ridge": {
+    "eqCurveDb": 2.33,
+    "eqShapeDb": 1.04,
+    "inputGainDb": 1.58
+   },
+   "1-NN": {
+    "eqCurveDb": 1.09,
+    "eqShapeDb": 0.9,
+    "inputGainDb": 1.64
+   }
+  },
+  {
+   "trainingSongs": 6,
+   "trainingItems": 36,
+   "ridge": {
+    "eqCurveDb": 0.85,
+    "eqShapeDb": 0.64,
+    "inputGainDb": 0.56
+   },
+   "1-NN": {
+    "eqCurveDb": 0.95,
+    "eqShapeDb": 0.75,
+    "inputGainDb": 1.53
+   }
+  },
+  {
+   "trainingSongs": 12,
+   "trainingItems": 72,
+   "ridge": {
+    "eqCurveDb": 0.63,
+    "eqShapeDb": 0.46,
+    "inputGainDb": 0.41
+   },
+   "1-NN": {
+    "eqCurveDb": 0.83,
+    "eqShapeDb": 0.65,
+    "inputGainDb": 1.15
+   }
+  },
+  {
+   "trainingSongs": 18,
+   "trainingItems": 108,
+   "ridge": {
+    "eqCurveDb": 0.57,
+    "eqShapeDb": 0.45,
+    "inputGainDb": 0.4
+   },
+   "1-NN": {
+    "eqCurveDb": 0.8,
+    "eqShapeDb": 0.65,
+    "inputGainDb": 0.92
+   }
+  }
+ ],
+ "cost": {
+  "seconds": {
+   "data": 112.8,
+   "train grouped": 0,
+   "train leaky": 0,
+   "evaluate grouped": 247.5,
+   "evaluate leaky": 60.8,
+   "learning curve": 1
+  },
+  "totalSeconds": 422.2,
+  "peakMemoryMiB": 249
+ },
+ "perItem": [
+  {
+   "key": "1:0:0",
+   "song": 1,
+   "no processing": {
+    "tonalMeanDb": 1.3855555555555559,
+    "tonalMaxDb": 2.38,
+    "loudnessLu": 2.21,
+    "eqCurveDb": 1.3379498450105163,
+    "eqShapeDb": 1.0447471450921846,
+    "inputGainDb": 3.7,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.12444444444444443,
+    "tonalMaxDb": 0.29,
+    "loudnessLu": 0.04,
+    "eqCurveDb": 2.117301246089666,
+    "eqShapeDb": 0.5677726233223003,
+    "inputGainDb": 1.9000000000000001,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.3,
+    "tonalMaxDb": 0.57,
+    "loudnessLu": 0.42,
+    "eqCurveDb": 0.3874856098157962,
+    "eqShapeDb": 0.3314213106947523,
+    "inputGainDb": 0.09999999999999964,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.5111111111111111,
+    "tonalMaxDb": 0.8,
+    "loudnessLu": 1.09,
+    "eqCurveDb": 0.8064013657194847,
+    "eqShapeDb": 0.7725702346093618,
+    "inputGainDb": 1,
+    "compressor": false
+   }
+  },
+  {
+   "key": "1:0:1",
+   "song": 1,
+   "no processing": {
+    "tonalMeanDb": 1.3155555555555556,
+    "tonalMaxDb": 2.22,
+    "loudnessLu": 2.07,
+    "eqCurveDb": 1.3379498450105163,
+    "eqShapeDb": 1.0447471450921846,
+    "inputGainDb": 3.7,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.10222222222222223,
+    "tonalMaxDb": 0.31,
+    "loudnessLu": 0.05,
+    "eqCurveDb": 2.034072391939359,
+    "eqShapeDb": 0.5383979135754358,
+    "inputGainDb": 1.9000000000000001,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.25555555555555554,
+    "tonalMaxDb": 0.57,
+    "loudnessLu": 0.17,
+    "eqCurveDb": 0.3996551963953841,
+    "eqShapeDb": 0.33641569671401594,
+    "inputGainDb": 0.20000000000000018,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.3611111111111111,
+    "tonalMaxDb": 0.85,
+    "loudnessLu": 0.39,
+    "eqCurveDb": 0.4241003753271045,
+    "eqShapeDb": 0.41056808339250966,
+    "inputGainDb": 0.39999999999999947,
+    "compressor": false
+   }
+  },
+  {
+   "key": "1:1:0",
+   "song": 1,
+   "no processing": {
+    "tonalMeanDb": 1.1177777777777778,
+    "tonalMaxDb": 2.56,
+    "loudnessLu": 1.67,
+    "eqCurveDb": 1.0120786401159538,
+    "eqShapeDb": 0.9433372921166839,
+    "inputGainDb": 0.5,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.031111111111111114,
+    "tonalMaxDb": 0.09,
+    "loudnessLu": 0.09,
+    "eqCurveDb": 1.7485150809897834,
+    "eqShapeDb": 0.27519583702279926,
+    "inputGainDb": 1.6,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.18555555555555553,
+    "tonalMaxDb": 0.72,
+    "loudnessLu": 0.12,
+    "eqCurveDb": 0.3251659499740428,
+    "eqShapeDb": 0.31838188860818445,
+    "inputGainDb": 0.09999999999999998,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.33222222222222225,
+    "tonalMaxDb": 0.84,
+    "loudnessLu": 0.95,
+    "eqCurveDb": 0.5341871970188237,
+    "eqShapeDb": 0.434866131390709,
+    "inputGainDb": 0.8999999999999999,
+    "compressor": false
+   }
+  },
+  {
+   "key": "1:1:1",
+   "song": 1,
+   "no processing": {
+    "tonalMeanDb": 1.1444444444444446,
+    "tonalMaxDb": 2.7,
+    "loudnessLu": 1.75,
+    "eqCurveDb": 1.0120786401159538,
+    "eqShapeDb": 0.9433372921166839,
+    "inputGainDb": 0.5,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.14555555555555555,
+    "tonalMaxDb": 0.22,
+    "loudnessLu": 0.16,
+    "eqCurveDb": 1.6208871768384967,
+    "eqShapeDb": 0.26038805570042906,
+    "inputGainDb": 1.5,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.16333333333333336,
+    "tonalMaxDb": 0.69,
+    "loudnessLu": 0.16,
+    "eqCurveDb": 0.32233363089061273,
+    "eqShapeDb": 0.3083666544093939,
+    "inputGainDb": 0.09999999999999998,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.2622222222222222,
+    "tonalMaxDb": 0.8,
+    "loudnessLu": 0.99,
+    "eqCurveDb": 0.5341871970188237,
+    "eqShapeDb": 0.434866131390709,
+    "inputGainDb": 0.8999999999999999,
+    "compressor": false
+   }
+  },
+  {
+   "key": "1:2:0",
+   "song": 1,
+   "no processing": {
+    "tonalMeanDb": 0.7866666666666667,
+    "tonalMaxDb": 1.44,
+    "loudnessLu": 2.86,
+    "eqCurveDb": 0.8367540429902075,
+    "eqShapeDb": 0.7294118452156282,
+    "inputGainDb": 4,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.1111111111111111,
+    "tonalMaxDb": 0.19,
+    "loudnessLu": 0.22,
+    "eqCurveDb": 1.0499463542158127,
+    "eqShapeDb": 0.55084836615119,
+    "inputGainDb": 1.2999999999999998,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.12111111111111111,
+    "tonalMaxDb": 0.22,
+    "loudnessLu": 0.21,
+    "eqCurveDb": 0.6777928548652356,
+    "eqShapeDb": 0.6723454057535364,
+    "inputGainDb": 0.09999999999999964,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.4366666666666667,
+    "tonalMaxDb": 1.5,
+    "loudnessLu": 0.21,
+    "eqCurveDb": 1.1597121913008868,
+    "eqShapeDb": 1.0304431528110911,
+    "inputGainDb": 0.09999999999999964,
+    "compressor": false
+   }
+  },
+  {
+   "key": "1:2:1",
+   "song": 1,
+   "no processing": {
+    "tonalMeanDb": 0.6733333333333333,
+    "tonalMaxDb": 1.24,
+    "loudnessLu": 2.94,
+    "eqCurveDb": 0.8367540429902075,
+    "eqShapeDb": 0.7294118452156282,
+    "inputGainDb": 4,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.051111111111111114,
+    "tonalMaxDb": 0.14,
+    "loudnessLu": 0.22,
+    "eqCurveDb": 1.0234271055243727,
+    "eqShapeDb": 0.4337525774880046,
+    "inputGainDb": 1.2999999999999998,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.1888888888888889,
+    "tonalMaxDb": 0.58,
+    "loudnessLu": 0.18,
+    "eqCurveDb": 0.6907362716445309,
+    "eqShapeDb": 0.6781094930122892,
+    "inputGainDb": 0.20000000000000018,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.4488888888888889,
+    "tonalMaxDb": 1.53,
+    "loudnessLu": 0.47,
+    "eqCurveDb": 1.1597121913008868,
+    "eqShapeDb": 1.0304431528110911,
+    "inputGainDb": 0.09999999999999964,
+    "compressor": false
+   }
+  },
+  {
+   "key": "2:0:0",
+   "song": 2,
+   "no processing": {
+    "tonalMeanDb": 0.8266666666666667,
+    "tonalMaxDb": 2.07,
+    "loudnessLu": 1.24,
+    "eqCurveDb": 1.0999405540864564,
+    "eqShapeDb": 0.9957418151840133,
+    "inputGainDb": 2.1,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.22444444444444445,
+    "tonalMaxDb": 0.47,
+    "loudnessLu": 0.11,
+    "eqCurveDb": 1.3620107766566087,
+    "eqShapeDb": 0.4487653413730395,
+    "inputGainDb": 1.2000000000000002,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.19111111111111112,
+    "tonalMaxDb": 0.59,
+    "loudnessLu": 0.22,
+    "eqCurveDb": 0.9195023614513725,
+    "eqShapeDb": 0.8156852613370421,
+    "inputGainDb": 0.6000000000000001,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.5655555555555556,
+    "tonalMaxDb": 0.88,
+    "loudnessLu": 0.23,
+    "eqCurveDb": 1.3194441822094,
+    "eqShapeDb": 0.7653136887266772,
+    "inputGainDb": 1.1,
+    "compressor": false
+   }
+  },
+  {
+   "key": "2:0:1",
+   "song": 2,
+   "no processing": {
+    "tonalMeanDb": 0.8300000000000001,
+    "tonalMaxDb": 2.08,
+    "loudnessLu": 1.22,
+    "eqCurveDb": 1.0999405540864564,
+    "eqShapeDb": 0.9957418151840133,
+    "inputGainDb": 2.1,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.13111111111111112,
+    "tonalMaxDb": 0.19,
+    "loudnessLu": 0.11,
+    "eqCurveDb": 1.1747979993335982,
+    "eqShapeDb": 0.44773054350894415,
+    "inputGainDb": 1,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.23666666666666666,
+    "tonalMaxDb": 0.71,
+    "loudnessLu": 0.34,
+    "eqCurveDb": 0.8963595466424336,
+    "eqShapeDb": 0.8260404108134419,
+    "inputGainDb": 0.6000000000000001,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.5466666666666666,
+    "tonalMaxDb": 0.88,
+    "loudnessLu": 0.18,
+    "eqCurveDb": 1.3194441822094,
+    "eqShapeDb": 0.7653136887266772,
+    "inputGainDb": 1.1,
+    "compressor": false
+   }
+  },
+  {
+   "key": "2:1:0",
+   "song": 2,
+   "no processing": {
+    "tonalMeanDb": 1.6900000000000002,
+    "tonalMaxDb": 3.65,
+    "loudnessLu": 1.43,
+    "eqCurveDb": 1.6525270984753844,
+    "eqShapeDb": 1.5363637218863142,
+    "inputGainDb": 0.1,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.01888888888888889,
+    "tonalMaxDb": 0.04,
+    "loudnessLu": 1.72,
+    "eqCurveDb": 1.8600514754635946,
+    "eqShapeDb": 0.3158961856925671,
+    "inputGainDb": 0.1,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.20333333333333334,
+    "tonalMaxDb": 0.56,
+    "loudnessLu": 0.27,
+    "eqCurveDb": 1.287822450012834,
+    "eqShapeDb": 0.8723515114625343,
+    "inputGainDb": 1.2,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.7444444444444445,
+    "tonalMaxDb": 2.11,
+    "loudnessLu": 1.22,
+    "eqCurveDb": 1.1920351717453008,
+    "eqShapeDb": 1.1602033756463501,
+    "inputGainDb": 0.7000000000000001,
+    "compressor": false
+   }
+  },
+  {
+   "key": "2:1:1",
+   "song": 2,
+   "no processing": {
+    "tonalMeanDb": 1.6933333333333336,
+    "tonalMaxDb": 3.73,
+    "loudnessLu": 1.47,
+    "eqCurveDb": 1.6525270984753844,
+    "eqShapeDb": 1.5363637218863142,
+    "inputGainDb": 0.1,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.0488888888888889,
+    "tonalMaxDb": 0.27,
+    "loudnessLu": 1.68,
+    "eqCurveDb": 1.887117546385164,
+    "eqShapeDb": 0.3402474984629749,
+    "inputGainDb": 0.1,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.21000000000000002,
+    "tonalMaxDb": 0.65,
+    "loudnessLu": 0.26,
+    "eqCurveDb": 1.3410013517425645,
+    "eqShapeDb": 0.8914921936772782,
+    "inputGainDb": 1.2,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.8322222222222222,
+    "tonalMaxDb": 2.33,
+    "loudnessLu": 1.31,
+    "eqCurveDb": 1.1920351717453008,
+    "eqShapeDb": 1.1602033756463501,
+    "inputGainDb": 0.7000000000000001,
+    "compressor": false
+   }
+  },
+  {
+   "key": "2:2:0",
+   "song": 2,
+   "no processing": {
+    "tonalMeanDb": 0.35555555555555557,
+    "tonalMaxDb": 1.46,
+    "loudnessLu": 4.86,
+    "eqCurveDb": 0.722949153561494,
+    "eqShapeDb": 0.6761672973670476,
+    "inputGainDb": 5.1,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.1411111111111111,
+    "tonalMaxDb": 0.33,
+    "loudnessLu": 0.08,
+    "eqCurveDb": 0.5765699288638406,
+    "eqShapeDb": 0.4149269620976255,
+    "inputGainDb": 0.20000000000000018,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.22666666666666668,
+    "tonalMaxDb": 0.68,
+    "loudnessLu": 0.06,
+    "eqCurveDb": 0.5987085506986053,
+    "eqShapeDb": 0.573020405402058,
+    "inputGainDb": 0,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.5088888888888888,
+    "tonalMaxDb": 1.02,
+    "loudnessLu": 0.16,
+    "eqCurveDb": 0.8247016194518074,
+    "eqShapeDb": 0.668922280880522,
+    "inputGainDb": 0.8000000000000007,
+    "compressor": false
+   }
+  },
+  {
+   "key": "2:2:1",
+   "song": 2,
+   "no processing": {
+    "tonalMeanDb": 0.3744444444444444,
+    "tonalMaxDb": 1.63,
+    "loudnessLu": 4.83,
+    "eqCurveDb": 0.722949153561494,
+    "eqShapeDb": 0.6761672973670476,
+    "inputGainDb": 5.1,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.13555555555555557,
+    "tonalMaxDb": 0.34,
+    "loudnessLu": 0.03,
+    "eqCurveDb": 0.6623540702064284,
+    "eqShapeDb": 0.3975487466352567,
+    "inputGainDb": 0.40000000000000036,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.26,
+    "tonalMaxDb": 0.64,
+    "loudnessLu": 0.18,
+    "eqCurveDb": 0.6429731250996873,
+    "eqShapeDb": 0.5921580445557381,
+    "inputGainDb": 0,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.4955555555555555,
+    "tonalMaxDb": 1,
+    "loudnessLu": 0.17,
+    "eqCurveDb": 0.8247016194518074,
+    "eqShapeDb": 0.668922280880522,
+    "inputGainDb": 0.8000000000000007,
+    "compressor": false
+   }
+  },
+  {
+   "key": "3:0:0",
+   "song": 3,
+   "no processing": {
+    "tonalMeanDb": 1.268888888888889,
+    "tonalMaxDb": 2.12,
+    "loudnessLu": 0.36,
+    "eqCurveDb": 1.250608268469258,
+    "eqShapeDb": 1.018022945908278,
+    "inputGainDb": 1,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.012222222222222223,
+    "tonalMaxDb": 0.03,
+    "loudnessLu": 0.59,
+    "eqCurveDb": 1.597371539809106,
+    "eqShapeDb": 0.2261689672497765,
+    "inputGainDb": 1,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.22777777777777775,
+    "tonalMaxDb": 0.37,
+    "loudnessLu": 0.14,
+    "eqCurveDb": 0.42173324356706915,
+    "eqShapeDb": 0.4060195814867516,
+    "inputGainDb": 0.30000000000000004,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.29222222222222227,
+    "tonalMaxDb": 0.78,
+    "loudnessLu": 0.98,
+    "eqCurveDb": 0.4524043369375467,
+    "eqShapeDb": 0.4523509461971448,
+    "inputGainDb": 1.1,
+    "compressor": false
+   }
+  },
+  {
+   "key": "3:0:1",
+   "song": 3,
+   "no processing": {
+    "tonalMeanDb": 1.2833333333333332,
+    "tonalMaxDb": 2.11,
+    "loudnessLu": 0.41,
+    "eqCurveDb": 1.250608268469258,
+    "eqShapeDb": 1.018022945908278,
+    "inputGainDb": 1,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.025555555555555557,
+    "tonalMaxDb": 0.06,
+    "loudnessLu": 0.64,
+    "eqCurveDb": 1.6709351188738595,
+    "eqShapeDb": 0.24862749251745572,
+    "inputGainDb": 1,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.17777777777777778,
+    "tonalMaxDb": 0.36,
+    "loudnessLu": 0.05,
+    "eqCurveDb": 0.40529394905203553,
+    "eqShapeDb": 0.39695454428688576,
+    "inputGainDb": 0.19999999999999996,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.6377777777777778,
+    "tonalMaxDb": 2.17,
+    "loudnessLu": 0.05,
+    "eqCurveDb": 0.9903778853670404,
+    "eqShapeDb": 0.9655313887050014,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "3:1:0",
+   "song": 3,
+   "no processing": {
+    "tonalMeanDb": 0.9355555555555556,
+    "tonalMaxDb": 1.91,
+    "loudnessLu": 0.98,
+    "eqCurveDb": 1.1685410359818362,
+    "eqShapeDb": 1.030773625355239,
+    "inputGainDb": 2,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.1011111111111111,
+    "tonalMaxDb": 0.18,
+    "loudnessLu": 0.07,
+    "eqCurveDb": 1.166413150907222,
+    "eqShapeDb": 0.34095171406543134,
+    "inputGainDb": 1.2,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.16,
+    "tonalMaxDb": 0.6,
+    "loudnessLu": 0.08,
+    "eqCurveDb": 0.5275800640835138,
+    "eqShapeDb": 0.5134652974727326,
+    "inputGainDb": 0,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.4311111111111111,
+    "tonalMaxDb": 1.56,
+    "loudnessLu": 1.48,
+    "eqCurveDb": 1.0932495139848877,
+    "eqShapeDb": 0.9691985926947444,
+    "inputGainDb": 1.2,
+    "compressor": false
+   }
+  },
+  {
+   "key": "3:1:1",
+   "song": 3,
+   "no processing": {
+    "tonalMeanDb": 0.948888888888889,
+    "tonalMaxDb": 2.17,
+    "loudnessLu": 0.92,
+    "eqCurveDb": 1.1685410359818362,
+    "eqShapeDb": 1.030773625355239,
+    "inputGainDb": 2,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.04111111111111112,
+    "tonalMaxDb": 0.15,
+    "loudnessLu": 0.02,
+    "eqCurveDb": 1.1611546870370517,
+    "eqShapeDb": 0.3032912068788515,
+    "inputGainDb": 1.2,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.12444444444444445,
+    "tonalMaxDb": 0.55,
+    "loudnessLu": 0.29,
+    "eqCurveDb": 0.49981083888276345,
+    "eqShapeDb": 0.4944278515816223,
+    "inputGainDb": 0.10000000000000009,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.7644444444444445,
+    "tonalMaxDb": 1.64,
+    "loudnessLu": 0.25,
+    "eqCurveDb": 0.8861983298929816,
+    "eqShapeDb": 0.8851175137808317,
+    "inputGainDb": 0.3999999999999999,
+    "compressor": false
+   }
+  },
+  {
+   "key": "3:2:0",
+   "song": 3,
+   "no processing": {
+    "tonalMeanDb": 0.1588888888888889,
+    "tonalMaxDb": 0.93,
+    "loudnessLu": 0.08,
+    "eqCurveDb": 0.5049464409351452,
+    "eqShapeDb": 0.47147946538141755,
+    "inputGainDb": 0.1,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.0988888888888889,
+    "tonalMaxDb": 0.36,
+    "loudnessLu": 0.1,
+    "eqCurveDb": 0.4119610095460876,
+    "eqShapeDb": 0.398876454652731,
+    "inputGainDb": 0.1,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.06444444444444446,
+    "tonalMaxDb": 0.15,
+    "loudnessLu": 0.39,
+    "eqCurveDb": 0.41749580103374995,
+    "eqShapeDb": 0.417481942914047,
+    "inputGainDb": 0.4,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.2866666666666667,
+    "tonalMaxDb": 1.13,
+    "loudnessLu": 0.01,
+    "eqCurveDb": 0.7281654709409576,
+    "eqShapeDb": 0.6719197517432677,
+    "inputGainDb": 0.30000000000000004,
+    "compressor": false
+   }
+  },
+  {
+   "key": "3:2:1",
+   "song": 3,
+   "no processing": {
+    "tonalMeanDb": 0.16,
+    "tonalMaxDb": 0.95,
+    "loudnessLu": 0.1,
+    "eqCurveDb": 0.5049464409351452,
+    "eqShapeDb": 0.47147946538141755,
+    "inputGainDb": 0.1,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.09555555555555556,
+    "tonalMaxDb": 0.35,
+    "loudnessLu": 0.11,
+    "eqCurveDb": 0.4119610095460876,
+    "eqShapeDb": 0.398876454652731,
+    "inputGainDb": 0.1,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.06555555555555555,
+    "tonalMaxDb": 0.15,
+    "loudnessLu": 0.26,
+    "eqCurveDb": 0.41749580103374995,
+    "eqShapeDb": 0.417481942914047,
+    "inputGainDb": 0.30000000000000004,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.23111111111111113,
+    "tonalMaxDb": 0.96,
+    "loudnessLu": 0.05,
+    "eqCurveDb": 0.7281654709409576,
+    "eqShapeDb": 0.6719197517432677,
+    "inputGainDb": 0.30000000000000004,
+    "compressor": false
+   }
+  },
+  {
+   "key": "8:0:0",
+   "song": 8,
+   "no processing": {
+    "tonalMeanDb": 0.9133333333333332,
+    "tonalMaxDb": 2.83,
+    "loudnessLu": 5.21,
+    "eqCurveDb": 0.8661217229377316,
+    "eqShapeDb": 0.6053481959853505,
+    "inputGainDb": 5.2,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.08111111111111113,
+    "tonalMaxDb": 0.3,
+    "loudnessLu": 0.31,
+    "eqCurveDb": 1.2435436954346801,
+    "eqShapeDb": 0.31578453281113317,
+    "inputGainDb": 0.7999999999999998,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.37444444444444447,
+    "tonalMaxDb": 0.83,
+    "loudnessLu": 0.18,
+    "eqCurveDb": 0.6583647599875655,
+    "eqShapeDb": 0.6562328030129492,
+    "inputGainDb": 0.6000000000000005,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.25222222222222224,
+    "tonalMaxDb": 0.69,
+    "loudnessLu": 0.74,
+    "eqCurveDb": 0.7576454146394094,
+    "eqShapeDb": 0.37092135657835307,
+    "inputGainDb": 0.5,
+    "compressor": false
+   }
+  },
+  {
+   "key": "8:0:1",
+   "song": 8,
+   "no processing": {
+    "tonalMeanDb": 0.7511111111111111,
+    "tonalMaxDb": 1.92,
+    "loudnessLu": 4.81,
+    "eqCurveDb": 0.8661217229377316,
+    "eqShapeDb": 0.6053481959853505,
+    "inputGainDb": 5.2,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.15555555555555556,
+    "tonalMaxDb": 0.33,
+    "loudnessLu": 0.34,
+    "eqCurveDb": 1.4838794580749206,
+    "eqShapeDb": 0.5418196652523447,
+    "inputGainDb": 0.39999999999999947,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.21333333333333337,
+    "tonalMaxDb": 0.65,
+    "loudnessLu": 0.44,
+    "eqCurveDb": 0.5083776344651254,
+    "eqShapeDb": 0.33566645504291887,
+    "inputGainDb": 0.5,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.5677777777777777,
+    "tonalMaxDb": 1.54,
+    "loudnessLu": 2.18,
+    "eqCurveDb": 0.9597709415047169,
+    "eqShapeDb": 0.576466962038818,
+    "inputGainDb": 2.6,
+    "compressor": false
+   }
+  },
+  {
+   "key": "8:1:0",
+   "song": 8,
+   "no processing": {
+    "tonalMeanDb": 1.1255555555555556,
+    "tonalMaxDb": 1.73,
+    "loudnessLu": 1.83,
+    "eqCurveDb": 1.3512218648639263,
+    "eqShapeDb": 0.9648532685560487,
+    "inputGainDb": 3.5,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.025555555555555554,
+    "tonalMaxDb": 0.06,
+    "loudnessLu": 0.06,
+    "eqCurveDb": 1.6767945204149879,
+    "eqShapeDb": 0.23298072339621076,
+    "inputGainDb": 1.8,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.10666666666666666,
+    "tonalMaxDb": 0.3,
+    "loudnessLu": 0.16,
+    "eqCurveDb": 0.4440577480131597,
+    "eqShapeDb": 0.2215675818232893,
+    "inputGainDb": 0.7000000000000002,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.29444444444444445,
+    "tonalMaxDb": 0.96,
+    "loudnessLu": 0.57,
+    "eqCurveDb": 0.9147454410880623,
+    "eqShapeDb": 0.45227943484947447,
+    "inputGainDb": 1.5,
+    "compressor": false
+   }
+  },
+  {
+   "key": "8:1:1",
+   "song": 8,
+   "no processing": {
+    "tonalMeanDb": 1.0344444444444445,
+    "tonalMaxDb": 1.62,
+    "loudnessLu": 2.02,
+    "eqCurveDb": 1.3512218648639263,
+    "eqShapeDb": 0.9648532685560487,
+    "inputGainDb": 3.5,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.022222222222222223,
+    "tonalMaxDb": 0.08,
+    "loudnessLu": 0.02,
+    "eqCurveDb": 1.7442045295020736,
+    "eqShapeDb": 0.2539638828050841,
+    "inputGainDb": 1.8,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.21222222222222223,
+    "tonalMaxDb": 0.54,
+    "loudnessLu": 0,
+    "eqCurveDb": 0.42268080742389574,
+    "eqShapeDb": 0.27251239360293483,
+    "inputGainDb": 0.6000000000000001,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.3122222222222223,
+    "tonalMaxDb": 0.76,
+    "loudnessLu": 0.57,
+    "eqCurveDb": 0.9147454410880623,
+    "eqShapeDb": 0.45227943484947447,
+    "inputGainDb": 1.5,
+    "compressor": false
+   }
+  },
+  {
+   "key": "8:2:0",
+   "song": 8,
+   "no processing": {
+    "tonalMeanDb": 0.2744444444444445,
+    "tonalMaxDb": 0.52,
+    "loudnessLu": 0.47,
+    "eqCurveDb": 0.3539511530932351,
+    "eqShapeDb": 0.3251699978756977,
+    "inputGainDb": 0.3,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.11444444444444445,
+    "tonalMaxDb": 0.23,
+    "loudnessLu": 0.44,
+    "eqCurveDb": 0.2308598819905782,
+    "eqShapeDb": 0.21459551748333472,
+    "inputGainDb": 0.3,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.2544444444444445,
+    "tonalMaxDb": 0.52,
+    "loudnessLu": 0.05,
+    "eqCurveDb": 0.3176834260217939,
+    "eqShapeDb": 0.30684130913099045,
+    "inputGainDb": 0.2,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.30111111111111116,
+    "tonalMaxDb": 0.83,
+    "loudnessLu": 0.01,
+    "eqCurveDb": 0.4489436932826666,
+    "eqShapeDb": 0.4002410217211693,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "8:2:1",
+   "song": 8,
+   "no processing": {
+    "tonalMeanDb": 0.2533333333333333,
+    "tonalMaxDb": 0.58,
+    "loudnessLu": 0.41,
+    "eqCurveDb": 0.3539511530932351,
+    "eqShapeDb": 0.3251699978756977,
+    "inputGainDb": 0.3,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.12555555555555556,
+    "tonalMaxDb": 0.22,
+    "loudnessLu": 0.4,
+    "eqCurveDb": 0.22647897892230082,
+    "eqShapeDb": 0.2244510467781202,
+    "inputGainDb": 0.3,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.23444444444444448,
+    "tonalMaxDb": 0.48,
+    "loudnessLu": 0.2,
+    "eqCurveDb": 0.3250844753529909,
+    "eqShapeDb": 0.28450994194328466,
+    "inputGainDb": 0.39999999999999997,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.27,
+    "tonalMaxDb": 0.77,
+    "loudnessLu": 0.04,
+    "eqCurveDb": 0.4489436932826666,
+    "eqShapeDb": 0.4002410217211693,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "17:0:0",
+   "song": 17,
+   "no processing": {
+    "tonalMeanDb": 1.62,
+    "tonalMaxDb": 3.33,
+    "loudnessLu": 3.87,
+    "eqCurveDb": 1.67458148503831,
+    "eqShapeDb": 1.6697324318343876,
+    "inputGainDb": 2.9,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.08444444444444447,
+    "tonalMaxDb": 0.46,
+    "loudnessLu": 0.14,
+    "eqCurveDb": 1.444850652879427,
+    "eqShapeDb": 0.884886603418464,
+    "inputGainDb": 1.1,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.4033333333333333,
+    "tonalMaxDb": 1.31,
+    "loudnessLu": 0.28,
+    "eqCurveDb": 0.7846335339211049,
+    "eqShapeDb": 0.6494531009047342,
+    "inputGainDb": 0,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.6511111111111111,
+    "tonalMaxDb": 1.43,
+    "loudnessLu": 0.63,
+    "eqCurveDb": 0.8307562325822444,
+    "eqShapeDb": 0.8274716050622144,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "17:0:1",
+   "song": 17,
+   "no processing": {
+    "tonalMeanDb": 1.593333333333333,
+    "tonalMaxDb": 3.19,
+    "loudnessLu": 3.63,
+    "eqCurveDb": 1.67458148503831,
+    "eqShapeDb": 1.6697324318343876,
+    "inputGainDb": 2.9,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.13,
+    "tonalMaxDb": 0.29,
+    "loudnessLu": 0.36,
+    "eqCurveDb": 1.562394520158006,
+    "eqShapeDb": 0.892377717801533,
+    "inputGainDb": 1,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.3833333333333333,
+    "tonalMaxDb": 0.85,
+    "loudnessLu": 0.32,
+    "eqCurveDb": 0.7356646338233706,
+    "eqShapeDb": 0.6665541633421226,
+    "inputGainDb": 0.3999999999999999,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.5133333333333333,
+    "tonalMaxDb": 1.05,
+    "loudnessLu": 0.95,
+    "eqCurveDb": 0.8157625525323077,
+    "eqShapeDb": 0.8083823938732921,
+    "inputGainDb": 0.6000000000000001,
+    "compressor": false
+   }
+  },
+  {
+   "key": "17:1:0",
+   "song": 17,
+   "no processing": {
+    "tonalMeanDb": 0.33111111111111113,
+    "tonalMaxDb": 1.17,
+    "loudnessLu": 0.56,
+    "eqCurveDb": 0.8015307164285836,
+    "eqShapeDb": 0.5717559838443599,
+    "inputGainDb": 1.2,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.10888888888888888,
+    "tonalMaxDb": 0.36,
+    "loudnessLu": 0.02,
+    "eqCurveDb": 0.6606883575610993,
+    "eqShapeDb": 0.2059072509777469,
+    "inputGainDb": 0.7,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.17555555555555558,
+    "tonalMaxDb": 0.34,
+    "loudnessLu": 0.09,
+    "eqCurveDb": 0.283235682294823,
+    "eqShapeDb": 0.19717744027627304,
+    "inputGainDb": 0.29999999999999993,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.3955555555555555,
+    "tonalMaxDb": 1.3,
+    "loudnessLu": 0.24,
+    "eqCurveDb": 0.6499855806263934,
+    "eqShapeDb": 0.577222258773635,
+    "inputGainDb": 0.19999999999999996,
+    "compressor": false
+   }
+  },
+  {
+   "key": "17:1:1",
+   "song": 17,
+   "no processing": {
+    "tonalMeanDb": 0.43,
+    "tonalMaxDb": 1.3,
+    "loudnessLu": 0.4,
+    "eqCurveDb": 0.8015307164285836,
+    "eqShapeDb": 0.5717559838443599,
+    "inputGainDb": 1.2,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.18333333333333335,
+    "tonalMaxDb": 0.51,
+    "loudnessLu": 0.23,
+    "eqCurveDb": 0.6138304508395823,
+    "eqShapeDb": 0.2822373231723439,
+    "inputGainDb": 0.7,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.15777777777777782,
+    "tonalMaxDb": 0.39,
+    "loudnessLu": 0.21,
+    "eqCurveDb": 0.20720088164656714,
+    "eqShapeDb": 0.1559813897366015,
+    "inputGainDb": 0.29999999999999993,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.36111111111111105,
+    "tonalMaxDb": 1.22,
+    "loudnessLu": 0.13,
+    "eqCurveDb": 0.6499855806263934,
+    "eqShapeDb": 0.577222258773635,
+    "inputGainDb": 0.19999999999999996,
+    "compressor": false
+   }
+  },
+  {
+   "key": "17:2:0",
+   "song": 17,
+   "no processing": {
+    "tonalMeanDb": 0.9633333333333335,
+    "tonalMaxDb": 2.16,
+    "loudnessLu": 1.16,
+    "eqCurveDb": 1.1972768332835704,
+    "eqShapeDb": 1.0480438167441355,
+    "inputGainDb": 1.4,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.15222222222222223,
+    "tonalMaxDb": 0.3,
+    "loudnessLu": 0.09,
+    "eqCurveDb": 0.6231751233300801,
+    "eqShapeDb": 0.5671842217877305,
+    "inputGainDb": 0.3999999999999999,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.07888888888888888,
+    "tonalMaxDb": 0.21,
+    "loudnessLu": 0.06,
+    "eqCurveDb": 1.034200811292937,
+    "eqShapeDb": 0.2881337522568297,
+    "inputGainDb": 0.8999999999999999,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.2922222222222222,
+    "tonalMaxDb": 0.99,
+    "loudnessLu": 1.33,
+    "eqCurveDb": 1.5885905485614507,
+    "eqShapeDb": 0.4585650737201225,
+    "inputGainDb": 2.6999999999999997,
+    "compressor": false
+   }
+  },
+  {
+   "key": "17:2:1",
+   "song": 17,
+   "no processing": {
+    "tonalMeanDb": 0.98,
+    "tonalMaxDb": 2.13,
+    "loudnessLu": 1.25,
+    "eqCurveDb": 1.1972768332835704,
+    "eqShapeDb": 1.0480438167441355,
+    "inputGainDb": 1.4,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.14333333333333337,
+    "tonalMaxDb": 0.27,
+    "loudnessLu": 0.07,
+    "eqCurveDb": 0.6880122675571698,
+    "eqShapeDb": 0.5727359431140456,
+    "inputGainDb": 0.2999999999999998,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.12111111111111111,
+    "tonalMaxDb": 0.37,
+    "loudnessLu": 0.03,
+    "eqCurveDb": 1.1438321059839622,
+    "eqShapeDb": 0.285604724029826,
+    "inputGainDb": 1.1,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.3177777777777778,
+    "tonalMaxDb": 0.94,
+    "loudnessLu": 1.3,
+    "eqCurveDb": 1.5885905485614507,
+    "eqShapeDb": 0.4585650737201225,
+    "inputGainDb": 2.6999999999999997,
+    "compressor": false
+   }
+  },
+  {
+   "key": "24:0:0",
+   "song": 24,
+   "no processing": {
+    "tonalMeanDb": 0.7855555555555555,
+    "tonalMaxDb": 1.01,
+    "loudnessLu": 1.93,
+    "eqCurveDb": 0.7202591836747873,
+    "eqShapeDb": 0.5728468283362274,
+    "inputGainDb": 1.1,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.04777777777777778,
+    "tonalMaxDb": 0.26,
+    "loudnessLu": 0.05,
+    "eqCurveDb": 1.1521483900382987,
+    "eqShapeDb": 0.21933849434296837,
+    "inputGainDb": 1.1,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.17222222222222225,
+    "tonalMaxDb": 0.67,
+    "loudnessLu": 0.12,
+    "eqCurveDb": 0.2903908727036129,
+    "eqShapeDb": 0.20952176761359778,
+    "inputGainDb": 0.09999999999999987,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.4933333333333333,
+    "tonalMaxDb": 2.11,
+    "loudnessLu": 0.72,
+    "eqCurveDb": 0.9982388400912205,
+    "eqShapeDb": 0.8182743950506175,
+    "inputGainDb": 0.40000000000000013,
+    "compressor": false
+   }
+  },
+  {
+   "key": "24:0:1",
+   "song": 24,
+   "no processing": {
+    "tonalMeanDb": 0.7355555555555555,
+    "tonalMaxDb": 0.96,
+    "loudnessLu": 1.89,
+    "eqCurveDb": 0.7202591836747873,
+    "eqShapeDb": 0.5728468283362274,
+    "inputGainDb": 1.1,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.04555555555555556,
+    "tonalMaxDb": 0.28,
+    "loudnessLu": 0.03,
+    "eqCurveDb": 1.0540904443129464,
+    "eqShapeDb": 0.2014486195989524,
+    "inputGainDb": 1,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.1788888888888889,
+    "tonalMaxDb": 0.72,
+    "loudnessLu": 0.06,
+    "eqCurveDb": 0.2903908727036129,
+    "eqShapeDb": 0.20952176761359778,
+    "inputGainDb": 0.09999999999999987,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.49666666666666676,
+    "tonalMaxDb": 2.16,
+    "loudnessLu": 0.7,
+    "eqCurveDb": 0.9982388400912205,
+    "eqShapeDb": 0.8182743950506175,
+    "inputGainDb": 0.40000000000000013,
+    "compressor": false
+   }
+  },
+  {
+   "key": "24:1:0",
+   "song": 24,
+   "no processing": {
+    "tonalMeanDb": 0.9355555555555556,
+    "tonalMaxDb": 1.87,
+    "loudnessLu": 1.82,
+    "eqCurveDb": 1.1871980835355547,
+    "eqShapeDb": 1.0949551366718877,
+    "inputGainDb": 2.5,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.011111111111111112,
+    "tonalMaxDb": 0.02,
+    "loudnessLu": 0.01,
+    "eqCurveDb": 0.9925324368346011,
+    "eqShapeDb": 0.3850734987243496,
+    "inputGainDb": 0.8999999999999999,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.17555555555555558,
+    "tonalMaxDb": 0.54,
+    "loudnessLu": 0.07,
+    "eqCurveDb": 0.6670440828191077,
+    "eqShapeDb": 0.643808924725796,
+    "inputGainDb": 0.10000000000000009,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.5811111111111111,
+    "tonalMaxDb": 1.34,
+    "loudnessLu": 2.13,
+    "eqCurveDb": 0.929975471169748,
+    "eqShapeDb": 0.9186676581235119,
+    "inputGainDb": 1.9000000000000004,
+    "compressor": false
+   }
+  },
+  {
+   "key": "24:1:1",
+   "song": 24,
+   "no processing": {
+    "tonalMeanDb": 0.9455555555555555,
+    "tonalMaxDb": 1.86,
+    "loudnessLu": 1.89,
+    "eqCurveDb": 1.1871980835355547,
+    "eqShapeDb": 1.0949551366718877,
+    "inputGainDb": 2.5,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.031111111111111114,
+    "tonalMaxDb": 0.07,
+    "loudnessLu": 0.03,
+    "eqCurveDb": 0.9349025744806266,
+    "eqShapeDb": 0.399386780064079,
+    "inputGainDb": 0.8,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.22999999999999998,
+    "tonalMaxDb": 0.6,
+    "loudnessLu": 0.02,
+    "eqCurveDb": 0.6925638441827894,
+    "eqShapeDb": 0.663714236183691,
+    "inputGainDb": 0.10000000000000009,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.5977777777777779,
+    "tonalMaxDb": 1.34,
+    "loudnessLu": 2.02,
+    "eqCurveDb": 0.929975471169748,
+    "eqShapeDb": 0.9186676581235119,
+    "inputGainDb": 1.9000000000000004,
+    "compressor": false
+   }
+  },
+  {
+   "key": "24:2:0",
+   "song": 24,
+   "no processing": {
+    "tonalMeanDb": 1.1555555555555557,
+    "tonalMaxDb": 2.2,
+    "loudnessLu": 1.23,
+    "eqCurveDb": 1.0170229791409584,
+    "eqShapeDb": 1.0170125978850768,
+    "inputGainDb": 1.7,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.06666666666666667,
+    "tonalMaxDb": 0.29,
+    "loudnessLu": 0.03,
+    "eqCurveDb": 0.867266437256426,
+    "eqShapeDb": 0.47957871157780846,
+    "inputGainDb": 0.7,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.12000000000000004,
+    "tonalMaxDb": 0.23,
+    "loudnessLu": 0.2,
+    "eqCurveDb": 0.43146897570601284,
+    "eqShapeDb": 0.2753649308632525,
+    "inputGainDb": 0.5000000000000002,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.4111111111111111,
+    "tonalMaxDb": 1.65,
+    "loudnessLu": 0.45,
+    "eqCurveDb": 0.6591930388460229,
+    "eqShapeDb": 0.6410874038401755,
+    "inputGainDb": 0.7999999999999999,
+    "compressor": false
+   }
+  },
+  {
+   "key": "24:2:1",
+   "song": 24,
+   "no processing": {
+    "tonalMeanDb": 1.0622222222222222,
+    "tonalMaxDb": 1.78,
+    "loudnessLu": 1.36,
+    "eqCurveDb": 1.0170229791409584,
+    "eqShapeDb": 1.0170125978850768,
+    "inputGainDb": 1.7,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.07111111111111112,
+    "tonalMaxDb": 0.28,
+    "loudnessLu": 0.02,
+    "eqCurveDb": 0.7770338941142964,
+    "eqShapeDb": 0.46356347747854487,
+    "inputGainDb": 0.5999999999999999,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.18555555555555558,
+    "tonalMaxDb": 0.36,
+    "loudnessLu": 0.07,
+    "eqCurveDb": 0.4634388553406089,
+    "eqShapeDb": 0.3273185851173881,
+    "inputGainDb": 0.40000000000000013,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.4111111111111112,
+    "tonalMaxDb": 1.28,
+    "loudnessLu": 0.59,
+    "eqCurveDb": 0.6591930388460229,
+    "eqShapeDb": 0.6410874038401755,
+    "inputGainDb": 0.7999999999999999,
+    "compressor": false
+   }
+  },
+  {
+   "key": "30:0:0",
+   "song": 30,
+   "no processing": {
+    "tonalMeanDb": 0.6233333333333335,
+    "tonalMaxDb": 1.5,
+    "loudnessLu": 0.83,
+    "eqCurveDb": 0.6783940288727549,
+    "eqShapeDb": 0.6780948739059338,
+    "inputGainDb": 0.8,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.22666666666666668,
+    "tonalMaxDb": 0.49,
+    "loudnessLu": 0.09,
+    "eqCurveDb": 0.5209201508396525,
+    "eqShapeDb": 0.26260040306924887,
+    "inputGainDb": 0.19999999999999996,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.17666666666666664,
+    "tonalMaxDb": 0.42,
+    "loudnessLu": 0.06,
+    "eqCurveDb": 0.32239003176356124,
+    "eqShapeDb": 0.29926384488623003,
+    "inputGainDb": 0.19999999999999996,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.20777777777777778,
+    "tonalMaxDb": 0.35,
+    "loudnessLu": 0.51,
+    "eqCurveDb": 0.2295667622850588,
+    "eqShapeDb": 0.2267399564745775,
+    "inputGainDb": 0.6000000000000001,
+    "compressor": false
+   }
+  },
+  {
+   "key": "30:0:1",
+   "song": 30,
+   "no processing": {
+    "tonalMeanDb": 0.6266666666666666,
+    "tonalMaxDb": 1.66,
+    "loudnessLu": 0.81,
+    "eqCurveDb": 0.6783940288727549,
+    "eqShapeDb": 0.6780948739059338,
+    "inputGainDb": 0.8,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.24333333333333332,
+    "tonalMaxDb": 0.4,
+    "loudnessLu": 0.29,
+    "eqCurveDb": 0.3215194311235707,
+    "eqShapeDb": 0.21611287796404793,
+    "inputGainDb": 0.09999999999999998,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.1077777777777778,
+    "tonalMaxDb": 0.36,
+    "loudnessLu": 0.02,
+    "eqCurveDb": 0.1853753741191106,
+    "eqShapeDb": 0.16103324565029167,
+    "inputGainDb": 0,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.21444444444444447,
+    "tonalMaxDb": 0.44,
+    "loudnessLu": 0.4,
+    "eqCurveDb": 0.2295667622850588,
+    "eqShapeDb": 0.2267399564745775,
+    "inputGainDb": 0.6000000000000001,
+    "compressor": false
+   }
+  },
+  {
+   "key": "30:1:0",
+   "song": 30,
+   "no processing": {
+    "tonalMeanDb": 1.3033333333333335,
+    "tonalMaxDb": 2.08,
+    "loudnessLu": 0.13,
+    "eqCurveDb": 1.4339315981298904,
+    "eqShapeDb": 1.1879417911448285,
+    "inputGainDb": 1.1,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.011111111111111112,
+    "tonalMaxDb": 0.03,
+    "loudnessLu": 0.15,
+    "eqCurveDb": 1.3025765067704564,
+    "eqShapeDb": 0.24217026112615753,
+    "inputGainDb": 1.1,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.11777777777777779,
+    "tonalMaxDb": 0.31,
+    "loudnessLu": 0.13,
+    "eqCurveDb": 0.3677846023701942,
+    "eqShapeDb": 0.33300249216633143,
+    "inputGainDb": 0,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.26555555555555554,
+    "tonalMaxDb": 0.65,
+    "loudnessLu": 1,
+    "eqCurveDb": 0.4497266901118535,
+    "eqShapeDb": 0.4418796042858682,
+    "inputGainDb": 1,
+    "compressor": false
+   }
+  },
+  {
+   "key": "30:1:1",
+   "song": 30,
+   "no processing": {
+    "tonalMeanDb": 1.2166666666666666,
+    "tonalMaxDb": 2.03,
+    "loudnessLu": 0.28,
+    "eqCurveDb": 1.4339315981298904,
+    "eqShapeDb": 1.1879417911448285,
+    "inputGainDb": 1.1,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.03888888888888889,
+    "tonalMaxDb": 0.19,
+    "loudnessLu": 0.05,
+    "eqCurveDb": 1.1115065324192306,
+    "eqShapeDb": 0.29776202059920526,
+    "inputGainDb": 1.1,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.22777777777777775,
+    "tonalMaxDb": 0.6,
+    "loudnessLu": 0.13,
+    "eqCurveDb": 0.4021547017679224,
+    "eqShapeDb": 0.3349309058326967,
+    "inputGainDb": 0,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.3766666666666667,
+    "tonalMaxDb": 0.8,
+    "loudnessLu": 0.81,
+    "eqCurveDb": 0.4497266901118535,
+    "eqShapeDb": 0.4418796042858682,
+    "inputGainDb": 1,
+    "compressor": false
+   }
+  },
+  {
+   "key": "30:2:0",
+   "song": 30,
+   "no processing": {
+    "tonalMeanDb": 0.5033333333333334,
+    "tonalMaxDb": 1.25,
+    "loudnessLu": 4.11,
+    "eqCurveDb": 1.0970679839728992,
+    "eqShapeDb": 0.9584160554374854,
+    "inputGainDb": 5.6,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.2488888888888889,
+    "tonalMaxDb": 0.53,
+    "loudnessLu": 0.12,
+    "eqCurveDb": 1.0542614859873651,
+    "eqShapeDb": 0.7046209212846948,
+    "inputGainDb": 1.1999999999999993,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.5066666666666667,
+    "tonalMaxDb": 1.1,
+    "loudnessLu": 0.07,
+    "eqCurveDb": 1.1873330060039782,
+    "eqShapeDb": 1.022518088045234,
+    "inputGainDb": 1.3999999999999995,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.7211111111111111,
+    "tonalMaxDb": 1.62,
+    "loudnessLu": 0.86,
+    "eqCurveDb": 0.8544267825962337,
+    "eqShapeDb": 0.7972432153404937,
+    "inputGainDb": 0.3000000000000007,
+    "compressor": false
+   }
+  },
+  {
+   "key": "30:2:1",
+   "song": 30,
+   "no processing": {
+    "tonalMeanDb": 0.5133333333333332,
+    "tonalMaxDb": 1.47,
+    "loudnessLu": 4.09,
+    "eqCurveDb": 1.0970679839728992,
+    "eqShapeDb": 0.9584160554374854,
+    "inputGainDb": 5.6,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.09666666666666668,
+    "tonalMaxDb": 0.22,
+    "loudnessLu": 0.31,
+    "eqCurveDb": 0.9048738190047885,
+    "eqShapeDb": 0.560042205859343,
+    "inputGainDb": 1.5999999999999996,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.43,
+    "tonalMaxDb": 0.95,
+    "loudnessLu": 0.11,
+    "eqCurveDb": 1.3245338966354936,
+    "eqShapeDb": 0.9568845028374589,
+    "inputGainDb": 1.6999999999999997,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.5355555555555555,
+    "tonalMaxDb": 1.55,
+    "loudnessLu": 1.77,
+    "eqCurveDb": 0.8558142609783398,
+    "eqShapeDb": 0.709167257928192,
+    "inputGainDb": 3.1999999999999997,
+    "compressor": false
+   }
+  },
+  {
+   "key": "31:0:0",
+   "song": 31,
+   "no processing": {
+    "tonalMeanDb": 1.051111111111111,
+    "tonalMaxDb": 2.42,
+    "loudnessLu": 2.09,
+    "eqCurveDb": 1.0161520276222509,
+    "eqShapeDb": 1.0140298266335395,
+    "inputGainDb": 2.8,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.19777777777777777,
+    "tonalMaxDb": 0.28,
+    "loudnessLu": 0.3,
+    "eqCurveDb": 1.0675605602391491,
+    "eqShapeDb": 0.6303238092121214,
+    "inputGainDb": 1.0999999999999999,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.11,
+    "tonalMaxDb": 0.15,
+    "loudnessLu": 0.06,
+    "eqCurveDb": 0.5070239722277484,
+    "eqShapeDb": 0.379626894982275,
+    "inputGainDb": 0.40000000000000036,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.27666666666666667,
+    "tonalMaxDb": 1.01,
+    "loudnessLu": 0.2,
+    "eqCurveDb": 1.1373138142484287,
+    "eqShapeDb": 0.5271885071662555,
+    "inputGainDb": 1.2999999999999998,
+    "compressor": false
+   }
+  },
+  {
+   "key": "31:0:1",
+   "song": 31,
+   "no processing": {
+    "tonalMeanDb": 1.0566666666666666,
+    "tonalMaxDb": 2.43,
+    "loudnessLu": 2.09,
+    "eqCurveDb": 1.0161520276222509,
+    "eqShapeDb": 1.0140298266335395,
+    "inputGainDb": 2.8,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.15999999999999998,
+    "tonalMaxDb": 0.22,
+    "loudnessLu": 0.18,
+    "eqCurveDb": 1.0191856021451582,
+    "eqShapeDb": 0.6135914492927085,
+    "inputGainDb": 0.7999999999999998,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.08777777777777779,
+    "tonalMaxDb": 0.18,
+    "loudnessLu": 0.07,
+    "eqCurveDb": 0.4946736756252141,
+    "eqShapeDb": 0.3784085301059739,
+    "inputGainDb": 0.40000000000000036,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.31333333333333335,
+    "tonalMaxDb": 1.01,
+    "loudnessLu": 0.2,
+    "eqCurveDb": 1.1373138142484287,
+    "eqShapeDb": 0.5271885071662555,
+    "inputGainDb": 1.2999999999999998,
+    "compressor": false
+   }
+  },
+  {
+   "key": "31:1:0",
+   "song": 31,
+   "no processing": {
+    "tonalMeanDb": 0.5311111111111111,
+    "tonalMaxDb": 0.96,
+    "loudnessLu": 2.74,
+    "eqCurveDb": 0.6298770766451908,
+    "eqShapeDb": 0.5864782639502707,
+    "inputGainDb": 2.5,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.11666666666666667,
+    "tonalMaxDb": 0.35,
+    "loudnessLu": 0.25,
+    "eqCurveDb": 0.8238453626640777,
+    "eqShapeDb": 0.3178022462647544,
+    "inputGainDb": 0.3999999999999999,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.31,
+    "tonalMaxDb": 0.73,
+    "loudnessLu": 0.14,
+    "eqCurveDb": 0.4428339475099976,
+    "eqShapeDb": 0.35358058761075556,
+    "inputGainDb": 0.6000000000000001,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.3688888888888889,
+    "tonalMaxDb": 1.19,
+    "loudnessLu": 0.29,
+    "eqCurveDb": 0.36610278283433956,
+    "eqShapeDb": 0.30184624296617996,
+    "inputGainDb": 0.10000000000000009,
+    "compressor": false
+   }
+  },
+  {
+   "key": "31:1:1",
+   "song": 31,
+   "no processing": {
+    "tonalMeanDb": 0.5444444444444445,
+    "tonalMaxDb": 0.93,
+    "loudnessLu": 2.8,
+    "eqCurveDb": 0.6298770766451908,
+    "eqShapeDb": 0.5864782639502707,
+    "inputGainDb": 2.5,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.16444444444444448,
+    "tonalMaxDb": 0.43,
+    "loudnessLu": 0.2,
+    "eqCurveDb": 0.794904188486193,
+    "eqShapeDb": 0.31014465235917527,
+    "inputGainDb": 0.3999999999999999,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.35333333333333333,
+    "tonalMaxDb": 0.73,
+    "loudnessLu": 0.24,
+    "eqCurveDb": 0.38203698164615635,
+    "eqShapeDb": 0.3187370325194051,
+    "inputGainDb": 0.7000000000000002,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.38999999999999996,
+    "tonalMaxDb": 1.27,
+    "loudnessLu": 0.29,
+    "eqCurveDb": 0.36610278283433956,
+    "eqShapeDb": 0.30184624296617996,
+    "inputGainDb": 0.10000000000000009,
+    "compressor": false
+   }
+  },
+  {
+   "key": "31:2:0",
+   "song": 31,
+   "no processing": {
+    "tonalMeanDb": 1.3711111111111112,
+    "tonalMaxDb": 2.42,
+    "loudnessLu": 3.61,
+    "eqCurveDb": 1.1871930379747848,
+    "eqShapeDb": 1.1613629827975942,
+    "inputGainDb": 4.6,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.21666666666666667,
+    "tonalMaxDb": 0.46,
+    "loudnessLu": 0.08,
+    "eqCurveDb": 0.8540530849795986,
+    "eqShapeDb": 0.38221202247219244,
+    "inputGainDb": 1.1999999999999997,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.19555555555555557,
+    "tonalMaxDb": 0.45,
+    "loudnessLu": 0.03,
+    "eqCurveDb": 0.3816710922175353,
+    "eqShapeDb": 0.32132142190787544,
+    "inputGainDb": 0.40000000000000036,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.8333333333333334,
+    "tonalMaxDb": 1.38,
+    "loudnessLu": 0.56,
+    "eqCurveDb": 1.208094125395028,
+    "eqShapeDb": 0.8497781789209542,
+    "inputGainDb": 0.7000000000000002,
+    "compressor": false
+   }
+  },
+  {
+   "key": "31:2:1",
+   "song": 31,
+   "no processing": {
+    "tonalMeanDb": 1.3555555555555554,
+    "tonalMaxDb": 2.48,
+    "loudnessLu": 3.55,
+    "eqCurveDb": 1.1871930379747848,
+    "eqShapeDb": 1.1613629827975942,
+    "inputGainDb": 4.6,
+    "compressor": false
+   },
+   "LAS-32 deterministic": {
+    "tonalMeanDb": 0.13555555555555554,
+    "tonalMaxDb": 0.22,
+    "loudnessLu": 0.33,
+    "eqCurveDb": 1.1384368658268875,
+    "eqShapeDb": 0.34711565025489977,
+    "inputGainDb": 1.4999999999999996,
+    "compressor": false
+   },
+   "ridge (learned)": {
+    "tonalMeanDb": 0.19333333333333333,
+    "tonalMaxDb": 0.49,
+    "loudnessLu": 0.16,
+    "eqCurveDb": 0.3619718491587588,
+    "eqShapeDb": 0.3218302709963558,
+    "inputGainDb": 0.5,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.2933333333333333,
+    "tonalMaxDb": 0.84,
+    "loudnessLu": 0.14,
+    "eqCurveDb": 0.9061062333815859,
+    "eqShapeDb": 0.5992555406160786,
+    "inputGainDb": 0.8000000000000007,
+    "compressor": false
+   }
+  }
+ ],
+ "leakyPerItem": [
+  {
+   "key": "10:1:1",
+   "song": 10,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.22444444444444445,
+    "tonalMaxDb": 0.63,
+    "loudnessLu": 0.14,
+    "eqCurveDb": 0.7417201412606105,
+    "eqShapeDb": 0.6870477015801706,
+    "inputGainDb": 0.40000000000000036,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.18444444444444447,
+    "tonalMaxDb": 0.68,
+    "loudnessLu": 0.02,
+    "eqCurveDb": 0.7065177453764583,
+    "eqShapeDb": 0.6903437461801503,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "10:2:1",
+   "song": 10,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.1288888888888889,
+    "tonalMaxDb": 0.3,
+    "loudnessLu": 0.24,
+    "eqCurveDb": 0.8625798553551686,
+    "eqShapeDb": 0.3724736652062171,
+    "inputGainDb": 1.4,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.1588888888888889,
+    "tonalMaxDb": 0.41,
+    "loudnessLu": 0.08,
+    "eqCurveDb": 0.19714301137027856,
+    "eqShapeDb": 0.18938874137144715,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "30:2:1",
+   "song": 30,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.33666666666666667,
+    "tonalMaxDb": 0.92,
+    "loudnessLu": 0.32,
+    "eqCurveDb": 0.9418727179321223,
+    "eqShapeDb": 0.7697217061903807,
+    "inputGainDb": 1.3999999999999995,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.13333333333333336,
+    "tonalMaxDb": 0.24,
+    "loudnessLu": 0.14,
+    "eqCurveDb": 0.31460022791347214,
+    "eqShapeDb": 0.31315826819923387,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "4:2:0",
+   "song": 4,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.21000000000000002,
+    "tonalMaxDb": 0.53,
+    "loudnessLu": 0.31,
+    "eqCurveDb": 0.23071515656242017,
+    "eqShapeDb": 0.1611855813269721,
+    "inputGainDb": 0.6000000000000001,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.15000000000000002,
+    "tonalMaxDb": 0.45,
+    "loudnessLu": 0.01,
+    "eqCurveDb": 0.20106176269694578,
+    "eqShapeDb": 0.167404840587957,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "17:1:1",
+   "song": 17,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.19777777777777775,
+    "tonalMaxDb": 0.38,
+    "loudnessLu": 0.22,
+    "eqCurveDb": 0.2665606261453181,
+    "eqShapeDb": 0.18867891695260924,
+    "inputGainDb": 0.3999999999999999,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.1111111111111111,
+    "tonalMaxDb": 0.26,
+    "loudnessLu": 0.08,
+    "eqCurveDb": 0.1780382962156493,
+    "eqShapeDb": 0.15566734168651233,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "19:0:0",
+   "song": 19,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.1733333333333333,
+    "tonalMaxDb": 0.45,
+    "loudnessLu": 0.04,
+    "eqCurveDb": 0.6721411843112288,
+    "eqShapeDb": 0.6658505451780572,
+    "inputGainDb": 0.09999999999999964,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.3033333333333334,
+    "tonalMaxDb": 0.95,
+    "loudnessLu": 0.35,
+    "eqCurveDb": 0.789288896396923,
+    "eqShapeDb": 0.7855828278507218,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "31:2:0",
+   "song": 31,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.1,
+    "tonalMaxDb": 0.26,
+    "loudnessLu": 0.03,
+    "eqCurveDb": 0.2529173167999015,
+    "eqShapeDb": 0.2434147954681291,
+    "inputGainDb": 0.10000000000000053,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.06888888888888889,
+    "tonalMaxDb": 0.17,
+    "loudnessLu": 0.02,
+    "eqCurveDb": 0.1830776623229727,
+    "eqShapeDb": 0.1781772375326052,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "4:0:0",
+   "song": 4,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.05888888888888889,
+    "tonalMaxDb": 0.16,
+    "loudnessLu": 0.03,
+    "eqCurveDb": 0.3009450338629451,
+    "eqShapeDb": 0.2856269219336995,
+    "inputGainDb": 0.2999999999999998,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.49222222222222217,
+    "tonalMaxDb": 1.82,
+    "loudnessLu": 0.46,
+    "eqCurveDb": 1.0599365662410378,
+    "eqShapeDb": 0.8083163162474318,
+    "inputGainDb": 0.7999999999999998,
+    "compressor": false
+   }
+  },
+  {
+   "key": "28:1:0",
+   "song": 28,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.2111111111111111,
+    "tonalMaxDb": 0.62,
+    "loudnessLu": 0.09,
+    "eqCurveDb": 1.3453214747033615,
+    "eqShapeDb": 0.3365292366499497,
+    "inputGainDb": 1.1,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.42000000000000004,
+    "tonalMaxDb": 0.93,
+    "loudnessLu": 0.22,
+    "eqCurveDb": 1.1223209002160437,
+    "eqShapeDb": 0.5815032517804661,
+    "inputGainDb": 1.1,
+    "compressor": false
+   }
+  },
+  {
+   "key": "1:1:0",
+   "song": 1,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.21000000000000002,
+    "tonalMaxDb": 0.68,
+    "loudnessLu": 0.22,
+    "eqCurveDb": 0.37915757388177784,
+    "eqShapeDb": 0.3476552181731354,
+    "inputGainDb": 0.09999999999999998,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.12666666666666668,
+    "tonalMaxDb": 0.69,
+    "loudnessLu": 0.11,
+    "eqCurveDb": 0.30561664881792744,
+    "eqShapeDb": 0.296942166955621,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "8:1:1",
+   "song": 8,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.16555555555555557,
+    "tonalMaxDb": 0.47,
+    "loudnessLu": 0.07,
+    "eqCurveDb": 0.4621089434023278,
+    "eqShapeDb": 0.23698168969463734,
+    "inputGainDb": 0.7000000000000002,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.19,
+    "tonalMaxDb": 0.39,
+    "loudnessLu": 0.21,
+    "eqCurveDb": 0.2983229283836312,
+    "eqShapeDb": 0.25329900009288775,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "24:0:1",
+   "song": 24,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.19555555555555557,
+    "tonalMaxDb": 0.74,
+    "loudnessLu": 0.02,
+    "eqCurveDb": 0.3030328619303421,
+    "eqShapeDb": 0.21447259652719275,
+    "inputGainDb": 0.19999999999999996,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.17000000000000004,
+    "tonalMaxDb": 0.69,
+    "loudnessLu": 0.06,
+    "eqCurveDb": 0.23171353780154424,
+    "eqShapeDb": 0.2148779212347592,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "28:2:0",
+   "song": 28,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.19777777777777777,
+    "tonalMaxDb": 0.67,
+    "loudnessLu": 0.27,
+    "eqCurveDb": 1.0353644083688764,
+    "eqShapeDb": 0.37091477659896704,
+    "inputGainDb": 0.5,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.12888888888888891,
+    "tonalMaxDb": 0.23,
+    "loudnessLu": 0.17,
+    "eqCurveDb": 0.5163610265960002,
+    "eqShapeDb": 0.48620084579365347,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "16:0:1",
+   "song": 16,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.31777777777777777,
+    "tonalMaxDb": 1.01,
+    "loudnessLu": 0.12,
+    "eqCurveDb": 0.7355137109528151,
+    "eqShapeDb": 0.5889185404900955,
+    "inputGainDb": 0.2999999999999998,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.2744444444444445,
+    "tonalMaxDb": 0.73,
+    "loudnessLu": 0,
+    "eqCurveDb": 0.6677166023338593,
+    "eqShapeDb": 0.626555901769135,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "20:1:0",
+   "song": 20,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.20444444444444446,
+    "tonalMaxDb": 0.51,
+    "loudnessLu": 0.04,
+    "eqCurveDb": 1.1939368709299676,
+    "eqShapeDb": 0.32002751001979973,
+    "inputGainDb": 1.1,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.19,
+    "tonalMaxDb": 0.9,
+    "loudnessLu": 0.14,
+    "eqCurveDb": 0.507633562124698,
+    "eqShapeDb": 0.5010625129872364,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "3:1:1",
+   "song": 3,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.15222222222222223,
+    "tonalMaxDb": 0.39,
+    "loudnessLu": 0.17,
+    "eqCurveDb": 0.5278869911959408,
+    "eqShapeDb": 0.5103324739698127,
+    "inputGainDb": 0,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.4977777777777778,
+    "tonalMaxDb": 1.29,
+    "loudnessLu": 1.24,
+    "eqCurveDb": 0.8799989745827316,
+    "eqShapeDb": 0.8655612625775665,
+    "inputGainDb": 1,
+    "compressor": false
+   }
+  },
+  {
+   "key": "13:2:1",
+   "song": 13,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.15666666666666668,
+    "tonalMaxDb": 0.45,
+    "loudnessLu": 0.04,
+    "eqCurveDb": 0.6620138701894601,
+    "eqShapeDb": 0.5835138731677508,
+    "inputGainDb": 0,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.4511111111111112,
+    "tonalMaxDb": 1.7,
+    "loudnessLu": 2.26,
+    "eqCurveDb": 0.712862595668021,
+    "eqShapeDb": 0.7116235552154442,
+    "inputGainDb": 2.9000000000000004,
+    "compressor": false
+   }
+  },
+  {
+   "key": "2:1:0",
+   "song": 2,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.18333333333333332,
+    "tonalMaxDb": 0.51,
+    "loudnessLu": 0.23,
+    "eqCurveDb": 1.140793953728502,
+    "eqShapeDb": 0.8275800882682255,
+    "inputGainDb": 1,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.05888888888888889,
+    "tonalMaxDb": 0.17,
+    "loudnessLu": 0.11,
+    "eqCurveDb": 0.6287046426514119,
+    "eqShapeDb": 0.5995968865351656,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "13:2:0",
+   "song": 13,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.1588888888888889,
+    "tonalMaxDb": 0.43,
+    "loudnessLu": 0.3,
+    "eqCurveDb": 0.5946061364576934,
+    "eqShapeDb": 0.487727304870491,
+    "inputGainDb": 0.5999999999999996,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.62,
+    "tonalMaxDb": 2.27,
+    "loudnessLu": 0.06,
+    "eqCurveDb": 1.0489415175240304,
+    "eqShapeDb": 1.0441278404664276,
+    "inputGainDb": 0.30000000000000027,
+    "compressor": false
+   }
+  },
+  {
+   "key": "20:0:0",
+   "song": 20,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.03666666666666667,
+    "tonalMaxDb": 0.09,
+    "loudnessLu": 0.14,
+    "eqCurveDb": 0.5391449928809371,
+    "eqShapeDb": 0.5370698657602546,
+    "inputGainDb": 0.10000000000000053,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.5733333333333334,
+    "tonalMaxDb": 1.1,
+    "loudnessLu": 0.45,
+    "eqCurveDb": 0.7221295846913967,
+    "eqShapeDb": 0.7105344960453925,
+    "inputGainDb": 0.10000000000000053,
+    "compressor": false
+   }
+  },
+  {
+   "key": "5:0:0",
+   "song": 5,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.1711111111111111,
+    "tonalMaxDb": 0.5,
+    "loudnessLu": 0.17,
+    "eqCurveDb": 0.3667173393199439,
+    "eqShapeDb": 0.26006038789503033,
+    "inputGainDb": 0.5,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.16000000000000003,
+    "tonalMaxDb": 0.55,
+    "loudnessLu": 0.12,
+    "eqCurveDb": 0.2972225455402606,
+    "eqShapeDb": 0.27216519260761407,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "18:1:0",
+   "song": 18,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.2277777777777778,
+    "tonalMaxDb": 0.68,
+    "loudnessLu": 0.15,
+    "eqCurveDb": 0.9840485297555821,
+    "eqShapeDb": 0.8548239027019554,
+    "inputGainDb": 0.7999999999999998,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.2222222222222222,
+    "tonalMaxDb": 0.68,
+    "loudnessLu": 0.01,
+    "eqCurveDb": 0.7191966990146833,
+    "eqShapeDb": 0.708392558789936,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "27:2:0",
+   "song": 27,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.27222222222222225,
+    "tonalMaxDb": 0.63,
+    "loudnessLu": 0.02,
+    "eqCurveDb": 0.6082687384343186,
+    "eqShapeDb": 0.5104179995968278,
+    "inputGainDb": 0.5,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.17444444444444446,
+    "tonalMaxDb": 0.95,
+    "loudnessLu": 0.08,
+    "eqCurveDb": 0.5471240699903352,
+    "eqShapeDb": 0.539566079501215,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "22:2:1",
+   "song": 22,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.08000000000000002,
+    "tonalMaxDb": 0.19,
+    "loudnessLu": 0.18,
+    "eqCurveDb": 0.673481614917542,
+    "eqShapeDb": 0.6651631061534512,
+    "inputGainDb": 0.20000000000000018,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.08000000000000002,
+    "tonalMaxDb": 0.16,
+    "loudnessLu": 0.04,
+    "eqCurveDb": 0.669396124598877,
+    "eqShapeDb": 0.6565700171125972,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "14:1:1",
+   "song": 14,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.10666666666666667,
+    "tonalMaxDb": 0.21,
+    "loudnessLu": 0.03,
+    "eqCurveDb": 0.3860931296741095,
+    "eqShapeDb": 0.2655765387042124,
+    "inputGainDb": 0.30000000000000004,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.09555555555555556,
+    "tonalMaxDb": 0.24,
+    "loudnessLu": 0.13,
+    "eqCurveDb": 0.3329267012354858,
+    "eqShapeDb": 0.2846768098946658,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "29:1:0",
+   "song": 29,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.2,
+    "tonalMaxDb": 0.68,
+    "loudnessLu": 0.38,
+    "eqCurveDb": 0.540778971909762,
+    "eqShapeDb": 0.39824651182550513,
+    "inputGainDb": 0.6,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.15666666666666668,
+    "tonalMaxDb": 0.42,
+    "loudnessLu": 0.07,
+    "eqCurveDb": 0.2596012940293557,
+    "eqShapeDb": 0.25813157716060836,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "26:1:1",
+   "song": 26,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.13666666666666666,
+    "tonalMaxDb": 0.34,
+    "loudnessLu": 0.11,
+    "eqCurveDb": 0.21180101266221635,
+    "eqShapeDb": 0.17504797741223535,
+    "inputGainDb": 0.1,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.5322222222222223,
+    "tonalMaxDb": 1.38,
+    "loudnessLu": 0.22,
+    "eqCurveDb": 0.6650900145135534,
+    "eqShapeDb": 0.6644871334232011,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "26:0:1",
+   "song": 26,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.26,
+    "tonalMaxDb": 0.54,
+    "loudnessLu": 0.17,
+    "eqCurveDb": 0.38181940779470447,
+    "eqShapeDb": 0.3806846418075077,
+    "inputGainDb": 0.3000000000000007,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.3977777777777778,
+    "tonalMaxDb": 0.83,
+    "loudnessLu": 0.83,
+    "eqCurveDb": 0.5102789615856362,
+    "eqShapeDb": 0.332502640751094,
+    "inputGainDb": 1.5,
+    "compressor": false
+   }
+  },
+  {
+   "key": "4:0:1",
+   "song": 4,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.12444444444444443,
+    "tonalMaxDb": 0.31,
+    "loudnessLu": 0.03,
+    "eqCurveDb": 0.4169652059459596,
+    "eqShapeDb": 0.37378986898816763,
+    "inputGainDb": 0.2999999999999998,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.25777777777777783,
+    "tonalMaxDb": 0.97,
+    "loudnessLu": 0.22,
+    "eqCurveDb": 0.5960732458873953,
+    "eqShapeDb": 0.5960728587594051,
+    "inputGainDb": 0.7999999999999998,
+    "compressor": false
+   }
+  },
+  {
+   "key": "3:2:0",
+   "song": 3,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.05555555555555555,
+    "tonalMaxDb": 0.13,
+    "loudnessLu": 0.29,
+    "eqCurveDb": 0.41101059064324197,
+    "eqShapeDb": 0.41093031463765695,
+    "inputGainDb": 0.30000000000000004,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.05333333333333333,
+    "tonalMaxDb": 0.12,
+    "loudnessLu": 0,
+    "eqCurveDb": 0.4014177101696379,
+    "eqShapeDb": 0.39914217835648497,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "18:2:0",
+   "song": 18,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.12111111111111111,
+    "tonalMaxDb": 0.25,
+    "loudnessLu": 0.14,
+    "eqCurveDb": 0.5702566079394494,
+    "eqShapeDb": 0.5697486915725056,
+    "inputGainDb": 0.09999999999999998,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.08222222222222224,
+    "tonalMaxDb": 0.22,
+    "loudnessLu": 0.12,
+    "eqCurveDb": 0.555686118626342,
+    "eqShapeDb": 0.5480110135166315,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "15:2:0",
+   "song": 15,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.44222222222222224,
+    "tonalMaxDb": 0.97,
+    "loudnessLu": 0.25,
+    "eqCurveDb": 0.9856225129280008,
+    "eqShapeDb": 0.5094926218121996,
+    "inputGainDb": 0.9000000000000004,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.1822222222222222,
+    "tonalMaxDb": 0.63,
+    "loudnessLu": 0.03,
+    "eqCurveDb": 0.34807015549524345,
+    "eqShapeDb": 0.34468357875846445,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "11:1:1",
+   "song": 11,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.23222222222222222,
+    "tonalMaxDb": 0.67,
+    "loudnessLu": 0.06,
+    "eqCurveDb": 0.7920530906929679,
+    "eqShapeDb": 0.442195785481239,
+    "inputGainDb": 0.5,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.09222222222222223,
+    "tonalMaxDb": 0.2,
+    "loudnessLu": 0.1,
+    "eqCurveDb": 0.20145222650391748,
+    "eqShapeDb": 0.19870283578866593,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "9:1:0",
+   "song": 9,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.17444444444444443,
+    "tonalMaxDb": 0.49,
+    "loudnessLu": 0.01,
+    "eqCurveDb": 0.6545899858188045,
+    "eqShapeDb": 0.6296367446320836,
+    "inputGainDb": 0,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.14111111111111108,
+    "tonalMaxDb": 0.47,
+    "loudnessLu": 0,
+    "eqCurveDb": 0.646716171235792,
+    "eqShapeDb": 0.6280780540014819,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "16:2:1",
+   "song": 16,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.2511111111111111,
+    "tonalMaxDb": 1.03,
+    "loudnessLu": 0.4,
+    "eqCurveDb": 0.6692654634320813,
+    "eqShapeDb": 0.552319590955772,
+    "inputGainDb": 0.19999999999999996,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.15888888888888889,
+    "tonalMaxDb": 0.36,
+    "loudnessLu": 0.13,
+    "eqCurveDb": 0.3197600751504078,
+    "eqShapeDb": 0.3168354160513346,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "26:1:0",
+   "song": 26,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.12222222222222223,
+    "tonalMaxDb": 0.42,
+    "loudnessLu": 0.05,
+    "eqCurveDb": 0.21227977461796024,
+    "eqShapeDb": 0.2109077581416738,
+    "inputGainDb": 0.1,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.5033333333333334,
+    "tonalMaxDb": 1.28,
+    "loudnessLu": 0.18,
+    "eqCurveDb": 0.6650900145135534,
+    "eqShapeDb": 0.6644871334232011,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "24:1:1",
+   "song": 24,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.16111111111111112,
+    "tonalMaxDb": 0.52,
+    "loudnessLu": 0.17,
+    "eqCurveDb": 0.7028090996633896,
+    "eqShapeDb": 0.6604388970290714,
+    "inputGainDb": 0.2999999999999998,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.044444444444444446,
+    "tonalMaxDb": 0.1,
+    "loudnessLu": 0.07,
+    "eqCurveDb": 0.5577105839258619,
+    "eqShapeDb": 0.5476364248175755,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "28:1:1",
+   "song": 28,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.21444444444444447,
+    "tonalMaxDb": 0.67,
+    "loudnessLu": 0.22,
+    "eqCurveDb": 1.3903740734181553,
+    "eqShapeDb": 0.35578892137226265,
+    "inputGainDb": 1,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.3922222222222222,
+    "tonalMaxDb": 0.75,
+    "loudnessLu": 0.1,
+    "eqCurveDb": 1.1223209002160437,
+    "eqShapeDb": 0.5815032517804661,
+    "inputGainDb": 1.1,
+    "compressor": false
+   }
+  },
+  {
+   "key": "24:2:0",
+   "song": 24,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.15555555555555556,
+    "tonalMaxDb": 0.27,
+    "loudnessLu": 0.15,
+    "eqCurveDb": 0.4027736208400216,
+    "eqShapeDb": 0.294788543933196,
+    "inputGainDb": 0.40000000000000013,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.4111111111111111,
+    "tonalMaxDb": 1.65,
+    "loudnessLu": 0.45,
+    "eqCurveDb": 0.6591930388460229,
+    "eqShapeDb": 0.6410874038401755,
+    "inputGainDb": 0.7999999999999999,
+    "compressor": false
+   }
+  },
+  {
+   "key": "30:0:0",
+   "song": 30,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.15555555555555556,
+    "tonalMaxDb": 0.4,
+    "loudnessLu": 0.1,
+    "eqCurveDb": 0.29611110232134635,
+    "eqShapeDb": 0.28149172096699787,
+    "inputGainDb": 0.19999999999999996,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.1111111111111111,
+    "tonalMaxDb": 0.39,
+    "loudnessLu": 0.08,
+    "eqCurveDb": 0.18166158512403985,
+    "eqShapeDb": 0.1763985646102929,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "9:2:0",
+   "song": 9,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.16333333333333336,
+    "tonalMaxDb": 0.34,
+    "loudnessLu": 0.24,
+    "eqCurveDb": 0.7236203477628048,
+    "eqShapeDb": 0.5871657753676165,
+    "inputGainDb": 0.6,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.04333333333333332,
+    "tonalMaxDb": 0.1,
+    "loudnessLu": 0.11,
+    "eqCurveDb": 0.6344044930515104,
+    "eqShapeDb": 0.615837349342448,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "1:0:0",
+   "song": 1,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.2644444444444444,
+    "tonalMaxDb": 0.52,
+    "loudnessLu": 0.39,
+    "eqCurveDb": 0.3619222822436513,
+    "eqShapeDb": 0.3120948252029041,
+    "inputGainDb": 0.09999999999999964,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.15555555555555556,
+    "tonalMaxDb": 0.27,
+    "loudnessLu": 0.09,
+    "eqCurveDb": 0.2314981507348059,
+    "eqShapeDb": 0.2308805997910995,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "19:2:0",
+   "song": 19,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.21222222222222223,
+    "tonalMaxDb": 0.5,
+    "loudnessLu": 0.15,
+    "eqCurveDb": 0.8115293253395254,
+    "eqShapeDb": 0.5254321734251387,
+    "inputGainDb": 0.6000000000000001,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.08111111111111112,
+    "tonalMaxDb": 0.17,
+    "loudnessLu": 0.1,
+    "eqCurveDb": 0.561744194113121,
+    "eqShapeDb": 0.5469764880612455,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "27:1:1",
+   "song": 27,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.11555555555555554,
+    "tonalMaxDb": 0.23,
+    "loudnessLu": 0.2,
+    "eqCurveDb": 0.6038911055161896,
+    "eqShapeDb": 0.6034003433402673,
+    "inputGainDb": 0.10000000000000009,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.14777777777777779,
+    "tonalMaxDb": 0.3,
+    "loudnessLu": 0.14,
+    "eqCurveDb": 0.5695379253139176,
+    "eqShapeDb": 0.562336159161812,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "2:0:1",
+   "song": 2,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.26333333333333336,
+    "tonalMaxDb": 0.64,
+    "loudnessLu": 0.29,
+    "eqCurveDb": 0.8486155250139384,
+    "eqShapeDb": 0.8116898245699228,
+    "inputGainDb": 0.5,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.04,
+    "tonalMaxDb": 0.11,
+    "loudnessLu": 0.07,
+    "eqCurveDb": 0.6603156016787269,
+    "eqShapeDb": 0.6424897363055513,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "18:0:0",
+   "song": 18,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.1511111111111111,
+    "tonalMaxDb": 0.32,
+    "loudnessLu": 0.37,
+    "eqCurveDb": 0.6460356799964461,
+    "eqShapeDb": 0.5790114232667928,
+    "inputGainDb": 0.5,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.19,
+    "tonalMaxDb": 0.5,
+    "loudnessLu": 0.16,
+    "eqCurveDb": 0.5819700027669379,
+    "eqShapeDb": 0.533457935114745,
+    "inputGainDb": 0,
+    "compressor": false
+   }
+  },
+  {
+   "key": "24:2:1",
+   "song": 24,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.18333333333333332,
+    "tonalMaxDb": 0.37,
+    "loudnessLu": 0.1,
+    "eqCurveDb": 0.41308519671085364,
+    "eqShapeDb": 0.3451365150929967,
+    "inputGainDb": 0.40000000000000013,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.4111111111111112,
+    "tonalMaxDb": 1.28,
+    "loudnessLu": 0.59,
+    "eqCurveDb": 0.6591930388460229,
+    "eqShapeDb": 0.6410874038401755,
+    "inputGainDb": 0.7999999999999999,
+    "compressor": false
+   }
+  },
+  {
+   "key": "3:1:0",
+   "song": 3,
+   "ridge (learned)": {
+    "tonalMeanDb": 0.19222222222222224,
+    "tonalMaxDb": 0.66,
+    "loudnessLu": 0.01,
+    "eqCurveDb": 0.5475191100158938,
+    "eqShapeDb": 0.5252591207055091,
+    "inputGainDb": 0.10000000000000009,
+    "compressor": false
+   },
+   "1-NN (learned)": {
+    "tonalMeanDb": 0.4266666666666667,
+    "tonalMaxDb": 1.29,
+    "loudnessLu": 1.21,
+    "eqCurveDb": 0.8799989745827316,
+    "eqShapeDb": 0.8655612625775665,
+    "inputGainDb": 1,
+    "compressor": false
+   }
+  }
+ ]
+}

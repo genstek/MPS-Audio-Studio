@@ -1,0 +1,4 @@
+LAS-39 reproducibility: two complete runs of experiment.js (same code apart from the added shape metric)
+per-item values compared (shared metrics, grouped + leaky test items, all methods): 1440
+values that differ: 0
+splits identical: True | leakage reports identical: True | ridge lambda identical: True
