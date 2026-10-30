@@ -1,0 +1,12 @@
+{
+  "processed vs original lag (samples)": 0,
+  "reference vs original lag (samples)": 0,
+  "processed LUFS (from written file)": -16.411,
+  "reference LUFS (from written file)": -16.411,
+  "original LUFS (from written file)": -16.41,
+  "frames": {
+    "processed": 132300,
+    "reference": 132300,
+    "original": 132300
+  }
+}

@@ -1,0 +1,406 @@
+{
+  "source": "demo-song.wav",
+  "start": 0.5,
+  "duration": 3,
+  "sourceSha256": "0ff4e5ed9bd258d6312becc00892fdf141b00348d74ff6948d125472b694e5cc",
+  "sampleRate": 44100,
+  "settings": {
+    "schema": "mps-chain",
+    "version": 1,
+    "order": [
+      "eq",
+      "compressor",
+      "limiter"
+    ],
+    "eq": {
+      "enabled": true,
+      "mode": "link",
+      "left": [
+        {
+          "enabled": true,
+          "type": "high-pass",
+          "frequency": 25,
+          "gain": 0,
+          "q": 0.707
+        },
+        {
+          "enabled": true,
+          "type": "low-shelf",
+          "frequency": 100,
+          "gain": 2,
+          "q": 0.707
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 51.79,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 68.05,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 89.41,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 117.5,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": true,
+          "type": "bell",
+          "frequency": 400,
+          "gain": -2,
+          "q": 1.2
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 202.8,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 266.5,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 350.1,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 460,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 604.4,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 794.2,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 1043,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 1371,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 1801,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 2367,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 3110,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 4086,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 5369,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": true,
+          "type": "high-shelf",
+          "frequency": 8000,
+          "gain": 3,
+          "q": 0.707
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 9268,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 12180,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 16000,
+          "gain": 0,
+          "q": 1
+        }
+      ],
+      "right": [
+        {
+          "enabled": true,
+          "type": "high-pass",
+          "frequency": 25,
+          "gain": 0,
+          "q": 0.707
+        },
+        {
+          "enabled": true,
+          "type": "low-shelf",
+          "frequency": 100,
+          "gain": 2,
+          "q": 0.707
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 51.79,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 68.05,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 89.41,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 117.5,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": true,
+          "type": "bell",
+          "frequency": 400,
+          "gain": -2,
+          "q": 1.2
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 202.8,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 266.5,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 350.1,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 460,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 604.4,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 794.2,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 1043,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 1371,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 1801,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 2367,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 3110,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 4086,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 5369,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": true,
+          "type": "high-shelf",
+          "frequency": 8000,
+          "gain": 3,
+          "q": 0.707
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 9268,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 12180,
+          "gain": 0,
+          "q": 1
+        },
+        {
+          "enabled": false,
+          "type": "bell",
+          "frequency": 16000,
+          "gain": 0,
+          "q": 1
+        }
+      ]
+    },
+    "compressor": {
+      "enabled": true,
+      "threshold": -18,
+      "ratio": 2.5,
+      "attack": 15,
+      "release": 150,
+      "knee": 6,
+      "makeup": 2,
+      "detector": "rms"
+    },
+    "limiter": {
+      "enabled": true,
+      "ceiling": -1,
+      "inputGain": 4,
+      "release": 80
+    }
+  },
+  "reference": {
+    "file": "demo-reference.wav",
+    "sha256": "d35cf875e22f374a80e7926959308b39c099050312b79ee52f8c3b7b134d4d85",
+    "checksumVerified": true,
+    "alignment": {
+      "offsetSeconds": 0.37,
+      "correlation": 0.961615102577956
+    }
+  },
+  "seed": 7,
+  "labels": {
+    "A": "processed",
+    "B": "reference",
+    "C": "original"
+  },
+  "loudnessBeforeLufs": {
+    "original": -16.410226341673745,
+    "processed": -13.183688069013794,
+    "reference": -11.695711493987611
+  },
+  "gainsDb": {
+    "original": 0,
+    "processed": -3.227,
+    "reference": -4.715
+  },
+  "loudnessAfterLufs": {
+    "original": -16.41,
+    "processed": -16.411,
+    "reference": -16.411
+  }
+}

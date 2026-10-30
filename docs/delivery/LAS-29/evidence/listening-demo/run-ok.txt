@@ -1,0 +1,2 @@
+Wrote A.wav, B.wav, C.wav, review-sheet.md and key.json to <scratch>/listening-demo/set.
+exit 0

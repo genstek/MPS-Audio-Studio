@@ -1,0 +1,2 @@
+96 renders in 36.3 s; findings 0; golden differences 0; FFmpeg PASS. Report: <scratch>/delivery-runs/LAS-29-0c961b9/regression
+exit 0
