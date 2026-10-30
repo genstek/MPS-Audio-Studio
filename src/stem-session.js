@@ -1,6 +1,8 @@
 // Stem session (LAS-34): several stems played together through one output stage (the master chain
 // and Processed/Original switch of LAS-28), each through its own channel strip:
-//   source → trim (gain) → pan (equal-power StereoPannerNode) → mute/solo gate → meter ─→ bus → output stage
+//   source → [own chain, LAS-35] → trim (gain) → pan (equal-power StereoPannerNode) → mute/solo gate → meter ─→ bus → output stage
+// A stem's own chain (optional; a chain node from createChainNode, sized to the stem's channels) has
+// the same constant latency as every other chain, bypassed or not, so the strips stay aligned.
 // Timing: every source of a play is started at one scheduled time on the context's clock with the
 // same offset into the session, so stems cannot drift apart; pause, seek and resume stop every
 // source and start new ones the same way. Alignment policy: each stem starts at session time
@@ -58,7 +60,7 @@ export function createStemSession(context, output, { onEnded = () => {} } = {}) 
       const local = from - stem.offset;
       if (local >= stem.buffer.duration) continue;
       const source = new AudioBufferSourceNode(context, { buffer: stem.buffer });
-      source.connect(stem.trim);
+      source.connect(stem.chain ? stem.chain.node : stem.trim);
       // A stem that starts later in the session waits for its offset; one already running joins in.
       if (local < 0) source.start(startedAt - local, 0);
       else source.start(startedAt, local);
@@ -80,17 +82,20 @@ export function createStemSession(context, output, { onEnded = () => {} } = {}) 
   }
 
   return {
-    // Adds a decoded stem (an AudioBuffer at the playback rate). info: { name, sampleRate, channels }
-    // as read from the file, so the policy can be explained.
-    add(buffer, info) {
+    // Adds a decoded stem (an AudioBuffer at the playback rate). info: { name, sampleRate, channels,
+    // file, sha256, params } as read from the file, so the policy can be explained and the stem
+    // rendered and recalled; chain: its own chain node (LAS-35), or none.
+    add(buffer, info, chain = null) {
       if (stems.length >= MAX_STEMS) throw new StemError(`A session holds up to ${MAX_STEMS} stems.`);
       const trim = new GainNode(context, { gain: 1, channelCount: 2, channelCountMode: 'clamped-max' });
       const pan = new StereoPannerNode(context, { pan: 0 });
       const gate = new GainNode(context, { gain: 1 });
       const meter = new AnalyserNode(context, { fftSize: 2048, smoothingTimeConstant: 0 });
       trim.connect(pan).connect(gate).connect(meter).connect(bus);
+      if (chain) chain.node.connect(trim);
       const stem = {
         id: nextId++, name: info.name, fileSampleRate: info.sampleRate, fileChannels: info.channels, buffer,
+        file: info.file ?? null, sha256: info.sha256 ?? null, params: info.params ?? null, chainLabel: 'bypass', chain,
         offset: 0, gainDb: 0, pan: 0, mute: false, solo: false, trim, panner: pan, gate, meter,
       };
       stems.push(stem);
@@ -104,14 +109,25 @@ export function createStemSession(context, output, { onEnded = () => {} } = {}) 
       const at = currentPosition();
       stopSources();
       const [stem] = stems.splice(index, 1);
-      for (const node of [stem.trim, stem.panner, stem.gate, stem.meter]) node.disconnect();
+      for (const node of [stem.trim, stem.panner, stem.gate, stem.meter, stem.chain?.node].filter(Boolean)) node.disconnect();
       position = Math.min(at, duration());
       updateGates();
       if (wasPlaying && stems.length) startSources(position);
     },
-    stems: () => stems.map(({ id, name, fileSampleRate, fileChannels, buffer, offset, gainDb, pan, mute, solo }) => ({
+    stems: () => stems.map(({ id, name, fileSampleRate, fileChannels, buffer, offset, gainDb, pan, mute, solo, file, sha256, params, chainLabel }) => ({
       id, name, fileSampleRate, fileChannels, duration: buffer.duration, channels: buffer.numberOfChannels, offset, gainDb, pan, mute, solo, audible: audible({ mute, solo }),
+      file, sha256, params, chainLabel,
     })),
+    // Gives a stem its own chain settings (LAS-35), applied live by its chain node. Resolves with the
+    // node's sample-rate warnings, or rejects with the reason the settings were refused.
+    async setChain(id, params, label) {
+      const stem = stems.find(s => s.id === id);
+      if (!stem?.chain) throw new StemError('This stem has no chain.');
+      const warnings = await stem.chain.setParams(params);
+      stem.params = params;
+      stem.chainLabel = label;
+      return warnings;
+    },
     duration,
     position: currentPosition,
     playing: () => Boolean(playing),
@@ -174,7 +190,7 @@ export function createStemSession(context, output, { onEnded = () => {} } = {}) 
     },
     dispose() {
       stopSources();
-      for (const stem of stems) for (const node of [stem.trim, stem.panner, stem.gate, stem.meter]) node.disconnect();
+      for (const stem of stems) for (const node of [stem.trim, stem.panner, stem.gate, stem.meter, stem.chain?.node].filter(Boolean)) node.disconnect();
       stems.length = 0;
       bus.disconnect();
     },

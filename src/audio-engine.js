@@ -2,11 +2,13 @@ import { defaultChain } from './dsp/chain-params.js';
 import { readWavHeader } from './dsp/wav-decode.js';
 import { createOutputStage } from './output-stage.js';
 import { createStemSession } from './stem-session.js';
+import { createChainNode } from './dsp/chain-node.js';
+import { bypassChain } from './dsp/stem-render.js';
 
 // One engine owns the audio context, the current source and the output stage (mastering chain
 // and original/processed switch, LAS-28), outside React state. createOutput can be replaced in
 // unit tests.
-export function createAudioEngine(onEnded, { createOutput = createOutputStage } = {}) {
+export function createAudioEngine(onEnded, { createOutput = createOutputStage, createStemChain = createChainNode } = {}) {
   let context;
   let buffer;
   let source;
@@ -276,13 +278,24 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage } 
       if (file.size > 100 * 1024 * 1024) throw new Error('Choose a WAV smaller than 100 MiB.');
       const bytes = await file.arrayBuffer();
       const header = readWavHeader(bytes.slice(0, 65536), file.size);
+      const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', bytes));
+      const sha256 = Array.from(digest, byte => byte.toString(16).padStart(2, '0')).join('');
       let decoded;
       try {
         decoded = await context.decodeAudioData(bytes);
       } catch {
         throw new Error('Unable to decode this WAV.');
       }
-      return stemSession.add(decoded, { name: file.name, sampleRate: header.sampleRate, channels: header.channels });
+      // Each stem gets its own chain (LAS-35), sized to its channels so mono stems keep the mono pan
+      // law; it starts bypassed.
+      const params = bypassChain();
+      let chain;
+      try {
+        chain = await createStemChain(context, params, Math.min(2, decoded.numberOfChannels));
+      } catch {
+        throw new Error('Audio processing could not start for this stem.');
+      }
+      return stemSession.add(decoded, { name: file.name, sampleRate: header.sampleRate, channels: header.channels, file, sha256, params }, chain);
     },
     // Starts the stems together; single-track playback and any comparison stop first.
     async playStems() {

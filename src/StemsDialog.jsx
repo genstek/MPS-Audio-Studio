@@ -1,5 +1,26 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ListenSwitch } from './ListeningControls.jsx';
+import { parseChain } from './dsp/chain-params.js';
+import { bypassChain } from './dsp/stem-render.js';
+import { parsePresetFile } from './presets.js';
+import { startRender } from './render-client.js';
+import { matchStems, parseStemSession, serializeStemSession } from './stem-session-file.js';
+
+const download = (blob, name) => {
+  const url = URL.createObjectURL(blob);
+  const link = Object.assign(document.createElement('a'), { href: url, download: name });
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 0);
+};
+// A settings file for one stem: an mps-chain settings file or an mps-preset file.
+async function readChainFile(file) {
+  const text = await file.text();
+  try {
+    return parseChain(text);
+  } catch (chainFailure) {
+    try { return parsePresetFile(text, file.name).preset.chain; } catch { throw chainFailure; }
+  }
+}
 
 const clock = seconds => `${Math.floor(seconds / 60)}:${(seconds % 60).toFixed(1).padStart(4, '0')}`;
 const db = value => (value === null ? '−∞' : value.toFixed(1).replace('-', '−'));
@@ -17,13 +38,19 @@ function Meter({ label, level }) {
 // Stem session (LAS-34): several original stems played together through the master chain, each on
 // its own strip with gain, pan, mute, solo, offset and a meter of what it sends to the mix. The
 // session has its own transport with seek; the single-track transport stops while it plays.
-export function StemsDialog({ engine, listening, onListen, onStemsPlay }) {
+// LAS-35: each strip has its own chain (bypass, a copy of the master settings, or a settings file),
+// the session's settings can be saved and recalled, and the stem master is rendered offline.
+export function StemsDialog({ engine, chain, listening, onListen, onStemsPlay }) {
   const dialog = useRef(null);
   const [stems, setStems] = useState([]);
   const [state, setState] = useState({ playing: false, position: 0, duration: 0, rate: null });
   const [levels, setLevels] = useState({ stems: [], master: null });
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+  const [bitDepth, setBitDepth] = useState(24);
+  const [render, setRender] = useState(null); // { report, urls } or { running, stage }
+  const renderJob = useRef(null);
 
   const refresh = () => {
     const session = engine.current.stemSession();
@@ -84,7 +111,82 @@ export function StemsDialog({ engine, listening, onListen, onStemsPlay }) {
 
   function close() {
     engine.current.stemSession()?.pause();
+    renderJob.current?.cancel();
     refresh();
+  }
+
+  // A stem's own chain (LAS-35): applied live, rendered offline.
+  async function setStemChain(stem, params, label) {
+    setError('');
+    try {
+      await engine.current.stemSession().setChain(stem.id, params, label);
+      setMessage(`${stem.name}: chain ${label}.`);
+    } catch (failure) {
+      setError(`${stem.name}: ${failure.message}`);
+    }
+    refresh();
+  }
+
+  async function loadStemChain(stem, event) {
+    const file = event.target.files[0];
+    event.target.value = '';
+    if (!file) return;
+    try {
+      await setStemChain(stem, await readChainFile(file), `from ${file.name}`);
+    } catch (failure) {
+      setError(`${file.name}: ${failure.message} Nothing was changed.`);
+    }
+  }
+
+  function saveSession() {
+    download(new Blob([serializeStemSession(engine.current.stemSession().stems(), chain.params)], { type: 'application/json' }), 'mps-stem-session.json');
+    setMessage('Saved the session settings (no audio) as mps-stem-session.json.');
+  }
+
+  // Recall: settings apply only to the loaded stems with the same checksum; the master chain is one
+  // undo step in the mixer.
+  async function loadSession(event) {
+    const file = event.target.files[0];
+    event.target.value = '';
+    if (!file) return;
+    setError('');
+    let saved;
+    try {
+      saved = parseStemSession(await file.text());
+    } catch (failure) {
+      setError(`${file.name}: ${failure.message} Nothing was changed.`);
+      return;
+    }
+    const session = engine.current.stemSession();
+    const { matched, missing } = matchStems(saved.stems, session.stems());
+    for (const { loadedId, saved: entry } of matched) {
+      session.setOffset(loadedId, entry.offset);
+      session.setGain(loadedId, entry.gainDb);
+      session.setPan(loadedId, entry.pan);
+      session.setMute(loadedId, entry.mute);
+      session.setSolo(loadedId, entry.solo);
+      await session.setChain(loadedId, entry.chain, entry.chainLabel);
+    }
+    chain.replace(saved.master);
+    setMessage(`Recalled ${matched.length} of ${saved.stems.length} stems and the master chain.${missing.length ? ` Not loaded (no stem with the same checksum): ${missing.join(', ')}.` : ''}`);
+    refresh();
+  }
+
+  function renderMaster() {
+    renderJob.current?.cancel();
+    setError('');
+    setRender({ running: true, stage: 'Starting…' });
+    const list = engine.current.stemSession().stems().map(s => ({ file: s.file, name: s.name, offsetSeconds: s.offset, gainDb: s.gainDb, pan: s.pan, mute: s.mute, solo: s.solo, params: s.params }));
+    const job = startRender(null, { mode: 'stems', stems: list, params: chain.params, bitDepth }, ({ stage }) => setRender(r => (r?.running ? { running: true, stage } : r)));
+    renderJob.current = job;
+    job.result.then(({ report, bytes }) => {
+      if (renderJob.current !== job) return;
+      setRender({ report, blobs: bytes.map(b => new Blob([b], { type: 'audio/wav' })) });
+    }, failure => {
+      if (renderJob.current !== job) return;
+      setRender(null);
+      if (failure.name !== 'AbortError') setError(failure.message);
+    });
   }
 
   const notes = [];
@@ -105,6 +207,7 @@ export function StemsDialog({ engine, listening, onListen, onStemsPlay }) {
         </div>
         <p className="fine-print">Original stems play together through the master chain, each on its own strip. Stems start together at their first sample; an offset delays one by whole samples. Files stay on this device and are never changed.</p>
         <p className="account-status" role="status">{busy || (stems.length ? `${stems.length} stem${stems.length > 1 ? 's' : ''} · ${clock(state.duration)}` : 'No stems yet.')}</p>
+        {message && <p className="fine-print" aria-live="polite">{message}</p>}
         {error && <p className="account-error" role="alert">{error}</p>}
         <label className="file-picker small">Add stem WAVs<input type="file" accept=".wav,audio/wav" multiple aria-label="Add stem WAVs" onChange={add} /></label>
         {notes.length > 0 && <ul className="comparison-conditions" aria-label="Alignment notes">{notes.map(note => <li key={note}>{note}</li>)}</ul>}
@@ -137,10 +240,52 @@ export function StemsDialog({ engine, listening, onListen, onStemsPlay }) {
                       <button type="button" onClick={() => act('remove', stem.id)} aria-label={`Remove ${stem.name}`}>Remove</button>
                     </span>
                     <Meter label={`${stem.name} level`} level={level} />
+                    <span className="stem-chain">
+                      <span className="fine-print">Chain: {stem.chainLabel}</span>
+                      <button type="button" onClick={() => setStemChain(stem, chain.params, 'copy of master settings')} aria-label={`Use master settings on ${stem.name}`}>Use master settings</button>
+                      <label className="file-picker small">Load settings…<input type="file" accept=".json,application/json" aria-label={`Load settings for ${stem.name}`} onChange={e => loadStemChain(stem, e)} /></label>
+                      <button type="button" onClick={() => setStemChain(stem, bypassChain(), 'bypass')} aria-label={`Bypass the chain of ${stem.name}`}>Bypass</button>
+                    </span>
                   </li>
                 );
               })}
             </ul>
+            <section className="stems-output" aria-labelledby="stems-output-title">
+              <h3 id="stems-output-title">Session and render</h3>
+              <div className="proposal-buttons">
+                <button type="button" onClick={saveSession}>Save session file</button>
+                <label className="file-picker small">Load session file…<input type="file" accept=".json,application/json" aria-label="Load stem session file" onChange={loadSession} /></label>
+              </div>
+              <p className="fine-print">A session file holds the strip settings, each stem's chain and the master chain, matched to stems by checksum. No audio is stored in it.</p>
+              <div className="proposal-buttons">
+                <label>Bit depth
+                  <select value={bitDepth} onChange={e => setBitDepth(Number(e.target.value))}><option value={24}>24-bit PCM</option><option value={16}>16-bit PCM (TPDF dither)</option></select>
+                </label>
+                <button type="button" className="primary" onClick={renderMaster} disabled={render?.running}>Render stem master</button>
+                {render?.running && <button type="button" onClick={() => { renderJob.current?.cancel(); setRender(null); }}>Cancel render</button>}
+              </div>
+              <p className="fine-print" aria-live="polite">{render?.running ? render.stage : render?.report ? `Rendered ${render.report.files.length} files${render.report.silent.length ? `; muted or not soloed, so not rendered: ${render.report.silent.join(', ')}` : ''}.` : 'Renders from the files themselves at their own sample rate: every audible stem through its chain, gain, pan and offset, summed through the master chain. Samples beyond full scale are clipped and counted, never normalised.'}</p>
+              {render?.report && (
+                <div className="table-scroll" role="region" aria-label="Rendered files" tabIndex={0}>
+                <table className="analysis-table stems-render">
+                  <caption>Rendered files (latency compensated: {render.report.latencyCompensatedSamples} samples per chain)</caption>
+                  <thead><tr><th scope="col">File</th><th scope="col">Length</th><th scope="col">Format</th><th scope="col">Peak / true peak</th><th scope="col">Clipped</th><th scope="col"><span className="visually-hidden">Download</span></th></tr></thead>
+                  <tbody>
+                    {render.report.files.map((f, i) => (
+                      <tr key={f.name}>
+                        <th scope="row">{f.name}</th>
+                        <td>{f.duration.toFixed(3)} s · {f.frames.toLocaleString('en-US')} samples</td>
+                        <td>{f.sampleRate.toLocaleString('en-US')} Hz · {f.channels} ch · {f.bitDepth}-bit</td>
+                        <td>{db(f.samplePeakDbfs)} dBFS / {db(f.truePeakDbtp)} dBTP</td>
+                        <td>{f.clippedSamples}</td>
+                        <td><button type="button" onClick={() => download(render.blobs[i], f.name)} aria-label={`Save ${f.name}`}>Save</button></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                </div>
+              )}
+            </section>
           </>
         )}
       </dialog>
