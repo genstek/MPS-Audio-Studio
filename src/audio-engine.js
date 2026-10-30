@@ -227,9 +227,12 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage } 
       output.setListening(audible, gains);
       return true;
     },
-    // Which one the comparison monitor plays: 'processed' | 'original' | 'reference'.
-    compareListen(audible) {
-      if (comparison) output.setListening(audible, comparison.gains);
+    // Which one the comparison monitor plays: 'processed' | 'original' | 'reference'; optionally
+    // new matching gains (after the processed version was measured again, LAS-32).
+    compareListen(audible, gains) {
+      if (!comparison) return;
+      if (gains) comparison.gains = gains;
+      output.setListening(audible, comparison.gains);
     },
     stopComparison: endComparison,
     comparing: () => Boolean(comparison),

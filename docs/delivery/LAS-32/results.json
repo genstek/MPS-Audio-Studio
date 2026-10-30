@@ -1,0 +1,69 @@
+{
+  "issue": "LAS-32",
+  "applicationCommit": "20323dbb5ac38d0e373f0dc0b6be9ede20fdc038",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (ESLint, Vitest 248/248, Vite build, Playwright 73/73) on the staged tree committed unchanged",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-20323dbb5ac38d0e373f0dc0b6be9ede20fdc038.log", "evidence/html-report-20323dbb5ac38d0e373f0dc0b6be9ede20fdc038.zip"]
+    },
+    {
+      "name": "First npm run check attempt: ESLint failed on the developer's own debug scripts in the git-ignored .data folder (removed; not repository code)",
+      "status": "FAIL",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 1,
+      "evidence": ["evidence/npm-run-check-attempt1-lint-failed.log"]
+    },
+    {
+      "name": "Proposal and engine unit tests (guards, adversarial cases, reproducibility, strength)",
+      "status": "PASS",
+      "command": "npx vitest run tests/unit/proposal.test.js tests/unit/audio-engine.test.js --reporter=verbose",
+      "exitCode": 0,
+      "evidence": ["evidence/vitest-proposal-verbose.log"]
+    },
+    {
+      "name": "Proposal browser workflow (Node-identical cards, preview at 50 %, check, reject, apply, undo; 360x780 and 1440x900) and LAS-31 workflows",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npx playwright test tests/e2e/proposal.spec.js tests/e2e/compare.spec.js --reporter=list",
+      "exitCode": 0,
+      "evidence": ["evidence/playwright-proposal.txt", "evidence/screenshots/proposal-360x780.png", "evidence/screenshots/proposal-1440x900.png"]
+    },
+    {
+      "name": "Representative synthetic cases at 100 % and 50 % (numerical evaluation)",
+      "status": "PASS",
+      "command": "node <scratch>/las-scripts/las32-examples.mjs",
+      "exitCode": 0,
+      "evidence": ["evidence/proposal-examples.md", "evidence/proposal-examples-script.mjs.txt"]
+    },
+    {
+      "name": "Compressor crest-factor survey (36 settings)",
+      "status": "PASS",
+      "command": "node <scratch>/las-scripts/las32-compressor-crest-survey.mjs",
+      "exitCode": 0,
+      "evidence": ["evidence/compressor-crest-survey.md", "evidence/compressor-crest-survey-script.mjs.txt"]
+    },
+    {
+      "name": "Artifact, bundle and log scan (131 pieces, 0 findings)",
+      "status": "PASS",
+      "command": "npm run scan:artifacts",
+      "exitCode": 0,
+      "evidence": ["evidence/scan-artifacts-20323dbb5ac38d0e373f0dc0b6be9ede20fdc038.json"]
+    },
+    {
+      "name": "Matched-loudness listening evaluation of representative examples (AC-04) and Mac/Chrome run",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["manual-qa.md"]
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],
+  "blockers": ["Listening evaluation needs Gennady (NOT_RUN)", "Lia v6 as a reference needs the authorized file and its SHA-256 (BLOCKED)"],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "feat/LAS-32-reference-proposal"
+}

@@ -257,3 +257,20 @@ a.button-link:hover { background: #44525e; }
 .comparison-explanation { display: block; font-weight: normal; }
 .comparison-small td { color: #9aa7b1; }
 .comparison-conditions, .comparison-interpretations { margin: 0; padding-left: 1.2rem; font-size: 13px; display: grid; gap: 4px; }
+
+/* LAS-32 proposal: provisional styling until the LAS-44/45 design gates. */
+.proposal { display: grid; gap: 10px; border-top: 1px solid #2c353d; padding-top: 12px; }
+.proposal > button { justify-self: start; }
+.proposal-modules { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); }
+.proposal-module { border: 1px solid #2c353d; border-radius: 8px; padding: 10px 12px; font-size: 13px; }
+.proposal-module h4 { margin: 0 0 6px; font-size: 14px; display: flex; gap: 8px; align-items: baseline; }
+.proposal-status { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #a7b2bc; }
+.proposal-status.is-proposed { color: #f0d79a; }
+.proposal-module dl { margin: 0; display: grid; gap: 6px; }
+.proposal-module dt { font-size: 11px; color: #a7b2bc; text-transform: uppercase; letter-spacing: 1px; }
+.proposal-module dd { margin: 0; }
+.proposal-controls { display: grid; gap: 10px; }
+.proposal-strength { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font-size: 13px; }
+.proposal-strength input { flex: 1 1 180px; max-width: 320px; }
+.proposal-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.proposal-buttons button[aria-pressed='true'] { outline: 2px solid #f0d79a; }

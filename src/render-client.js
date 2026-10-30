@@ -1,8 +1,9 @@
-// Starts an offline render in a Web Worker (LAS-28): mode 'export', 'match' or 'compare' (LAS-31,
-// with segment { start, end } in seconds). Returns
+// Starts an offline render in a Web Worker (LAS-28): mode 'export', 'match', 'compare' (LAS-31,
+// with segment { start, end } in seconds) or 'propose' (LAS-32, with segment and the reference
+// section's analysis report). Returns
 // { result, cancel }: result resolves with { report, bytes } or rejects with a showable Error;
 // cancel() stops the work at once (AbortError).
-export function startRender(file, { mode, params, bitDepth, segment }, onProgress = () => {}) {
+export function startRender(file, { mode, params, bitDepth, segment, reference }, onProgress = () => {}) {
   const worker = new Worker(new URL('./dsp/render.worker.js', import.meta.url), { type: 'module' });
   let settle;
   const result = new Promise((resolve, reject) => { settle = { resolve, reject }; });
@@ -18,7 +19,7 @@ export function startRender(file, { mode, params, bitDepth, segment }, onProgres
     finish();
     settle.reject(new Error('Rendering failed unexpectedly. Try again.'));
   };
-  worker.postMessage({ mode, file, params, bitDepth, segment });
+  worker.postMessage({ mode, file, params, bitDepth, segment, reference });
   return {
     result,
     cancel() {

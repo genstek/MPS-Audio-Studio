@@ -4,6 +4,7 @@ import { startAnalysis } from './analysis-client.js';
 import { startRender } from './render-client.js';
 import { readWavHeader } from './dsp/wav-decode.js';
 import { compareToReference, matchLevels } from './reference-comparison.js';
+import { ProposalPanel } from './ProposalPanel.jsx';
 
 const UNAVAILABLE = 'Accounts are unavailable right now; choose a reference WAV on this device instead.';
 const number = (value, digits) => {
@@ -63,8 +64,10 @@ function Results({ result }) {
 // Mix-versus-reference comparison (LAS-31). Measures the chosen mix section (original and as
 // processed with the current settings) and a reference section, shows measured differences with
 // units and the limits of the comparison, and loops both at matched loudness through the output
-// stage. Choosing or comparing a reference never changes the processing settings.
-export function CompareDialog({ engine, file, track, params, onMonitorStart }) {
+// stage. Choosing or comparing a reference never changes the processing settings; only applying a
+// proposal does (LAS-32), as one undo step.
+export function CompareDialog({ engine, file, track, chain, onMonitorStart }) {
+  const { params } = chain;
   const dialog = useRef(null);
   const jobs = useRef([]);
   const latestRun = useRef(0); // a comparison that was superseded or closed never shows its result
@@ -102,6 +105,7 @@ export function CompareDialog({ engine, file, track, params, onMonitorStart }) {
   function close() {
     latestRun.current++;
     cancelJobs();
+    chain.setPreview(null);
     engine.current.stopComparison();
     setMonitor(m => ({ ...m, on: false }));
     setBusy('');
@@ -149,6 +153,7 @@ export function CompareDialog({ engine, file, track, params, onMonitorStart }) {
     event.preventDefault();
     const run = ++latestRun.current;
     cancelJobs();
+    chain.setPreview(null);
     engine.current.stopComparison();
     setMonitor(m => ({ ...m, on: false }));
     setResult(null);
@@ -169,6 +174,7 @@ export function CompareDialog({ engine, file, track, params, onMonitorStart }) {
       jobs.current = [];
       setResult({
         ...comparison,
+        id: run,
         file,
         params: usedParams,
         reference,
@@ -198,6 +204,12 @@ export function CompareDialog({ engine, file, track, params, onMonitorStart }) {
     } catch (failure) {
       setError(failure.message);
     }
+  }
+
+  // New matching gains after the previewed proposal was measured (LAS-32).
+  function updateGains(gains) {
+    setResult(r => ({ ...r, gains }));
+    engine.current.compareListen(monitor.audible, gains);
   }
 
   function hear(audible) {
@@ -264,6 +276,7 @@ export function CompareDialog({ engine, file, track, params, onMonitorStart }) {
                 : `Each section loops on its own; the louder versions are turned down to the quietest (${gainText}).`}</p>
             </section>
             <Results result={result} />
+            <ProposalPanel key={result.id} file={file} result={result} chain={chain} jobs={jobs} onCheckedGains={updateGains} />
           </>
         )}
       </dialog>
