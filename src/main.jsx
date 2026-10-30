@@ -8,6 +8,7 @@ import { ExportDialog } from './ExportDialog.jsx';
 import { ListenSwitch, LoudnessMatch } from './ListeningControls.jsx';
 import { useChainSettings } from './useChainSettings.js';
 import { ReferencesDialog } from './ReferencesDialog.jsx';
+import { CompareDialog } from './CompareDialog.jsx';
 import './styles.css';
 
 // Seconds as mm:ss.t, rounded to a tenth of a second.
@@ -105,6 +106,12 @@ function App() {
     setStatus('Stopped');
   }
 
+  // The reference comparison monitor (LAS-31) replaces normal playback while it runs.
+  function monitorStarted() {
+    setPosition(0);
+    setStatus('Stopped');
+  }
+
   // Takes the track out of the session; the file on the device is never touched (LAS-12).
   function removeTrack() {
     engine.current.unload();
@@ -139,7 +146,7 @@ function App() {
 
       <div className="workspace">
         <section className="tracks panel" aria-labelledby="tracks-title">
-          <div className="panel-heading"><h2 id="tracks-title">Tracks</h2><div className="heading-tools">{track && <><AnalysisDialog file={currentFile} /><button className="remove-track" onClick={removeTrack}>Remove track</button></>}<span className="badge">{track ? '01 TRACK' : '00 TRACKS'}</span></div></div>
+          <div className="panel-heading"><h2 id="tracks-title">Tracks</h2><div className="heading-tools">{track && <><AnalysisDialog file={currentFile} /><CompareDialog engine={engine} file={currentFile} track={track} params={chain.params} onMonitorStart={monitorStarted} /><button className="remove-track" onClick={removeTrack}>Remove track</button></>}<span className="badge">{track ? '01 TRACK' : '00 TRACKS'}</span></div></div>
           <div className="track-space"><div className="track-content">
             <span className="audio-icon" aria-hidden="true"><span>♫</span></span>
             <h3 title={track ? track.name : undefined}>{track ? track.name : 'Your session starts here'}</h3>

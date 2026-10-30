@@ -45,3 +45,11 @@ export const analyserPeakHz = page => page.evaluate(() => {
   for (let k = 1; k < data.length; k++) if (data[k] > data[best]) best = k;
   return Math.round((best * analyser.context.sampleRate) / analyser.fftSize);
 });
+
+// LAS-31: all three output paths (the reference path is the stage's third gain) and how many
+// settings messages the chain has received so far.
+export const comparisonGains = page => page.evaluate(() => {
+  const [processed, original, reference] = window.__chainProbe.gains;
+  return { processed: Number(processed.gain.value.toFixed(3)), original: Number(original.gain.value.toFixed(3)), reference: Number(reference.gain.value.toFixed(3)) };
+});
+export const paramsMessageCount = page => page.evaluate(() => window.__chainProbe.params.length);
