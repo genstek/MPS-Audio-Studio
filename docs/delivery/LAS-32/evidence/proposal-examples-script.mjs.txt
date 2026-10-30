@@ -1,0 +1,45 @@
+// LAS-32 evidence: proposals for representative synthetic cases, with the numerical check of each.
+// Prints Markdown. All audio is generated here (LAS-29 fixtures); no recorded music.
+import { analyze } from '<worktree>/src/dsp/analysis.js';
+import { renderChain } from '<worktree>/src/dsp/chain.js';
+import { defaultChain, validateChain } from '<worktree>/src/dsp/chain-params.js';
+import { renderSegment } from '<worktree>/src/dsp/segment-render.js';
+import { atStrength, evaluate, proposeChain } from '<worktree>/src/proposal.js';
+import { FIXTURES } from '<worktree>/tests/fixtures/dsp-fixtures.js';
+import { concat } from '<worktree>/tests/fixtures/signals.js';
+import { PRESETS } from '<worktree>/tests/harness/presets.js';
+
+const RATE = 44100;
+const f32 = s => Float32Array.from(s);
+const loop = FIXTURES.programme(RATE);
+const P = loop.map(c => f32(concat(c, c, c))); // 12 s
+const gain = (ch, db) => ch.map(c => c.map(v => v * 10 ** (db / 20)));
+const tilt = (ch, passes) => ch.map(c => { let out = c; for (let p = 0; p < passes; p++) { let s = 0; out = out.map(v => { s += 0.17 * (v - s); return v - 0.8 * s; }); } return out; });
+const render = (params, ch) => renderChain(validateChain(params), ch, RATE).channels;
+const wide = loop.map(c => { const q = c.map(v => v * 0.25); return f32(concat(q, q, c, c)); });
+const cases = [
+  ['Mix vs the same music through the "master" preset', P, render(PRESETS.master, P), { start: 4, end: 10 }],
+  ['Mix vs a much brighter version (tonal, adversarial)', P, tilt(P, 3), { start: 4, end: 10 }],
+  ['Quiet wide-range mix vs a slowly compressed version', wide, render({ ...defaultChain(), compressor: { enabled: true, threshold: -30, ratio: 4, attack: 30, release: 300, knee: 6, makeup: 6, detector: 'rms' } }, wide), { start: 3, end: 15 }],
+  ['Mix vs a hard-limited version (+14 dB into the limiter)', P, render({ ...defaultChain(), limiter: { enabled: true, ceiling: -1, inputGain: 14, release: 50 } }, P), { start: 4, end: 10 }],
+  ['Mastered mix vs a quieter, unprocessed reference', render(PRESETS.master, P), gain(P, -6), { start: 4, end: 10 }],
+  ['Mix 24 dB too quiet vs the mastered version', gain(P, -24), render(PRESETS.master, P), { start: 4, end: 10 }],
+  ['Mix with an inverted right channel vs the original', [P[0], P[1].map(v => -v)], P, { start: 4, end: 10 }],
+];
+const fmt = v => (v === null || v === undefined ? '—' : `${v > 0 ? '+' : ''}${v.toFixed(1)}`);
+const lines = ['# LAS-32 proposals for representative cases', '', `Node ${process.version}, ${RATE} Hz. Synthetic LAS-29 programme only. "before → after" is the distance to the reference, rendered and measured.`, ''];
+for (const [name, mix, reference, section] of cases) {
+  const t0 = Date.now();
+  const renderSection = params => { const r = renderSegment(params, mix, RATE, section); return { report: analyze(r.channels, RATE), meters: r.meters }; };
+  const original = analyze(mix, RATE, section);
+  const ref = analyze(reference, RATE, section);
+  const proposal = proposeChain({ reference: ref, original, sampleRate: RATE, renderSection });
+  const seconds = (Date.now() - t0) / 1000;
+  const half = evaluate(ref, original, renderSection(atStrength(proposal.params, 0.5)));
+  lines.push(`## ${name}`, '', `Section ${section.start}–${section.end} s · computed in ${seconds.toFixed(1)} s`, '');
+  for (const m of proposal.modules) lines.push(`- **${m.module} — ${m.status}.** ${m.reasons.join(' ')}${m.values.length ? ` Values: ${m.values.join('; ')}.` : ''}${m.guardNotes.length ? ` Guards: ${m.guardNotes.join(' ')}` : ''}`);
+  lines.push('', '| Distance to the reference | Mix | Proposal 100 % | Proposal 50 % |', '| --- | --- | --- | --- |');
+  proposal.evaluation.rows.forEach((row, i) => lines.push(`| ${row.name} (${row.unit}) | ${fmt(row.before)} | ${fmt(row.after)} | ${fmt(half.rows[i].after)} |`));
+  lines.push(`| True peak of the result (dBTP) | — | ${proposal.evaluation.truePeakDbtp.toFixed(2)} | ${half.truePeakDbtp.toFixed(2)} |`, `| Largest compressor / limiter gain reduction (dB) | — | ${proposal.evaluation.compressorReductionDb.toFixed(1)} / ${proposal.evaluation.limiterReductionDb.toFixed(1)} | ${half.compressorReductionDb.toFixed(1)} / ${half.limiterReductionDb.toFixed(1)} |`, '');
+}
+console.log(lines.join('\n'));

@@ -1,0 +1,43 @@
+
+ RUN  v5.0.5 <worktree>
+
+ ✓ tests/unit/audio-engine.test.js > pause preserves the offset, stop resets it, and dispose closes the context 8ms
+ ✓ tests/unit/audio-engine.test.js > decode failure preserves the previously loaded track 3ms
+ ✓ tests/unit/audio-engine.test.js > natural end disconnects the source and permits playback from the start 1ms
+ ✓ tests/unit/audio-engine.test.js > unsupported names, oversized files and invalid headers are rejected 5ms
+ ✓ tests/unit/audio-engine.test.js > a newer import wins over a slower earlier one 56ms
+ ✓ tests/unit/audio-engine.test.js > disposing during an import discards it without creating an audio context 2ms
+ ✓ tests/unit/audio-engine.test.js > replacing a playing track stops and disconnects its source before the next play 2ms
+ ✓ tests/unit/audio-engine.test.js > 100 MiB is the largest accepted file size 1ms
+ ✓ tests/unit/audio-engine.test.js > files without a RIFF/WAVE header are rejected before decoding; the extension is case-insensitive 2ms
+ ✓ tests/unit/audio-engine.test.js > a failed first import leaves nothing to play 1ms
+ ✓ tests/unit/audio-engine.test.js > position follows the audio clock, freezes on pause and resets on stop and natural end 1ms
+ ✓ tests/unit/audio-engine.test.js > a second Play while the first is starting does not add a source 1ms
+ ✓ tests/unit/audio-engine.test.js > stop, pause or a new track while the context resumes cancels the start 5ms
+ ✓ tests/unit/audio-engine.test.js > a failed resume can be retried 1ms
+ ✓ tests/unit/audio-engine.test.js > unload stops playback, forgets the track and keeps the engine for the next import 1ms
+ ✓ tests/unit/audio-engine.test.js > unload cancels an import in progress and a start waiting for the context 53ms
+ ✓ tests/unit/audio-engine.test.js > a valid header is accepted whatever bytes its RIFF size field contains 1ms
+ ✓ tests/unit/audio-engine.test.js > playback feeds both output paths; one stage is reused until the channel count changes 1ms
+ ✓ tests/unit/audio-engine.test.js > chain settings, listening choice and loudness match reach the stage, also one built later 2ms
+ ✓ tests/unit/audio-engine.test.js > meters from the stage reach every listener until it unsubscribes 1ms
+ ✓ tests/unit/audio-engine.test.js > a stage built for a superseded import is disposed; a stage failure is reported clearly 54ms
+ ✓ tests/unit/audio-engine.test.js > files with more than two channels get a stereo output stage (played as a downmix) 2ms
+ ✓ tests/unit/audio-engine.test.js > the comparison monitor loops both sections, replaces playback and never touches the chain settings 3ms
+ ✓ tests/unit/audio-engine.test.js > play, stop, a new import and removal each end the comparison monitor 4ms
+ ✓ tests/unit/audio-engine.test.js > a comparison cancelled while the reference decodes never starts, and a bad reference is refused 7ms
+ ✓ tests/unit/audio-engine.test.js > LAS-32: the monitor takes new matching gains after the previewed proposal was measured 1ms
+ ✓ tests/unit/proposal.test.js > reference-guided proposal > towards a mastered reference: every module explains itself and the rendered result is closer 9822ms
+ ✓ tests/unit/proposal.test.js > reference-guided proposal > extreme tonal differences are bounded by the EQ guards and say so 5068ms
+ ✓ tests/unit/proposal.test.js > reference-guided proposal > a mix with a wide loudness range against a compressed reference: slow compression within the guard brings the range closer 34936ms
+ ✓ tests/unit/proposal.test.js > reference-guided proposal > a mix already denser and louder than the reference gets no compression and no gain 6475ms
+ ✓ tests/unit/proposal.test.js > reference-guided proposal > a very quiet mix: input gain within its guard and the limiter guard; the crest difference is explained 7857ms
+ ✓ tests/unit/proposal.test.js > reference-guided proposal > width is measured but never proposed; a negative correlation warns about mono 4482ms
+ ✓ tests/unit/proposal.test.js > reference-guided proposal > the same inputs give the same proposal 6707ms
+ ✓ tests/unit/proposal.test.js > reference-guided proposal > strength scales every move towards neutral and stays valid 4ms
+
+ Test Files  2 passed (2)
+      Tests  34 passed (34)
+   Start at  04:24:41
+   Duration  75.74s (tests 100%)
+
