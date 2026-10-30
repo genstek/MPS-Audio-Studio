@@ -29,8 +29,8 @@ Developer outcome uses NOT_STARTED / IN_PROGRESS / BLOCKED / READY_FOR_QA. Genna
 | LAS-31 | 05 | IMPLEMENT | `feat/LAS-31-reference-comparison` → [#34](https://github.com/genstek/MPS-Audio-Studio/pull/34) | 5ff67e9 | [docs/delivery/LAS-31](LAS-31/) | READY_FOR_QA | NOT_RUN |
 | LAS-32 | 06 | IMPLEMENT | `feat/LAS-32-reference-proposal` → [#35](https://github.com/genstek/MPS-Audio-Studio/pull/35) | 20323db | [docs/delivery/LAS-32](LAS-32/) | READY_FOR_QA (numerical + workflow; listening evaluation NOT_RUN) | NOT_RUN |
 | LAS-33 | 06 | IMPLEMENT | `feat/LAS-33-presets-preferences` → [#36](https://github.com/genstek/MPS-Audio-Studio/pull/36) | d490a50 | [docs/delivery/LAS-33](LAS-33/) | READY_FOR_QA | NOT_RUN |
-| LAS-34 | 07 | IMPLEMENT | — → — | — | — | NOT_STARTED | NOT_RUN |
-| LAS-35 | 07 | IMPLEMENT | — → — | — | — | NOT_STARTED | NOT_RUN |
+| LAS-34 | 07 | IMPLEMENT | `feat/LAS-34-stems` → [#37](https://github.com/genstek/MPS-Audio-Studio/pull/37) | 98bf1c6 | [docs/delivery/LAS-34](LAS-34/) | READY_FOR_QA | NOT_RUN |
+| LAS-35 | 07 | IMPLEMENT | `feat/LAS-35-stem-processing` → [#38](https://github.com/genstek/MPS-Audio-Studio/pull/38) | 7fc3a59 | [docs/delivery/LAS-35](LAS-35/) | READY_FOR_QA | NOT_RUN |
 | LAS-36 | 08 | RESEARCH | — → — | — | — | NOT_STARTED | NOT_RUN |
 | LAS-37 | 08 | RESEARCH | — → — | — | — | NOT_STARTED | NOT_RUN |
 | LAS-38 | 09 | GATED_PROTOTYPE | — → — | — | — | NOT_STARTED | NOT_RUN |
@@ -39,13 +39,13 @@ Developer outcome uses NOT_STARTED / IN_PROGRESS / BLOCKED / READY_FOR_QA. Genna
 | LAS-43 | 02 | DESIGN_REVIEW_REQUIRED | `design/LAS-43-wireframes` → [#27](https://github.com/genstek/MPS-Audio-Studio/pull/27) | — (design) | [docs/delivery/LAS-43](LAS-43/) | BLOCKED — walkthrough pending | PENDING walkthrough |
 | LAS-44 | 03 | DESIGN_REVIEW_REQUIRED | — (status documents only) → — | — | [docs/delivery/LAS-44](LAS-44/) | BLOCKED (LAS-42 direction, LAS-43 walkthrough pending) | PENDING |
 | LAS-45 | 04 | GATED_IMPLEMENTATION | — (status documents only) → — | — | [docs/delivery/LAS-45](LAS-45/) | BLOCKED (needs approved LAS-44 design) | PENDING |
-| LAS-46 | 07 | GATED_IMPLEMENTATION | — → — | — | — | NOT_STARTED | NOT_RUN |
-| LAS-47 | 07 | QA_REVIEW_REQUIRED | — → — | — | — | NOT_STARTED | NOT_RUN |
+| LAS-46 | 07 | GATED_IMPLEMENTATION | — (status documents) → — | — | [docs/delivery/LAS-46](LAS-46/) | BLOCKED (approved design: LAS-42 → 43 → 44 → 45) | PENDING |
+| LAS-47 | 07 | QA_REVIEW_REQUIRED | — (status documents) → — | — | [docs/delivery/LAS-47](LAS-47/) | BLOCKED (needs LAS-46; Gennady's review not prefilled) | PENDING |
 | LAS-48 | 00 | VERIFY_AND_CLOSE_COVERAGE_GAPS | `test/LAS-48-coverage-gaps` → [#17](https://github.com/genstek/MPS-Audio-Studio/pull/17) | b06590b | [docs/delivery/LAS-48](LAS-48/) | READY_FOR_QA (AC-03/06, cross-browser BLOCKED) | NOT_RUN |
 | LAS-49 | 00 (unscheduled) | TEST_PLAN_RECONCILIATION | `docs/LAS-49-test-plan-reconciliation` → [#18](https://github.com/genstek/MPS-Audio-Studio/pull/18) | b06590b | [docs/delivery/LAS-49](LAS-49/) | READY_FOR_QA (24 cases reconciled) | NOT_RUN (24) |
 | LAS-57 | 00 | AUTOMATION_AND_QA_HANDOFF | `test/LAS-57-tc002-valid-wav` → [#12](https://github.com/genstek/MPS-Audio-Studio/pull/12) | f90adfc | [docs/delivery/LAS-57](LAS-57/) | READY_FOR_QA | NOT_RUN |
 
-Sprint boundaries: [00 foundation](sprints/00-foundation/README.md) · [01](sprints/01/README.md) · [02](sprints/02/README.md) · [03](sprints/03/README.md) · [04](sprints/04/README.md) · [05](sprints/05/README.md) · [06](sprints/06/README.md).
+Sprint boundaries: [00 foundation](sprints/00-foundation/README.md) · [01](sprints/01/README.md) · [02](sprints/02/README.md) · [03](sprints/03/README.md) · [04](sprints/04/README.md) · [05](sprints/05/README.md) · [06](sprints/06/README.md) · [07](sprints/07/README.md).
 
 ## Next ready task and queue (checkpoint)
 1. **LAS-30** reference import and versioned sound profiles (sprint 05) — next; then LAS-31 matched-loudness reference comparison, LAS-32/33 (sprint 06), LAS-34/35 stems (sprint 07).

@@ -1,0 +1,19 @@
+{
+  "issue": "LAS-46",
+  "applicationCommit": null,
+  "deliveryStatus": "BLOCKED",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "Integration of the working workflows into the approved navigation and components",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": []
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md"],
+  "blockers": ["LAS-45 approved shell and components (blocked on LAS-44, which waits for the LAS-42 direction and the LAS-43 walkthrough)"],
+  "jiraSync": "SYNC_PENDING",
+  "branch": "delivery/LAS-40-all-sprints"
+}
