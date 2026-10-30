@@ -1,6 +1,6 @@
 # LAS-40 delivery index
 
-Integration branch: `delivery/LAS-40-all-sprints` (from `origin/main` 364d863; never merged into `main`). Handoff: `docs/claude-code/2026-10-29/` on `docs/LAS-40-claude-code-handoff-2026-10-29` (commit 078c0a0). Developer environment: [`ENVIRONMENT.md`](ENVIRONMENT.md). Baseline: [`baseline/`](baseline/).
+Integration branch: `delivery/LAS-40-all-sprints` (from `origin/main` 364d863; never merged into `main`). Aggregate review PR into `main`: [#42](https://github.com/genstek/MPS-Audio-Studio/pull/42) (draft, not merged). Handoff: `docs/claude-code/2026-10-29/` on `docs/LAS-40-claude-code-handoff-2026-10-29` (commit 078c0a0). Developer environment: [`ENVIRONMENT.md`](ENVIRONMENT.md). Baseline: [`baseline/`](baseline/).
 
 Developer outcome uses NOT_STARTED / IN_PROGRESS / BLOCKED / READY_FOR_QA. Gennady's manual status stays **NOT_RUN** until he tests. Every Jira update is **SYNC_PENDING** (no authorized Jira connection in this session); the text to post is in each issue's `jira-update.md`.
 
