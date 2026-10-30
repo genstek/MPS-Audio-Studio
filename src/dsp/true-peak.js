@@ -20,18 +20,23 @@ function besselI0(x) {
   return sum;
 }
 
-// BRANCHES[p - 1][k] weights sample n + HALF - k for the point n + p/4.
-export const BRANCHES = [1, 2, 3].map(p => {
-  const branch = Array.from({ length: TAPS }, (_, k) => {
-    const t = k - HALF + p / OVERSAMPLING;
-    const sinc = Math.sin(Math.PI * t) / (Math.PI * t);
-    const ratio = t / HALF;
-    const window = besselI0(BETA * Math.sqrt(Math.max(0, 1 - ratio * ratio))) / besselI0(BETA);
-    return sinc * window;
+// interpolationBranches(factor)[p - 1][k] weights sample n + HALF - k for the point n + p/factor.
+export function interpolationBranches(factor) {
+  return Array.from({ length: factor - 1 }, (_, i) => {
+    const p = i + 1;
+    const branch = Array.from({ length: TAPS }, (_, k) => {
+      const t = k - HALF + p / factor;
+      const sinc = Math.sin(Math.PI * t) / (Math.PI * t);
+      const ratio = t / HALF;
+      const window = besselI0(BETA * Math.sqrt(Math.max(0, 1 - ratio * ratio))) / besselI0(BETA);
+      return sinc * window;
+    });
+    const sum = branch.reduce((a, b) => a + b, 0); // unity gain at DC
+    return Float64Array.from(branch, tap => tap / sum);
   });
-  const sum = branch.reduce((a, b) => a + b, 0); // unity gain at DC
-  return Float64Array.from(branch, tap => tap / sum);
-});
+}
+
+export const BRANCHES = interpolationBranches(OVERSAMPLING);
 
 const [B1, B2, B3] = BRANCHES;
 

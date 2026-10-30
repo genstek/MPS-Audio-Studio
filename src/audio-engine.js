@@ -1,8 +1,19 @@
-// One engine owns the audio context and the current source, outside React state.
-export function createAudioEngine(onEnded) {
+import { defaultChain } from './dsp/chain-params.js';
+import { createOutputStage } from './output-stage.js';
+
+// One engine owns the audio context, the current source and the output stage (mastering chain
+// and original/processed switch, LAS-28), outside React state. createOutput can be replaced in
+// unit tests.
+export function createAudioEngine(onEnded, { createOutput = createOutputStage } = {}) {
   let context;
   let buffer;
   let source;
+  // The output stage is built for the track's channel count and reused for every play.
+  let output = null;
+  let chainParams = defaultChain();
+  let listening = 'processed';
+  let match = { processedDb: 0, originalDb: 0 };
+  const meterListeners = new Set();
   let offset = 0;
   let startedAt = 0;
   // Every import gets a number. Only the newest one may replace the track, so a slow
@@ -57,10 +68,31 @@ export function createAudioEngine(onEnded) {
         throw new Error('Unable to decode this WAV. Try another WAV file.');
       }
       if (load !== latestLoad) throw superseded();
+      // The chain is mono or stereo; files with more channels play as a stereo downmix.
+      const channels = Math.min(2, decoded.numberOfChannels);
+      let stage = output;
+      if (!stage || stage.channelCount !== channels) {
+        try {
+          stage = await createOutput(context, channels, chainParams);
+        } catch {
+          if (load !== latestLoad) throw superseded();
+          throw new Error('Audio processing could not start. Reload the page and try again.');
+        }
+        if (load !== latestLoad) {
+          stage.dispose();
+          throw superseded();
+        }
+      }
       // Keep the previous track intact until replacement decoding succeeds.
       disconnect();
       buffer = decoded;
       offset = 0;
+      if (stage !== output) {
+        output?.dispose();
+        output = stage;
+        output.onMeters(meters => meterListeners.forEach(listener => listener(meters)));
+        output.setListening(listening, match);
+      }
       return { duration: buffer.duration, channels: buffer.numberOfChannels, sampleRate: buffer.sampleRate };
     },
     // Resolves true when a source started, false when nothing started (no track, already
@@ -79,7 +111,7 @@ export function createAudioEngine(onEnded) {
       pendingStart = null;
       source = context.createBufferSource();
       source.buffer = buffer;
-      source.connect(context.destination);
+      for (const input of output.inputs) source.connect(input);
       source.onended = () => {
         source.disconnect();
         source = null;
@@ -111,7 +143,33 @@ export function createAudioEngine(onEnded) {
     dispose() {
       latestLoad++;
       disconnect();
+      output?.dispose();
+      output = null;
+      meterListeners.clear();
       if (context && context.state !== 'closed') void context.close();
     },
+    // Mastering chain settings (validated schema, LAS-27). Resolves with sample-rate warnings, or
+    // rejects with the reason the settings were refused. Kept for the next output stage.
+    async setChain(params) {
+      chainParams = params;
+      return output ? output.setParams(params) : [];
+    },
+    // A/B: 'processed' or 'original'. The same source keeps playing; only the audible path changes.
+    listen(next) {
+      listening = next;
+      output?.setListening(listening, match);
+    },
+    // Loudness matching gains in dB (each ≤ 0), or null for none.
+    setLoudnessMatch(next) {
+      match = next ?? { processedDb: 0, originalDb: 0 };
+      output?.setListening(listening, match);
+    },
+    onMeters(listener) {
+      meterListeners.add(listener);
+      return () => meterListeners.delete(listener);
+    },
+    analyser: () => output?.analyser ?? null,
+    latency: () => output?.latency ?? 0,
+    sampleRate: () => context?.sampleRate ?? null,
   };
 }

@@ -1,0 +1,8 @@
+passed	2569 ms	LAS-28: an EQ edit reaches the preview chain and the exported WAV; undo and redo restore it	export: 1 kHz gain 6.000 dB, largest difference to offline render 5.960464477539063e-8
+passed	6169 ms	LAS-28: Original/Processed keeps the position and the single source; loudness matching turns the louder one down	A/B: switched at 1.9 s without restarting
+passed	6320 ms	LAS-28: export can be cancelled; 16-bit dithered mono export keeps format and length
+passed	1741 ms	LAS-28: EQ points follow the pointer and the keyboard; a whole drag is one undo step
+passed	927 ms	LAS-28: settings files and snapshots round-trip; an invalid file changes nothing
+passed	1728 ms	LAS-28: editors and dialogs fit small and regression-size screens
+passed	869 ms	LAS-28: the live spectrum measures the audio being played
+{"startTime": "2026-10-29T23:59:14.828Z", "duration": 21849.268, "expected": 7, "skipped": 0, "unexpected": 0, "flaky": 0}

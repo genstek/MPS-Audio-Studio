@@ -18,10 +18,23 @@ function setup() {
     },
   };
   vi.stubGlobal('AudioContext', vi.fn(function () { return context; }));
+  // A stand-in for the output stage (mastering chain and A/B paths, LAS-28).
+  const stages = [];
+  const createOutput = vi.fn(async (_context, channelCount, params) => {
+    const stage = {
+      channelCount, params, latency: 83, inputs: ['chain', 'delay'], analyser: 'analyser', listening: [],
+      setParams: vi.fn(async next => { stage.params = next; return []; }),
+      onMeters: vi.fn(listener => { stage.meters = listener; }),
+      setListening: vi.fn((which, match) => stage.listening.push([which, match])),
+      dispose: vi.fn(),
+    };
+    stages.push(stage);
+    return stage;
+  });
   const onEnded = vi.fn();
-  const engine = createAudioEngine(onEnded);
+  const engine = createAudioEngine(onEnded, { createOutput });
   const file = { name: 'tone.wav', size: 44, arrayBuffer: async () => new TextEncoder().encode('RIFF0000WAVE').buffer };
-  return { engine, context, sources, onEnded, file };
+  return { engine, context, sources, onEnded, file, stages, createOutput };
 }
 
 afterEach(() => vi.unstubAllGlobals());
@@ -279,5 +292,87 @@ test('a valid header is accepted whatever bytes its RIFF size field contains', a
     await expect(engine.load({ ...file, arrayBuffer: async () => bytes }), size.join(' ')).resolves.toMatchObject({ duration: 10 });
   }
   expect(context.decodeAudioData).toHaveBeenCalledTimes(sizeFields.length);
+  engine.dispose();
+});
+
+// LAS-28: the output stage (mastering chain + original path).
+test('playback feeds both output paths; one stage is reused until the channel count changes', async () => {
+  const { engine, context, sources, file, stages, createOutput } = setup();
+  await engine.load(file);
+  await engine.play();
+  expect(sources[0].connect.mock.calls).toEqual([['chain'], ['delay']]);
+  engine.stop();
+  await engine.load(file); // same channel count: same stage
+  expect(createOutput).toHaveBeenCalledOnce();
+  context.decodeAudioData.mockResolvedValueOnce({ duration: 5, numberOfChannels: 2, sampleRate: 44100 });
+  await engine.load(file);
+  expect(createOutput).toHaveBeenCalledTimes(2);
+  expect(stages[0].dispose).toHaveBeenCalledOnce();
+  expect(stages[1].channelCount).toBe(2);
+  engine.dispose();
+  expect(stages[1].dispose).toHaveBeenCalledOnce();
+});
+
+test('chain settings, listening choice and loudness match reach the stage, also one built later', async () => {
+  const { engine, file, stages } = setup();
+  const params = { schema: 'mps-chain', marker: 1 };
+  await expect(engine.setChain(params)).resolves.toEqual([]); // no stage yet: kept for later
+  engine.listen('original');
+  engine.setLoudnessMatch({ processedDb: -4, originalDb: 0 });
+  await engine.load(file);
+  expect(stages[0].params).toBe(params);
+  expect(stages[0].listening.at(-1)).toEqual(['original', { processedDb: -4, originalDb: 0 }]);
+  const next = { schema: 'mps-chain', marker: 2 };
+  await engine.setChain(next);
+  expect(stages[0].setParams).toHaveBeenCalledWith(next);
+  engine.listen('processed');
+  engine.setLoudnessMatch(null);
+  expect(stages[0].listening.at(-1)).toEqual(['processed', { processedDb: 0, originalDb: 0 }]);
+  expect(engine.latency()).toBe(83);
+  expect(engine.analyser()).toBe('analyser');
+  engine.dispose();
+});
+
+test('meters from the stage reach every listener until it unsubscribes', async () => {
+  const { engine, file, stages } = setup();
+  const first = vi.fn(), second = vi.fn();
+  const stopFirst = engine.onMeters(first);
+  engine.onMeters(second);
+  await engine.load(file);
+  stages[0].meters({ compressorGainReductionDb: 3, limiterGainReductionDb: 1 });
+  stopFirst();
+  stages[0].meters({ compressorGainReductionDb: 2, limiterGainReductionDb: 0 });
+  expect(first).toHaveBeenCalledOnce();
+  expect(second).toHaveBeenCalledTimes(2);
+  engine.dispose();
+});
+
+test('a stage built for a superseded import is disposed; a stage failure is reported clearly', async () => {
+  const { engine, file, stages, createOutput } = setup();
+  let release;
+  createOutput.mockImplementationOnce(async (...args) => {
+    await new Promise(resolve => { release = resolve; });
+    return createOutput.getMockImplementation()(...args);
+  });
+  const first = engine.load(file);
+  await vi.waitFor(() => expect(release).toBeTypeOf('function'));
+  const second = engine.load(file);
+  release();
+  await expect(first).rejects.toMatchObject({ name: 'SupersededError' });
+  await second;
+  expect(stages.filter(stage => stage.dispose.mock.calls.length)).toHaveLength(1);
+  engine.dispose();
+
+  const failing = setup();
+  failing.createOutput.mockRejectedValueOnce(new Error('worklet'));
+  await expect(failing.engine.load(failing.file)).rejects.toThrow('Audio processing could not start');
+  failing.engine.dispose();
+});
+
+test('files with more than two channels get a stereo output stage (played as a downmix)', async () => {
+  const { engine, context, file, createOutput } = setup();
+  context.decodeAudioData.mockResolvedValueOnce({ duration: 2, numberOfChannels: 4, sampleRate: 48000 });
+  await expect(engine.load(file)).resolves.toMatchObject({ channels: 4 });
+  expect(createOutput.mock.calls[0][1]).toBe(2);
   engine.dispose();
 });

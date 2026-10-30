@@ -3,6 +3,10 @@ import { createRoot } from 'react-dom/client';
 import { createAudioEngine } from './audio-engine.js';
 import { AccountDialog } from './AccountDialog.jsx';
 import { AnalysisDialog } from './AnalysisDialog.jsx';
+import { MixerPanel } from './MixerPanel.jsx';
+import { ExportDialog } from './ExportDialog.jsx';
+import { ListenSwitch, LoudnessMatch } from './ListeningControls.jsx';
+import { useChainSettings } from './useChainSettings.js';
 import './styles.css';
 
 // Seconds as mm:ss.t, rounded to a tenth of a second.
@@ -32,6 +36,14 @@ function App() {
     });
     return () => engine.current.dispose();
   }, []);
+
+  // Mastering chain settings and the Original/Processed choice (LAS-28).
+  const chain = useChainSettings(engine);
+  const [listening, setListening] = useState('processed');
+  function listen(next) {
+    setListening(next);
+    engine.current.listen(next);
+  }
 
   // While playing, the elapsed time is read from the engine's audio clock ten times a second.
   useEffect(() => {
@@ -142,24 +154,18 @@ function App() {
 
         <section className="master panel" aria-labelledby="master-title">
           <div className="panel-heading"><h2 id="master-title">Master</h2><span className="badge">STEREO</span></div>
-          <div className="master-body" role="region" aria-label="Master details" tabIndex={0}><p className="eyebrow">OUTPUT STAGE</p><div className="master-symbol" aria-hidden="true">L <span>│</span> R</div><p>Direct playback</p><p className="muted">Output trim and measured meters coming soon.</p></div>
+          <div className="master-body" role="region" aria-label="Master details" tabIndex={0}>
+            <p className="eyebrow">OUTPUT STAGE</p>
+            <ListenSwitch value={listening} onChange={listen} disabled={!track} />
+            <LoudnessMatch engine={engine} file={currentFile} params={chain.params} />
+          </div>
           <div className="master-level"><label>Master level<input aria-label="Master level" type="range" min="0" max="100" defaultValue="75" disabled /></label><p className="fine-print">Level control unavailable</p></div>
-          <button disabled>Export WAV — coming soon</button>
+          <ExportDialog file={currentFile} params={chain.params} />
         </section>
       </div>
 
-      <section className="mixer panel" aria-labelledby="mixer-title">
-        <div className="panel-heading"><h2 id="mixer-title">Mixer</h2><span className="badge">PROCESSING MODULES · COMING SOON</span></div>
-        <div className="strips" role="group" aria-label="Processing modules" tabIndex={0}>{['Input', 'EQ', 'Dynamics', 'Space'].map((name, index) => (
-          <section className="strip" key={name} aria-label={`${name} channel strip`}>
-            <div className="strip-title"><span className="strip-number">0{index + 1}</span><h3>{name}</h3></div>
-            <div className="knob" aria-hidden="true" />
-            <p>Coming soon</p>
-            <button disabled aria-label={`${name} processing unavailable`}>Unavailable</button>
-          </section>
-        ))}</div>
-      </section>
-      <footer><span className="connection">LOCAL / WEB AUDIO</span><span>Playback foundation · EQ, dynamics, multitrack and export are planned.</span></footer>
+      <MixerPanel chain={chain} engine={engine} track={track} sampleRate={track ? track.sampleRate : 48000} listening={listening} onListen={listen} />
+      <footer><span className="connection">LOCAL / WEB AUDIO</span><span>EQ, dynamics, limiter and WAV export run on this device · reference matching and multitrack are planned.</span></footer>
     </main>
   );
 }

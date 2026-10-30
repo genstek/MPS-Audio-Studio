@@ -30,17 +30,16 @@ for (const viewport of viewports) {
     await expect(page.getByText('Import WAV', { exact: true })).toBeVisible();
     await expect(page.getByLabel('Import WAV')).toBeEnabled();
 
-    // Placeholders say they are unavailable and cannot be operated.
+    // Placeholders say they are unavailable and cannot be operated. Since LAS-28 only Space and the
+    // master level are placeholders; EQ, Dynamics and Limiter open real editors.
     const mixer = page.getByRole('region', { name: 'Mixer', exact: true });
-    await expect(mixer.getByText('PROCESSING MODULES · COMING SOON')).toBeVisible();
-    await expect(mixer.getByText('Coming soon', { exact: true })).toHaveCount(4);
-    for (const name of ['Input', 'EQ', 'Dynamics', 'Space']) {
-      await expect(mixer.getByRole('button', { name: `${name} processing unavailable` })).toBeDisabled();
-    }
+    await expect(mixer.getByText('Coming soon', { exact: true })).toHaveCount(1);
+    await expect(mixer.getByRole('button', { name: 'Space processing unavailable' })).toBeDisabled();
+    for (const name of ['Edit EQ', 'Edit dynamics', 'Edit limiter']) await expect(mixer.getByRole('button', { name })).toBeEnabled();
     const master = page.getByRole('region', { name: 'Master', exact: true });
     await expect(master.getByRole('slider', { name: 'Master level' })).toBeDisabled();
     await expect(master.getByText('Level control unavailable')).toBeVisible();
-    await expect(master.getByRole('button', { name: 'Export WAV — coming soon' })).toBeDisabled();
+    await expect(master.getByRole('button', { name: 'Export WAV' })).toBeDisabled(); // needs a track
 
     // A screenshot of each size is kept with the report as evidence.
     const screenshot = testInfo.outputPath(`LAS-7-shell-${size}.png`);
