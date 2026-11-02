@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LAS-44 studio proposals</title>
+<link rel="stylesheet" href="tokens.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #0a0d10; color: var(--ink); font: var(--text-md)/1.35 var(--font-ui); }
+  .page { max-width: 1520px; margin: auto; padding: 20px 24px 48px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  h2 { font-size: 17px; margin: 34px 0 6px; }
+  .lead { color: var(--ink-3); font-size: 12px; margin: 0 0 12px; max-width: 980px; }
+  .banner { display: inline-block; margin: 6px 0 10px; padding: 6px 10px; border: 1px solid var(--accent); border-radius: var(--radius); color: #f0d79a; background: #241f16; font-size: 12px; }
+  .frame { width: 1440px; height: 900px; transform-origin: 0 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface-1); position: relative; }
+  .scaler { width: calc(1440px * var(--k)); height: calc(900px * var(--k)); overflow: hidden; margin-bottom: 8px; }
+  .scaler .frame { transform: scale(var(--k)); }
+  .caption { font-size: 12px; color: var(--ink-3); margin: 0 0 14px; }
+  .pair { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start; }
+  .phone { width: 390px; height: 844px; border: 1px solid var(--line); border-radius: 22px; overflow: hidden; background: var(--surface-1); position: relative; }
+  .phone .inner { padding: 10px; display: grid; gap: 8px; }
+  /* shared bits */
+  .lbl { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink-3); }
+  .num { font: 12px var(--font-num); color: var(--ink); }
+  .info { display: inline-grid; place-items: center; width: 15px; height: 15px; border-radius: 50%; border: 1px solid var(--ink-3); color: var(--ink-3); font: 600 9px var(--font-ui); vertical-align: middle; margin-left: 4px; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 5px; background: #303a43; border: 1px solid var(--line-strong); font-size: 12px; white-space: nowrap; }
+  .btn.primary { background: var(--accent); color: var(--ink-on-accent); border-color: var(--accent); font-weight: 650; }
+  .btn.sm { padding: 3px 8px; font-size: 11px; }
+  .key { display: inline-grid; place-items: center; min-width: 44px; height: 36px; padding: 0 10px; border-radius: 4px; background: linear-gradient(#3a444c, #262e34); border: 1px solid #0009; box-shadow: 0 1px 0 #ffffff1c inset, 0 2px 3px #0008; font-size: 13px; color: var(--ink); }
+  .key.on { box-shadow: 0 0 0 1px var(--accent) inset, 0 0 10px #d7af6c55; color: #f3d9a6; }
+  .glass { background: var(--surface-0); border: 1px solid #000; box-shadow: 0 0 0 1px #ffffff10; border-radius: 4px; }
+  .vu { position: relative; width: 150px; height: 92px; border-radius: 6px; background: radial-gradient(ellipse at 50% 120%, #f7ecd0 0%, #e9d9ad 60%, #c9b383 100%); border: 3px solid #1b1f22; overflow: hidden; }
+  .vu svg { position: absolute; inset: 0; }
+  .vu .tag { position: absolute; bottom: 3px; left: 0; right: 0; text-align: center; font: 700 8px var(--font-ui); color: #3a3020; letter-spacing: .5px; }
+  .bars { display: grid; gap: 3px; }
+  .bar { height: 8px; border-radius: 2px; background: linear-gradient(90deg, var(--ok) 0 70%, var(--warn) 70% 90%, var(--clip) 90%); position: relative; }
+  .bar i { position: absolute; inset: 0 0 0 var(--v); background: #0c1013e6; }
+  .fader { position: relative; width: 34px; height: 220px; }
+  .fader .slot { position: absolute; left: 15px; top: 6px; bottom: 6px; width: 4px; border-radius: 2px; background: #05070a; box-shadow: 0 0 0 1px #ffffff12; }
+  .fader .cap { position: absolute; left: 2px; width: 30px; height: 40px; top: var(--y); border-radius: 3px; background: linear-gradient(#5c666e, #2b3237 45%, #5c666e 46% 54%, #2b3237 55%, #4b545b); box-shadow: 0 3px 6px #000a; }
+  .fader .cap::after { content: ''; position: absolute; left: 3px; right: 3px; top: 19px; height: 2px; background: var(--accent); }
+  .scale { position: absolute; left: 36px; top: 6px; bottom: 6px; display: flex; flex-direction: column; justify-content: space-between; font: 9px var(--font-num); color: var(--ink-3); }
+  .knob { width: 30px; height: 30px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #5c666e, #262d33 70%); border: 2px solid #11161a; position: relative; box-shadow: 0 2px 4px #0008; }
+  .knob::after { content: ''; position: absolute; left: 50%; top: 2px; width: 2px; height: 9px; background: var(--c, var(--accent)); transform-origin: 50% 13px; transform: translateX(-50%) rotate(var(--r, 0deg)); }
+  .k { display: grid; justify-items: center; gap: 2px; font-size: 9px; letter-spacing: 1px; color: var(--ink-3); }
+  .k b { font: 10px var(--font-num); color: var(--ink); background: var(--surface-0); padding: 0 4px; border-radius: 2px; }
+  .led { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--c, var(--ok)); box-shadow: 0 0 6px var(--c, var(--ok)); }
+  .led.off { background: var(--led-off); box-shadow: none; }
+  .ladder { display: flex; flex-direction: column-reverse; gap: 2px; }
+  .ladder span { width: 8px; height: 5px; background: #1b2a20; } .ladder span.on { background: var(--ok); } .ladder span.on.w { background: var(--warn); } .ladder span.on.r { background: var(--clip); }
+  .window { position: absolute; background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: 10px; box-shadow: var(--shadow-window); overflow: hidden; }
+  .window .bar2 { display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: #2a333a; border-bottom: 1px solid var(--line); font-size: 12px; font-weight: 600; }
+  .window.active { outline: 2px solid var(--focus); } .window.active .bar2 { background: #34404a; }
+  .grip { color: var(--ink-3); letter-spacing: -2px; }
+  .sp { flex: 1; }
+  .popover { position: absolute; width: 260px; padding: 10px 12px; border-radius: 8px; background: #26303a; border: 1px solid var(--focus); box-shadow: 0 8px 24px #000a; font-size: 12px; z-index: 5; }
+  .popover b { display: block; font-size: 13px; margin-bottom: 4px; }
+  .popover a { color: var(--focus); }
+  .dim { position: absolute; inset: 0; background: #0009; display: grid; place-items: center; z-index: 6; }
+  .dialog { width: 420px; padding: 18px 20px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--line-strong); display: grid; gap: 10px; box-shadow: var(--shadow-window); }
+  .input { padding: 7px 9px; border-radius: 5px; border: 1px solid var(--line-strong); background: var(--surface-0); }
+  .input.err { border-color: var(--clip); }
+  .err-text { color: #f2a19a; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>LAS-44 · Whole-studio proposals (Fostex-inspired)</h1>
+  <p class="banner">PROPOSALS FOR REVIEW — not approved. Static mockups; every number is an illustrative placeholder. Nothing here measures audio. Gennady selects a proposal and a player variant (or asks for changes) before LAS-45 starts.</p>
+  <p class="lead">Built from the LAS-42 directions, the LAS-43 wireframes, the LAS-65 processor proposals and the Fostex Model 820 reference attached to LAS-44 (the photo is not reproduced here). Functions already working in the studio (Sprint 10): New/Save/Open project, Master Level (monitor), FF/RWD and seekable timeline, L/R output meters and spectrum, Space reverb, movable concurrent editors, ⓘ help. Tokens and component states: <code>design-system.md</code>, <code>tokens.css</code>.</p>
+
+  <h2>Proposal 1 — "Model 820 console" (hardware-first)</h2>
+  <p class="lead">A recording console laid out like the 820 family: a meter bridge with two VU-style needles and the spectrum on top, a tape-deck transport (Player A), the session panel on the left, vertical channel modules (EQ · Dynamics · Limiter · Space) with knobs and LED ladders, and a master strip with a long Master Level fader on the right.</p>
+  <div class="scaler" style="--k:.92"><div class="frame" id="p1"></div></div>
+  <p class="caption">1440×900, loaded and playing. Editors open as movable windows over the console (two open here; the active one has the bright title bar).</p>
+
+  <h2>Proposal 2 — "Hybrid console workstation" (display-first in a console frame)</h2>
+  <p class="lead">The LAS-65 hybrid: graph-first module cards framed as console modules, a compact professional player (Player B) with electronic L/R bars, spectrum and a scaled timeline, a right-hand master section with a fader and needle pair, and the project menu in the header.</p>
+  <div class="scaler" style="--k:.92"><div class="frame" id="p2"></div></div>
+  <p class="caption">1440×900, loaded and playing, with the ⓘ help popover for the Limiter ceiling open.</p>
+
+  <h2>Empty state, narrow layout and flows (shown in Proposal 2; Proposal 1 uses the same flows)</h2>
+  <div class="pair">
+    <div class="scaler" style="--k:.5"><div class="frame" id="empty"></div></div>
+    <div class="phone" id="phone"></div>
+    <div class="scaler" style="--k:.5"><div class="frame" id="flows"></div></div>
+  </div>
+  <p class="caption">Left: empty session (1440×900, 50 %). Middle: 390×844 phone, stacked and scrolling. Right: New project dialog with validation, and the unsaved-changes prompt (Save / Discard / Cancel).</p>
+
+  <h2>Player variants for LAS-67 (behaviour is already implemented; the look is chosen here)</h2>
+  <div class="pair">
+    <div><div class="glass" id="playerA" style="width:700px; padding:14px; background: linear-gradient(#2a3137,#1d2328)"></div><p class="caption">Player A — classic tape deck: dual VU-style needles, piano-key transport, tape counter, optional reel animation (decorative, off under reduced motion, never driven by fake signal).</p></div>
+    <div><div class="glass" id="playerB" style="width:700px; padding:14px"></div><p class="caption">Player B — compact professional hybrid: electronic L/R peak/RMS bars with clip LEDs, spectrum with Hz/dB scales, seekable timeline with time ruler.</p></div>
+  </div>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const ladder = (n, c) => `<div class="ladder">${Array.from({ length: 12 }, (_, i) => `<span class="${i < n ? 'on' : ''}${i >= 8 ? ' w' : ''}${i >= 11 ? ' r' : ''}"></span>`).join('')}</div>`;
+function vu(label, angle) {
+  const ticks = [-20, -10, -7, -5, -3, -2, -1, 0, 1, 2, 3].map((d, i) => { const a = -50 + i * 10; const r = a * Math.PI / 180; return `<line x1="${75 + 52 * Math.sin(r)}" y1="${100 - 52 * Math.cos(r)}" x2="${75 + 60 * Math.sin(r)}" y2="${100 - 60 * Math.cos(r)}" stroke="${d >= 0 ? '#b3261e' : '#2d2414'}" stroke-width="1.5"/><text x="${75 + 68 * Math.sin(r)}" y="${100 - 68 * Math.cos(r)}" font-size="7" text-anchor="middle" fill="${d >= 0 ? '#b3261e' : '#2d2414'}">${d > 0 ? '+' + d : d}</text>`; }).join('');
+  const r = angle * Math.PI / 180;
+  return `<div class="vu"><svg viewBox="0 0 150 92">${ticks}<line x1="75" y1="100" x2="${75 + 70 * Math.sin(r)}" y2="${100 - 70 * Math.cos(r)}" stroke="#111" stroke-width="1.6"/></svg><span class="tag">${label} · VU-STYLE RMS</span></div>`;
+}
+function spectrum(w, h) {
+  let p = `M0,${h}`;
+  for (let i = 0; i <= 80; i++) { const x = i * w / 80; const y = h - 8 - (h - 18) * Math.exp(-((i - 22) ** 2) / 300) * (0.75 + 0.25 * Math.sin(i * 1.3)) - (h * .1) * Math.exp(-((i - 55) ** 2) / 90); p += `L${x.toFixed(1)},${y.toFixed(1)}`; }
+  const ticks = ['50', '100', '500', '1k', '5k', '10k'].map((t, i) => `<text x="${8 + i * (w - 20) / 5}" y="${h - 2}" font-size="8" fill="#8a96a0">${t}</text>`).join('');
+  return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" class="glass"><path d="${p}L${w},${h}Z" fill="#6fc3b233" stroke="#6fc3b2"/>${['0', '-24', '-48'].map((d, i) => `<text x="2" y="${10 + i * (h - 20) / 2}" font-size="8" fill="#8a96a0">${d}</text>`).join('')}${ticks}</svg>`;
+}
+const timeline = w => `<div style="display:grid; gap:2px; width:${w}px"><div style="position:relative; height:8px; border-radius:4px; background:#05070a; box-shadow:0 0 0 1px #ffffff14"><i style="position:absolute; inset:0 auto 0 0; width:38%; border-radius:4px; background:var(--accent)"></i><i style="position:absolute; left:38%; top:-4px; width:3px; height:16px; background:#fff; border-radius:2px"></i></div><div style="display:flex; justify-content:space-between; font:9px var(--font-num); color:var(--ink-3)"><span>0:00</span><span>0:30</span><span>1:00</span><span>1:30</span><span>2:00</span><span>2:30</span><span>3:12</span></div></div>`;
+const transportKeys = (style = '') => `<div style="display:flex; gap:6px; ${style}"><span class="key" title="Rewind 5 s">◀◀</span><span class="key on">▶</span><span class="key">Ⅱ</span><span class="key">■</span><span class="key" title="Forward 5 s">▶▶</span></div>`;
+function playerA() {
+  return `<div style="display:flex; gap:14px; align-items:center">${vu('L', -8)}${vu('R', -14)}<div style="display:grid; gap:8px; flex:1"><div style="display:flex; justify-content:space-between; align-items:center"><span class="lbl">Tape counter</span><span class="glass num" style="padding:3px 8px; font-size:18px; color:#f3d9a6">01:12.4 / 03:12.0</span></div>${transportKeys()}<div class="lbl">RWD / FF: click ±5 s · hold 25 s per second · stops at start/end</div>${timeline(300)}</div></div>`;
+}
+function playerB() {
+  return `<div style="display:grid; grid-template-columns: auto 1fr auto; gap:14px; align-items:center">${transportKeys()}<div style="display:grid; gap:4px">${timeline(330)}<div style="display:flex; justify-content:space-between"><span class="num">01:12.4 / 03:12.0</span><span class="lbl">Playing · Processed</span></div></div><div class="bars" style="width:150px"><span class="lbl">L −14.2 / −8.1 dBFS</span><div class="bar" style="--v:62%"><i></i></div><span class="lbl">R −15.0 / −8.9 dBFS <span class="led" style="--c:var(--led-off)"></span> CLIP</span><div class="bar" style="--v:58%"><i></i></div></div></div><div style="margin-top:10px">${spectrum(670, 90)}</div>`;
+}
+const MODS = [['EQ', 'var(--accent)', [['FREQ', '3.2k'], ['GAIN', '−2.5'], ['Q', '2.0']]], ['DYNAMICS', 'var(--dyn)', [['THR', '−18'], ['RATIO', '3:1']]], ['LIMITER', 'var(--lim)', [['CEIL', '−1.0'], ['INPUT', '+3']]], ['SPACE', 'var(--space)', [['MIX', '20%'], ['DECAY', '1.8s']]]];
+function scope(name, c, w = 150, h = 70) {
+  let p = '';
+  for (let i = 0; i <= 40; i++) { const x = i * w / 40; let y;
+    if (name === 'EQ') y = h / 2 - 12 * Math.exp(-((i - 8) ** 2) / 20) + 10 * Math.exp(-((i - 28) ** 2) / 8);
+    else if (name === 'DYNAMICS') y = h - 6 - (i < 22 ? i * (h - 12) / 40 : 22 * (h - 12) / 40 + (i - 22) * (h - 12) / 120);
+    else if (name === 'LIMITER') y = Math.max(16, h - 10 - (h - 30) * Math.abs(Math.sin(i / 3)));
+    else y = i < 5 ? 10 : 10 + (i - 5) * (h - 16) / 35;
+    p += `${i ? 'L' : 'M'}${x.toFixed(1)},${y.toFixed(1)}`; }
+  return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" class="glass"><path d="${p}" fill="none" stroke="${c}" stroke-width="2"/>${name === 'LIMITER' ? `<line x1="0" x2="${w}" y1="16" y2="16" stroke="${c}"/>` : ''}</svg>`;
+}
+function strip(name, c, knobs, i, wide = false) {
+  return `<div style="--c:${c}; width:${wide ? 210 : 176}px; display:grid; gap:8px; justify-items:center; padding:0 10px 10px; border-radius:6px; background:var(--faceplate); box-shadow:var(--shadow-module); border:1px solid #0007"><div style="height:6px; margin:0 -10px; justify-self:stretch; background:${c}; border-radius:6px 6px 0 0"></div><div style="display:flex; justify-content:space-between; width:100%"><span class="lbl" style="color:var(--ink-2)">0${i + 1} ${name}<span class="info">i</span></span><span class="led" style="--c:${c}"></span></div>${scope(name, c, wide ? 188 : 154)}<div style="display:flex; gap:10px">${knobs.map(([l, v], k) => `<span class="k"><span class="knob" style="--r:${k * 70 - 50}deg"></span>${l}<b>${v}</b></span>`).join('')}</div><div style="display:flex; gap:8px; align-items:end">${ladder(6 - i)}<span class="btn sm">Bypass</span><span class="btn sm">Edit</span></div></div>`;
+}
+function masterStrip(fy = 60) {
+  return `<div style="width:210px; display:grid; gap:8px; justify-items:center; padding:10px; border-radius:6px; background:var(--faceplate); box-shadow:var(--shadow-module)"><span class="lbl" style="color:var(--ink-2)">MASTER<span class="info">i</span></span><div style="display:flex; gap:14px; align-items:center"><div class="fader" style="--y:${fy}px"><span class="slot"></span><span class="cap"></span><span class="scale"><span>0</span><span>−6</span><span>−12</span><span>−24</span><span>−48</span><span>−∞</span></span></div><div style="display:flex; gap:3px">${ladder(8)}${ladder(7)}</div></div><span class="num">−6.0 dB</span><span class="lbl" style="text-align:center">Monitor level · not in WAV</span><span class="btn primary">Export WAV</span></div>`;
+}
+const header = (proj = 'Album master v3', dirty = true) => `<div style="display:flex; align-items:center; gap:14px; padding:10px 18px; border-bottom:1px solid var(--line)"><span style="border:1px solid var(--accent); color:#e8c58d; padding:6px 8px; border-radius:5px; font-weight:750; letter-spacing:2px">MPS</span><div><div class="lbl">PROJECT${dirty ? ' · <span style="color:#f0d79a">UNSAVED CHANGES</span>' : ' · SAVED'}</div><div style="font-weight:600">${proj}</div></div><span class="btn sm">New</span><span class="btn sm">Open…</span><span class="btn sm">Save</span><span class="btn sm">Save As…</span><span class="sp"></span><span class="btn sm">References</span><span class="btn sm">Account</span><span class="btn sm">Help</span></div>`;
+// ---------- Proposal 1 ----------
+$('p1').innerHTML = `${header()}<div style="display:grid; grid-template-columns: 1fr 420px; gap:14px; padding:14px 18px; background:linear-gradient(#1a2025,#14191d); border-bottom:1px solid var(--line)"><div style="display:flex; gap:14px; align-items:center">${vu('L', -8)}${vu('R', -14)}${spectrum(560, 92)}</div><div style="display:grid; gap:8px">${transportKeys('justify-content:flex-end')}<div style="display:flex; justify-content:flex-end; gap:10px; align-items:center"><span class="lbl">Counter</span><span class="glass num" style="padding:3px 8px; font-size:17px; color:#f3d9a6">01:12.4 / 03:12.0</span></div>${timeline(420)}</div></div>
+<div style="display:grid; grid-template-columns: 280px 1fr 230px; gap:14px; padding:14px 18px; height:560px"><div class="glass" style="padding:12px; display:grid; gap:8px; align-content:start; background:var(--surface-2)"><span class="lbl">Session · 01 track</span><b>mix-final-24bit.wav</b><span style="color:var(--ink-3); font-size:12px">192.0 s · stereo · 48 kHz</span><span class="btn sm" style="justify-self:start">Replace WAV</span><span class="lbl" style="margin-top:8px">Listen</span><div><span class="key on" style="height:28px">PROCESSED</span> <span class="key" style="height:28px">ORIGINAL</span></div><span style="font-size:11px; color:var(--ink-3)">Match loudness: processed plays 2.1 dB lower</span><span class="btn sm" style="justify-self:start">Analyze</span><span class="btn sm" style="justify-self:start">Compare with reference</span><span class="btn sm" style="justify-self:start">Stems…</span></div>
+<div style="display:flex; gap:12px; align-items:start">${MODS.map(([n, c, k], i) => strip(n, c, k, i)).join('')}</div>${masterStrip()}</div>
+<div class="window" style="left:330px; top:420px; width:440px"><div class="bar2"><span class="grip">⋮⋮</span>EQ<span class="info">i</span><span class="sp"></span><span class="btn sm">Undo</span><span class="btn sm">Save preset</span><span class="btn sm">×</span></div><div style="padding:10px">${scope('EQ', 'var(--accent)', 420, 150)}</div></div>
+<div class="window active" style="left:700px; top:520px; width:420px"><div class="bar2"><span class="grip">⋮⋮</span>Space<span class="info">i</span><span class="sp"></span><span class="btn sm">Room ▾</span><span class="btn sm">×</span></div><div style="padding:10px; display:grid; grid-template-columns: 1fr auto; gap:10px">${scope('SPACE', 'var(--space)', 250, 120)}<div style="display:grid; gap:6px">${[['MIX', '20%'], ['PRE', '20 ms'], ['DECAY', '1.8 s'], ['DAMP', '40%']].map(([l, v], k) => `<span class="k" style="--c:var(--space); grid-auto-flow:column; align-items:center"><span class="knob" style="--r:${k * 40 - 60}deg"></span>${l}<b>${v}</b></span>`).join('')}</div></div></div>`;
+// ---------- Proposal 2 ----------
+function cardB(name, c, read, i) {
+  return `<div style="--c:${c}; display:grid; gap:6px; padding:0 10px 10px; border-radius:6px; background:var(--faceplate); box-shadow:var(--shadow-module)"><div style="height:5px; margin:0 -10px; background:${c}; border-radius:6px 6px 0 0"></div><div style="display:flex; justify-content:space-between; align-items:center"><b style="font-size:13px">0${i + 1} ${name[0] + name.slice(1).toLowerCase()}<span class="info">i</span></b><span class="key on" style="height:22px; min-width:0; font-size:10px">ON</span></div>${scope(name, c, 230, 110).replace('width="230" height="110"', `width="100%" height="${i >= 10 ? 70 : 110}" preserveAspectRatio="none"`)}<div style="display:flex; justify-content:space-between; font:11px var(--font-num)">${read.map(([a, b]) => `<span><span class="lbl" style="display:block">${a}</span>${b}</span>`).join('')}</div><span class="btn sm" style="justify-content:center">Edit</span></div>`;
+}
+const READ = [[['Bands', '3'], ['Max', '+3.0'], ['Mode', 'Link']], [['Thr', '−18'], ['Ratio', '3:1'], ['GR', '−4.2']], [['Ceiling', '−1.0'], ['GR', '−2.1'], ['Rel', '100']], [['Mix', '20%'], ['Decay', '1.8s'], ['Preset', 'Room']]];
+$('p2').innerHTML = `${header()}<div style="padding:12px 18px; border-bottom:1px solid var(--line); background:var(--surface-2)">${playerB()}</div>
+<div style="display:grid; grid-template-columns: 260px 1fr 250px; gap:14px; padding:14px 18px"><div style="display:grid; gap:8px; align-content:start; padding:12px; border-radius:8px; background:var(--surface-2); border:1px solid var(--line)"><span class="lbl">Tracks</span><b>mix-final-24bit.wav</b><span style="color:var(--ink-3); font-size:12px">192.0 s · stereo · 48 kHz</span><span class="btn sm" style="justify-self:start">Replace WAV</span><span class="btn sm" style="justify-self:start">Stems…</span><span class="btn sm" style="justify-self:start">Compare…</span></div>
+<div style="display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap:12px; align-items:start">${MODS.map(([n, c], i) => cardB(n, c, READ[i], i)).join('')}</div>
+<div style="display:grid; gap:10px; justify-items:center; padding:12px; border-radius:8px; background:var(--faceplate)"><span class="lbl">Master<span class="info">i</span></span><div style="display:flex; gap:8px">${vu('L', -8).replace('width: 150px', '')}</div><div style="display:flex; gap:12px; align-items:center"><div class="fader" style="--y:60px"><span class="slot"></span><span class="cap"></span><span class="scale"><span>0</span><span>−6</span><span>−12</span><span>−24</span><span>−48</span><span>−∞</span></span></div></div><span class="num">−6.0 dB</span><span class="lbl">Monitor · not in WAV</span><div><span class="key on" style="height:26px">PROC</span> <span class="key" style="height:26px">ORIG</span></div><span class="btn primary">Export WAV</span></div></div>
+<div class="popover" style="left:900px; top:500px"><b>Limiter ceiling</b>The highest true-peak level the limiter lets through, in dBTP. Use −1.0 dBTP for most streaming services; lower ceilings add headroom but reduce loudness.<br><a href="#">Read more about the limiter ceiling →</a></div>`;
+// ---------- Empty ----------
+$('empty').innerHTML = `${header('Untitled project', false)}<div style="padding:12px 18px; border-bottom:1px solid var(--line); background:var(--surface-2); opacity:.7">${playerB().replace(/01:12\.4 \/ 03:12\.0/, '00:00.0 / 00:00.0').replace('Playing · Processed', 'No audio loaded')}</div><div style="display:grid; place-items:center; height:380px"><div style="text-align:center; display:grid; gap:10px; justify-items:center"><span style="font-size:40px; color:var(--accent)">♫</span><b style="font-size:20px">Your session starts here</b><span style="color:var(--ink-3)">Import a WAV (up to 250 MiB) or add stems. Files stay on your device.</span><span class="btn primary">Import WAV</span></div></div><div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; padding:0 18px">${MODS.map(([n, c], i) => cardB(n, c, READ[i], i)).join('')}</div>`;
+// ---------- Phone ----------
+$('phone').innerHTML = `<div class="inner"><div style="display:flex; justify-content:space-between; align-items:center"><b>MPS</b><span class="btn sm">Project ▾</span></div><div class="lbl">Album master v3 · unsaved</div>${transportKeys('justify-content:center; transform:scale(.9)')}${timeline(366)}<div class="bars"><div class="bar" style="--v:62%"><i></i></div><div class="bar" style="--v:58%"><i></i></div></div><div style="display:grid; grid-template-columns:1fr 1fr; gap:8px">${MODS.map(([n, c], i) => cardB(n, c, READ[i], i).replace(/height="110" preserveAspectRatio/, 'height="70" preserveAspectRatio')).join('')}</div><div style="display:flex; justify-content:space-between; align-items:center"><span class="lbl">Master −6.0 dB</span><span class="btn primary sm">Export WAV</span></div></div>`;
+// ---------- Flows ----------
+$('flows').innerHTML = `${header('Album master v3', true)}<div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px; padding:60px"><div class="dialog"><b style="font-size:17px">New project<span class="info">i</span></b><label class="lbl">Project name</label><span class="input err">&nbsp;</span><span class="err-text">Enter a project name.</span><span style="font-size:12px; color:var(--ink-3)">Your current session has unsaved changes; you will be asked to save them first.</span><div style="display:flex; gap:8px; justify-content:flex-end"><span class="btn">Cancel</span><span class="btn primary">Create</span></div></div><div class="dialog"><b style="font-size:17px">Save changes to “Album master v3”?</b><span style="font-size:12px; color:var(--ink-3)">Opening another project replaces the current session. Unsaved: EQ band 7, Space mix.</span><div style="display:flex; gap:8px; justify-content:flex-end"><span class="btn">Cancel</span><span class="btn">Discard</span><span class="btn primary">Save</span></div></div><div class="dialog" style="grid-column: span 2"><b style="font-size:17px">Missing audio for “Album master v3”</b><span style="font-size:12px; color:var(--ink-3)">The project file stores settings and the identity of each file (name, size, SHA-256), not the audio. Choose the file again to relink it; a different file is refused.</span><div style="display:flex; justify-content:space-between"><span>mix-final-24bit.wav · 55.3 MB · sha256 9f2c…e41a</span><span class="btn sm">Relink…</span></div><div style="display:flex; justify-content:space-between"><span>bass-stem.wav · 21.0 MB</span><span class="btn sm">Relink…</span></div></div></div>`;
+$('playerA').innerHTML = playerA();
+$('playerB').innerHTML = playerB();
+</script>
+</body>
+</html>

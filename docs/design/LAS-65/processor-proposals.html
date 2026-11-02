@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LAS-65 processor proposals</title>
+<link rel="stylesheet" href="../LAS-44/tokens.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--surface-1); color: var(--ink); font: var(--text-md)/1.35 var(--font-ui); }
+  header.page { padding: 20px 24px 8px; max-width: 1500px; margin: auto; }
+  header.page h1 { font-size: 22px; margin: 0 0 4px; }
+  .banner { display: inline-block; margin: 6px 0; padding: 6px 10px; border: 1px solid var(--accent); border-radius: var(--radius); color: #f0d79a; background: #241f16; font-size: 12px; }
+  main { max-width: 1500px; margin: auto; padding: 0 24px 40px; }
+  h2 { font-size: 16px; margin: 28px 0 10px; letter-spacing: .3px; }
+  h3 { font-size: 13px; margin: 0; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink-3); }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .col { border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 14px; background: #151a1e; }
+  .col > h3 { margin-bottom: 10px; color: var(--ink); font-size: 14px; letter-spacing: .5px; text-transform: none; }
+  .row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .note { font-size: 12px; color: var(--ink-3); margin: 8px 0 0; }
+  svg text { font: 9px var(--font-num); fill: var(--ink-3); }
+  /* ---------- Proposal A: console module ---------- */
+  .modA { position: relative; background: var(--faceplate); border: 1px solid #0007; border-radius: var(--radius); box-shadow: var(--shadow-module); padding: 0 10px 10px; display: grid; gap: 8px; justify-items: center; }
+  .modA .cap { justify-self: stretch; height: 6px; margin: 0 -10px; border-radius: var(--radius) var(--radius) 0 0; background: var(--c); }
+  .modA .title { justify-self: stretch; display: flex; justify-content: space-between; align-items: center; font-size: 10px; letter-spacing: 1.5px; color: var(--ink-2); }
+  .modA .scope { width: 100%; aspect-ratio: 16/10; background: var(--surface-0); border: 1px solid #000; border-radius: 3px; box-shadow: 0 0 0 1px #ffffff10; }
+  .knobs { display: flex; gap: 10px; justify-content: center; }
+  .knob { display: grid; justify-items: center; gap: 3px; font-size: 9px; letter-spacing: 1px; color: var(--ink-3); }
+  .knob i { width: 34px; height: 34px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #59636b, #2a3137 70%); border: 2px solid #12171b; box-shadow: 0 2px 4px #0008; position: relative; }
+  .knob i::after { content: ''; position: absolute; left: 50%; top: 3px; width: 2px; height: 10px; background: var(--c); transform-origin: 50% 14px; transform: translateX(-50%) rotate(var(--r, 0deg)); }
+  .knob b { font: 10px var(--font-num); color: var(--ink); background: var(--surface-0); padding: 1px 4px; border-radius: 2px; }
+  .bypass { display: flex; align-items: center; gap: 6px; font-size: 9px; letter-spacing: 1px; color: var(--ink-3); }
+  .key { padding: 3px 8px; border-radius: 3px; background: #1a1f23; border: 1px solid #0009; box-shadow: 0 1px 0 #ffffff14 inset; color: var(--ink-2); }
+  .led { width: 7px; height: 7px; border-radius: 50%; background: var(--c); box-shadow: 0 0 6px var(--c); }
+  .led.off { background: var(--led-off); box-shadow: none; }
+  .ladder { display: flex; gap: 2px; }
+  .ladder span { width: 7px; height: 5px; background: #1b2a20; }
+  .ladder span.on { background: var(--ok); } .ladder span.on.w { background: var(--warn); } .ladder span.on.r { background: var(--clip); }
+  /* ---------- Proposal B: graph-first tile ---------- */
+  .modB { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px; display: grid; gap: 6px; }
+  .modB .title { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 600; }
+  .modB .title .num { color: var(--c); font: 10px var(--font-num); margin-right: 6px; }
+  .toggle { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; color: var(--ink-3); }
+  .toggle i { width: 24px; height: 13px; border-radius: 7px; background: var(--c); position: relative; }
+  .toggle i::after { content: ''; position: absolute; right: 2px; top: 2px; width: 9px; height: 9px; border-radius: 50%; background: var(--ink-on-accent); }
+  .toggle.off i { background: #3a444c; } .toggle.off i::after { right: auto; left: 2px; background: var(--ink-3); }
+  .modB .graph { width: 100%; aspect-ratio: 16/9; background: var(--surface-0); border-radius: 3px; }
+  .readouts { display: flex; justify-content: space-between; gap: 6px; font: 10px var(--font-num); color: var(--ink-2); }
+  .readouts span b { display: block; font: 9px var(--font-ui); letter-spacing: 1px; color: var(--ink-3); text-transform: uppercase; }
+  .edit { justify-self: stretch; text-align: center; font-size: 11px; padding: 4px; border: 1px solid var(--line-strong); border-radius: 4px; background: #303a43; }
+  .info { display: inline-grid; place-items: center; width: 15px; height: 15px; border-radius: 50%; border: 1px solid var(--ink-3); color: var(--ink-3); font: 600 9px var(--font-ui); }
+  /* ---------- editors ---------- */
+  .editor { margin-top: 10px; border: 1px solid var(--line-strong); border-radius: var(--radius-lg); background: var(--surface-2); box-shadow: var(--shadow-window); overflow: hidden; }
+  .editor .bar { display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: #2a333a; border-bottom: 1px solid var(--line); font-size: 12px; font-weight: 600; cursor: move; }
+  .editor .bar .grip { color: var(--ink-3); letter-spacing: -2px; }
+  .editor .bar .spacer { flex: 1; }
+  .editor .bar .btn { font-weight: 400; font-size: 11px; padding: 2px 8px; border: 1px solid var(--line-strong); border-radius: 4px; background: #303a43; }
+  .editor .body { display: grid; grid-template-columns: minmax(0, 1fr) 170px; gap: 10px; padding: 10px; }
+  .editor .big { width: 100%; aspect-ratio: 2/1; background: var(--surface-0); border-radius: 4px; }
+  .rail { display: grid; gap: 6px; align-content: start; font-size: 11px; }
+  .field { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px; }
+  .field b { font: 11px var(--font-num); background: var(--surface-0); border: 1px solid var(--line-strong); border-radius: 3px; padding: 2px 6px; min-width: 64px; text-align: right; }
+  .meters { display: flex; gap: 4px; align-items: end; height: 70px; }
+  .meters span { width: 10px; background: linear-gradient(0deg, var(--ok), var(--warn) 80%, var(--clip)); border-radius: 2px; }
+  .meters span.gr { background: var(--c); align-self: start; }
+  .states { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+  .states figure { margin: 0; display: grid; gap: 4px; font-size: 11px; color: var(--ink-3); }
+  .states .modB { min-height: 120px; }
+  .is-bypassed .graph path { stroke: #5d6870 !important; } .is-bypassed { opacity: .82; }
+  .is-hover { outline: 1px solid var(--line-strong); box-shadow: 0 4px 12px #0007; }
+  .is-focus { box-shadow: var(--focus-ring); }
+  .is-disabled .graph { opacity: .55; }
+  .desk { position: relative; height: 330px; border: 1px dashed var(--line); border-radius: var(--radius-lg); background: repeating-linear-gradient(90deg, #ffffff05 0 1px, transparent 1px 40px), #12171b; overflow: hidden; }
+  .desk .editor { position: absolute; width: 360px; margin: 0; }
+  .desk .editor .body { grid-template-columns: 1fr; }
+  .phone { width: 390px; border: 1px solid var(--line); border-radius: 18px; padding: 10px; background: var(--surface-1); }
+  .phone .row { grid-template-columns: 1fr 1fr; }
+  .tag { font-size: 10px; color: var(--ink-on-accent); background: var(--accent); padding: 1px 6px; border-radius: 8px; }
+  @media (max-width: 900px) { .cols { grid-template-columns: 1fr; } .states { grid-template-columns: repeat(2, 1fr); } }
+</style>
+</head>
+<body>
+<header class="page">
+  <h1>LAS-65 · Processor cards and editors — two proposals</h1>
+  <p class="banner">PROPOSAL FOR REVIEW — not approved. Static mockup; numbers are illustrative placeholders, nothing here measures audio. Gennady chooses A, B, the hybrid, or asks for changes.</p>
+  <p class="note">Research, sources and the recommendation: <code>docs/design/LAS-65/research.md</code>. Tokens: <code>docs/design/LAS-44/tokens.css</code>. Console reference: Gennady's Fostex Model 820 photo (attached to LAS-44; not reproduced here).</p>
+</header>
+<main>
+  <h2>1 · Compact mixer cards</h2>
+  <div class="cols">
+    <section class="col" aria-label="Proposal A cards"><h3>A — Console module (hardware-first)</h3><div class="row" id="cardsA"></div>
+      <p class="note">Faceplate with cap colour per module, scope window, 2–3 knobs with numeric windows, bypass key with LED, LED ladder for real GR/output.</p></section>
+    <section class="col" aria-label="Proposal B cards"><h3>B — Graph-first pro (display-first)</h3><div class="row" id="cardsB"></div>
+      <p class="note">Large graph per card, key readouts, bypass toggle in the title row, ⓘ help next to the title.</p></section>
+  </div>
+
+  <h2>2 · Expanded editors</h2>
+  <div class="cols">
+    <section class="col"><h3>A — knobs around a scope</h3><div id="editorsA"></div></section>
+    <section class="col"><h3>B — large graph + numeric rail</h3><div id="editorsB"></div></section>
+  </div>
+
+  <h2>3 · States (shown in proposal B; A uses the same rules)</h2>
+  <div class="states" id="states"></div>
+
+  <h2>4 · Several editors open, moved freely (LAS-61/62) and the narrow layout</h2>
+  <div class="cols">
+    <div class="desk" aria-label="Movable editors">
+      <div class="editor" style="left: 16px; top: 18px; opacity: .92"><div class="bar"><span class="grip">⋮⋮</span>EQ<span class="spacer"></span><span class="btn">Reset</span><span class="btn">×</span></div><div class="body"><svg class="big" id="deskEq" viewBox="0 0 300 150"></svg></div></div>
+      <div class="editor" style="left: 150px; top: 120px; z-index: 2; outline: 2px solid var(--focus)"><div class="bar" style="background:#34404a"><span class="grip">⋮⋮</span>Dynamics · active window<span class="spacer"></span><span class="btn">×</span></div><div class="body"><svg class="big" id="deskDyn" viewBox="0 0 300 150"></svg></div></div>
+      <p class="note" style="position:absolute; bottom: 6px; left: 12px">Drag by the title bar · click brings to front · arrow keys on the ⋮⋮ grip move the window · “Reset window layout” in the Mixer heading.</p>
+    </div>
+    <div class="phone" aria-label="Narrow layout"><p class="note" style="margin:0 0 8px">390 px wide: cards in two columns; an open editor fills the width and scrolls inside.</p><div class="row" id="narrow"></div></div>
+  </div>
+</main>
+<script>
+// Illustrative shapes computed from example settings (the real cards compute them from the chain).
+const W = 300, H = 150;
+const fx = f => 10 + Math.log(f / 20) / Math.log(1000) * (W - 20);
+const gy = g => H / 2 - g * (H / 2 - 12) / 18;
+const bell = (f, f0, g, q) => g / (1 + (q * (f / f0 - f0 / f)) ** 2);
+const eqDb = f => bell(f, 90, 3, .9) + bell(f, 3200, -2.5, 2) + 2 / (1 + (8000 / f) ** 2);
+function eqSvg(color, { spectrum = true, dots = true } = {}) {
+  let curve = '', spec = `M10,${H}`;
+  for (let i = 0; i <= 120; i++) { const f = 20 * 1000 ** (i / 120); curve += `${i ? 'L' : 'M'}${fx(f).toFixed(1)},${gy(eqDb(f)).toFixed(1)}`; spec += `L${fx(f).toFixed(1)},${(H - 30 - 55 * Math.exp(-((Math.log10(f) - 2.2) ** 2) / .9) - 10 * Math.sin(i)).toFixed(1)}`; }
+  const grid = [100, 1000, 10000].map(f => `<line x1="${fx(f)}" x2="${fx(f)}" y1="0" y2="${H}" stroke="#222b31"/><text x="${fx(f) + 2}" y="${H - 3}">${f >= 1000 ? f / 1000 + 'k' : f}</text>`).join('') + [12, 0, -12].map(g => `<line x1="10" x2="${W - 10}" y1="${gy(g)}" y2="${gy(g)}" stroke="${g ? '#222b31' : '#3a454e'}"/><text x="12" y="${gy(g) - 2}">${g > 0 ? '+' : ''}${g}</text>`).join('');
+  const pts = dots ? [[90, 3], [3200, -2.5], [8000, 1.6]].map(([f, g], i) => `<circle cx="${fx(f)}" cy="${gy(g)}" r="${i === 1 ? 6 : 4.5}" fill="${i === 1 ? color : '#1c2329'}" stroke="${color}" stroke-width="2"/>`).join('') + `<text x="${fx(3200) + 8}" y="${gy(-2.5) + 16}" style="fill:${color}">3.2 kHz −2.5 dB Q 2.0</text>` : '';
+  return `${grid}${spectrum ? `<path d="${spec}L${W - 10},${H}Z" fill="#6fc3b222"/>` : ''}<path d="${curve}" fill="none" stroke="${color}" stroke-width="2"/>${pts}`;
+}
+function dynSvg(color, { dot = true } = {}) {
+  const thr = -18, ratio = 3, knee = 6, x = d => 10 + (d + 60) / 60 * (W - 20), y = d => H - 10 - (d + 60) / 60 * (H - 20);
+  let p = '';
+  for (let d = -60; d <= 0; d += 1) { const o = d - thr; let out = d; if (2 * o > knee) out = thr + o / ratio; else if (2 * Math.abs(o) <= knee) out = d + (1 / ratio - 1) * (o + knee / 2) ** 2 / (2 * knee); p += `${d === -60 ? 'M' : 'L'}${x(d).toFixed(1)},${y(out).toFixed(1)}`; }
+  return `<line x1="${x(-60)}" y1="${y(-60)}" x2="${x(0)}" y2="${y(0)}" stroke="#2c363e" stroke-dasharray="3 3"/><line x1="${x(thr)}" x2="${x(thr)}" y1="10" y2="${H - 10}" stroke="${color}" stroke-opacity=".45"/><text x="${x(thr) + 3}" y="20">THR −18</text><rect x="${x(thr - knee / 2)}" y="10" width="${x(thr + knee / 2) - x(thr - knee / 2)}" height="${H - 20}" fill="${color}" opacity=".08"/><path d="${p}" fill="none" stroke="${color}" stroke-width="2"/>${dot ? `<circle cx="${x(-9)}" cy="${y(-15)}" r="4" fill="#ecedf0"/><text x="${x(-9) - 46}" y="${y(-15) - 6}">in −9 → out −15</text>` : ''}<text x="12" y="${H - 2}">input dB →</text>`;
+}
+function limSvg(color, { live = true } = {}) {
+  const ceil = gy(-1 * 18 / 6) ; let a = '', g = '';
+  for (let i = 0; i <= 100; i++) { const v = Math.min(1, .55 + .35 * Math.abs(Math.sin(i / 7)) + .1 * Math.sin(i * 1.7)); const xx = 10 + i * (W - 20) / 100; a += `${i ? 'L' : 'M'}${xx},${H - 10 - v * (H - 40)}`; g += `${i ? 'L' : 'M'}${xx},${10 + Math.max(0, v - .82) * 120}`; }
+  return `<line x1="10" x2="${W - 10}" y1="34" y2="34" stroke="${color}" stroke-width="1.5"/><text x="${W - 92}" y="30" style="fill:${color}">CEILING −1.0 dBTP</text>${live ? `<path d="${a}" fill="none" stroke="#8d9aa4"/><path d="${g}L${W - 10},10L10,10Z" fill="${color}" opacity=".35"/><text x="12" y="20">GR</text>` : '<text x="12" y="80">No audio — ceiling shown, no level history</text>'}`;
+}
+function spaceSvg(color) {
+  const pre = 28, x0 = 10 + pre; let env = `M10,${H - 10}L10,30L${x0},30`, hf = `M${x0},30`;
+  for (let i = 0; i <= 60; i++) { const t = i / 60; env += `L${x0 + t * (W - 20 - pre)},${30 + t * (H - 40)}`; hf += `L${x0 + t * (W - 20 - pre) * .6},${30 + t * (H - 40)}`; }
+  return `<path d="${env}" fill="${color}" fill-opacity=".12" stroke="${color}" stroke-width="2"/><path d="${hf}" fill="none" stroke="${color}" stroke-dasharray="4 3" opacity=".7"/><line x1="${x0}" x2="${x0}" y1="20" y2="${H - 10}" stroke="#5d6870" stroke-dasharray="2 2"/><text x="${x0 + 3}" y="20">pre-delay 20 ms</text><text x="${W - 110}" y="${H - 14}">−60 dB at 1.8 s</text><text x="${x0 + 40}" y="${H / 2 + 10}">HF decays faster (damping 40 %)</text>`;
+}
+const MODS = [
+  { name: 'EQ', c: 'var(--accent)', svg: eqSvg, knobs: [['FREQ', '3.2k', 40], ['GAIN', '−2.5', -30], ['Q', '2.0', 10]], read: [['Bands', '3 on'], ['Max', '+3.0 dB'], ['Mode', 'Link']], ladder: 5 },
+  { name: 'Dynamics', c: 'var(--dyn)', svg: dynSvg, knobs: [['THR', '−18', -40], ['RATIO', '3:1', 20]], read: [['Thr', '−18 dB'], ['Ratio', '3:1'], ['GR', '−4.2 dB']], ladder: 4 },
+  { name: 'Limiter', c: 'var(--lim)', svg: limSvg, knobs: [['CEIL', '−1.0', 120], ['INPUT', '+3', -60]], read: [['Ceiling', '−1.0 dBTP'], ['GR', '−2.1 dB'], ['Rel', '100 ms']], ladder: 3 },
+  { name: 'Space', c: 'var(--space)', svg: spaceSvg, knobs: [['MIX', '20%', -80], ['DECAY', '1.8s', 0]], read: [['Mix', '20 %'], ['Decay', '1.8 s'], ['Preset', 'Room']], ladder: 2 },
+];
+const ladder = n => `<div class="ladder">${Array.from({ length: 10 }, (_, i) => `<span class="${i < n ? 'on' : ''}${i >= 7 ? ' w' : ''}${i >= 9 ? ' r' : ''}"></span>`).join('')}</div>`;
+const cardA = (m, i) => `<div class="modA" style="--c:${m.c}"><div class="cap"></div><div class="title"><span>0${i + 1} ${m.name.toUpperCase()}</span><span class="info">i</span></div><svg class="scope" viewBox="0 0 ${W} ${H}">${m.svg(m.c, { spectrum: false, dots: false, dot: false, live: false })}</svg><div class="knobs">${m.knobs.map(([l, v, r]) => `<span class="knob"><i style="--r:${r}deg"></i>${l}<b>${v}</b></span>`).join('')}</div><div class="bypass"><span class="led"></span><span class="key">ON</span>${ladder(m.ladder)}</div><span class="edit" style="background:#1a1f23">EDIT</span></div>`;
+const cardB = (m, i, extra = '') => `<div class="modB ${extra}" style="--c:${m.c}"><div class="title"><span><span class="num">0${i + 1}</span>${m.name} <span class="info">i</span></span><span class="toggle${extra.includes('bypassed') ? ' off' : ''}"><i></i>${extra.includes('bypassed') ? 'Bypass' : 'On'}</span></div><svg class="graph" viewBox="0 0 ${W} ${H}">${m.svg(m.c, { spectrum: !extra.includes('disabled'), dots: false, live: !extra.includes('disabled') })}</svg><div class="readouts">${m.read.map(([k, v]) => `<span><b>${k}</b>${v}</span>`).join('')}</div><span class="edit">Edit ${m.name}</span></div>`;
+document.getElementById('cardsA').innerHTML = MODS.map(cardA).join('');
+document.getElementById('cardsB').innerHTML = MODS.map((m, i) => cardB(m, i)).join('');
+const FIELDS = { EQ: [['Band', '7 of 24'], ['Type', 'Bell'], ['Frequency', '3200 Hz'], ['Gain', '−2.5 dB'], ['Q', '2.00'], ['Channel', 'Link']], Dynamics: [['Threshold', '−18.0 dB'], ['Ratio', '3.0 : 1'], ['Knee', '6.0 dB'], ['Attack', '10.0 ms'], ['Release', '150 ms'], ['Makeup', '0.0 dB']], Limiter: [['Ceiling', '−1.0 dBTP'], ['Input gain', '3.0 dB'], ['Release', '100 ms'], ['Latency', '83 smp']], Space: [['Preset', 'Room'], ['Mix', '20 %'], ['Pre-delay', '20 ms'], ['Decay', '1.8 s'], ['Damping', '40 %']] };
+const editorA = (m, i) => `<div class="editor" style="--c:${m.c}"><div class="bar"><span class="grip">⋮⋮</span>${m.name}<span class="spacer"></span><span class="btn">Undo</span><span class="btn">Presets ▾</span><span class="btn">×</span></div><div class="body" style="grid-template-columns: 1fr"><svg class="big" viewBox="0 0 ${W} ${H}">${m.svg(m.c, {})}</svg><div class="knobs" style="flex-wrap:wrap">${FIELDS[m.name].map(([l, v], k) => `<span class="knob" style="--c:${m.c}"><i style="--r:${(k * 47) % 240 - 120}deg"></i>${l.toUpperCase()}<b>${v}</b></span>`).join('')}</div></div></div>`;
+const editorB = (m) => `<div class="editor" style="--c:${m.c}"><div class="bar"><span class="grip">⋮⋮</span>${m.name}<span class="info">i</span><span class="spacer"></span><span class="btn">Undo</span><span class="btn">Save preset</span><span class="btn">Load preset</span><span class="btn">×</span></div><div class="body"><svg class="big" viewBox="0 0 ${W} ${H}">${m.svg(m.c, {})}</svg><div class="rail">${FIELDS[m.name].map(([l, v]) => `<label class="field">${l} <span class="info">i</span><b>${v}</b></label>`).join('')}${m.name === 'EQ' ? '' : `<div class="meters"><span style="height:70%"></span><span style="height:58%"></span><span class="gr" style="height:22%"></span></div><span class="note" style="margin:0">IN · OUT · GR (real signal while playing)</span>`}</div></div></div>`;
+document.getElementById('editorsA').innerHTML = MODS.map(editorA).join('');
+document.getElementById('editorsB').innerHTML = MODS.map(editorB).join('');
+const states = [['Active', ''], ['Bypassed (shape kept, grey)', 'is-bypassed'], ['Edited from default', 'edited'], ['No audio loaded', 'is-disabled'], ['Hover', 'is-hover'], ['Keyboard focus', 'is-focus'], ['Silent / paused (meters idle)', 'is-disabled']];
+document.getElementById('states').innerHTML = states.map(([label, cls]) => `<figure>${cardB(MODS[1], 1, cls).replace('Dynamics <span', cls === 'edited' ? 'Dynamics <span class="tag">edited</span> <span' : 'Dynamics <span')}<figcaption>${label}</figcaption></figure>`).join('');
+document.getElementById('deskEq').innerHTML = eqSvg('var(--accent)');
+document.getElementById('deskDyn').innerHTML = dynSvg('var(--dyn)');
+document.getElementById('narrow').innerHTML = MODS.map((m, i) => cardB(m, i)).join('');
+</script>
+</body>
+</html>
