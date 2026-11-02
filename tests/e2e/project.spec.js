@@ -227,6 +227,58 @@ test('LAS-69: Save, Save again, Save As, reopen after a restart with relink: set
   await expect(stems.getByRole('button', { name: 'Mute' })).toHaveAttribute('aria-pressed', 'true');
 });
 
+test('LAS-69: the same WAV on two stems is relinked as two strips; replacing the track with a same-name, same-size file is unsaved', async ({ page }) => {
+  await installFileStore(page);
+  await page.goto('/');
+  const ui = studio(page);
+  await ui.load('mix.wav', TRACK);
+  await expect(ui.status).toHaveText('Ready');
+  // Two strips from one file, with different settings.
+  await page.getByRole('button', { name: 'Stems…' }).click();
+  const stems = page.getByRole('dialog', { name: 'Stem session' });
+  await stems.getByLabel('Add stem WAVs').setInputFiles([
+    { name: 'bass.wav', mimeType: 'audio/wav', buffer: STEM },
+    { name: 'bass.wav', mimeType: 'audio/wav', buffer: STEM },
+  ]);
+  await expect(stems.getByRole('status')).toHaveText(/^2 stems/);
+  await stems.getByRole('slider', { name: 'Gain (dB)' }).nth(0).fill('-3');
+  await stems.getByRole('slider', { name: 'Gain (dB)' }).nth(1).fill('-9');
+  await stems.getByRole('button', { name: 'Close stems' }).click();
+  await page.evaluate(() => { window.__fs.nextSaveName = 'Doubles.mps-project.json'; });
+  await ui.menu('Save project');
+  await expect(ui.projectStatus).toHaveText('Saved to Doubles.mps-project.json');
+
+  // A revised mix with the same name and byte size is still a different file: unsaved.
+  const revised = makeWav({ seconds: 4, channels: 2, frequency: 440, dbfs: -12 });
+  expect(revised.length).toBe(TRACK.length);
+  await ui.load('mix.wav', revised);
+  await expect(ui.status).toHaveText('Ready');
+  await expect(ui.projectStatus).toHaveText('Unsaved changes');
+
+  // Reopen without saving that replacement; relink one strip at a time.
+  const store = await files(page);
+  await page.evaluate(store => sessionStorage.setItem('fs', JSON.stringify(store)), store);
+  page.once('dialog', dialog => dialog.accept()); // leave-page question for the unsaved replacement
+  await page.reload();
+  await page.evaluate(() => { window.__fs.files = JSON.parse(sessionStorage.getItem('fs')); window.__fs.nextOpen = 'Doubles.mps-project.json'; });
+  await page.keyboard.press('Control+o');
+  await expect(ui.relink).toBeVisible();
+  await expect(ui.relink.getByRole('status')).toHaveText('3 files still missing.');
+  await ui.relink.getByLabel('Relink mix.wav').setInputFiles({ name: 'mix.wav', mimeType: 'audio/wav', buffer: TRACK });
+  await expect(ui.relink.getByRole('status')).toHaveText('2 files still missing.');
+  await ui.relink.getByLabel('Relink bass.wav (1 of 2)').setInputFiles({ name: 'bass.wav', mimeType: 'audio/wav', buffer: STEM });
+  await expect(ui.relink.getByRole('status')).toHaveText('1 file still missing.');
+  await expect(ui.relink.getByText(/−9\.0 dB/)).toBeVisible(); // the other strip is still listed
+  await ui.relink.getByLabel('Relink bass.wav').setInputFiles({ name: 'bass.wav', mimeType: 'audio/wav', buffer: STEM });
+  await expect(ui.relink.getByRole('status')).toHaveText('All audio is linked.');
+  await ui.relink.getByRole('button', { name: 'Done' }).click();
+  // Relinked with verified files: nothing unsaved; both strips came back with their own gain.
+  await expect(ui.projectStatus).toHaveText('Opened Doubles.mps-project.json');
+  await page.getByRole('button', { name: 'Stems…' }).click();
+  await expect(stems.getByRole('slider', { name: 'Gain (dB)' })).toHaveCount(2);
+  expect(await stems.getByRole('slider', { name: 'Gain (dB)' }).evaluateAll(inputs => inputs.map(input => input.value).sort())).toEqual(['-3', '-9']);
+});
+
 test('LAS-69: cancelled and failed saves keep the session and the last saved file; edits made while saving stay unsaved; bad files are refused', async ({ page }) => {
   await installFileStore(page);
   await installChainProbe(page);

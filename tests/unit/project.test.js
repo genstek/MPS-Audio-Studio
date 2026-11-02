@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { defaultChain, serializeChain, validateChain } from '../../src/dsp/chain-params.js';
-import { PROJECT_FILE_LIMIT, ProjectFileError, cleanProjectName, fileNameFor, parseProject, projectKey, serializeProject, sha256Hex } from '../../src/project.js';
+import { PROJECT_FILE_LIMIT, ProjectFileError, adoptMediaIdentity, cleanProjectName, fileNameFor, mediaIdentity, parseProject, projectKey, savedMediaIdentity, serializeProject, sha256Hex } from '../../src/project.js';
 
 // LAS-60/69: project files are versioned manifests: settings plus media identity, never audio.
 const SHA = 'a'.repeat(64);
@@ -61,6 +61,22 @@ describe('LAS-69 project files', () => {
     expect(projectKey({ ...base, chain: { ...base.chain, limiter: { ...base.chain.limiter, ceiling: -2 } } })).not.toBe(key);
     expect(projectKey({ ...base, windowLayout: { eq: { open: true, position: { x: 9, y: 2 } } } })).not.toBe(key);
     expect(projectKey({ ...base, project: { id: 'p', name: 'B' } })).not.toBe(key);
+  });
+
+  test('replacing the track with another file of the same name and size is an unsaved change; a verified relink is not', () => {
+    const base = { project: { id: 'p', name: 'A' }, stems: [], chain: defaultChain(), listening: 'processed', windowLayout: {} };
+    const original = new File([new Uint8Array([1, 2, 3, 4])], 'mix.wav');
+    const revised = new File([new Uint8Array([9, 9, 9, 9])], 'mix.wav'); // same name, same size
+    const keyOf = file => projectKey({ ...base, track: { name: file.name, size: file.size, identity: mediaIdentity(file) } });
+    expect(mediaIdentity(original)).toBe(mediaIdentity(original)); // stable for one file
+    expect(keyOf(original)).toBe(keyOf(original));
+    expect(keyOf(revised)).not.toBe(keyOf(original));
+    // After Open, the saved key names the SHA-256; a relinked file verified against it matches.
+    const saved = projectKey({ ...base, track: { name: 'mix.wav', size: 4, identity: savedMediaIdentity(SHA) } });
+    const relinked = new File([new Uint8Array([1, 2, 3, 4])], 'mix.wav');
+    expect(keyOf(relinked)).not.toBe(saved);
+    adoptMediaIdentity(relinked, SHA);
+    expect(keyOf(relinked)).toBe(saved);
   });
 
   test('SHA-256 of a file is computed locally (known vector)', async () => {

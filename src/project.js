@@ -98,12 +98,27 @@ export function parseProject(text) {
   return validateProject(parsed);
 }
 
+// Identity of a loaded audio file for "Unsaved changes", without hashing it on every change: a
+// token per File object, or the saved SHA-256 once a relink has verified the file against a project.
+// Replacing the track with another file therefore counts as a change even when the name and size
+// are the same.
+const identities = new WeakMap();
+let nextIdentity = 0;
+export function mediaIdentity(file) {
+  if (!identities.has(file)) identities.set(file, `file-${++nextIdentity}`);
+  return identities.get(file);
+}
+export function adoptMediaIdentity(file, sha256) {
+  identities.set(file, `sha256-${sha256}`);
+}
+export const savedMediaIdentity = sha256 => `sha256-${sha256}`;
+
 // The part of a project that "Unsaved changes" compares (no save time, no checksums: those are only
 // computed when saving). Two states with the same key need no save.
 export function projectKey({ project, track, stems, chain, listening, windowLayout }) {
   return JSON.stringify({
     id: project?.id ?? null, name: project?.name ?? null,
-    track: track ? [track.name, track.size] : null,
+    track: track ? [track.name, track.size, track.identity ?? null] : null,
     stems: (stems ?? []).map(s => [s.name, s.sha256, s.offset, s.gainDb, s.pan, s.mute, s.solo, s.chainLabel, s.params]),
     chain, listening,
     windows: Object.fromEntries(Object.entries(windowLayout ?? {}).map(([k, w]) => [k, [Boolean(w.open), w.position?.x ?? null, w.position?.y ?? null]])),

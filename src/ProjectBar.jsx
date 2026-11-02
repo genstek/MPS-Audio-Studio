@@ -103,6 +103,13 @@ export function UnsavedDialog({ prompt, onChoose }) {
   );
 }
 
+// The same WAV can sit on several stem strips (each with its own settings); each is relinked on its
+// own, so their rows and labels say which strip they restore.
+const stemSettings = stem => `${stem.gainDb.toFixed(1).replace('-', '−')} dB · pan ${stem.pan.toFixed(2).replace('-', '−')} · offset ${stem.offset.toFixed(2)} s${stem.mute ? ' · muted' : ''}`;
+function relinkLabel(entry, entries) {
+  const same = entries.filter(other => other.kind === entry.kind && other.name === entry.name);
+  return same.length > 1 ? `Relink ${entry.name} (${same.indexOf(entry) + 1} of ${same.length})` : `Relink ${entry.name}`;
+}
 const bytes = size => (size >= 1048576 ? `${(size / 1048576).toFixed(1)} MiB` : `${Math.max(1, Math.round(size / 1024))} KiB`);
 
 // Missing audio after Open (the project stores identities, not audio): choose each file again.
@@ -121,10 +128,10 @@ export function RelinkDialog({ missing, open, onRelink, onClose, busy, problem }
       {problem && <p className="account-error" role="alert">{problem}</p>}
       <ul className="library-list">
         {entries.map(entry => (
-          <li key={`${entry.kind}-${entry.sha256}`}>
-            <span><strong>{entry.name}</strong> <span className="fine-print">· {entry.kind === 'track' ? 'track' : 'stem'} · {bytes(entry.size)} · SHA-256 {entry.sha256.slice(0, 8)}…{entry.sha256.slice(-4)}</span></span>
+          <li key={entry.kind === 'track' ? 'track' : `stem-${entry.slot}`}>
+            <span><strong>{entry.name}</strong> <span className="fine-print">· {entry.kind === 'track' ? 'track' : `stem · ${stemSettings(entry)}`} · {bytes(entry.size)} · SHA-256 {entry.sha256.slice(0, 8)}…{entry.sha256.slice(-4)}</span></span>
             <span className="library-actions">
-              <label className="file-picker small">Relink…<input type="file" accept=".wav,audio/wav" aria-label={`Relink ${entry.name}`} disabled={Boolean(busy)} onChange={event => { const file = event.target.files[0]; event.target.value = ''; if (file) onRelink(entry, file); }} /></label>
+              <label className="file-picker small">Relink…<input type="file" accept=".wav,audio/wav" aria-label={relinkLabel(entry, entries)} disabled={Boolean(busy)} onChange={event => { const file = event.target.files[0]; event.target.value = ''; if (file) onRelink(entry, file); }} /></label>
             </span>
           </li>
         ))}

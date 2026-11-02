@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { defaultChain } from './dsp/chain-params.js';
 import { audioFileSizeProblem } from './file-limits.js';
-import { PROJECT_FILE_LIMIT, PROJECT_SCHEMA, PROJECT_VERSION, fileNameFor, parseProject, projectKey, serializeProject, sha256Hex } from './project.js';
+import { PROJECT_FILE_LIMIT, PROJECT_SCHEMA, PROJECT_VERSION, adoptMediaIdentity, fileNameFor, mediaIdentity, parseProject, projectKey, savedMediaIdentity, serializeProject, sha256Hex } from './project.js';
 
 // The project workflow (LAS-60 New project, LAS-69 Save / Save As / Open).
 // - Save writes to the project's file when the browser lets the studio keep a file handle (File
@@ -20,6 +20,7 @@ const PICKER_TYPES = [{ description: 'MPS project', accept: { 'application/json'
 
 const layoutOf = windows => Object.fromEntries(Object.entries(windows).filter(([, w]) => w.position).map(([name, w]) => [name, { open: Boolean(w.open), x: w.position.x, y: w.position.y }]));
 const windowsFrom = layout => Object.fromEntries(Object.entries(layout).map(([name, w], i) => [name, { open: w.open, position: { x: w.x, y: w.y }, z: i + 1, focusRequest: 0 }]));
+const withoutSlot = stem => { const copy = { ...stem }; delete copy.slot; return copy; };
 const stemKeyOf = s => ({ name: s.name, sha256: s.sha256, offset: s.offset, gainDb: s.gainDb, pan: s.pan, mute: s.mute, solo: s.solo, chainLabel: s.chainLabel, params: s.params ?? s.chain });
 
 function downloadText(text, name) {
@@ -53,7 +54,8 @@ export function useProject({ engine, chain, listening, listen, windows, setWindo
   const saving = useRef(false);
   const hashes = useRef(new WeakMap());
 
-  const trackForKey = currentFile ? { name: currentFile.name, size: currentFile.size } : missing?.track ?? null;
+  const savedTrackKey = t => (t ? { name: t.name, size: t.size, identity: savedMediaIdentity(t.sha256) } : null);
+  const trackForKey = currentFile ? { name: currentFile.name, size: currentFile.size, identity: mediaIdentity(currentFile) } : savedTrackKey(missing?.track);
   const stemsForKey = [...stems, ...(missing?.stems ?? [])].map(stemKeyOf);
   const keyNow = (p = project) => projectKey({ project: p, track: trackForKey, stems: stemsForKey, chain: chain.params, listening, windowLayout: windows });
   const dirty = keyNow() !== baseKey;
@@ -71,7 +73,7 @@ export function useProject({ engine, chain, listening, listen, windows, setWindo
   }
   const stemEntries = () => [
     ...stems.map(s => ({ name: s.name, size: s.file?.size ?? 0, sha256: s.sha256, duration: s.duration, sampleRate: s.fileSampleRate, channels: s.fileChannels, offset: s.offset, gainDb: s.gainDb, pan: s.pan, mute: s.mute, solo: s.solo, chainLabel: s.chainLabel, chain: s.params })),
-    ...(missing?.stems ?? []),
+    ...(missing?.stems ?? []).map(withoutSlot), // the slot is only for relinking, not saved
   ];
 
   async function write(text, as, name) {
@@ -176,10 +178,11 @@ export function useProject({ engine, chain, listening, listen, windows, setWindo
     setWindows(restored);
     setProject(doc.project);
     handle.current = fileHandle;
-    const pending = doc.media.track || doc.media.stems.length ? { track: doc.media.track, stems: doc.media.stems } : null;
+    // Each saved stem keeps its own slot, so the same WAV on two strips is relinked as two strips.
+    const pending = doc.media.track || doc.media.stems.length ? { track: doc.media.track, stems: doc.media.stems.map((stem, slot) => ({ ...stem, slot })) } : null;
     setMissing(pending);
     setRelink({ open: Boolean(pending), busy: '', problem: '' });
-    setBaseKey(projectKey({ project: doc.project, track: doc.media.track ? { name: doc.media.track.name, size: doc.media.track.size } : null, stems: doc.media.stems.map(stemKeyOf), chain: doc.chain, listening: doc.player.listening, windowLayout: restored }));
+    setBaseKey(projectKey({ project: doc.project, track: savedTrackKey(doc.media.track), stems: doc.media.stems.map(stemKeyOf), chain: doc.chain, listening: doc.player.listening, windowLayout: restored }));
     setState({ phase: 'opened', fileName: file.name });
   }
 
@@ -193,6 +196,7 @@ export function useProject({ engine, chain, listening, listen, windows, setWindo
       if (sha !== entry.sha256) throw new Error(`${file.name} is not the saved ${entry.name} (its SHA-256 differs). Choose the original file.`);
       if (entry.kind === 'track') {
         hashes.current.set(file, sha);
+        adoptMediaIdentity(file, sha); // verified: the same audio as saved, so not an unsaved change
         await loadTrack(file);
         setMissing(m => (m ? { ...m, track: null } : m));
       } else {
@@ -205,7 +209,7 @@ export function useProject({ engine, chain, listening, listen, windows, setWindo
         session.setSolo(id, entry.solo);
         await session.setChain(id, entry.chain, entry.chainLabel);
         setStems(session.stems());
-        setMissing(m => (m ? { ...m, stems: m.stems.filter(s => s.sha256 !== entry.sha256) } : m));
+        setMissing(m => (m ? { ...m, stems: m.stems.filter(s => s.slot !== entry.slot) } : m)); // only the strip restored
       }
       setRelink(r => ({ ...r, busy: '', problem: '' }));
     } catch (failure) {
