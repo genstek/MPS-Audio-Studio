@@ -209,7 +209,7 @@ test('LAS-28: settings files and snapshots round-trip; an invalid file changes n
   const download = page.waitForEvent('download');
   await settings.getByRole('link', { name: 'Download settings (.json)' }).click();
   const saved = JSON.parse(readFileSync(await (await download).path(), 'utf8'));
-  expect(saved).toMatchObject({ schema: 'mps-chain', version: 1, compressor: { enabled: true, threshold: -24 } });
+  expect(saved).toMatchObject({ schema: 'mps-chain', version: 2, compressor: { enabled: true, threshold: -24 }, space: { enabled: false } });
 
   const invalid = { ...saved, compressor: { ...saved.compressor, ratio: 99 } };
   await settings.getByLabel('Load settings file').setInputFiles({ name: 'bad.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(invalid)) });

@@ -1,5 +1,5 @@
 // Processing presets for the LAS-29 regression set: bypass, the shipped defaults and a full master.
-import { defaultChain, editBand, setEqMode, validateChain } from '../../src/dsp/chain-params.js';
+import { SPACE_PRESETS, defaultChain, editBand, setEqMode, validateChain } from '../../src/dsp/chain-params.js';
 
 function master() {
   let params = defaultChain();
@@ -26,4 +26,10 @@ function bypass() {
   return validateChain({ ...params, eq: { ...params.eq, enabled: false }, compressor: { ...params.compressor, enabled: false }, limiter: { ...params.limiter, enabled: false } });
 }
 
-export const PRESETS = { bypass: bypass(), default: defaultChain(), master: master(), independent: independent() };
+// LAS-64: the shipped defaults with the Space "Hall" preset switched on (reverb before the limiter).
+function space() {
+  const params = defaultChain();
+  return validateChain({ ...params, space: { enabled: true, ...SPACE_PRESETS.Hall } });
+}
+
+export const PRESETS = { bypass: bypass(), default: defaultChain(), master: master(), independent: independent(), space: space() };

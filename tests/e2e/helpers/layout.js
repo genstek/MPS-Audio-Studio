@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 
-// The mixer strips and their buttons (working modules since LAS-28; Space is still a placeholder).
-export const STRIP_BUTTONS = { EQ: 'Edit EQ', Dynamics: 'Edit dynamics', Limiter: 'Edit limiter', Space: 'Space processing unavailable' };
+// The mixer strips and their buttons (working modules since LAS-28; Space since LAS-64).
+export const STRIP_BUTTONS = { EQ: 'Edit EQ', Dynamics: 'Edit dynamics', Limiter: 'Edit limiter', Space: 'Edit space' };
 
 // The controls that must stay usable at every size (LAS-48; the LAS-51 essentials).
 export function essentials(page) {

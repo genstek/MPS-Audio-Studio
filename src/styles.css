@@ -330,3 +330,17 @@ dialog .file-picker { grid-area: auto; }
 .stems-output select { padding: 6px 8px; border-radius: 5px; border: 1px solid #52616c; background: #11161a; color: #ecedf0; font: inherit; }
 .stems-render td { white-space: nowrap; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* LAS-63/64 configured-state previews: computed from the settings, shown even when stopped. */
+.space-thumbnail { width: 100%; height: 100%; }
+.space-graph { background: #11161a; border: 1px solid #39434c; border-radius: 6px; }
+.space-graph .space-thumbnail { display: block; height: auto; aspect-ratio: 480 / 160; }
+.space-graph text { fill: #a7b2bc; font-size: 11px; }
+.preview-axis { fill: #222b31; stroke: #39434c; stroke-width: 1; }
+.preview-line { fill: none; stroke: #a58bd8; stroke-width: 2; vector-effect: non-scaling-stroke; }
+.preview-line.dashed { stroke-dasharray: 4 3; opacity: .75; }
+.preview-fill { fill: #a58bd833; }
+.preview-mix { fill: #a58bd8; }
+.is-bypassed .preview-line, .is-bypassed .preview-mix { stroke: #6b7780; fill: #6b7780; }
+.is-bypassed .preview-line { fill: none; }
+.is-bypassed .preview-fill { fill: #6b778022; }

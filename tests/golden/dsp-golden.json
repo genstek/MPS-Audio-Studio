@@ -1,15 +1,20 @@
 {
- "goldenVersion": 1,
+ "goldenVersion": 2,
  "fixtureSetVersion": "mps-fixtures-1",
- "chainSchemaVersion": 1,
+ "chainSchemaVersion": 2,
  "analysisVersion": "mps-analysis-1",
  "limiterOversampling": 8,
- "node": "v22.22.0",
+ "node": "v22.23.4",
  "history": [
   {
    "goldenVersion": 1,
    "date": "2026-10-30",
    "reason": "Initial golden results (LAS-29): fixtures mps-fixtures-1, chain schema v1 with the 8x limiter detector"
+  },
+  {
+   "goldenVersion": 2,
+   "date": "2026-11-02",
+   "reason": "LAS-64: chain schema v2 adds Space (reverb before the limiter, off by default); all 96 existing renders are byte-identical to golden v1; adds the 'space' preset (Hall) renders"
   }
  ],
  "fixtures": {
@@ -99,6 +104,21 @@
    "nonFinite": 0,
    "sha256": "31bba6717d9de1925431b5ff544b1f4129215b45a3d85dd7575cd5fa8c16f70f"
   },
+  "silence-stereo@44100/space": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": null,
+   "truePeakDbtp": null,
+   "samplePeakDbfs": null,
+   "rmsDbfs": [
+    null,
+    null
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "31bba6717d9de1925431b5ff544b1f4129215b45a3d85dd7575cd5fa8c16f70f"
+  },
   "impulse-mono@44100/bypass": {
    "frames": 88200,
    "channels": 1,
@@ -154,6 +174,20 @@
    "clippedSamples": 0,
    "nonFinite": 0,
    "sha256": "446a95055e806fbf52090548016483cb08f08ffd141f310aad66f89060ad40b2"
+  },
+  "impulse-mono@44100/space": {
+   "frames": 88200,
+   "channels": 1,
+   "integratedLufs": -47.4322,
+   "truePeakDbtp": -8.1787,
+   "samplePeakDbfs": -8.1787,
+   "rmsDbfs": [
+    -57.5159
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "e238f14098f5a95124032ef7234f04bfccc35f0584014de38d8414eea509ef4b"
   },
   "tone-1k-stereo@44100/bypass": {
    "frames": 88200,
@@ -215,6 +249,21 @@
    "nonFinite": 0,
    "sha256": "c4e3c6ec2c2c2f0f82083d6308b25aa496d38a36b3f5fda1c848d21b214f6a8a"
   },
+  "tone-1k-stereo@44100/space": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -21.7181,
+   "truePeakDbtp": -20.2119,
+   "samplePeakDbfs": -20.2137,
+   "rmsDbfs": [
+    -23.6527,
+    -26.2599
+   ],
+   "correlation": 0.9932,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "a67367d211d02c58a723ab555e7d8a36b070d54706f82e558b2f4fed868edfbc"
+  },
   "tone-100-mono@44100/bypass": {
    "frames": 88200,
    "channels": 1,
@@ -270,6 +319,20 @@
    "clippedSamples": 0,
    "nonFinite": 0,
    "sha256": "cdb11c20f8596fe26ce8ead51b6b0632d398b02b638358c66e9eae3a8cd5cef4"
+  },
+  "tone-100-mono@44100/space": {
+   "frames": 88200,
+   "channels": 1,
+   "integratedLufs": -19.1771,
+   "truePeakDbtp": -13.154,
+   "samplePeakDbfs": -13.154,
+   "rmsDbfs": [
+    -17.3673
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "7a96718b7ff71319ba9b64127e42a402987cb2892ce3064035be95736b654229"
   },
   "tone-10k-stereo@44100/bypass": {
    "frames": 88200,
@@ -331,6 +394,21 @@
    "nonFinite": 0,
    "sha256": "c87042469674b561ab52a4472f1b0f777fe4d7d91c7666cbebc1fc22ba952fed"
   },
+  "tone-10k-stereo@44100/space": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -15.7244,
+   "truePeakDbtp": -18.7003,
+   "samplePeakDbfs": -18.7015,
+   "rmsDbfs": [
+    -22.4656,
+    -21.8817
+   ],
+   "correlation": 0.9948,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "7f866bf6e9313b89314df2b7533eb5e34e99e1f7ca74cd55ea281569dd2202ca"
+  },
   "sweep-mono@44100/bypass": {
    "frames": 132300,
    "channels": 1,
@@ -386,6 +464,20 @@
    "clippedSamples": 0,
    "nonFinite": 0,
    "sha256": "2d8d45424fba46f18464f9808e79150e70b510728b7668b1d9b5cd5a5ea62157"
+  },
+  "sweep-mono@44100/space": {
+   "frames": 132300,
+   "channels": 1,
+   "integratedLufs": -16.2729,
+   "truePeakDbtp": -10.4033,
+   "samplePeakDbfs": -10.4033,
+   "rmsDbfs": [
+    -17.0618
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "0f756f087005362cb7385ddadb76c2e05fc50e5d465bdda0ec22bc243db85197"
   },
   "phase-inverted@44100/bypass": {
    "frames": 88200,
@@ -447,6 +539,21 @@
    "nonFinite": 0,
    "sha256": "eecd307bcf182e95eeb92a379a63dd9d858f5cfe43e5d387aaca4c4ab0650cc8"
   },
+  "phase-inverted@44100/space": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -16.8532,
+   "truePeakDbtp": -16.1573,
+   "samplePeakDbfs": -16.1581,
+   "rmsDbfs": [
+    -19.2231,
+    -19.2231
+   ],
+   "correlation": -1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "5912e61da78c0a8134bb4caad8adc3eeddcaa4fdfb2f82bc2a40598f3935f576"
+  },
   "phase-quadrature@44100/bypass": {
    "frames": 88200,
    "channels": 2,
@@ -506,6 +613,21 @@
    "clippedSamples": 0,
    "nonFinite": 0,
    "sha256": "23020c059d34958bd7068acf3c8c615cb6582ca3f52dd963b72f8d99297a1111"
+  },
+  "phase-quadrature@44100/space": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -16.1326,
+   "truePeakDbtp": -14.6003,
+   "samplePeakDbfs": -14.6013,
+   "rmsDbfs": [
+    -17.9911,
+    -19.1286
+   ],
+   "correlation": 0.1731,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "72556e14733709180fadb3fe1169832731fc9e95cba46623e43ca5b51def7956"
   },
   "left-only@44100/bypass": {
    "frames": 88200,
@@ -567,6 +689,21 @@
    "nonFinite": 0,
    "sha256": "a62af83314ba2696e7be9d39c66c56f0b4cc8ad7fdf41ae8d3179aab663dc5b1"
   },
+  "left-only@44100/space": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -15.0534,
+   "truePeakDbtp": -11.2665,
+   "samplePeakDbfs": -11.2703,
+   "rmsDbfs": [
+    -14.7679,
+    -29.1729
+   ],
+   "correlation": 0.1943,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "397a650fac26893a99e69a9e5d87f461a83335a78da31584c3fb33ceaa54078c"
+  },
   "transients@44100/bypass": {
    "frames": 132300,
    "channels": 2,
@@ -626,6 +763,21 @@
    "clippedSamples": 0,
    "nonFinite": 0,
    "sha256": "3f668d2c7490660bfba3304cf2541d60cd54d01609532948698ab6362604be0a"
+  },
+  "transients@44100/space": {
+   "frames": 132300,
+   "channels": 2,
+   "integratedLufs": -18.4342,
+   "truePeakDbtp": -0.9998,
+   "samplePeakDbfs": -2.9706,
+   "rmsDbfs": [
+    -24.2783,
+    -24.3087
+   ],
+   "correlation": -0.019,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "f4f6aab2c39a93c048f108d5da55c2646465790210e367970cf9e174fb4e3ccc"
   },
   "programme@44100/bypass": {
    "frames": 176400,
@@ -687,6 +839,21 @@
    "nonFinite": 0,
    "sha256": "767b2a52e7d5a4242d7d4392e525c24c526d79c8aadee27725f666aa07061e49"
   },
+  "programme@44100/space": {
+   "frames": 176400,
+   "channels": 2,
+   "integratedLufs": -18.2997,
+   "truePeakDbtp": -4.3222,
+   "samplePeakDbfs": -4.4612,
+   "rmsDbfs": [
+    -19.7083,
+    -19.3444
+   ],
+   "correlation": 0.967,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "69172cec949e9fbe526a41712f671e63a5b0b6b691bb1d4061722b787fc7fe18"
+  },
   "programme-hot@44100/bypass": {
    "frames": 176400,
    "channels": 2,
@@ -747,6 +914,21 @@
    "nonFinite": 0,
    "sha256": "4c11bcc8289594649c4f0ae3cf1624df62f66b8361f5e88c87be76ab7cc50910"
   },
+  "programme-hot@44100/space": {
+   "frames": 176400,
+   "channels": 2,
+   "integratedLufs": -10.8037,
+   "truePeakDbtp": -0.99,
+   "samplePeakDbfs": -1,
+   "rmsDbfs": [
+    -12.3938,
+    -11.9183
+   ],
+   "correlation": 0.9592,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "f949edc9f8521e19ce04bdf23c2a031afa08d2825769966f2b66c25274e0cd8e"
+  },
   "silence-stereo@48000/bypass": {
    "frames": 96000,
    "channels": 2,
@@ -793,6 +975,21 @@
    "sha256": "af49089ff49f4ebe4e67e7ab4bfa3461454e312b948a91f153c48b3c5da2f4d8"
   },
   "silence-stereo@48000/independent": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": null,
+   "truePeakDbtp": null,
+   "samplePeakDbfs": null,
+   "rmsDbfs": [
+    null,
+    null
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "af49089ff49f4ebe4e67e7ab4bfa3461454e312b948a91f153c48b3c5da2f4d8"
+  },
+  "silence-stereo@48000/space": {
    "frames": 96000,
    "channels": 2,
    "integratedLufs": null,
@@ -863,6 +1060,20 @@
    "nonFinite": 0,
    "sha256": "fda3fb8487073a231647d15ea86ca2d4e4d3f61b219043eb1daf75d6bbf464c4"
   },
+  "impulse-mono@48000/space": {
+   "frames": 96000,
+   "channels": 1,
+   "integratedLufs": -47.7846,
+   "truePeakDbtp": -8.1787,
+   "samplePeakDbfs": -8.1787,
+   "rmsDbfs": [
+    -57.8836
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "cc764f889fa92d0204fe79ed761b24366e896e6202e436bd885decb57afa2c67"
+  },
   "tone-1k-stereo@48000/bypass": {
    "frames": 96000,
    "channels": 2,
@@ -923,6 +1134,21 @@
    "nonFinite": 0,
    "sha256": "cec4a90545434e8fb94a0b05dc7ae5dc89905de2a614f96101af07f39d624fe3"
   },
+  "tone-1k-stereo@48000/space": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -21.6573,
+   "truePeakDbtp": -20.1401,
+   "samplePeakDbfs": -20.1569,
+   "rmsDbfs": [
+    -23.6518,
+    -26.0908
+   ],
+   "correlation": 0.9924,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "928b7d5a36b20424bc6c6d04b223085c75329f482bf1f83a150d2f3ce0d5f7dd"
+  },
   "tone-100-mono@48000/bypass": {
    "frames": 96000,
    "channels": 1,
@@ -978,6 +1204,20 @@
    "clippedSamples": 0,
    "nonFinite": 0,
    "sha256": "4239344321b878b4c7729d6f625c67f0bba070eca42acd18a622965fb62c0ef3"
+  },
+  "tone-100-mono@48000/space": {
+   "frames": 96000,
+   "channels": 1,
+   "integratedLufs": -19.1512,
+   "truePeakDbtp": -13.1385,
+   "samplePeakDbfs": -13.1386,
+   "rmsDbfs": [
+    -17.3395
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "26d0de081c7edfff8980bcebc28a8a7a57b57ed6c4465153f12d1c27954bfcbf"
   },
   "tone-10k-stereo@48000/bypass": {
    "frames": 96000,
@@ -1039,6 +1279,21 @@
    "nonFinite": 0,
    "sha256": "19c4f13a7742eb031921c08c05c7a8b11fdfde57c23d42a2d70f31751ca169af"
   },
+  "tone-10k-stereo@48000/space": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -16.8547,
+   "truePeakDbtp": -19.2264,
+   "samplePeakDbfs": -19.2339,
+   "rmsDbfs": [
+    -23.6746,
+    -22.8271
+   ],
+   "correlation": 0.9976,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "e5631b86c480162f6b33fd0973bac45ee6e9f0cef1c8d851dd727aac8adbd5bd"
+  },
   "sweep-mono@48000/bypass": {
    "frames": 144000,
    "channels": 1,
@@ -1094,6 +1349,20 @@
    "clippedSamples": 0,
    "nonFinite": 0,
    "sha256": "15945879ed00397897a3226d89bbff68b7fb2d8b67f2d5dfe5097e94b438a797"
+  },
+  "sweep-mono@48000/space": {
+   "frames": 144000,
+   "channels": 1,
+   "integratedLufs": -16.2697,
+   "truePeakDbtp": -10.0817,
+   "samplePeakDbfs": -10.148,
+   "rmsDbfs": [
+    -17.0597
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "82eccd2f7fb89dc9b267d23efe313d001829944f419d2090a79f1377b13d0418"
   },
   "phase-inverted@48000/bypass": {
    "frames": 96000,
@@ -1155,6 +1424,21 @@
    "nonFinite": 0,
    "sha256": "2d53d8ccd01ae9dea3edfc1df8af5d7dd53363dc0a64edb7c304322869d60ed3"
   },
+  "phase-inverted@48000/space": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -16.8569,
+   "truePeakDbtp": -16.1574,
+   "samplePeakDbfs": -16.1581,
+   "rmsDbfs": [
+    -19.2231,
+    -19.2231
+   ],
+   "correlation": -1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "f369785e4e9cfad66ac084f14721d408fb9b27c23bbb237ce54f3f8a56957da6"
+  },
   "phase-quadrature@48000/bypass": {
    "frames": 96000,
    "channels": 2,
@@ -1214,6 +1498,21 @@
    "clippedSamples": 0,
    "nonFinite": 0,
    "sha256": "dfe15ede0ec5ef3b156fccae84a1b59831e2ca98a4ad1796a7ebc9b9e1014c3f"
+  },
+  "phase-quadrature@48000/space": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -16.0932,
+   "truePeakDbtp": -14.5411,
+   "samplePeakDbfs": -14.5419,
+   "rmsDbfs": [
+    -17.9393,
+    -19.1006
+   ],
+   "correlation": 0.1732,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "f9a3d96e42c81e0b1b6c33daeaf323a019d1013c95623717a834521d09af668d"
   },
   "left-only@48000/bypass": {
    "frames": 96000,
@@ -1275,6 +1574,21 @@
    "nonFinite": 0,
    "sha256": "c091cfeaffc9cdb2bd9bf58323ece34f009d0b2a5e28a5d362503df0ffe8a4cf"
   },
+  "left-only@48000/space": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -14.8983,
+   "truePeakDbtp": -11.2175,
+   "samplePeakDbfs": -11.2213,
+   "rmsDbfs": [
+    -14.6032,
+    -29.3644
+   ],
+   "correlation": 0.0914,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "91c3d2eae207b94524b866737cccfde7a2dfbccda1a883fec3694dd0234580e6"
+  },
   "transients@48000/bypass": {
    "frames": 144000,
    "channels": 2,
@@ -1334,6 +1648,21 @@
    "clippedSamples": 0,
    "nonFinite": 0,
    "sha256": "8a5a8e16f712965d6ea42f095b7e0fbd31eef09c8111e390c8534cda653d75af"
+  },
+  "transients@48000/space": {
+   "frames": 144000,
+   "channels": 2,
+   "integratedLufs": -18.5344,
+   "truePeakDbtp": -0.9944,
+   "samplePeakDbfs": -2.9646,
+   "rmsDbfs": [
+    -24.4005,
+    -24.4241
+   ],
+   "correlation": -0.0095,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "45e371ab9f52a9677a4b2270abbf6bfe494c98b6ec23ad5a0dfdb351dd0a8822"
   },
   "programme@48000/bypass": {
    "frames": 192000,
@@ -1395,6 +1724,21 @@
    "nonFinite": 0,
    "sha256": "cfee3f8707bb8f04a5f88f07411d154fbb2762fbdb9576a0aa20b0a15b2b11bb"
   },
+  "programme@48000/space": {
+   "frames": 192000,
+   "channels": 2,
+   "integratedLufs": -18.2989,
+   "truePeakDbtp": -4.4017,
+   "samplePeakDbfs": -4.4637,
+   "rmsDbfs": [
+    -19.7064,
+    -19.3448
+   ],
+   "correlation": 0.9668,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "092192810dc7ccae45c1de7eca879dcea5c738d0ddf7c3a5760620abcf2483ba"
+  },
   "programme-hot@48000/bypass": {
    "frames": 192000,
    "channels": 2,
@@ -1454,6 +1798,21 @@
    "clippedSamples": 0,
    "nonFinite": 0,
    "sha256": "44f6a81df75e1657ada0df4d2b7c278408c0012c4dadb7f12915b20e9548face"
+  },
+  "programme-hot@48000/space": {
+   "frames": 192000,
+   "channels": 2,
+   "integratedLufs": -10.8164,
+   "truePeakDbtp": -0.9975,
+   "samplePeakDbfs": -1.0056,
+   "rmsDbfs": [
+    -12.3994,
+    -11.9273
+   ],
+   "correlation": 0.959,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "e2dd55e3d6fd80837bbaf89270f175929879be34fef7f5f5fde6349b3fa133e8"
   }
  }
 }

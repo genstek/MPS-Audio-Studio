@@ -1,5 +1,6 @@
 import React from 'react';
-import { BOUNDS } from './dsp/chain-params.js';
+import { BOUNDS, SPACE_PRESETS } from './dsp/chain-params.js';
+import { SpaceThumbnail } from './ProcessorPreviews.jsx';
 import { ParamField } from './ParamField.jsx';
 import { GainReductionMeter } from './GainReductionMeter.jsx';
 
@@ -59,6 +60,43 @@ export function LimiterEditor({ params, update, engine, active, latency, sampleR
           onChange={value => update(setField('limiter', name, value), `limiter-${name}`)} />
       ))}
       <p className="fine-print">True-peak limiter (4× oversampled detection, 1.5 ms look-ahead). Latency{latency ? ` ${latency} samples (${((latency / sampleRate) * 1000).toFixed(1)} ms)` : ''}; the original is delayed by the same amount so the comparison lines up.</p>
+    </div>
+  );
+}
+
+// Space (LAS-64): a stereo reverb between the compressor and the limiter.
+const SPACE_FIELDS = [
+  ['mix', 'Mix (wet)', '%', 1, false],
+  ['preDelay', 'Pre-delay', 'ms', 1, false],
+  ['decay', 'Decay (RT60)', 's', 0.01, true],
+  ['damping', 'Damping', '%', 1, false],
+];
+
+// The preset whose values the settings match, or 'custom'.
+export function spacePresetName(space) {
+  return Object.entries(SPACE_PRESETS).find(([, values]) => Object.entries(values).every(([key, value]) => space[key] === value))?.[0] ?? 'custom';
+}
+
+export function SpaceEditor({ params, update }) {
+  const settings = params.space;
+  const preset = spacePresetName(settings);
+  return (
+    <div className="module-editor">
+      <div className="module-row">
+        <label className="toggle"><input type="checkbox" checked={settings.enabled} onChange={e => update(setField('space', 'enabled', e.target.checked))} />Space on</label>
+        <label className="select-field">Preset
+          <select value={preset} onChange={e => update(p => ({ ...p, space: { ...p.space, ...SPACE_PRESETS[e.target.value] } }))}>
+            {Object.keys(SPACE_PRESETS).map(name => <option key={name} value={name}>{name}</option>)}
+            <option value="custom" disabled>Custom</option>
+          </select>
+        </label>
+      </div>
+      <div className="space-graph"><SpaceThumbnail space={settings} large /></div>
+      {SPACE_FIELDS.map(([name, label, unit, step, log]) => (
+        <ParamField key={name} label={label} unit={unit} min={BOUNDS[name][0]} max={BOUNDS[name][1]} step={step} value={settings[name]} log={log}
+          onChange={value => update(setField('space', name, Number((Math.round(value / step) * step).toFixed(step < 1 ? 2 : 0))), `space-${name}`)} />
+      ))}
+      <p className="fine-print">Stereo reverb (an 8-line feedback delay network) placed after the compressor and before the limiter, so the limiter's ceiling also holds the reverb. The left and right inputs are summed; the reverb comes back as decorrelated stereo (a mono track gets mono reverb). Decay is the time for low frequencies to fall by 60 dB; damping makes high frequencies fall faster. Changes glide over about 20 ms; switching Space off fades the reverb out over 20 ms. Pause and Stop let the tail ring out; removing or replacing the track clears it. Room, Hall and Plate are starting points of this one algorithm, not models of real rooms or plates. Export can include or cut the tail.</p>
     </div>
   );
 }

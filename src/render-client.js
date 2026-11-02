@@ -4,7 +4,7 @@
 // pan, mute, solo, params }] and the master params). Returns
 // { result, cancel }: result resolves with { report, bytes } or rejects with a showable Error;
 // cancel() stops the work at once (AbortError).
-export function startRender(file, { mode, params, bitDepth, segment, reference, stems }, onProgress = () => {}) {
+export function startRender(file, { mode, params, bitDepth, segment, reference, stems, includeTail }, onProgress = () => {}) {
   const worker = new Worker(new URL('./dsp/render.worker.js', import.meta.url), { type: 'module' });
   let settle;
   const result = new Promise((resolve, reject) => { settle = { resolve, reject }; });
@@ -20,7 +20,7 @@ export function startRender(file, { mode, params, bitDepth, segment, reference, 
     finish();
     settle.reject(new Error('Rendering failed unexpectedly. Try again.'));
   };
-  worker.postMessage({ mode, file, params, bitDepth, segment, reference, stems });
+  worker.postMessage({ mode, file, params, bitDepth, segment, reference, stems, includeTail });
   return {
     result,
     cancel() {

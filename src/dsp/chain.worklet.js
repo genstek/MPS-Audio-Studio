@@ -15,6 +15,8 @@ class ChainProcessor extends AudioWorkletProcessor {
     this.compressorPeak = 0;
     this.limiterPeak = 0;
     this.port.onmessage = ({ data }) => {
+      // LAS-64: clear every state (reverb tail, limiter delay) when the track is removed or replaced.
+      if (data.type === 'reset') { this.chain.reset(); return; }
       if (data.type !== 'params') return;
       try {
         this.chain.setParams(data.params);

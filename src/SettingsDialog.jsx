@@ -173,7 +173,7 @@ export function SettingsDialog({ params, replace }) {
           <h3 id="files-title">Settings file</h3>
           {fileUrl && <a className="button-link" href={fileUrl} download="mps-chain-settings.json">Download settings (.json)</a>}
           <label className="file-picker small">Load settings…<input type="file" accept=".json,application/json" aria-label="Load settings file" onChange={load} /></label>
-          <p className="fine-print">Versioned JSON (schema mps-chain v1) with every band, the compressor and the limiter. Invalid or newer files are refused without changing anything.</p>
+          <p className="fine-print">Versioned JSON (schema mps-chain v2) with every band, the compressor, Space and the limiter. Version 1 files load with Space off. Invalid or newer files are refused without changing anything.</p>
         </section>
         <section className="account-body" aria-labelledby="presets-title">
           <h3 id="presets-title">My presets</h3>
@@ -205,7 +205,7 @@ export function SettingsDialog({ params, replace }) {
                   </li>
                 ))}
               </ul>
-              <p className="fine-print">A preset is the complete chain (all 24 bands per channel, Link or independent, compressor, limiter) with its versions; only these settings are stored, never audio.</p>
+              <p className="fine-print">A preset is the complete chain (all 24 bands per channel, Link or independent, compressor, Space, limiter) with its versions; only these settings are stored, never audio.</p>
             </>
           )}
         </section>

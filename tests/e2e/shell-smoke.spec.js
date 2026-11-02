@@ -34,9 +34,9 @@ for (const viewport of viewports) {
     // Limiter open real editors; since LAS-68 the master level works and, without audio, says why
     // it is disabled instead of claiming it is unavailable.
     const mixer = page.getByRole('region', { name: 'Mixer', exact: true });
-    await expect(mixer.getByText('Coming soon', { exact: true })).toHaveCount(1);
-    await expect(mixer.getByRole('button', { name: 'Space processing unavailable' })).toBeDisabled();
-    for (const name of ['Edit EQ', 'Edit dynamics', 'Edit limiter']) await expect(mixer.getByRole('button', { name })).toBeEnabled();
+    // Since LAS-64 Space is a working module too; no strip is a placeholder any more.
+    await expect(mixer.getByText('Coming soon', { exact: true })).toHaveCount(0);
+    for (const name of ['Edit EQ', 'Edit dynamics', 'Edit limiter', 'Edit space']) await expect(mixer.getByRole('button', { name })).toBeEnabled();
     const master = page.getByRole('region', { name: 'Master', exact: true });
     await expect(master.getByRole('slider', { name: 'Master level' })).toBeDisabled();
     await expect(master.getByText('Import a WAV or add stems to use the master level.')).toBeVisible();

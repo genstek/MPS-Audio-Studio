@@ -36,7 +36,7 @@ describe('LAS-27 chain settings schema', () => {
     const text = serializeChain(params);
     expect(parseChain(text)).toEqual(params);
     expect(serializeChain(parseChain(text))).toBe(text); // stable text
-    expect(JSON.parse(text)).toMatchObject({ schema: 'mps-chain', version: 1, order: ['eq', 'compressor', 'limiter'] });
+    expect(JSON.parse(text)).toMatchObject({ schema: 'mps-chain', version: 2, order: ['eq', 'compressor', 'space', 'limiter'], space: { enabled: false } });
   });
 
   test('every band keeps its own frequency, gain, Q and type in the serialised text', () => {
@@ -57,7 +57,7 @@ describe('LAS-27 chain settings schema', () => {
   test.each([
     ['not JSON', '{', 'not valid JSON'],
     ['another file type', broken(p => { p.schema = 'other'; }), 'not MPS chain settings'],
-    ['a newer version', broken(p => { p.version = 2; }), 'newer version'],
+    ['a newer version', broken(p => { p.version = 3; }), 'newer version'],
     ['an unknown old version', broken(p => { p.version = 0; }), 'cannot be upgraded'],
     ['another processing order', broken(p => { p.order = ['compressor', 'eq', 'limiter']; }), 'processing order'],
     ['23 bands', broken(p => { p.eq.left.pop(); }), 'exactly 24 bands'],

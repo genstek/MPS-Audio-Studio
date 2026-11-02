@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { startRender } from './render-client.js';
+import { spaceTailSeconds } from './dsp/chain.js';
 
 const level = (value, unit) => (value === null || value === undefined ? '—' : `${value.toFixed(2).replace('-', '−')} ${unit}`);
 
@@ -10,6 +11,9 @@ export function ExportDialog({ file, params }) {
   const dialog = useRef(null);
   const job = useRef(null);
   const [bitDepth, setBitDepth] = useState(24);
+  // LAS-64: with Space on, the export keeps the reverb tail unless the user cuts it.
+  const [includeTail, setIncludeTail] = useState(true);
+  const tailSeconds = spaceTailSeconds(params);
   const [state, setState] = useState({ phase: 'idle' });
   const [download, setDownload] = useState(null);
 
@@ -17,21 +21,21 @@ export function ExportDialog({ file, params }) {
   useEffect(() => () => {
     job.current?.cancel();
     job.current = null;
-  }, [file, params]);
+  }, [file, params, includeTail]);
   useEffect(() => () => { if (download) URL.revokeObjectURL(download.url); }, [download]);
 
   function run() {
     job.current?.cancel();
     setDownload(null);
     setState({ phase: 'running', stage: 'Starting…', fraction: 0 });
-    const current = startRender(file, { mode: 'export', params, bitDepth }, ({ stage, fraction }) => {
+    const current = startRender(file, { mode: 'export', params, bitDepth, includeTail: includeTail && tailSeconds > 0 }, ({ stage, fraction }) => {
       if (job.current === current) setState({ phase: 'running', stage, fraction });
     });
     job.current = current;
     current.result.then(({ report, bytes }) => {
       if (job.current !== current) return;
       job.current = null;
-      setDownload({ url: URL.createObjectURL(new Blob([bytes], { type: 'audio/wav' })), name: report.name, file, params });
+      setDownload({ url: URL.createObjectURL(new Blob([bytes], { type: 'audio/wav' })), name: report.name, file, params, includeTail });
       setState({ phase: 'done', report });
     }, failure => {
       if (failure.name === 'AbortError') setState({ phase: 'cancelled' });
@@ -44,7 +48,7 @@ export function ExportDialog({ file, params }) {
     job.current = null;
   }
 
-  const fresh = download && download.file === file && download.params === params;
+  const fresh = download && download.file === file && download.params === params && download.includeTail === includeTail;
   const running = state.phase === 'running';
   const report = fresh && state.phase === 'done' ? state.report : null;
   const status = running ? state.stage : state.phase === 'cancelled' ? 'Export cancelled.' : report ? 'Export ready.' : state.phase === 'done' ? 'Settings changed since the export; export again.' : '';
@@ -62,7 +66,14 @@ export function ExportDialog({ file, params }) {
           <label><input type="radio" name="export-depth" checked={bitDepth === 24} onChange={() => setBitDepth(24)} />24-bit PCM</label>
           <label><input type="radio" name="export-depth" checked={bitDepth === 16} onChange={() => setBitDepth(16)} />16-bit PCM + TPDF dither</label>
         </fieldset>
-        <p className="fine-print">Same sample rate and channels as the source. 24-bit is written without dither; 16-bit adds triangular (TPDF) dither of ±1 step. The chain's latency is compensated, so the export is exactly as long as the source.</p>
+        {tailSeconds > 0 && (
+          <fieldset className="segmented" disabled={running}>
+            <legend>Reverb tail (Space is on)</legend>
+            <label><input type="radio" name="export-tail" checked={includeTail} onChange={() => setIncludeTail(true)} />Include the tail (+{tailSeconds.toFixed(2)} s)</label>
+            <label><input type="radio" name="export-tail" checked={!includeTail} onChange={() => setIncludeTail(false)} />Cut at the end of the source</label>
+          </fieldset>
+        )}
+        <p className="fine-print">Same sample rate and channels as the source. 24-bit is written without dither; 16-bit adds triangular (TPDF) dither of ±1 step. The chain's latency is compensated, so the export starts exactly with the source and is exactly as long{tailSeconds > 0 ? ', plus the reverb tail (pre-delay + decay) when it is included' : ''}. Master Level (monitor volume) is not applied.</p>
         <p className="account-status" role="status">{status}</p>
         {running && <progress max={1} value={state.fraction} aria-label="Export progress" />}
         {state.phase === 'error' && <p className="account-error" role="alert">{state.message}</p>}
@@ -74,6 +85,7 @@ export function ExportDialog({ file, params }) {
                 ['Format', `${report.bitDepth}-bit PCM WAV, ${report.sampleRate.toLocaleString('en-US')} Hz, ${report.channels === 1 ? 'mono' : 'stereo'}`],
                 ['Dither', report.dither],
                 ['Length', `${report.duration.toFixed(3)} s (${report.frames.toLocaleString('en-US')} samples per channel)`],
+                ...(report.tailFrames ? [['Reverb tail', `${report.tailFrames.toLocaleString('en-US')} samples after the source (${(report.tailFrames / report.sampleRate).toFixed(3)} s)`]] : []),
                 ['Integrated loudness', level(report.integratedLufs, 'LUFS')],
                 ['True peak (4× oversampled)', level(report.truePeakDbtp, 'dBTP')],
                 ['Sample peak', level(report.samplePeakDbfs, 'dBFS')],

@@ -46,5 +46,7 @@ export async function createChainNode(context, params, channelCount) {
       });
     },
     onMeters(listener) { onMeters = listener; },
+    // Clears all states (no stale reverb tail after unload or replacement, LAS-64).
+    reset() { node.port.postMessage({ type: 'reset' }); },
   };
 }

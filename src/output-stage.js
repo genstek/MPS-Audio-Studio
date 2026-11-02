@@ -40,6 +40,8 @@ export async function createOutputStage(context, channelCount, params, destinati
     referenceInput: reference,
     analyser,
     setParams: next => chain.setParams(next),
+    // Clears the chain's tail (reverb, limiter delay) after a track is removed or replaced (LAS-64).
+    reset: () => chain.reset(),
     onMeters: listener => chain.onMeters(listener),
     // listening: 'processed' | 'original' | 'reference'; match: { processedDb, originalDb,
     // referenceDb } gains in dB (≤ 0).

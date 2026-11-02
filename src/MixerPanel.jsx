@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { EditorDialog } from './EditorDialog.jsx';
 import { EqEditor, EqThumbnail } from './EqEditor.jsx';
-import { CompressorEditor, LimiterEditor } from './ModuleEditors.jsx';
+import { CompressorEditor, LimiterEditor, SpaceEditor, spacePresetName } from './ModuleEditors.jsx';
+import { SpaceThumbnail } from './ProcessorPreviews.jsx';
 import { GainReductionMeter } from './GainReductionMeter.jsx';
 import { ListenSwitch } from './ListeningControls.jsx';
 import { SettingsDialog } from './SettingsDialog.jsx';
@@ -27,7 +28,7 @@ function defaultPosition(name) {
 }
 
 // The mixer (LAS-28): the mastering chain's modules in processing order, each with a real indicator
-// and an editor, plus undo/redo and saved settings. Space (reverb/width) is not built yet.
+// and an editor, plus undo/redo and saved settings. Space is the LAS-64 reverb.
 export function MixerPanel({ chain, engine, track, sampleRate, listening, onListen, tools }) {
   // name → { open, position, z, focusRequest }; the highest z is the front (active) window.
   const [windows, setWindows] = useState({});
@@ -94,6 +95,7 @@ export function MixerPanel({ chain, engine, track, sampleRate, listening, onList
     { name: 'EQ', visual: <EqThumbnail params={params} sampleRate={sampleRate} />, caption: eqCaption(params.eq), edit: 'Edit EQ', editor: 'eq' },
     { name: 'Dynamics', visual: <GainReductionMeter engine={engine} which="compressor" label="Compressor gain reduction" active={active} compact />, caption: params.compressor.enabled ? `${params.compressor.threshold} dB · ${params.compressor.ratio}:1` : 'Off', edit: 'Edit dynamics', editor: 'dynamics' },
     { name: 'Limiter', visual: <GainReductionMeter engine={engine} which="limiter" label="Limiter gain reduction" active={active} compact />, caption: params.limiter.enabled ? `Ceiling ${params.limiter.ceiling.toFixed(1)} dBTP` : 'Off', edit: 'Edit limiter', editor: 'limiter' },
+    { name: 'Space', visual: <SpaceThumbnail space={params.space} />, caption: params.space.enabled ? `${spacePresetName(params.space) === 'custom' ? 'Custom' : spacePresetName(params.space)} · ${params.space.mix} % · ${params.space.decay} s` : 'Off', edit: 'Edit space', editor: 'space' },
   ];
   return (
     <section className="mixer panel" aria-labelledby="mixer-title">
@@ -117,12 +119,6 @@ export function MixerPanel({ chain, engine, track, sampleRate, listening, onList
             <button className={windows[strip.editor]?.open ? 'is-open' : undefined} onClick={() => openEditor(strip.editor)} aria-label={strip.edit}>Edit</button>
           </section>
         ))}
-        <section className="strip" aria-label="Space channel strip">
-          <div className="strip-title"><span className="strip-number">04</span><h3>Space</h3></div>
-          <div className="knob" aria-hidden="true" />
-          <p>Coming soon</p>
-          <button disabled aria-label="Space processing unavailable">Unavailable</button>
-        </section>
       </div>
       <EditorDialog title="EQ" {...windowProps('eq')} headerExtra={editorTools}>
         <EqEditor params={params} update={update} sampleRate={sampleRate} engine={engine} />
@@ -132,6 +128,9 @@ export function MixerPanel({ chain, engine, track, sampleRate, listening, onList
       </EditorDialog>
       <EditorDialog title="Limiter" {...windowProps('limiter')} headerExtra={editorTools}>
         <LimiterEditor params={params} update={update} engine={engine} active={active} latency={track ? engine.current?.latency() : 0} sampleRate={sampleRate} />
+      </EditorDialog>
+      <EditorDialog title="Space" {...windowProps('space')} headerExtra={editorTools}>
+        <SpaceEditor params={params} update={update} />
       </EditorDialog>
     </section>
   );

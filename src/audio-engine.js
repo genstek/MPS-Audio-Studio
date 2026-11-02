@@ -151,6 +151,7 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
       }
       // Keep the previous track intact until replacement decoding succeeds.
       disconnect();
+      output?.reset?.(); // the old track's reverb tail is not carried into the new one (LAS-64)
       buffer = decoded;
       offset = 0;
       if (stage !== output) {
@@ -203,6 +204,7 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
     unload() {
       latestLoad++; // an import still running cannot bring the removed audio back
       disconnect();
+      output?.reset?.(); // no stale reverb tail after removal (LAS-64)
       buffer = null;
       offset = 0;
       // Nothing is left to play, so the audio device may idle until the next Play resumes it.
