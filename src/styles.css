@@ -344,3 +344,27 @@ dialog .file-picker { grid-area: auto; }
 .is-bypassed .preview-line, .is-bypassed .preview-mix { stroke: #6b7780; fill: #6b7780; }
 .is-bypassed .preview-line { fill: none; }
 .is-bypassed .preview-fill { fill: #6b778022; }
+/* LAS-63: card state without playback. The graph keeps its shape when bypassed (grey); the LED
+   says on/bypassed; "edited" marks settings that differ from the defaults. */
+.strip-led { width: 8px; height: 8px; border-radius: 50%; background: #3a2f2a; margin-left: auto; flex-shrink: 0; }
+.strip-led.on { background: #6fd08c; box-shadow: 0 0 6px #6fd08c; }
+.strip-edited { font-size: 9px; letter-spacing: .5px; color: #14191d; background: #d7af6c; border-radius: 6px; padding: 0 4px; line-height: 13px; }
+.strip.is-bypassed .strip-visual { opacity: .75; }
+.strip-visual { position: relative; }
+.strip-visual > .dynamics-thumbnail, .strip-visual > .limiter-thumbnail { width: 100%; height: 100%; }
+.strip-visual > .gr-meter.compact { position: absolute; right: 2px; top: 10%; width: 5px; height: 80%; }
+.strip:hover .strip-visual { border-color: #52616c; }
+.strip:focus-within { background: linear-gradient(110deg, #80d1e010, transparent); }
+.eq-thumbnail.is-bypassed path { stroke: #6b7780; }
+.dynamics-thumbnail, .limiter-thumbnail { display: block; }
+.preview-plot { fill: transparent; }
+.preview-grid line { stroke: #2c353d; stroke-width: 1; }
+.preview-grid text, .preview-label, .preview-axis-label { fill: #a7b2bc; font-size: 10px; }
+.preview-unity { stroke: #3a454e; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
+.preview-marker { stroke: #6fc3b255; vector-effect: non-scaling-stroke; }
+.dynamics-thumbnail .preview-line { stroke: #6fc3b2; }
+.limiter-thumbnail .preview-line { stroke: #e07b62; }
+.limiter-thumbnail .preview-marker { stroke: #e07b6288; }
+.transfer-graph { max-width: 340px; background: #11161a; border: 1px solid #39434c; border-radius: 6px; }
+.transfer-graph svg { display: block; width: 100%; height: auto; aspect-ratio: 320 / 220; }
+@media (prefers-reduced-motion: reduce) { .strip, .strip-visual { transition: none; } }

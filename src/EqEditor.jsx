@@ -3,6 +3,7 @@ import { BANDS_PER_CHANNEL, BAND_TYPES, BOUNDS, editBand, resolveForSampleRate, 
 import { designBand } from './dsp/eq-design.js';
 import { biquadResponseDb } from './dsp/biquad.js';
 import { ParamField } from './ParamField.jsx';
+import { useEased } from './ProcessorPreviews.jsx';
 
 // The 24-band EQ editor (LAS-28). The curve is the real transfer function of the enabled bands at
 // the playback sample rate; the spectrum behind it is measured from what is being heard.
@@ -49,14 +50,21 @@ function curvePath(response, scale) {
   return points.join('');
 }
 
-// Small curve for the mixer strip (decorative; the numbers are in the editor).
+// Small curve for the mixer strip (LAS-63): the configured response, shown and updated whether or
+// not audio plays; it moves to a new shape over a short transition (none with reduced motion) and
+// turns grey, still visible, when the EQ is bypassed. The numbers are in the editor.
+const THUMB_POINTS = 96;
 export function EqThumbnail({ params, sampleRate }) {
-  const path = useMemo(() => {
+  const target = useMemo(() => {
     const resolved = resolveForSampleRate(params, sampleRate).params;
-    return curvePath(responseOf(resolved.eq.left, sampleRate), scales(sampleRate));
+    const response = responseOf(resolved.eq.left, sampleRate);
+    const scale = scales(sampleRate);
+    return Array.from({ length: THUMB_POINTS + 1 }, (_, i) => scale.y(response(BOUNDS.frequency[0] * (scale.fMax / BOUNDS.frequency[0]) ** (i / THUMB_POINTS))));
   }, [params, sampleRate]);
+  const ys = useEased(target);
+  const path = ys.map((y, i) => `${i ? 'L' : 'M'}${(VIEW.left + (i / THUMB_POINTS) * PLOT_W).toFixed(1)},${y.toFixed(1)}`).join('');
   return (
-    <svg className="eq-thumbnail" viewBox={`0 0 ${VIEW.width} ${VIEW.height}`} aria-hidden="true" preserveAspectRatio="none">
+    <svg className={`eq-thumbnail${params.eq.enabled ? '' : ' is-bypassed'}`} viewBox={`0 0 ${VIEW.width} ${VIEW.height}`} aria-hidden="true" preserveAspectRatio="none">
       <line x1={VIEW.left} x2={VIEW.width - VIEW.right} y1={VIEW.top + PLOT_H / 2} y2={VIEW.top + PLOT_H / 2} />
       <path d={path} />
     </svg>

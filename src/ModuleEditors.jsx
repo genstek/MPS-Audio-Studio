@@ -1,6 +1,6 @@
 import React from 'react';
 import { BOUNDS, SPACE_PRESETS } from './dsp/chain-params.js';
-import { SpaceThumbnail } from './ProcessorPreviews.jsx';
+import { DynamicsThumbnail, LimiterThumbnail, SpaceThumbnail } from './ProcessorPreviews.jsx';
 import { ParamField } from './ParamField.jsx';
 import { GainReductionMeter } from './GainReductionMeter.jsx';
 
@@ -38,6 +38,7 @@ export function CompressorEditor({ params, update, engine, active }) {
         </label>
         <GainReductionMeter engine={engine} which="compressor" label="Compressor gain reduction" active={active} />
       </div>
+      <div className="transfer-graph" aria-label="Compressor transfer curve (configured)" role="img"><DynamicsThumbnail compressor={settings} large /></div>
       {COMPRESSOR_FIELDS.map(([name, label, unit, step]) => (
         <ParamField key={name} label={label} unit={unit} min={BOUNDS[name][0]} max={BOUNDS[name][1]} step={step} value={settings[name]}
           onChange={value => update(setField('compressor', name, value), `compressor-${name}`)} />
@@ -55,6 +56,7 @@ export function LimiterEditor({ params, update, engine, active, latency, sampleR
         <label className="toggle"><input type="checkbox" checked={settings.enabled} onChange={e => update(setField('limiter', 'enabled', e.target.checked))} />Limiter on</label>
         <GainReductionMeter engine={engine} which="limiter" label="Limiter gain reduction" active={active} />
       </div>
+      <div className="transfer-graph" aria-label="Limiter ceiling curve (configured)" role="img"><LimiterThumbnail limiter={settings} large /></div>
       {LIMITER_FIELDS.map(([name, label, unit, step, bounds]) => (
         <ParamField key={name} label={label} unit={unit} min={bounds[0]} max={bounds[1]} step={step} value={settings[name]}
           onChange={value => update(setField('limiter', name, value), `limiter-${name}`)} />
