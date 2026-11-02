@@ -1,16 +1,19 @@
-import { renderChain } from './chain.js';
+import { renderChain, spaceTailSeconds } from './chain.js';
 
 // Renders one section of a track with the mastering chain as it sounds inside the whole-track
 // render (LAS-31), without rendering the whole track. The chain's level detectors carry memory,
 // so rendering starts a pre-roll earlier: at least MIN_PRE_ROLL_SECONDS and five of the slowest
 // attack/release time constants, after which an earlier state difference has decayed below
-// e^-5 (under 1 %). A short post-roll lets the limiter's look-ahead see the audio that follows.
+// e^-5 (under 1 %). Space (LAS-64) also carries sound from before the section: its pre-delay plus
+// its decay (RT60, the time to fall by 60 dB) is added, so reverb started earlier is in the section
+// as it is in the whole-track render. A short post-roll lets the limiter's look-ahead see the
+// audio that follows.
 export const MIN_PRE_ROLL_SECONDS = 3;
 export const POST_ROLL_SECONDS = 0.01;
 
 export function preRollSeconds(params) {
   const slowest = Math.max(params.compressor.attack, params.compressor.release, params.limiter.release) / 1000;
-  return Math.max(MIN_PRE_ROLL_SECONDS, 5 * slowest);
+  return Math.max(MIN_PRE_ROLL_SECONDS, 5 * slowest + spaceTailSeconds(params));
 }
 
 // channels: the whole track; { start, end } in seconds. Returns renderChain's result with the

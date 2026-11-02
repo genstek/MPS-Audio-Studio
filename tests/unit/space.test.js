@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { createChain, renderChain, spaceTailSeconds } from '../../src/dsp/chain.js';
 import { CHAIN_ORDER, ChainParamsError, SPACE_PRESETS, defaultChain, parseChain, serializeChain, validateChain } from '../../src/dsp/chain-params.js';
+import { preRollSeconds, renderSegment } from '../../src/dsp/segment-render.js';
 
 // LAS-64: Space (reverb) with deterministic signal tests. Every measurement is computed from the
 // rendered samples; nothing here is a listening judgement.
@@ -172,6 +173,22 @@ describe('LAS-64 Space processing', () => {
     expect(rms(withTail[0].subarray(rate, rate + Math.round(0.2 * rate)))).toBeGreaterThan(1e-4); // the tail carries reverb
     expect(spaceTailSeconds(defaultChain())).toBe(0); // Space off: no tail, exports keep the source length
   });
+
+  test('a section render keeps reverb that started before the section: the pre-roll covers pre-delay + decay', () => {
+    const rate = 44100;
+    const params = validateChain({ ...defaultChain(), space: { enabled: true, mix: 50, preDelay: 20, decay: 10, damping: 40 } });
+    expect(preRollSeconds(params)).toBeGreaterThanOrEqual(spaceTailSeconds(params));
+    // 1 s of 100 Hz, then silence: the 7–8 s section holds only the tail of that reverb.
+    const tone = Float32Array.from({ length: 9 * rate }, (_, i) => (i < rate ? 0.5 * Math.sin((2 * Math.PI * 100 * i) / rate) : 0));
+    const audio = [tone, tone.slice()];
+    const whole = renderChain(params, audio, rate).channels.map(channel => channel.subarray(7 * rate, 8 * rate));
+    const section = renderSegment(params, audio, rate, { start: 7, end: 8 }).channels;
+    expect(rms(whole[0]), 'the whole render has reverb in the section').toBeGreaterThan(1e-4);
+    for (const c of [0, 1]) {
+      const worst = section[c].reduce((m, v, i) => Math.max(m, Math.abs(v - whole[c][i])), 0);
+      expect(worst, `channel ${c}: section equals the whole render`).toBeLessThan(1e-6);
+    }
+  }, 30_000);
 
   test('reset() clears the tail at once: silence in gives silence out afterwards', () => {
     const rate = 48000;
