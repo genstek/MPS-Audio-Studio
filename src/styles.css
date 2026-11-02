@@ -423,3 +423,22 @@ dialog .file-picker { grid-area: auto; }
   .player-footer { flex-wrap: wrap; }
   .timeline { flex-basis: 100%; }
 }
+
+/* LAS-60/69 project area: New and the Project menu where "SESSION 001" was; status in the header. */
+.project-area { min-width: 0; }
+.project-toolbar { display: flex; align-items: center; gap: 4px; margin-bottom: clamp(1px, .2dvh, 5px); }
+.project-button { padding: 0 6px; font-size: 10px; letter-spacing: .5px; line-height: 1.25; white-space: nowrap; }
+.project-menu-wrap { position: relative; display: flex; }
+.project-menu { position: absolute; z-index: 60; top: calc(100% + 4px); left: 0; min-width: 15rem; margin: 0; padding: 4px; list-style: none; background: #1c2329; border: 1px solid #52616c; border-radius: 8px; box-shadow: 0 12px 30px #000a; }
+.project-menu button { display: flex; justify-content: space-between; gap: 12px; width: 100%; padding: 6px 10px; font-size: 13px; text-align: left; border: 0; background: transparent; }
+.project-menu button:hover, .project-menu button:focus-visible { background: #303a43; outline-offset: -2px; }
+.project-menu kbd { font: 11px ui-monospace, monospace; color: #a7b2bc; }
+.project-name { max-width: clamp(7.5rem, 18vw, 18rem); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.project-status { max-width: 22ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.project-status.is-dirty { color: #f0d79a; }
+.project-status.is-error { color: #f2a19a; }
+.dialog-actions { justify-content: flex-end; margin-top: 8px; }
+.dialog-actions button { padding: 6px 14px; font-size: 13px; }
+.module-presets { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding-bottom: 8px; border-bottom: 1px solid #2c353d; }
+.module-presets .file-picker.small { padding: 3px 10px; font-size: 11px; }
+.module-presets p { flex-basis: 100%; margin: 0; }

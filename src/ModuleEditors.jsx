@@ -87,7 +87,7 @@ export function SpaceEditor({ params, update }) {
       <div className="module-row">
         <label className="toggle"><input type="checkbox" checked={settings.enabled} onChange={e => update(setField('space', 'enabled', e.target.checked))} />Space on</label>
         <label className="select-field">Preset
-          <select value={preset} onChange={e => update(p => ({ ...p, space: { ...p.space, ...SPACE_PRESETS[e.target.value] } }))}>
+          <select aria-label="Space preset" value={preset} onChange={e => update(p => ({ ...p, space: { ...p.space, ...SPACE_PRESETS[e.target.value] } }))}>
             {Object.keys(SPACE_PRESETS).map(name => <option key={name} value={name}>{name}</option>)}
             <option value="custom" disabled>Custom</option>
           </select>

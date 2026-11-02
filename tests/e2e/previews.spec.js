@@ -78,7 +78,7 @@ test('LAS-63: without playback, cards show on/bypassed and edited state, and the
   await ui.open('space');
   const spaceBefore = await ui.strip('Space').locator('.preview-line').first().getAttribute('d');
   await ui.window('Space').getByLabel('Space on').check();
-  await ui.window('Space').getByLabel('Preset').selectOption('Hall');
+  await ui.window('Space').getByRole('combobox', { name: 'Space preset' }).selectOption('Hall');
   await expect(ui.strip('Space')).toHaveAttribute('data-state', 'on');
   await expect.poll(() => ui.strip('Space').locator('.preview-line').first().getAttribute('d')).not.toBe(spaceBefore);
 });

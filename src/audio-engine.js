@@ -328,6 +328,11 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
       return stemSession;
     },
     stemSession: () => stemSession,
+    // Removes every stem (new or opened project, LAS-60/69); the stem output stage is kept.
+    clearStems() {
+      stemSession?.dispose();
+      stemSession = null;
+    },
     // Decodes a stem WAV at the playback rate and adds it; the file's own rate and channel count are
     // read from its header so the alignment policy can be explained.
     async addStem(file) {

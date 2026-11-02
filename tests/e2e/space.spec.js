@@ -40,14 +40,14 @@ test('LAS-64: the Space editor switches the reverb on, applies presets and value
   await ui.openSpace();
   await expect(ui.space).toBeVisible();
   await ui.space.getByLabel('Space on').check();
-  await ui.space.getByLabel('Preset').selectOption('Hall');
+  await ui.space.getByRole('combobox', { name: 'Space preset' }).selectOption('Hall');
   await expect.poll(async () => (await lastChainParams(page))?.space).toEqual({ enabled: true, mix: 22, preDelay: 30, decay: 2.6, damping: 35 });
   await expect(ui.strip.getByText('Hall · 22 % · 2.6 s')).toBeVisible();
   const mix = ui.space.getByRole('spinbutton', { name: 'Mix (wet) (%)' });
   await mix.fill('35');
   await mix.press('Enter');
   await expect.poll(async () => (await lastChainParams(page)).space.mix).toBe(35);
-  await expect(ui.space.getByLabel('Preset')).toHaveValue('custom');
+  await expect(ui.space.getByRole('combobox', { name: 'Space preset' })).toHaveValue('custom');
   await expect(ui.strip.getByText('Custom · 35 % · 2.6 s')).toBeVisible();
   await ui.space.getByRole('button', { name: 'Undo' }).click();
   await expect.poll(async () => (await lastChainParams(page)).space.mix).toBe(22);
@@ -81,7 +81,7 @@ test('LAS-64: with Space on, reverb is measurable at the speakers after the tone
   expect(dry.left, 'Space off: silence after the tone').toBeNull();
   await ui.openSpace();
   await ui.space.getByLabel('Space on').check();
-  await ui.space.getByLabel('Preset').selectOption('Hall');
+  await ui.space.getByRole('combobox', { name: 'Space preset' }).selectOption('Hall');
   await expect.poll(async () => (await lastChainParams(page)).space.enabled).toBe(true);
   // Let any tail of the first pass die away before measuring again.
   await page.waitForTimeout(500);
@@ -100,7 +100,7 @@ test('LAS-64: the export equals the offline chain with Space, with the tail incl
   await expect(ui.status).toHaveText('Ready');
   await ui.openSpace();
   await ui.space.getByLabel('Space on').check();
-  await ui.space.getByLabel('Preset').selectOption('Room');
+  await ui.space.getByRole('combobox', { name: 'Space preset' }).selectOption('Room');
   await expect.poll(async () => (await lastChainParams(page)).space.enabled).toBe(true);
   const params = await lastChainParams(page);
   await ui.space.getByRole('button', { name: 'Close Space' }).click();

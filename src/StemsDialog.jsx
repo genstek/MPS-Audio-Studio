@@ -58,7 +58,7 @@ export function StemsDialog({ engine, chain, listening, onListen, onStemsPlay, o
     const session = engine.current.stemSession();
     if (!session) return;
     setStems(session.stems());
-    onStemsChange(session.stems().length);
+    onStemsChange(session.stems());
     setState({ playing: session.playing(), position: session.position(), duration: session.duration(), rate: engine.current.sampleRate() });
   };
 
@@ -76,6 +76,7 @@ export function StemsDialog({ engine, chain, listening, onListen, onStemsPlay, o
 
   async function open() {
     setError('');
+    setStems([]);
     dialog.current.showModal();
     try {
       await engine.current.openStems(() => refresh());

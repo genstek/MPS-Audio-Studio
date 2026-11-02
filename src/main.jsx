@@ -14,6 +14,8 @@ import { MAX_AUDIO_FILE_LABEL } from './file-limits.js';
 import { MasterLevel } from './MasterLevel.jsx';
 import { clampMasterDb } from './monitor-bus.js';
 import { BarMeters, PlayerDisplay, SeekButton, Timeline, createMeterStore } from './Player.jsx';
+import { NewProjectDialog, ProjectArea, RelinkDialog, UnsavedDialog } from './ProjectBar.jsx';
+import { useProject } from './useProject.js';
 
 // Master Level is a listening preference of this browser (LAS-68), kept across reloads when the
 // browser allows storage; it is not part of a project, a preset or an export.
@@ -49,7 +51,10 @@ function App() {
   const importInput = useRef(null);
   // Master Level (LAS-68) and how many stems are loaded (the fader works for either).
   const [masterDb, setMasterDb] = useState(storedMasterDb);
-  const [stemCount, setStemCount] = useState(0);
+  const [stems, setStems] = useState([]); // stem session summary (LAS-34/35), for Master Level and projects
+  const stemCount = stems.length;
+  // Editor window layout (LAS-61/62), held here so a project can save and restore it (LAS-69).
+  const [windows, setWindows] = useState({});
   function changeMaster(db) {
     const applied = engine.current.setMasterLevel(db);
     setMasterDb(applied);
@@ -91,9 +96,8 @@ function App() {
     return () => clearInterval(timer);
   }, [status]);
 
-  async function importAudio(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+  // Loads a track (import, replacement and project relink). Rejects with the reason it failed.
+  async function loadTrack(file) {
     setBusy('Loading audio…');
     setError('');
     try {
@@ -102,22 +106,48 @@ function App() {
       setCurrentFile(file);
       setStatus('Ready');
       setPosition(0);
+    } finally {
+      setBusy('');
+    }
+  }
+
+  async function importAudio(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    try {
+      await loadTrack(file);
     } catch (failure) {
       // A superseded import was replaced by a newer choice, so it is not an error to show.
       if (failure.name !== 'SupersededError') setError(failure.message);
     } finally {
-      setBusy('');
       // Clearing the picker lets the same file be chosen again.
       event.target.value = '';
     }
   }
+
+  // New / Open project (LAS-60/69): the track and stems leave the session; files are not touched.
+  function resetSession() {
+    engine.current.stop();
+    engine.current.unload();
+    engine.current.clearStems();
+    setTrack(null);
+    setCurrentFile(null);
+    setStems([]);
+    setPosition(0);
+    setError('');
+    setStatus('No audio loaded');
+  }
+  const project = useProject({ engine, chain, listening, listen, windows, setWindows, track, currentFile, stems, setStems, resetSession, loadTrack });
 
   async function play() {
     setBusy('Starting playback…');
     setError('');
     try {
       // The engine resolves false when Stop, a new track or removal cancelled this start.
-      if (await engine.current.play()) setStatus('Playing');
+      if (await engine.current.play()) {
+        setStatus('Playing');
+        setPosition(engine.current.position()); // at once (Play from the end restarts at 0, LAS-67)
+      }
     } catch {
       setError('Audio could not start. Try pressing Play again.');
     } finally {
@@ -166,11 +196,16 @@ function App() {
     <main>
       <header className="masthead">
         <div className="brand"><span className="brand-mark" aria-hidden="true">MPS</span><div><p className="eyebrow">LOCAL AUDIO WORKSPACE</p><h1>MPS Audio Studio</h1></div></div>
-        <div className="masthead-tools"><span className="version">SPRINT 0 <span aria-hidden="true">/</span> WEB MIXER</span><ReferencesDialog /><AccountDialog currentFile={currentFile} /></div>
+        <div className="masthead-tools">
+          {/* Project save state (LAS-69); a polite live region, not a second role=status. */}
+          <span className={`version project-status${project.dirty ? ' is-dirty' : ''}${project.phase === 'error' ? ' is-error' : ''}`} aria-live="polite" title={project.status}>{project.status}</span>
+          {project.missingCount > 0 && <button type="button" className="heading-button" onClick={project.openRelink}>{project.missingCount} audio file{project.missingCount > 1 ? 's' : ''} missing — Relink…</button>}
+          <ReferencesDialog /><AccountDialog currentFile={currentFile} />
+        </div>
       </header>
 
       <section className="transport panel" aria-label="Transport">
-        <div><p className="eyebrow">SESSION 001</p><h2>Untitled project</h2></div>
+        <ProjectArea name={project.project.name} onNew={project.requestNew} onOpen={project.open} onSave={project.save} onSaveAs={project.saveAs} disabled={Boolean(busy)} />
         <div className="transport-buttons">
           <SeekButton direction={-1} onSkip={skip} disabled={!track || Boolean(busy)} />
           <button className="primary" onClick={play} disabled={!track || busy || status === 'Playing'}>▶ Play</button>
@@ -197,6 +232,7 @@ function App() {
             <p className="fine-print">WAV up to {MAX_AUDIO_FILE_LABEL} · Files stay on your device</p>
           </div></div>
           {error && <p role="alert" className="error">{error}</p>}
+          {project.problem && <p role="alert" className="error">{project.problem} <button type="button" className="link" onClick={project.clearProblem}>Dismiss</button></p>}
           <div className="track-footer player-footer">
             <Timeline position={position} duration={track ? track.duration : 0} onSeek={seek} disabled={!track || Boolean(busy)} scrub={scrub} setScrub={setScrub} />
             <BarMeters store={meters} />
@@ -218,7 +254,10 @@ function App() {
         </section>
       </div>
 
-      <MixerPanel chain={chain} engine={engine} track={track} sampleRate={track ? track.sampleRate : 48000} listening={listening} onListen={listen} tools={<StemsDialog engine={engine} chain={chain} listening={listening} onListen={listen} onStemsPlay={monitorStarted} onStemsChange={setStemCount} masterLevel={{ value: masterDb, onChange: changeMaster }} />} />
+      <MixerPanel windows={windows} setWindows={setWindows} chain={chain} engine={engine} track={track} sampleRate={track ? track.sampleRate : 48000} listening={listening} onListen={listen} tools={<StemsDialog engine={engine} chain={chain} listening={listening} onListen={listen} onStemsPlay={monitorStarted} onStemsChange={setStems} masterLevel={{ value: masterDb, onChange: changeMaster }} />} />
+      <NewProjectDialog open={project.newOpen} onCreate={project.create} onCancel={project.cancelNew} />
+      <UnsavedDialog prompt={project.prompt} onChoose={project.answer} />
+      <RelinkDialog missing={project.missing} open={project.relink.open} busy={project.relink.busy} problem={project.relink.problem} onRelink={project.relinkFile} onClose={project.closeRelink} />
       <footer><span className="connection">LOCAL / WEB AUDIO</span><span>EQ, dynamics, limiter and WAV export run on this device · reference matching and multitrack are planned.</span></footer>
     </main>
   );

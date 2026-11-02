@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { EditorDialog } from './EditorDialog.jsx';
 import { EqEditor, EqThumbnail } from './EqEditor.jsx';
 import { CompressorEditor, LimiterEditor, SpaceEditor, spacePresetName } from './ModuleEditors.jsx';
 import { DynamicsThumbnail, LimiterThumbnail, SpaceThumbnail } from './ProcessorPreviews.jsx';
 import { changedModules } from './previews.js';
+import { ModulePresets } from './ProjectBar.jsx';
 import { GainReductionMeter } from './GainReductionMeter.jsx';
 import { ListenSwitch } from './ListeningControls.jsx';
 import { SettingsDialog } from './SettingsDialog.jsx';
@@ -30,10 +31,11 @@ function defaultPosition(name) {
 
 // The mixer (LAS-28): the mastering chain's modules in processing order, each with a real indicator
 // and an editor, plus undo/redo and saved settings. Space is the LAS-64 reverb.
-export function MixerPanel({ chain, engine, track, sampleRate, listening, onListen, tools }) {
-  // name → { open, position, z, focusRequest }; the highest z is the front (active) window.
-  const [windows, setWindows] = useState({});
+// windows / setWindows: name → { open, position, z, focusRequest }, held by the app so a project can
+// save and restore the layout (LAS-69); the highest z is the front (active) window.
+export function MixerPanel({ chain, engine, track, sampleRate, listening, onListen, tools, windows, setWindows }) {
   const top = useRef(0);
+  top.current = Math.max(top.current, ...Object.values(windows).map(w => w.z ?? 0)); // eslint-disable-line react-hooks/refs -- keeps new z values above restored ones
   const { params, update, undo, redo, canUndo, canRedo, replace, warnings, problem } = chain;
   const active = Boolean(track);
 
@@ -41,15 +43,15 @@ export function MixerPanel({ chain, engine, track, sampleRate, listening, onList
     const current = all[name];
     const z = current?.open && current.z === top.current ? current.z : ++top.current;
     return { ...all, [name]: { position: current?.position ?? defaultPosition(name), open: true, z, focusRequest: (current?.focusRequest ?? 0) + 1 } };
-  }), []);
-  const closeEditor = useCallback(name => setWindows(all => ({ ...all, [name]: { ...all[name], open: false } })), []);
+  }), [setWindows]);
+  const closeEditor = useCallback(name => setWindows(all => ({ ...all, [name]: { ...all[name], open: false } })), [setWindows]);
   // One stable set of handlers per editor, so the windows do not re-subscribe on every render.
   const handlers = useMemo(() => Object.fromEntries(WINDOW_ORDER.map(name => [name, {
     close: () => closeEditor(name),
     move: position => setWindows(all => ({ ...all, [name]: { ...all[name], position } })),
     front: () => setWindows(all => (all[name]?.z === top.current ? all : { ...all, [name]: { ...all[name], z: ++top.current } })),
     resetPosition: () => setWindows(all => ({ ...all, [name]: { ...all[name], position: defaultPosition(name) } })),
-  }])), [closeEditor]);
+  }])), [closeEditor, setWindows]);
   const openWindows = WINDOW_ORDER.filter(name => windows[name]?.open);
   const front = openWindows.reduce((best, name) => (best && windows[best].z > windows[name].z ? best : name), null);
   const resetLayout = () => setWindows(all => Object.fromEntries(Object.entries(all).map(([name, w]) => [name, { ...w, position: defaultPosition(name) }])));
@@ -75,7 +77,7 @@ export function MixerPanel({ chain, engine, track, sampleRate, listening, onList
   // Ctrl/Cmd+Z undoes and Shift+Ctrl/Cmd+Z (or Ctrl+Y) redoes, except while typing in a field.
   useEffect(() => {
     function onKey(event) {
-      if (!(event.ctrlKey || event.metaKey) || event.target.closest('input, select, textarea')) return;
+      if (!(event.ctrlKey || event.metaKey) || (event.target instanceof Element && event.target.closest('input, select, textarea'))) return;
       const key = event.key.toLowerCase();
       if (key === 'z' && !event.shiftKey) { event.preventDefault(); undo(); }
       if ((key === 'z' && event.shiftKey) || key === 'y') { event.preventDefault(); redo(); }
@@ -128,15 +130,19 @@ export function MixerPanel({ chain, engine, track, sampleRate, listening, onList
         ))}
       </div>
       <EditorDialog title="EQ" {...windowProps('eq')} headerExtra={editorTools}>
+        <ModulePresets module="eq" params={params} update={update} />
         <EqEditor params={params} update={update} sampleRate={sampleRate} engine={engine} />
       </EditorDialog>
       <EditorDialog title="Dynamics" {...windowProps('dynamics')} headerExtra={editorTools}>
+        <ModulePresets module="compressor" params={params} update={update} />
         <CompressorEditor params={params} update={update} engine={engine} active={active} />
       </EditorDialog>
       <EditorDialog title="Limiter" {...windowProps('limiter')} headerExtra={editorTools}>
+        <ModulePresets module="limiter" params={params} update={update} />
         <LimiterEditor params={params} update={update} engine={engine} active={active} latency={track ? engine.current?.latency() : 0} sampleRate={sampleRate} />
       </EditorDialog>
       <EditorDialog title="Space" {...windowProps('space')} headerExtra={editorTools}>
+        <ModulePresets module="space" params={params} update={update} />
         <SpaceEditor params={params} update={update} />
       </EditorDialog>
     </section>
