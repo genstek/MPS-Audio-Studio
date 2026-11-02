@@ -99,8 +99,9 @@ async function checkEssentialsBeforeScrolling(page, label) {
   const masterBody = master.getByRole('region', { name: 'Master details' });
   const strips = page.getByRole('group', { name: 'Processing modules' });
   const essentials = [
-    ...['Play', 'Pause', 'Stop'].map(name => [name, transport.getByRole('button', { name })]),
+    ...['Play', 'Pause', 'Stop', 'Rewind 5 seconds', 'Fast forward 5 seconds'].map(name => [name, transport.getByRole('button', { name })]),
     ['playback status', transport.getByRole('status')],
+    ['timeline', tracks.getByRole('slider', { name: 'Timeline' })], // LAS-67 player
     ['Tracks heading', tracks.getByRole('heading', { name: 'Tracks', exact: true })],
     ['Import/Replace WAV', tracks.getByRole('button', { name: 'Import WAV', exact: true })],
     ['Master heading', master.getByRole('heading', { name: 'Master', exact: true })],

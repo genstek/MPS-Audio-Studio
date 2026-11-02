@@ -103,6 +103,21 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
     stopSource();
   }
 
+  // Starts the single source at `offset` on the running context (play and seek, LAS-9/LAS-67).
+  function startSource() {
+    source = context.createBufferSource();
+    source.buffer = buffer;
+    for (const input of output.inputs) source.connect(input);
+    source.onended = () => {
+      source.disconnect();
+      source = null;
+      offset = 0;
+      onEnded();
+    };
+    startedAt = context.currentTime;
+    source.start(0, offset);
+  }
+
   // Seconds into the track, read from the audio clock while playing (LAS-9).
   function position() {
     if (!buffer) return 0;
@@ -178,18 +193,27 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
       }
       if (pendingStart !== start) return false;
       pendingStart = null;
-      source = context.createBufferSource();
-      source.buffer = buffer;
-      for (const input of output.inputs) source.connect(input);
-      source.onended = () => {
-        source.disconnect();
-        source = null;
-        offset = 0;
-        onEnded();
-      };
-      startedAt = context.currentTime;
-      source.start(0, offset);
+      // Play at the very end (after FF or a seek to the end) starts again from the beginning.
+      if (offset >= buffer.duration) offset = 0;
+      startSource();
       return true;
+    },
+    // Moves the playhead (LAS-67). While playing, the source restarts at the new place at once
+    // (one source, same output paths); while paused or stopped the place is kept for the next Play.
+    // The target is clamped to 0…duration; reaching the end while playing ends playback like the
+    // natural end of the track. Returns the position used.
+    seek(seconds) {
+      if (!buffer) return 0;
+      const target = Math.min(buffer.duration, Math.max(0, Number.isFinite(seconds) ? seconds : 0));
+      endComparison();
+      if (source) {
+        stopSource();
+        offset = target;
+        startSource();
+      } else {
+        offset = target;
+      }
+      return target;
     },
     pause() {
       if (source) offset = position();

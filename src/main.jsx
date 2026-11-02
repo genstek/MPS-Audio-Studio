@@ -13,6 +13,7 @@ import { StemsDialog } from './StemsDialog.jsx';
 import { MAX_AUDIO_FILE_LABEL } from './file-limits.js';
 import { MasterLevel } from './MasterLevel.jsx';
 import { clampMasterDb } from './monitor-bus.js';
+import { BarMeters, PlayerDisplay, SeekButton, Timeline, createMeterStore } from './Player.jsx';
 
 // Master Level is a listening preference of this browser (LAS-68), kept across reloads when the
 // browser allows storage; it is not part of a project, a preset or an export.
@@ -55,14 +56,25 @@ function App() {
     try { localStorage.setItem(MASTER_KEY, String(applied)); } catch { /* storage is optional */ }
   }
 
+  // Player (LAS-67): one meter reading loop for the output meters, and the timeline's drag target.
+  const [meters] = useState(createMeterStore);
+  const [scrub, setScrub] = useState(null);
+
   useEffect(() => {
     engine.current = createAudioEngine(() => {
       setStatus('Stopped');
       setPosition(0);
     });
     engine.current.setMasterLevel(storedMasterDb());
-    return () => engine.current.dispose();
-  }, []);
+    meters.attach(() => engine.current);
+    return () => { meters.stop(); engine.current.dispose(); };
+  }, [meters]);
+  useEffect(() => meters.setPlaying(status === 'Playing'), [meters, status]);
+  // Seeking moves the one source (LAS-67); while paused or stopped it cues the next Play.
+  function seek(seconds) {
+    setPosition(engine.current.seek(seconds));
+  }
+  const skip = delta => seek(engine.current.position() + delta);
 
   // Mastering chain settings and the Original/Processed choice (LAS-28).
   const chain = useChainSettings(engine);
@@ -160,9 +172,11 @@ function App() {
       <section className="transport panel" aria-label="Transport">
         <div><p className="eyebrow">SESSION 001</p><h2>Untitled project</h2></div>
         <div className="transport-buttons">
+          <SeekButton direction={-1} onSkip={skip} disabled={!track || Boolean(busy)} />
           <button className="primary" onClick={play} disabled={!track || busy || status === 'Playing'}>▶ Play</button>
           <button onClick={togglePause} aria-pressed={status === 'Paused'} disabled={busy || (status !== 'Playing' && status !== 'Paused')}>Ⅱ Pause</button>
           <button onClick={stop} disabled={!track || busy}>■ Stop</button>
+          <SeekButton direction={1} onSkip={skip} disabled={!track || Boolean(busy)} />
         </div>
         <div className="transport-state">
           <p role="status" className="status">{busy || status}</p>
@@ -173,7 +187,7 @@ function App() {
       <div className="workspace">
         <section className="tracks panel" aria-labelledby="tracks-title">
           <div className="panel-heading"><h2 id="tracks-title">Tracks</h2><div className="heading-tools">{track && <><AnalysisDialog file={currentFile} /><CompareDialog engine={engine} file={currentFile} track={track} chain={chain} onMonitorStart={monitorStarted} /><button className="remove-track" onClick={removeTrack}>Remove track</button></>}<span className="badge">{track ? '01 TRACK' : '00 TRACKS'}</span></div></div>
-          <div className="track-space"><div className="track-content">
+          <div className="track-space">{track && <PlayerDisplay engine={engine} store={meters} />}<div className="track-content">
             <span className="audio-icon" aria-hidden="true"><span>♫</span></span>
             <h3 title={track ? track.name : undefined}>{track ? track.name : 'Your session starts here'}</h3>
             <p className="track-info">{track ? `${track.duration.toFixed(1)} seconds · ${track.channels} channel(s) · ${track.sampleRate.toLocaleString()} Hz decoded` : 'Import a WAV file to start listening.'}</p>
@@ -183,7 +197,10 @@ function App() {
             <p className="fine-print">WAV up to {MAX_AUDIO_FILE_LABEL} · Files stay on your device</p>
           </div></div>
           {error && <p role="alert" className="error">{error}</p>}
-          <div className="track-footer">SINGLE-TRACK PLAYBACK <span>Waveform & seeking coming soon</span></div>
+          <div className="track-footer player-footer">
+            <Timeline position={position} duration={track ? track.duration : 0} onSeek={seek} disabled={!track || Boolean(busy)} scrub={scrub} setScrub={setScrub} />
+            <BarMeters store={meters} />
+          </div>
         </section>
 
         <section className="master panel" aria-labelledby="master-title">

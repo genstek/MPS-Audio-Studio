@@ -617,3 +617,36 @@ test('LAS-68: the level is clamped to mute…0 dB, kept through transport, unloa
   for (const stage of stages) for (const [params] of stage.setParams.mock.calls) expect(JSON.stringify(params)).not.toMatch(/master/i);
   engine.dispose();
 });
+
+// LAS-67: seeking (FF/RWD and the timeline) moves the one source; it never adds a second one.
+test('LAS-67: seek while playing restarts the single source at the new place; while paused it cues the next Play', async () => {
+  const { engine, context, sources, file } = setup();
+  expect(engine.seek(3)).toBe(0); // nothing loaded
+  await engine.load(file); // 10 s
+  await engine.play();
+  context.currentTime = 2;
+  expect(engine.seek(engine.position() + 5)).toBe(7);
+  expect(sources[0].stop).toHaveBeenCalledOnce();
+  expect(sources[0].onended).toBeNull();
+  expect(sources[1].start).toHaveBeenCalledWith(0, 7);
+  expect(engine.position()).toBe(7);
+  expect(engine.seek(-4)).toBe(0); // clamped at the start
+  expect(sources[2].start).toHaveBeenCalledWith(0, 0);
+  engine.pause();
+  expect(engine.seek(9.5)).toBe(9.5);
+  expect(sources).toHaveLength(3); // paused: nothing started
+  expect(engine.position()).toBe(9.5);
+  await engine.play();
+  expect(sources[3].start).toHaveBeenCalledWith(0, 9.5);
+  engine.dispose();
+});
+
+test('LAS-67: seeking to the end clamps; Play from the end starts again at 0; an invalid time seeks to 0', async () => {
+  const { engine, sources, file } = setup();
+  await engine.load(file);
+  expect(engine.seek(99)).toBe(10);
+  await engine.play();
+  expect(sources[0].start).toHaveBeenCalledWith(0, 0);
+  expect(engine.seek(Number.NaN)).toBe(0);
+  engine.dispose();
+});

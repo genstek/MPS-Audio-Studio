@@ -368,3 +368,56 @@ dialog .file-picker { grid-area: auto; }
 .transfer-graph { max-width: 340px; background: #11161a; border: 1px solid #39434c; border-radius: 6px; }
 .transfer-graph svg { display: block; width: 100%; height: auto; aspect-ratio: 320 / 220; }
 @media (prefers-reduced-motion: reduce) { .strip, .strip-visual { transition: none; } }
+
+/* LAS-67 player (behaviour; the look follows the LAS-44 selection). */
+.seek-button { padding-inline: 10px; letter-spacing: -3px; }
+.player-footer { gap: 12px; align-items: center; }
+.timeline { position: relative; flex: 1 1 auto; min-width: 0; display: grid; }
+.timeline input { width: 100%; margin: 0; }
+.timeline-ruler { position: relative; height: 10px; font-size: 8px; line-height: 10px; letter-spacing: 0; color: #8a96a0; font-variant-numeric: tabular-nums; }
+.timeline-ruler span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; }
+.timeline-ruler span:first-child { transform: none; }
+.timeline-ruler span:last-child { transform: translateX(-100%); }
+.bar-meters { display: grid; grid-template-columns: auto auto; gap: 1px 6px; align-items: center; flex-shrink: 0; letter-spacing: 0; }
+.bar-meter { display: flex; align-items: center; gap: 4px; font-size: 9px; color: #a7b2bc; }
+.bar-track { position: relative; width: clamp(48px, 8vw, 110px); height: 6px; border-radius: 2px; background: #0c1013; box-shadow: 0 0 0 1px #2c353d; overflow: hidden; }
+.bar-rms { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, #4f9d69 0 75%, #d7af6c 75% 92%, #e5534b 92%); }
+.bar-hold { position: absolute; top: 0; bottom: 0; width: 2px; background: #ecedf0; }
+.bar-value { min-width: 2.6em; text-align: right; font-variant-numeric: tabular-nums; }
+.clip-led { grid-column: 2; grid-row: 1 / span 2; padding: 2px 6px; font-size: 9px; letter-spacing: .5px; color: #a7b2bc; background: #2a1d1d; border-color: #4d2428; }
+.clip-led.on { color: #fff; background: #e5534b; border-color: #e5534b; box-shadow: 0 0 8px #e5534b88; }
+.bar-meters { grid-template-columns: auto auto; }
+.bar-meters .bar-meter { grid-column: 1; }
+/* Needles and spectrum sit beside the track details when the Tracks area is wide enough. */
+.track-space:has(.player-display) { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--space); }
+.track-space:has(.player-display) .track-content { grid-column: 1; grid-row: 1; }
+.player-display { grid-column: 2; grid-row: 1; align-self: center; display: flex; align-items: center; gap: 8px; height: 100%; max-height: 130px; }
+.needle-meter { margin: 0; display: grid; justify-items: center; height: 100%; }
+.needle-meter svg { height: calc(100% - 14px); max-height: 92px; aspect-ratio: 120 / 78; background: radial-gradient(ellipse at 50% 120%, #f4e7c6, #dccb9d 70%, #b8a678); border: 2px solid #1b1f22; border-radius: 6px; }
+.needle-tick line { stroke: #2d2414; stroke-width: 1.2; }
+.needle-tick text { font-size: 7px; fill: #2d2414; text-anchor: middle; }
+.needle-tick.hot line, .needle-tick.hot text { stroke: #b3261e; fill: #b3261e; }
+.needle { stroke: #111; stroke-width: 1.5; }
+.needle-pivot { fill: #111; }
+.needle-meter figcaption, .output-spectrum figcaption { font-size: 9px; color: #a7b2bc; letter-spacing: .5px; }
+.output-spectrum { margin: 0; display: grid; gap: 1px; width: clamp(160px, 22vw, 280px); height: 100%; grid-template-rows: minmax(0, 1fr) auto auto; }
+.spectrum-plot { position: relative; min-height: 40px; background: #0c1013; border: 1px solid #2c353d; border-radius: 4px; }
+.spectrum-plot canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.spectrum-db, .spectrum-hz { position: relative; font-size: 8px; color: #8a96a0; font-variant-numeric: tabular-nums; }
+.spectrum-db { position: absolute; inset: 2px auto 2px 2px; }
+.spectrum-db span { position: absolute; left: 0; transform: translateY(-50%); }
+.spectrum-db span:first-child { transform: none; }
+.spectrum-hz { height: 10px; }
+.spectrum-hz span { position: absolute; transform: translateX(-50%); }
+@container track (width < 44rem) { .player-display { display: none; } }
+@container track (height < 6rem) { .player-display { display: none; } }
+@media (max-width: 760px) {
+  .track-space:has(.player-display) { grid-template-columns: minmax(0, 1fr); row-gap: 8px; }
+  /* Phones: the two needles side by side, the spectrum on its own row below them. */
+  .player-display { grid-column: 1; grid-row: 2; justify-self: stretch; height: auto; max-height: none; flex-wrap: wrap; justify-content: center; }
+  .needle-meter { height: auto; }
+  .needle-meter svg { height: 78px; }
+  .output-spectrum { order: 3; width: 100%; height: 120px; }
+  .player-footer { flex-wrap: wrap; }
+  .timeline { flex-basis: 100%; }
+}

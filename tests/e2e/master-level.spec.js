@@ -127,7 +127,7 @@ test('LAS-68: the level is kept through pause, stop, editors, replacement, unloa
   await installAudioProbe(page);
   await page.goto('/');
   const ui = studio(page);
-  await ui.load('tone.wav', stereoTone({ seconds: 3 }));
+  await ui.load('tone.wav', stereoTone({ seconds: 20 }));
   await expect(ui.status).toHaveText('Ready');
 
   const exportOnce = async name => {
