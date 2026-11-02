@@ -11,6 +11,20 @@ import { ReferencesDialog } from './ReferencesDialog.jsx';
 import { CompareDialog } from './CompareDialog.jsx';
 import { StemsDialog } from './StemsDialog.jsx';
 import { MAX_AUDIO_FILE_LABEL } from './file-limits.js';
+import { MasterLevel } from './MasterLevel.jsx';
+import { clampMasterDb } from './monitor-bus.js';
+
+// Master Level is a listening preference of this browser (LAS-68), kept across reloads when the
+// browser allows storage; it is not part of a project, a preset or an export.
+const MASTER_KEY = 'mps.masterLevelDb';
+function storedMasterDb() {
+  try {
+    const saved = localStorage.getItem(MASTER_KEY);
+    return saved === null ? 0 : clampMasterDb(saved === '-Infinity' ? -Infinity : Number(saved));
+  } catch {
+    return 0;
+  }
+}
 import './styles.css';
 
 // Seconds as mm:ss.t, rounded to a tenth of a second.
@@ -32,12 +46,21 @@ function App() {
   const [currentFile, setCurrentFile] = useState(null);
   const engine = useRef(null);
   const importInput = useRef(null);
+  // Master Level (LAS-68) and how many stems are loaded (the fader works for either).
+  const [masterDb, setMasterDb] = useState(storedMasterDb);
+  const [stemCount, setStemCount] = useState(0);
+  function changeMaster(db) {
+    const applied = engine.current.setMasterLevel(db);
+    setMasterDb(applied);
+    try { localStorage.setItem(MASTER_KEY, String(applied)); } catch { /* storage is optional */ }
+  }
 
   useEffect(() => {
     engine.current = createAudioEngine(() => {
       setStatus('Stopped');
       setPosition(0);
     });
+    engine.current.setMasterLevel(storedMasterDb());
     return () => engine.current.dispose();
   }, []);
 
@@ -126,6 +149,7 @@ function App() {
     importInput.current.focus();
   }
 
+  const playable = Boolean(track || stemCount) && !busy;
   return (
     <main>
       <header className="masthead">
@@ -169,12 +193,15 @@ function App() {
             <ListenSwitch value={listening} onChange={listen} disabled={!track} />
             <LoudnessMatch engine={engine} file={currentFile} params={chain.params} />
           </div>
-          <div className="master-level"><label>Master level<input aria-label="Master level" type="range" min="0" max="100" defaultValue="75" disabled /></label><p className="fine-print">Level control unavailable</p></div>
+          <div className="master-level">
+            <MasterLevel value={masterDb} onChange={changeMaster} disabled={!playable}
+              reason={busy ? 'Available when the audio has loaded.' : 'Import a WAV or add stems to use the master level.'} />
+          </div>
           <ExportDialog file={currentFile} params={chain.params} />
         </section>
       </div>
 
-      <MixerPanel chain={chain} engine={engine} track={track} sampleRate={track ? track.sampleRate : 48000} listening={listening} onListen={listen} tools={<StemsDialog engine={engine} chain={chain} listening={listening} onListen={listen} onStemsPlay={monitorStarted} />} />
+      <MixerPanel chain={chain} engine={engine} track={track} sampleRate={track ? track.sampleRate : 48000} listening={listening} onListen={listen} tools={<StemsDialog engine={engine} chain={chain} listening={listening} onListen={listen} onStemsPlay={monitorStarted} onStemsChange={setStemCount} masterLevel={{ value: masterDb, onChange: changeMaster }} />} />
       <footer><span className="connection">LOCAL / WEB AUDIO</span><span>EQ, dynamics, limiter and WAV export run on this device · reference matching and multitrack are planned.</span></footer>
     </main>
   );

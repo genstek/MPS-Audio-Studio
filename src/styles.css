@@ -121,6 +121,15 @@ button.danger { border-color: #c17474; background: #4d2428; }
 .master-level label { display: block; color: #aebac4; font-size: 12px; }
 .master-level input { display: block; width: 100%; margin: clamp(2px, .6dvh, 8px) 0; }
 .master > button { margin: var(--space) 12px; padding-inline: 10px; font-size: 12px; }
+/* LAS-68 Master Level: value and reset beside the label, a dB scale under the fader. */
+.master-fader-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 12px; color: #aebac4; }
+.master-level .master-fader-row label { display: inline; }
+.master-value { font-variant-numeric: tabular-nums; color: #ecedf0; margin-left: auto; }
+.master-reset { padding: 0 6px; font-size: 10px; line-height: 1.5; }
+.master-scale { position: relative; height: 10px; margin: -2px 0 2px; font-size: 8px; line-height: 10px; color: #8a96a0; font-variant-numeric: tabular-nums; }
+.master-scale span { position: absolute; top: 0; white-space: nowrap; }
+.master-fader.compact { display: inline-grid; gap: 2px; min-width: 180px; }
+.master-fader.compact .master-note { display: none; }
 .mixer { display: grid; grid-template-rows: auto minmax(min-content, 1fr); min-height: 0; }
 /* Strips are a size container: full console strips by default; the caption is dropped when they
    are shorter, and in the compact row the knob sits beside the button. Nothing essential hides. */

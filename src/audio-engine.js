@@ -5,6 +5,7 @@ import { createStemSession } from './stem-session.js';
 import { createChainNode } from './dsp/chain-node.js';
 import { bypassChain } from './dsp/stem-render.js';
 import { audioFileSizeProblem } from './file-limits.js';
+import { clampMasterDb, createMonitorBus } from './monitor-bus.js';
 
 // Reading or decoding a large file can fail for lack of memory (LAS-71). Both failures leave the
 // current session unchanged, so the messages say what to try instead of reporting a dead end.
@@ -26,8 +27,12 @@ function decodeFailure(failure) {
 // One engine owns the audio context, the current source and the output stage (mastering chain
 // and original/processed switch, LAS-28), outside React state. createOutput can be replaced in
 // unit tests.
-export function createAudioEngine(onEnded, { createOutput = createOutputStage, createStemChain = createChainNode } = {}) {
+export function createAudioEngine(onEnded, { createOutput = createOutputStage, createStemChain = createChainNode, createMonitor = createMonitorBus } = {}) {
   let context;
+  // Monitor bus with Master Level (LAS-68), created together with the audio context so it exists
+  // before any output stage; every stage plays into it. masterDb is kept for a context made later.
+  let monitor = null;
+  let masterDb = 0;
   let buffer;
   let source;
   // The output stage is built for the track's channel count and reused for every play.
@@ -55,6 +60,12 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
   let stemOutput = null;
   let stemSession = null;
   const NO_MATCH = { processedDb: 0, originalDb: 0 };
+
+  function ensureContext() {
+    if (context) return;
+    context = new AudioContext();
+    monitor = createMonitor(context, masterDb);
+  }
 
   function superseded() {
     const error = new Error('A newer import replaced this one.');
@@ -114,7 +125,7 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
       if (tag(0, 4) !== 'RIFF' || tag(8, 12) !== 'WAVE') {
         throw new Error('This file is not a valid WAV. Choose another file.');
       }
-      context ??= new AudioContext();
+      ensureContext();
       let decoded;
       try {
         decoded = await context.decodeAudioData(bytes);
@@ -128,7 +139,7 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
       let stage = output;
       if (!stage || stage.channelCount !== channels) {
         try {
-          stage = await createOutput(context, channels, chainParams);
+          stage = await createOutput(context, channels, chainParams, monitor.input);
         } catch {
           if (load !== latestLoad) throw superseded();
           throw new Error('Audio processing could not start. Reload the page and try again.');
@@ -206,6 +217,8 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
       stemOutput = null;
       output?.dispose();
       output = null;
+      monitor?.dispose();
+      monitor = null;
       meterListeners.clear();
       if (context && context.state !== 'closed') void context.close();
     },
@@ -274,10 +287,10 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
     comparing: () => Boolean(comparison),
     // Opens (or returns) the stem session. onEnded runs when the last stem finishes.
     async openStems(onEnded = () => {}) {
-      context ??= new AudioContext();
+      ensureContext();
       if (!stemOutput) {
         try {
-          stemOutput = await createOutput(context, 2, chainParams);
+          stemOutput = await createOutput(context, 2, chainParams, monitor.input);
         } catch {
           throw new Error('Audio processing could not start. Reload the page and try again.');
         }
@@ -339,6 +352,20 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
       meterListeners.add(listener);
       return () => meterListeners.delete(listener);
     },
+    // Master Level (LAS-68): a monitor volume in dB (−Infinity mutes), applied after the A/B paths
+    // of the single track and the stems alike. It is not part of the chain settings and never
+    // reaches an export. Kept for the next audio context.
+    setMasterLevel(db) {
+      masterDb = clampMasterDb(db);
+      monitor?.setLevel(masterDb);
+      return masterDb;
+    },
+    masterLevel: () => masterDb,
+    // What reaches the speakers, after Master Level: per-channel peak/RMS and a spectrum analyser
+    // (LAS-67 player meters). null before any audio context exists.
+    outputLevels: () => monitor?.levels() ?? null,
+    outputAnalyser: () => monitor?.spectrum ?? null,
+    // The output stage's analyser (after A/B, before Master Level): the EQ editor's spectrum.
     analyser: () => output?.analyser ?? null,
     latency: () => output?.latency ?? 0,
     sampleRate: () => context?.sampleRate ?? null,

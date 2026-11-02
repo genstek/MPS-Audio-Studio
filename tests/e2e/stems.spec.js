@@ -140,7 +140,7 @@ test('LAS-34: the stem session loads, explains, plays, seeks and mixes; single-t
   await expect(timer).not.toHaveText(/^0:00\.0 /);
   const vocal = dialog.getByRole('listitem', { name: 'Stem vocal.wav' });
   await expect.poll(async () => Number(await vocal.getByRole('meter').getAttribute('aria-valuenow'))).toBeGreaterThan(-40);
-  await expect.poll(async () => Number(await dialog.getByRole('meter', { name: 'Master level' }).getAttribute('aria-valuenow'))).toBeGreaterThan(-40);
+  await expect.poll(async () => Number(await dialog.getByRole('meter', { name: 'Master output level' }).getAttribute('aria-valuenow'))).toBeGreaterThan(-40);
 
   // Mute and solo change only their strips' audibility.
   await vocal.getByRole('button', { name: 'Mute' }).click();

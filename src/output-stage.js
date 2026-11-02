@@ -5,12 +5,14 @@ import { createChainNode } from './dsp/chain-node.js';
 //   processed: source → mastering chain (AudioWorklet) → processed gain ┐
 //   original:  source → delay (= chain latency) → original gain ─────────┴→ analyser → speakers
 //   reference: reference source (comparison, LAS-31) → reference gain ─┘   (no processing)
+// "speakers" is the destination passed in: the engine's monitor bus with Master Level (LAS-68).
 // The delay keeps the original aligned with the processed sound. Only one path is audible at a
 // time; switching ramps the gains over RAMP_SECONDS. Loudness matching turns the louder path
 // down while comparing (never up, so nothing clips).
 export const RAMP_SECONDS = 0.02;
 
-export async function createOutputStage(context, channelCount, params) {
+// destination: where the stage's output goes; the engine passes its monitor bus (LAS-68).
+export async function createOutputStage(context, channelCount, params, destination = context.destination) {
   const chain = await createChainNode(context, params, channelCount);
   const delay = new DelayNode(context, { maxDelayTime: 1, delayTime: chain.latency / context.sampleRate, channelCount, channelCountMode: 'explicit' });
   const processed = new GainNode(context, { gain: 1 });
@@ -22,7 +24,7 @@ export async function createOutputStage(context, channelCount, params) {
   processed.connect(analyser);
   original.connect(analyser);
   reference.connect(analyser);
-  analyser.connect(context.destination);
+  analyser.connect(destination);
 
   const rampTo = (param, value) => {
     const now = context.currentTime;

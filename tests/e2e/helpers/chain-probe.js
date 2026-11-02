@@ -9,7 +9,30 @@ export async function installChainProbe(page) {
       if (data && data.type === 'params') probe.params.push(JSON.parse(JSON.stringify(data.params)));
       return postMessage.call(this, data, ...rest);
     };
-    // The output stage creates the processed gain first, then the original gain.
+    // LAS-68: the monitor bus is created with the audio context, before any output stage: its
+    // Master Level gain is the first GainNode and its left, right and spectrum analysers are the
+    // first three analysers. The output stage then creates its processed gain, then the original
+    // gain, then the reference gain, and its own analyser.
+    // A speakers tap measures whatever is connected to the destination, independently of the app.
+    const { connect } = AudioNode.prototype;
+    const RawAnalyser = window.AnalyserNode; // the tap's own analysers are not counted below
+    AudioNode.prototype.connect = function (target, ...rest) {
+      if (target instanceof AudioDestinationNode && !this.__probeTapped) {
+        this.__probeTapped = true;
+        const context = this.context;
+        if (!context.__speakersTap) {
+          const splitter = new ChannelSplitterNode(context, { numberOfOutputs: 2 });
+          const left = new RawAnalyser(context, { fftSize: 8192, smoothingTimeConstant: 0 });
+          const right = new RawAnalyser(context, { fftSize: 8192, smoothingTimeConstant: 0 });
+          connect.call(splitter, left, 0);
+          connect.call(splitter, right, 1);
+          context.__speakersTap = { splitter, left, right };
+          probe.speakers = context.__speakersTap;
+        }
+        connect.call(this, context.__speakersTap.splitter);
+      }
+      return connect.call(this, target, ...rest);
+    };
     const PageAnalyserNode = window.AnalyserNode;
     window.AnalyserNode = class extends PageAnalyserNode {
       constructor(...args) {
@@ -32,7 +55,7 @@ export const lastChainParams = page => page.evaluate(() => window.__chainProbe.p
 
 // Current values of the processed and original path gains.
 export const pathGains = page => page.evaluate(() => {
-  const [processed, original] = window.__chainProbe.gains;
+  const [, processed, original] = window.__chainProbe.gains;
   return { processed: Number(processed.gain.value.toFixed(3)), original: Number(original.gain.value.toFixed(3)) };
 });
 
@@ -49,7 +72,24 @@ export const analyserPeakHz = page => page.evaluate(() => {
 // LAS-31: all three output paths (the reference path is the stage's third gain) and how many
 // settings messages the chain has received so far.
 export const comparisonGains = page => page.evaluate(() => {
-  const [processed, original, reference] = window.__chainProbe.gains;
+  const [, processed, original, reference] = window.__chainProbe.gains;
   return { processed: Number(processed.gain.value.toFixed(3)), original: Number(original.gain.value.toFixed(3)), reference: Number(reference.gain.value.toFixed(3)) };
 });
 export const paramsMessageCount = page => page.evaluate(() => window.__chainProbe.params.length);
+
+// LAS-68: the Master Level gain of the monitor bus (the first GainNode the page creates).
+export const masterGainValue = page => page.evaluate(() => window.__chainProbe.gains[0].gain.value);
+
+// LAS-68: RMS (dBFS, null when silent) of what reaches the speakers, per channel, measured by the
+// probe's own tap on the destination over the last 8192 samples.
+export const speakersRmsDb = page => page.evaluate(() => {
+  const tap = window.__chainProbe.speakers;
+  if (!tap) return null;
+  const read = analyser => {
+    const data = new Float32Array(analyser.fftSize);
+    analyser.getFloatTimeDomainData(data);
+    const rms = Math.sqrt(data.reduce((sum, v) => sum + v * v, 0) / data.length);
+    return rms > 1e-7 ? Number((20 * Math.log10(rms)).toFixed(2)) : null;
+  };
+  return { left: read(tap.left), right: read(tap.right) };
+});

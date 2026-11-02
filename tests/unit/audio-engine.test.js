@@ -35,9 +35,16 @@ function setup() {
   const onEnded = vi.fn();
   // A stand-in for a stem's own chain node (LAS-35).
   const createStemChain = vi.fn(async (_context, params, channels) => ({ node: { connect: vi.fn(), disconnect: vi.fn() }, setParams: vi.fn(async () => []), latency: 83, params, channels }));
-  const engine = createAudioEngine(onEnded, { createOutput, createStemChain });
+  // A stand-in for the monitor bus with Master Level (LAS-68).
+  const monitors = [];
+  const createMonitor = vi.fn((_context, db) => {
+    const monitor = { input: 'monitor input', spectrum: 'monitor spectrum', db, setLevel: vi.fn(next => { monitor.db = next; }), levels: vi.fn(() => ({ left: { peak: 0.5 }, right: { peak: 0.25 } })), dispose: vi.fn() };
+    monitors.push(monitor);
+    return monitor;
+  });
+  const engine = createAudioEngine(onEnded, { createOutput, createStemChain, createMonitor });
   const file = { name: 'tone.wav', size: 44, arrayBuffer: async () => new TextEncoder().encode('RIFF0000WAVE').buffer };
-  return { engine, context, sources, onEnded, file, stages, createOutput, createStemChain };
+  return { engine, context, sources, onEnded, file, stages, createOutput, createStemChain, createMonitor, monitors };
 }
 
 afterEach(() => vi.unstubAllGlobals());
@@ -507,7 +514,7 @@ test('LAS-34: stems get their own stereo stage, follow the chain settings and th
   await engine.load(file);
   await engine.play();
   await engine.openStems();
-  expect(createOutput).toHaveBeenLastCalledWith(context, 2, expect.any(Object));
+  expect(createOutput).toHaveBeenLastCalledWith(context, 2, expect.any(Object), 'monitor input');
   const stemStage = stages.at(-1);
   stemStage.analyser = { fftSize: 32, getFloatTimeDomainData: () => {} };
   const wav = makeWav({ seconds: 2, channels: 1, sampleRate: 48000 });
@@ -566,4 +573,47 @@ test('LAS-35: each stem gets its own chain, bypassed and sized to its channels; 
   await engine.stemSession().setChain(id, settings, 'from limiter.json');
   expect(chain.setParams).toHaveBeenCalledWith(settings);
   expect(engine.stemSession().stems()[0]).toMatchObject({ chainLabel: 'from limiter.json', params: settings });
+});
+
+// LAS-68: Master Level is a monitor volume after the A/B paths, shared by the single track and the stems.
+test('LAS-68: one monitor bus is made with the context; every output stage plays into it', async () => {
+  const { engine, context, createOutput, createMonitor, monitors } = setup();
+  expect(engine.outputLevels()).toBeNull();
+  engine.setMasterLevel(-6);
+  await engine.load(file());
+  expect(createMonitor).toHaveBeenCalledOnce();
+  expect(createMonitor).toHaveBeenCalledWith(context, -6);
+  expect(createOutput).toHaveBeenLastCalledWith(context, 1, expect.any(Object), 'monitor input');
+  stubNodes();
+  await engine.openStems();
+  expect(createOutput).toHaveBeenLastCalledWith(context, 2, expect.any(Object), 'monitor input');
+  expect(createMonitor).toHaveBeenCalledOnce();
+  expect(engine.outputLevels()).toEqual({ left: { peak: 0.5 }, right: { peak: 0.25 } });
+  expect(engine.outputAnalyser()).toBe('monitor spectrum');
+  engine.dispose();
+  expect(monitors[0].dispose).toHaveBeenCalledOnce();
+
+  function file() { return { name: 'tone.wav', size: 44, arrayBuffer: async () => new TextEncoder().encode('RIFF0000WAVE').buffer }; }
+});
+
+test('LAS-68: the level is clamped to mute…0 dB, kept through transport, unload and replacement, and never sent with the chain settings', async () => {
+  const { engine, file, monitors, stages } = setup();
+  await engine.load(file);
+  expect(engine.setMasterLevel(-12.5)).toBe(-12.5);
+  expect(monitors[0].setLevel).toHaveBeenLastCalledWith(-12.5);
+  expect(engine.setMasterLevel(6)).toBe(0); // no positive gain without a headroom decision
+  expect(engine.setMasterLevel(-61)).toBe(-Infinity); // below −60 dB is mute
+  expect(engine.setMasterLevel(-Infinity)).toBe(-Infinity);
+  engine.setMasterLevel(-9);
+  await engine.play();
+  engine.pause();
+  await engine.play();
+  engine.stop();
+  engine.unload();
+  await engine.load({ ...file, name: 'next.wav' });
+  expect(engine.masterLevel()).toBe(-9);
+  expect(monitors).toHaveLength(1);
+  expect(monitors[0].setLevel).toHaveBeenLastCalledWith(-9);
+  for (const stage of stages) for (const [params] of stage.setParams.mock.calls) expect(JSON.stringify(params)).not.toMatch(/master/i);
+  engine.dispose();
 });
