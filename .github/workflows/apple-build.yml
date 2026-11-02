@@ -42,6 +42,11 @@ jobs:
         run: |
           mkdir -p artifacts/apple-ci
           ditto -c -k --keepParent apple/build/Build/Products/Debug/MPSMac.app artifacts/apple-ci/MPSMac-unsigned.zip
+          mkdir -p artifacts/dmg-stage
+          ditto apple/build/Build/Products/Debug/MPSMac.app 'artifacts/dmg-stage/MPS Audio Studio.app'
+          ln -s /Applications artifacts/dmg-stage/Applications
+          hdiutil create -volname 'MPS Audio Studio Development' -srcfolder artifacts/dmg-stage -format UDZO artifacts/apple-ci/MPS-Audio-Studio-development-universal-unsigned.dmg
+          shasum -a 256 artifacts/apple-ci/*.dmg > artifacts/apple-ci/SHA256SUMS.txt
           ditto -c -k --keepParent apple/ios-build/Build/Products/Debug-iphonesimulator/MPSiOS.app artifacts/apple-ci/MPSiOS-simulator-only.zip
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() && steps.package.outcome == 'success' }}

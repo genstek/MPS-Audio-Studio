@@ -12,7 +12,7 @@ stage="$(mktemp -d)"
 trap 'rm -rf "$stage"' EXIT
 ditto "$app" "$stage/MPS Audio Studio.app"
 ln -s /Applications "$stage/Applications"
-output="artifacts/apple/MPS-Audio-Studio-$(uname -m).dmg"
+output="artifacts/apple/MPS-Audio-Studio-universal.dmg"
 test ! -e "$output" || { echo 'Move the existing DMG before creating another.' >&2; exit 1; }
 hdiutil create -volname 'MPS Audio Studio' -srcfolder "$stage" -ov -format UDZO "$output"
 codesign --timestamp --sign "$MAC_SIGN_IDENTITY" "$output"

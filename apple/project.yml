@@ -39,6 +39,8 @@ targets:
         buildPhase: resources
     settings:
       base:
+        ARCHS: 'arm64 x86_64'
+        ONLY_ACTIVE_ARCH: NO
         PRODUCT_BUNDLE_IDENTIFIER: com.genstek.mpsaudio.mac
         ENABLE_HARDENED_RUNTIME: YES
         CODE_SIGN_ENTITLEMENTS: Mac.entitlements
