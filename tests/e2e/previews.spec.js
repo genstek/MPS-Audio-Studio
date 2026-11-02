@@ -113,3 +113,20 @@ test('LAS-63: gain-reduction meters are idle while stopped or paused and follow 
   await page.getByRole('button', { name: 'Pause' }).click();
   await expect.poll(async () => Number(await meter.getAttribute('aria-valuenow')), { timeout: 2000 }).toBe(0);
 });
+
+test('LAS-63: with every card edited, a 360 px phone still has no sideways scroll', async ({ page }) => {
+  await page.goto('/');
+  const ui = studio(page);
+  for (const [name, label] of [['dynamics', 'Compressor on'], ['space', 'Space on']]) {
+    await ui.open(name);
+    await ui.window(name === 'dynamics' ? 'Dynamics' : 'Space').getByLabel(label).check();
+  }
+  await ui.window('Space').getByRole('button', { name: 'Close Space' }).click();
+  await ui.window('Dynamics').getByRole('button', { name: 'Close Dynamics' }).click();
+  await ui.open('limiter');
+  await ui.window('Limiter').getByLabel('Limiter on').uncheck();
+  await ui.window('Limiter').getByRole('button', { name: 'Close Limiter' }).click();
+  await expect(ui.mixer.getByText('edited', { exact: true })).toHaveCount(3);
+  await page.setViewportSize({ width: 360, height: 780 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(360);
+});

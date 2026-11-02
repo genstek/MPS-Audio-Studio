@@ -346,6 +346,8 @@ dialog .file-picker { grid-area: auto; }
 .is-bypassed .preview-fill { fill: #6b778022; }
 /* LAS-63: card state without playback. The graph keeps its shape when bypassed (grey); the LED
    says on/bypassed; "edited" marks settings that differ from the defaults. */
+.strip-title { flex-wrap: wrap; row-gap: 2px; min-width: 0; }
+.strip-title h3 { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .strip-led { width: 8px; height: 8px; border-radius: 50%; background: #3a2f2a; margin-left: auto; flex-shrink: 0; }
 .strip-led.on { background: #6fd08c; box-shadow: 0 0 6px #6fd08c; }
 .strip-edited { font-size: 9px; letter-spacing: .5px; color: #14191d; background: #d7af6c; border-radius: 6px; padding: 0 4px; line-height: 13px; }
