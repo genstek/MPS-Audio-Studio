@@ -205,6 +205,15 @@ footer { letter-spacing: .3px; font-size: 10px; line-height: 1.6; }
 .select-field select, .param-number input { background: #11161a; color: #ecedf0; border: 1px solid #52616c; border-radius: 4px; padding: 3px 6px; font: inherit; }
 .editor-dialog { position: fixed; inset: auto 16px 16px auto; margin: 0; z-index: 10; width: min(680px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow: auto; background: #1c2329; color: #ecedf0; border: 1px solid #52616c; border-radius: 10px; padding: 16px 18px; box-shadow: 0 12px 40px #000a; }
 .editor-dialog > * + * { margin-top: 10px; }
+/* LAS-61/62: movable, concurrent editor windows. The title bar is the drag handle; the front
+   window has a brighter frame. */
+.editor-titlebar { position: sticky; top: -16px; z-index: 1; cursor: move; touch-action: none; user-select: none; gap: 8px; margin: -16px -18px 8px; padding: 8px 18px 8px 10px; background: #252e35; border-bottom: 1px solid #39434c; border-radius: 10px 10px 0 0; }
+.editor-titlebar h2 { flex: 1; min-width: 0; }
+.editor-dialog.is-active { border-color: #80d1e0; }
+.editor-dialog.is-active .editor-titlebar { background: #2f3a43; }
+.window-grip { padding: 2px 6px; font-size: 12px; letter-spacing: -2px; cursor: grab; background: transparent; border-color: transparent; color: #a7b2bc; }
+.window-grip:hover, .window-grip:focus-visible { border-color: #52616c; }
+.strip button.is-open { border-color: #80d1e0; }
 .editor-heading-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
 .editor-heading-tools .segmented legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 .module-editor, .eq-editor { display: grid; gap: 10px; }
