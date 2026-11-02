@@ -19,7 +19,7 @@ test('TC-003: unsupported or invalid files show a recoverable error', async ({ p
     await upload.setInputFiles(file);
     await expect(page.getByRole('alert'), description).toContainText(message);
     await expect(status, `${description}: nothing was loaded`).toHaveText('No audio loaded');
-    await expect(page.getByRole('button', { name: 'Play' }), `${description}: Play stays disabled`).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Play', exact: true }), `${description}: Play stays disabled`).toBeDisabled();
   }
 
   // Recovery: a valid file is accepted and the error disappears.

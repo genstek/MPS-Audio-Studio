@@ -11,7 +11,7 @@ function references(page) {
   const dialog = page.getByRole('dialog', { name: 'Reference profiles' });
   return {
     dialog,
-    open: () => page.getByRole('button', { name: 'References' }).click(),
+    open: () => page.getByRole('button', { name: 'References', exact: true }).click(),
     choose: (buffer, name = 'sadeness.wav') => dialog.getByLabel('Choose reference WAV').setInputFiles({ name, mimeType: 'audio/wav', buffer }),
     status: dialog.getByRole('status'),
     alert: dialog.getByRole('alert'),

@@ -36,7 +36,7 @@ test('LAS-71: a WAV of exactly 250 MiB imports and plays; 250 MiB + 1 byte is re
   await expect(tracks.getByText(/^1486\.1 seconds · 2 channel\(s\)/)).toBeVisible();
   test.info().annotations.push({ type: 'exact-limit import (262,144,000 bytes)', description: `${loadSeconds.toFixed(1)} s from choosing the file to Ready` });
 
-  await transport.getByRole('button', { name: 'Play' }).click();
+  await transport.getByRole('button', { name: 'Play', exact: true }).click();
   await expect(transport.getByRole('status')).toHaveText('Playing');
   await expect.poll(() => page.evaluate(() => document.querySelector('[role="timer"]').textContent)).not.toMatch(/^00:00\.0 /);
 
@@ -45,7 +45,7 @@ test('LAS-71: a WAV of exactly 250 MiB imports and plays; 250 MiB + 1 byte is re
   await expect(page.getByRole('alert')).toHaveText('This file is 250.0 MiB. WAV files can be at most 250 MiB (262,144,000 bytes); choose a smaller file.');
   await expect(transport.getByRole('status')).toHaveText('Playing');
   await expect(tracks.getByRole('heading', { name: 'limit-exact.wav' })).toBeVisible();
-  await transport.getByRole('button', { name: 'Stop' }).click();
+  await transport.getByRole('button', { name: 'Stop', exact: true }).click();
   await expect(transport.getByRole('status')).toHaveText('Stopped');
 
   // Retry with a small valid file works after the refusal.
@@ -69,7 +69,7 @@ test('LAS-71: stems and local references use the same 250 MiB limit', async ({ p
 
   // Local reference WAV in the comparison (LAS-31): refused by size before its header is read.
   await page.getByLabel('Import WAV').setInputFiles({ name: 'my-mix.wav', mimeType: 'audio/wav', buffer: makeWav() });
-  await page.getByRole('button', { name: 'Compare with a reference' }).click();
+  await page.getByRole('button', { name: 'Compare with a reference', exact: true }).click();
   const compare = page.getByRole('dialog', { name: 'Compare with a reference' });
   await compare.getByLabel('Choose reference WAV').setInputFiles(over);
   await expect(compare.getByRole('alert')).toContainText('WAV files can be at most 250 MiB (262,144,000 bytes)');

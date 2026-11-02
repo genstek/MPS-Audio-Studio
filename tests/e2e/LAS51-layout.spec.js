@@ -77,7 +77,7 @@ async function checkPanels(page, label) {
     for (const b of names.slice(index + 1)) expect(overlaps(boxes[a], boxes[b]), `${label}: ${a} overlaps ${b}`).toBe(false);
   }
   const bodyBox = await master.getByRole('region', { name: 'Master details' }).boundingBox();
-  const exportBox = await master.getByRole('button', { name: 'Export WAV' }).boundingBox();
+  const exportBox = await master.getByRole('button', { name: 'Export WAV', exact: true }).boundingBox();
   expect(exportBox.y, `${label}: Export starts below the Master details`).toBeGreaterThanOrEqual(bodyBox.y + bodyBox.height - 0.5);
   expect(exportBox.y + exportBox.height, `${label}: Export stays inside Master`).toBeLessThanOrEqual(boxes.Master.y + boxes.Master.height + 0.5);
 }
@@ -99,14 +99,14 @@ async function checkEssentialsBeforeScrolling(page, label) {
   const masterBody = master.getByRole('region', { name: 'Master details' });
   const strips = page.getByRole('group', { name: 'Processing modules' });
   const essentials = [
-    ...['Play', 'Pause', 'Stop', 'Rewind 5 seconds', 'Fast forward 5 seconds'].map(name => [name, transport.getByRole('button', { name })]),
+    ...['Play', 'Pause', 'Stop', 'Rewind 5 seconds', 'Fast forward 5 seconds'].map(name => [name, transport.getByRole('button', { name, exact: true })]),
     ['playback status', transport.getByRole('status')],
     ['timeline', tracks.getByRole('slider', { name: 'Timeline' })], // LAS-67 player
     ['Tracks heading', tracks.getByRole('heading', { name: 'Tracks', exact: true })],
     ['Import/Replace WAV', tracks.getByRole('button', { name: 'Import WAV', exact: true })],
     ['Master heading', master.getByRole('heading', { name: 'Master', exact: true })],
     ['Master level', master.getByRole('slider', { name: 'Master level' })],
-    ['Export WAV', master.getByRole('button', { name: 'Export WAV' })],
+    ['Export WAV', master.getByRole('button', { name: 'Export WAV', exact: true })],
     ...STRIPS.flatMap(name => {
       const strip = strips.getByRole('region', { name: `${name} channel strip` });
       return [
@@ -159,10 +159,12 @@ async function checkScrollerEnds(scroller, firstItems, lastItems, stacked, label
 // editing command, and Chromium on Windows/Linux scrolls with it natively. Control+End is a
 // Windows/Linux document shortcut, not a macOS scrolling key.
 // Since LAS-28 real controls sit between Import WAV and the mixer (Original/Processed, Match
-// loudness, Export, Undo/Redo, Settings), so the Tab budget is 12 instead of 4.
+// loudness, Export, Undo/Redo, Settings), so the Tab budget is 12 instead of 4. Sprint 10 adds the
+// timeline, clip, Master Level reset, Reset window layout, Stems and an ⓘ beside each of them
+// (LAS-67/68/61/70), so the budget is now 40. It only caps the loop; the assertion is unchanged.
 async function checkKeyboardScroll(page, scroller, first, last, label) {
   await page.getByRole('button', { name: 'Import WAV', exact: true }).focus();
-  for (let presses = 0; presses < 12 && !(await scroller.evaluate(e => e === document.activeElement)); presses++) {
+  for (let presses = 0; presses < 40 && !(await scroller.evaluate(e => e === document.activeElement)); presses++) {
     await page.keyboard.press('Tab');
   }
   await expect(scroller, `${label}: reachable with Tab`).toBeFocused();
@@ -203,12 +205,12 @@ async function checkLayout(page, label) {
     expect(pageWidth, `${label}: no horizontal page overflow`).toBeLessThanOrEqual(width);
     await expect(transport, `${label}: Transport visible`).toBeInViewport({ ratio: 1 });
     for (const name of ['Play', 'Pause', 'Stop']) {
-      await expectFullyVisible(transport.getByRole('button', { name }), `${label}: ${name} visible`);
+      await expectFullyVisible(transport.getByRole('button', { name, exact: true }), `${label}: ${name} visible`);
     }
     const reachable = [
       ['Import WAV', page.getByRole('button', { name: 'Import WAV', exact: true })],
       ['Master level', master.getByRole('slider', { name: 'Master level' })],
-      ['Export WAV', master.getByRole('button', { name: 'Export WAV' })],
+      ['Export WAV', master.getByRole('button', { name: 'Export WAV', exact: true })],
       ['footer', page.locator('footer')],
     ];
     if (await page.getByRole('alert').count()) reachable.push(['load error message', page.getByRole('alert')]);
@@ -309,17 +311,17 @@ test('LAS-51: playback state survives viewport changes', async ({ page }) => {
   await page.goto('/');
   await page.getByLabel('Import WAV').setInputFiles({ name: 'tone.wav', mimeType: 'audio/wav', buffer: makeWav() });
   await expect(page.getByRole('status')).toHaveText('Ready');
-  await page.getByRole('button', { name: 'Play' }).click();
+  await page.getByRole('button', { name: 'Play', exact: true }).click();
   // The 3-second fixture is still playing while the layout switches between desktop and stacked.
   for (const [width, height] of [[785, 520], [600, 650], [1440, 900]]) {
     await page.setViewportSize({ width, height });
     await expect(page.getByRole('status'), `playing at ${width}x${height}`).toHaveText('Playing');
   }
-  await page.getByRole('button', { name: 'Pause' }).click();
+  await page.getByRole('button', { name: 'Pause', exact: true }).click();
   await expect(page.getByRole('status')).toHaveText('Paused');
-  await page.getByRole('button', { name: 'Play' }).click();
+  await page.getByRole('button', { name: 'Play', exact: true }).click();
   await expect(page.getByRole('status')).toHaveText('Playing');
-  await page.getByRole('button', { name: 'Stop' }).click();
+  await page.getByRole('button', { name: 'Stop', exact: true }).click();
   await expect(page.getByRole('status')).toHaveText('Stopped');
   await expect(page.getByRole('heading', { name: 'tone.wav' })).toBeVisible();
 });

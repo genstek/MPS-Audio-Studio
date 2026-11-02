@@ -167,6 +167,9 @@ button.danger { border-color: #c17474; background: #4d2428; }
 footer { letter-spacing: .3px; font-size: 10px; line-height: 1.6; }
 .connection { color: #adc6bd; white-space: nowrap; }
 @media (max-width: 760px) {
+  /* LAS-69/70: project status, help icons and Help wrap instead of widening the page. */
+  .masthead-tools { flex-wrap: wrap; justify-content: flex-end; row-gap: 6px; }
+  .project-status { max-width: 14ch; }
   main { height: auto; min-height: 100dvh; grid-template-rows: auto; padding: 20px 16px; }
   .masthead, .transport { flex-wrap: wrap; }
   .workspace { grid-template-columns: 1fr; }
@@ -442,3 +445,32 @@ dialog .file-picker { grid-area: auto; }
 .module-presets { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding-bottom: 8px; border-bottom: 1px solid #2c353d; }
 .module-presets .file-picker.small { padding: 3px 10px; font-size: 11px; }
 .module-presets p { flex-basis: 100%; margin: 0; }
+
+/* LAS-70 contextual help: an ⓘ next to each control (overlay badge in compact places, inline next to
+   labels), a focusable popover and the in-app Help view. */
+.with-help { position: relative; display: inline-flex; }
+button.help-tip { display: inline-grid; place-items: center; width: 14px !important; height: 14px; min-width: 0; padding: 0 !important; border-radius: 50%; border: 1px solid #6c7c88; background: #1c2329; color: #c5ced6; font: italic 700 9px/1 Georgia, 'Times New Roman', serif !important; letter-spacing: 0; cursor: help; flex-shrink: 0; opacity: .8; }
+button.help-tip:hover, button.help-tip[aria-expanded='true'] { opacity: 1; border-color: #80d1e0; color: #80d1e0; background: #1c2329; }
+.with-help > button.help-tip { position: absolute; top: -6px; right: -6px; z-index: 2; }
+button.help-tip.inline { position: static; margin-left: 4px; vertical-align: middle; }
+.help-popover { position: fixed; z-index: 1000; width: min(280px, calc(100vw - 16px)); padding: 10px 12px; border-radius: 8px; background: #26303a; border: 1px solid #80d1e0; box-shadow: 0 10px 28px #000c; font-size: 12px; line-height: 1.4; color: #ecedf0; text-align: left; letter-spacing: 0; text-transform: none; font-weight: 400; }
+.help-popover strong { display: block; font-size: 13px; margin-bottom: 4px; }
+.help-popover p { margin: 0 0 6px; }
+.help-popover a { color: #80d1e0; }
+.help-view { width: min(760px, calc(100vw - 32px)); }
+.help-view h3 { margin: 14px 0 6px; font-size: 15px; color: #f0d79a; }
+.help-article { padding: 6px 8px; border-radius: 6px; }
+.help-article:focus { outline: 2px solid #80d1e0; }
+.help-article h4 { margin: 0 0 2px; font-size: 13px; }
+.help-article p { margin: 0; font-size: 13px; color: #c5ced6; }
+.param-label { display: inline-flex; align-items: center; min-width: 0; }
+.track-content > .picker-wrap { grid-area: picker; align-self: center; }
+.picker-wrap > .file-picker { grid-area: auto; }
+.strip > .strip-edit { grid-area: button; }
+.master > .export-wrap { display: flex; margin: var(--space) 12px; flex-shrink: 0; }
+.master > .export-wrap > button { flex: 1; padding-inline: 10px; font-size: 12px; }
+.listen-with-help, .toggle-with-help { display: inline-flex; align-items: center; justify-content: center; }
+.display-help { height: 100%; }
+.clip-wrap { grid-column: 2; grid-row: 1 / span 2; }
+.meters-help { grid-column: 3; grid-row: 1 / span 2; }
+.bar-meters { grid-template-columns: auto auto auto; }

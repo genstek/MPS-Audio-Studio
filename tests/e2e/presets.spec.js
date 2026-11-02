@@ -164,7 +164,7 @@ test('LAS-33: preferences stay apart from reference targets, either can be reset
   await page.goto('/');
   await signIn(page, request, 'prefs');
   await importTrack(page, wav(loop.map(c => c.map(v => v * 0.5))), 'my-mix.wav');
-  await page.getByRole('button', { name: 'Compare with a reference' }).click();
+  await page.getByRole('button', { name: 'Compare with a reference', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Compare with a reference' });
   await dialog.getByLabel('WAV on this device').check();
   await dialog.getByLabel('Choose reference WAV').setInputFiles({ name: 'reference.wav', mimeType: 'audio/wav', buffer: wav(renderChain(PRESETS.master, loop, RATE).channels) });

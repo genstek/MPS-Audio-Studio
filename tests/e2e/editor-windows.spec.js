@@ -51,22 +51,22 @@ test('LAS-62: EQ, Dynamics and Limiter stay open together; opening an open edito
 
   // Each window edits its own module. Focusing a control in a window brings that window to the
   // front, as clicking it does, so a covered window's controls become usable.
-  await ui.window('Dynamics').getByLabel('Compressor on').focus();
+  await ui.window('Dynamics').getByLabel('Compressor on', { exact: true }).focus();
   await expect(ui.window('Dynamics')).toHaveClass(/is-active/);
-  await ui.window('Dynamics').getByLabel('Compressor on').check();
+  await ui.window('Dynamics').getByLabel('Compressor on', { exact: true }).check();
   await ui.window('Limiter').getByRole('spinbutton', { name: 'Ceiling (dBTP)' }).focus();
   await ui.window('Limiter').getByRole('spinbutton', { name: 'Ceiling (dBTP)' }).fill('-2');
   await ui.window('Limiter').getByRole('spinbutton', { name: 'Ceiling (dBTP)' }).press('Enter');
-  await ui.window('EQ').getByLabel('EQ on').focus();
-  await ui.window('EQ').getByLabel('EQ on').uncheck();
+  await ui.window('EQ').getByLabel('EQ on', { exact: true }).focus();
+  await ui.window('EQ').getByLabel('EQ on', { exact: true }).uncheck();
   await expect.poll(async () => {
     const p = await lastChainParams(page);
     return p && [p.compressor.enabled, p.limiter.ceiling, p.eq.enabled].join();
   }).toBe('true,-2,false');
 
   // Undo/redo keep their documented scope: one history for the whole chain, newest edit first.
-  await ui.window('Dynamics').getByRole('button', { name: 'Undo' }).focus();
-  await ui.window('Dynamics').getByRole('button', { name: 'Undo' }).click();
+  await ui.window('Dynamics').getByRole('button', { name: 'Undo', exact: true }).focus();
+  await ui.window('Dynamics').getByRole('button', { name: 'Undo', exact: true }).click();
   await expect.poll(async () => (await lastChainParams(page)).eq.enabled).toBe(true);
   expect((await lastChainParams(page)).limiter.ceiling).toBe(-2);
 
@@ -83,7 +83,7 @@ test('LAS-62: EQ, Dynamics and Limiter stay open together; opening an open edito
   expect(await paramsMessageCount(page)).toBe(sent);
   expect((await lastChainParams(page)).compressor.enabled).toBe(true);
   await ui.open('dynamics');
-  await expect(ui.window('Dynamics').getByLabel('Compressor on')).toBeChecked();
+  await expect(ui.window('Dynamics').getByLabel('Compressor on', { exact: true })).toBeChecked();
 });
 
 test('LAS-61: windows move by their title bar while playing, come to the front when clicked, and keep their place when reopened', async ({ page }) => {
@@ -93,12 +93,12 @@ test('LAS-61: windows move by their title bar while playing, come to the front w
   await page.goto('/');
   const ui = studio(page);
   await ui.load();
-  await page.getByRole('button', { name: 'Play' }).click();
+  await page.getByRole('button', { name: 'Play', exact: true }).click();
   await expect(ui.status).toHaveText('Playing');
   await ui.open('EQ');
   await ui.open('dynamics');
   // Editors open below the transport: Pause stays uncovered and usable.
-  const pause = page.getByRole('button', { name: 'Pause' });
+  const pause = page.getByRole('button', { name: 'Pause', exact: true });
   expect(await pause.evaluate(e => { const b = e.getBoundingClientRect(); return e.contains(document.elementFromPoint(b.x + b.width / 2, b.y + b.height / 2)); })).toBe(true);
   const sent = await paramsMessageCount(page);
   const before = await box(ui.window('Dynamics'));
@@ -112,7 +112,7 @@ test('LAS-61: windows move by their title bar while playing, come to the front w
   expect((await audioSources(page)).started).toBe(1);
 
   // Controls inside the window still work on their own (no drag starts from them).
-  await ui.window('Dynamics').getByLabel('Compressor on').check();
+  await ui.window('Dynamics').getByLabel('Compressor on', { exact: true }).check();
   expect(await box(ui.window('Dynamics'))).toEqual(after);
 
   // Clicking the EQ window brings it to the front.
@@ -168,7 +168,7 @@ test('LAS-61: keyboard positioning, Escape on the focused window, Reset window l
   await ui.open('limiter');
   expect((await box(limiter)).x).toBe(start.x - 16);
   // (The windows cover the mixer heading here, so the button is reached from the keyboard.)
-  await ui.mixer.getByRole('button', { name: 'Reset window layout' }).focus();
+  await ui.mixer.getByRole('button', { name: 'Reset window layout', exact: true }).focus();
   await page.keyboard.press('Enter');
   expect(await box(limiter)).toEqual(start);
 
@@ -201,8 +201,8 @@ test('LAS-61/62: on a phone-sized screen every open window keeps its title and c
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
   // The windows are non-modal: with all three open, the transport still plays and pauses.
   await page.evaluate(() => window.scrollTo(0, 0));
-  await page.getByRole('button', { name: 'Play' }).click();
+  await page.getByRole('button', { name: 'Play', exact: true }).click();
   await expect(ui.status).toHaveText('Playing');
-  await page.getByRole('button', { name: 'Pause' }).click();
+  await page.getByRole('button', { name: 'Pause', exact: true }).click();
   await expect(ui.status).toHaveText('Paused');
 });

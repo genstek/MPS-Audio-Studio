@@ -5,6 +5,7 @@ import { CompressorEditor, LimiterEditor, SpaceEditor, spacePresetName } from '.
 import { DynamicsThumbnail, LimiterThumbnail, SpaceThumbnail } from './ProcessorPreviews.jsx';
 import { changedModules } from './previews.js';
 import { ModulePresets } from './ProjectBar.jsx';
+import { HelpTip, WithHelp } from './HelpTip.jsx';
 import { GainReductionMeter } from './GainReductionMeter.jsx';
 import { ListenSwitch } from './ListeningControls.jsx';
 import { SettingsDialog } from './SettingsDialog.jsx';
@@ -88,9 +89,10 @@ export function MixerPanel({ chain, engine, track, sampleRate, listening, onList
 
   // Editors cover part of the page, so they carry their own Undo/Redo and Original/Processed switch.
   const history = (
-    <span className="history-buttons">
+    <span className="history-buttons with-help">
       <button className="heading-button" onClick={undo} disabled={!canUndo}>Undo</button>
       <button className="heading-button" onClick={redo} disabled={!canRedo}>Redo</button>
+      <HelpTip id="mixer.undo" />
     </span>
   );
   const editorTools = <>{history}<ListenSwitch value={listening} onChange={onListen} disabled={!active} /></>;
@@ -107,8 +109,8 @@ export function MixerPanel({ chain, engine, track, sampleRate, listening, onList
         <h2 id="mixer-title">Mixer</h2>
         <div className="heading-tools">
           {history}
-          <button className="heading-button" onClick={resetLayout} disabled={!Object.keys(windows).length}>Reset window layout</button>
-          <SettingsDialog params={params} replace={replace} />
+          <WithHelp id="mixer.reset-layout"><button className="heading-button" onClick={resetLayout} disabled={!Object.keys(windows).length}>Reset window layout</button></WithHelp>
+          <WithHelp id="mixer.settings"><SettingsDialog params={params} replace={replace} /></WithHelp>
           {tools}
         </div>
       </div>
@@ -125,7 +127,7 @@ export function MixerPanel({ chain, engine, track, sampleRate, listening, onList
             <div className="strip-visual">{strip.visual}</div>
             <p>{strip.caption}</p>
             {/* Visible "Edit" (the strip title names the module); the accessible name says which. */}
-            <button className={windows[strip.editor]?.open ? 'is-open' : undefined} onClick={() => openEditor(strip.editor)} aria-label={strip.edit}>Edit</button>
+            <WithHelp id={`mixer.${strip.editor}`} className="strip-edit"><button className={windows[strip.editor]?.open ? 'is-open' : undefined} onClick={() => openEditor(strip.editor)} aria-label={strip.edit}>Edit</button></WithHelp>
           </section>
         ))}
       </div>

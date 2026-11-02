@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
+import { HelpTip } from './HelpTip.jsx';
 
 // Processor editor windows (LAS-28 non-modal editors, made movable and concurrent in LAS-61/62).
 // Each editor is its own non-modal <dialog> with a position and a stacking order held by the mixer,
@@ -109,6 +110,7 @@ export function EditorDialog({ title, open, onClose, children, headerExtra = nul
       onKeyDown={keyDown} onPointerDownCapture={onFront} onFocusCapture={onFront}>
       <div className="account-heading editor-titlebar" onPointerDown={startDrag} onPointerMove={dragMove} onPointerUp={endDrag} onPointerCancel={endDrag}>
         <button type="button" className="window-grip" aria-label={`Move ${title} window`} title="Drag the title bar, or use the arrow keys here (Home resets)" onKeyDown={gripKey}>⋮⋮</button>
+        <HelpTip id="mixer.window" className="inline" />
         <h2>{title}</h2>
         <div className="editor-heading-tools">
           {headerExtra}

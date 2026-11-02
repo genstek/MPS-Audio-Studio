@@ -63,7 +63,7 @@ test('LAS-68: the fader explains why it is disabled, then sets 0 dB, −6 dB and
   await expect(ui.fader).toBeEnabled();
   await expect(ui.fader).toHaveAttribute('aria-valuetext', '0.0 dB');
   await expect(ui.master.getByText('Monitor volume · not in exported WAV')).toBeVisible();
-  await ui.transport.getByRole('button', { name: 'Play' }).click();
+  await ui.transport.getByRole('button', { name: 'Play', exact: true }).click();
   await expect(ui.status).toHaveText('Playing');
   await expectSpeakers(page, { left: UNITY_RMS, right: UNITY_RMS }, 'unity: the tone reaches both speakers unchanged');
 
@@ -116,10 +116,10 @@ test('LAS-68: left-only, right-only and mono files are attenuated equally on the
     await expect(page.getByRole('heading', { name })).toBeVisible();
     await ui.fader.fill('-6');
     await expect(ui.fader).toHaveAttribute('aria-valuetext', '−6.0 dB');
-    await ui.transport.getByRole('button', { name: 'Play' }).click();
+    await ui.transport.getByRole('button', { name: 'Play', exact: true }).click();
     await expect(ui.status).toHaveText('Playing');
     await expectSpeakers(page, expected, `${name} at −6 dB`);
-    await ui.transport.getByRole('button', { name: 'Stop' }).click();
+    await ui.transport.getByRole('button', { name: 'Stop', exact: true }).click();
   }
 });
 
@@ -131,7 +131,7 @@ test('LAS-68: the level is kept through pause, stop, editors, replacement, unloa
   await expect(ui.status).toHaveText('Ready');
 
   const exportOnce = async name => {
-    await ui.master.getByRole('button', { name: 'Export WAV' }).click();
+    await ui.master.getByRole('button', { name: 'Export WAV', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Export processed WAV' });
     await dialog.getByRole('button', { name: /^Export( again)?$/ }).click();
     await expect(dialog.getByRole('status')).toHaveText('Export ready.', { timeout: 60_000 });
@@ -150,7 +150,7 @@ test('LAS-68: the level is kept through pause, stop, editors, replacement, unloa
   testInfo.annotations.push({ type: 'export SHA-256 at 0 dB and −20 dB', description: atUnity });
 
   // Rapid pointer drags while playing: the transport keeps going with one source.
-  await ui.transport.getByRole('button', { name: 'Play' }).click();
+  await ui.transport.getByRole('button', { name: 'Play', exact: true }).click();
   await expect(ui.status).toHaveText('Playing');
   const box = await ui.fader.boundingBox();
   await page.mouse.move(box.x + 2, box.y + box.height / 2);
@@ -163,14 +163,14 @@ test('LAS-68: the level is kept through pause, stop, editors, replacement, unloa
   await ui.fader.fill('-9');
   await expect(ui.value).toHaveText('−9.0 dB');
 
-  for (const action of ['Pause', 'Pause', 'Stop']) await ui.transport.getByRole('button', { name: action }).click();
+  for (const action of ['Pause', 'Pause', 'Stop']) await ui.transport.getByRole('button', { name: action, exact: true }).click();
   await page.getByRole('button', { name: 'Edit EQ' }).click();
   await page.getByRole('button', { name: 'Close EQ' }).click();
   await expect(ui.value).toHaveText('−9.0 dB');
   await ui.load('next.wav', stereoTone({ seconds: 2 }));
   await expect(page.getByRole('heading', { name: 'next.wav' })).toBeVisible();
   await expect(ui.value).toHaveText('−9.0 dB');
-  await page.getByRole('button', { name: 'Remove track' }).click();
+  await page.getByRole('button', { name: 'Remove track', exact: true }).click();
   await expect(ui.fader).toBeDisabled();
   await expect(ui.fader).toHaveAttribute('aria-valuetext', '−9.0 dB');
   await page.reload();
@@ -191,10 +191,10 @@ test('LAS-68: one Master Level for the stem mix too, also reachable inside the s
   await expect(dialog.getByRole('status')).toHaveText(/^2 stems/);
   const stemFader = dialog.getByRole('slider', { name: 'Master level' });
   await stemFader.fill('-6');
-  await dialog.getByRole('button', { name: 'Play' }).click();
+  await dialog.getByRole('button', { name: 'Play', exact: true }).click();
   // Two stems at their own levels, both 6 dB down at the speakers.
   await expectSpeakers(page, { left: UNITY_RMS - 6, right: UNITY_RMS - 6 }, 'stem mix at −6 dB');
-  await dialog.getByRole('button', { name: 'Stop' }).click();
+  await dialog.getByRole('button', { name: 'Stop', exact: true }).click();
   await dialog.getByRole('button', { name: 'Close stems' }).click();
   // Only stems are loaded: the main fader is enabled and shows the same level.
   await expect(ui.fader).toBeEnabled();

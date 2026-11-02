@@ -39,7 +39,7 @@ test('LAS-64: the Space editor switches the reverb on, applies presets and value
   await expect(ui.strip.getByText('Off', { exact: true })).toBeVisible();
   await ui.openSpace();
   await expect(ui.space).toBeVisible();
-  await ui.space.getByLabel('Space on').check();
+  await ui.space.getByLabel('Space on', { exact: true }).check();
   await ui.space.getByRole('combobox', { name: 'Space preset' }).selectOption('Hall');
   await expect.poll(async () => (await lastChainParams(page))?.space).toEqual({ enabled: true, mix: 22, preDelay: 30, decay: 2.6, damping: 35 });
   await expect(ui.strip.getByText('Hall · 22 % · 2.6 s')).toBeVisible();
@@ -49,9 +49,9 @@ test('LAS-64: the Space editor switches the reverb on, applies presets and value
   await expect.poll(async () => (await lastChainParams(page)).space.mix).toBe(35);
   await expect(ui.space.getByRole('combobox', { name: 'Space preset' })).toHaveValue('custom');
   await expect(ui.strip.getByText('Custom · 35 % · 2.6 s')).toBeVisible();
-  await ui.space.getByRole('button', { name: 'Undo' }).click();
+  await ui.space.getByRole('button', { name: 'Undo', exact: true }).click();
   await expect.poll(async () => (await lastChainParams(page)).space.mix).toBe(22);
-  await ui.space.getByRole('button', { name: 'Redo' }).click();
+  await ui.space.getByRole('button', { name: 'Redo', exact: true }).click();
   await expect.poll(async () => (await lastChainParams(page)).space.mix).toBe(35);
 
   // The settings file carries Space (schema v2) and loads back.
@@ -71,16 +71,16 @@ test('LAS-64: with Space on, reverb is measurable at the speakers after the tone
   await page.getByLabel('Import WAV').setInputFiles({ name: 'tone-then-silence.wav', mimeType: 'audio/wav', buffer: toneThenSilence() });
   await expect(ui.status).toHaveText('Ready');
   const levelAt = async at => {
-    await page.getByRole('button', { name: 'Play' }).click();
+    await page.getByRole('button', { name: 'Play', exact: true }).click();
     await expect.poll(async () => seconds(await ui.timer.textContent()), { timeout: 5000 }).toBeGreaterThanOrEqual(at);
     const level = await speakersRmsDb(page);
-    await page.getByRole('button', { name: 'Stop' }).click();
+    await page.getByRole('button', { name: 'Stop', exact: true }).click();
     return level;
   };
   const dry = await levelAt(1.6);
   expect(dry.left, 'Space off: silence after the tone').toBeNull();
   await ui.openSpace();
-  await ui.space.getByLabel('Space on').check();
+  await ui.space.getByLabel('Space on', { exact: true }).check();
   await ui.space.getByRole('combobox', { name: 'Space preset' }).selectOption('Hall');
   await expect.poll(async () => (await lastChainParams(page)).space.enabled).toBe(true);
   // Let any tail of the first pass die away before measuring again.
@@ -99,7 +99,7 @@ test('LAS-64: the export equals the offline chain with Space, with the tail incl
   await page.getByLabel('Import WAV').setInputFiles({ name: 'tone.wav', mimeType: 'audio/wav', buffer: source });
   await expect(ui.status).toHaveText('Ready');
   await ui.openSpace();
-  await ui.space.getByLabel('Space on').check();
+  await ui.space.getByLabel('Space on', { exact: true }).check();
   await ui.space.getByRole('combobox', { name: 'Space preset' }).selectOption('Room');
   await expect.poll(async () => (await lastChainParams(page)).space.enabled).toBe(true);
   const params = await lastChainParams(page);
@@ -109,7 +109,7 @@ test('LAS-64: the export equals the offline chain with Space, with the tail incl
   const tailFrames = Math.ceil(spaceTailSeconds(params) * decoded.sampleRate);
   const dialog = page.getByRole('dialog', { name: 'Export processed WAV' });
   const exportWith = async (tailChoice, name) => {
-    await page.getByRole('button', { name: 'Export WAV' }).click();
+    await page.getByRole('button', { name: 'Export WAV', exact: true }).click();
     await dialog.getByRole('radio', { name: tailChoice }).check();
     await dialog.getByRole('button', { name: /^Export( again)?$/ }).click();
     await expect(dialog.getByRole('status')).toHaveText('Export ready.', { timeout: 60_000 });

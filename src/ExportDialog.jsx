@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { startRender } from './render-client.js';
 import { spaceTailSeconds } from './dsp/chain.js';
+import { HelpTip, WithHelp } from './HelpTip.jsx';
 
 const level = (value, unit) => (value === null || value === undefined ? '—' : `${value.toFixed(2).replace('-', '−')} ${unit}`);
 
@@ -54,7 +55,7 @@ export function ExportDialog({ file, params }) {
   const status = running ? state.stage : state.phase === 'cancelled' ? 'Export cancelled.' : report ? 'Export ready.' : state.phase === 'done' ? 'Settings changed since the export; export again.' : '';
   return (
     <>
-      <button className="export-button" onClick={() => dialog.current.showModal()} disabled={!file}>Export WAV</button>
+      <WithHelp id="master.export" className="export-wrap"><button className="export-button" onClick={() => dialog.current.showModal()} disabled={!file}>Export WAV</button></WithHelp>
       <dialog ref={dialog} className="analysis-dialog" aria-labelledby="export-title" onClose={cancel}>
         <div className="account-heading">
           <h2 id="export-title">Export processed WAV</h2>
@@ -62,13 +63,13 @@ export function ExportDialog({ file, params }) {
         </div>
         {file && <p className="analysis-file" title={file.name}>{file.name}</p>}
         <fieldset className="segmented" disabled={running}>
-          <legend>Format</legend>
+          <legend>Format <HelpTip id="export.format" className="inline" /></legend>
           <label><input type="radio" name="export-depth" checked={bitDepth === 24} onChange={() => setBitDepth(24)} />24-bit PCM</label>
           <label><input type="radio" name="export-depth" checked={bitDepth === 16} onChange={() => setBitDepth(16)} />16-bit PCM + TPDF dither</label>
         </fieldset>
         {tailSeconds > 0 && (
           <fieldset className="segmented" disabled={running}>
-            <legend>Reverb tail (Space is on)</legend>
+            <legend>Reverb tail (Space is on) <HelpTip id="export.tail" className="inline" /></legend>
             <label><input type="radio" name="export-tail" checked={includeTail} onChange={() => setIncludeTail(true)} />Include the tail (+{tailSeconds.toFixed(2)} s)</label>
             <label><input type="radio" name="export-tail" checked={!includeTail} onChange={() => setIncludeTail(false)} />Cut at the end of the source</label>
           </fieldset>

@@ -52,7 +52,7 @@ test('LAS-32: propose, preview at a strength, check, reject, apply and undo', as
   await expect.poll(async () => (await lastChainParams(page))?.limiter.inputGain).toBe(2);
   const before = await lastChainParams(page);
 
-  await page.getByRole('button', { name: 'Compare with a reference' }).click();
+  await page.getByRole('button', { name: 'Compare with a reference', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Compare with a reference' });
   await dialog.getByLabel('Choose reference WAV').setInputFiles({ name: 'reference.wav', mimeType: 'audio/wav', buffer: REFERENCE });
   for (const [label, value] of [['Reference start (s)', '2'], ['Reference end (s)', '10'], ['Mix start (s)', '2'], ['Mix end (s)', '10']]) await dialog.getByLabel(label).fill(value);

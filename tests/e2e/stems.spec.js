@@ -117,7 +117,7 @@ test('LAS-34: the stem session loads, explains, plays, seeks and mixes; single-t
   const transport = page.getByRole('region', { name: 'Transport', exact: true });
   await page.getByLabel('Import WAV').setInputFiles({ name: 'song.wav', mimeType: 'audio/wav', buffer: makeWav({ seconds: 6, channels: 2, sampleRate: 44100, dbfs: -20 }) });
   await expect(transport.getByRole('status')).toHaveText('Ready');
-  await transport.getByRole('button', { name: 'Play' }).click();
+  await transport.getByRole('button', { name: 'Play', exact: true }).click();
   await expect(transport.getByRole('status')).toHaveText('Playing');
 
   await page.getByRole('region', { name: 'Mixer', exact: true }).getByRole('button', { name: 'Stems…' }).click();
@@ -133,7 +133,7 @@ test('LAS-34: the stem session loads, explains, plays, seeks and mixes; single-t
   await expect(notes).toContainText('bass.wav is 48,000 Hz; it plays resampled to 44,100 Hz by the browser.');
   await expect(notes).toContainText('The stems end at different times (5.00–8.00 s); the session lasts until the last one ends');
 
-  await dialog.getByRole('button', { name: 'Play' }).click();
+  await dialog.getByRole('button', { name: 'Play', exact: true }).click();
   await expect(transport.getByRole('status')).toHaveText('Stopped'); // the single track handed over
   await expect.poll(() => audioSources(page)).toMatchObject({ playing: 3 });
   const timer = dialog.getByRole('timer', { name: 'Stem position' });
@@ -158,7 +158,7 @@ test('LAS-34: the stem session loads, explains, plays, seeks and mixes; single-t
   await dialog.getByLabel('Position', { exact: true }).fill('6');
   await expect(timer).toHaveText(/^0:0[67]\.\d \/ 0:08\.0$/);
   await expect.poll(() => audioSources(page)).toMatchObject({ playing: 2 }); // the 5 s vocal has ended by 6 s
-  await dialog.getByRole('button', { name: 'Pause' }).click();
+  await dialog.getByRole('button', { name: 'Pause', exact: true }).click();
   await expect.poll(() => audioSources(page)).toMatchObject({ playing: 0 });
   await page.setViewportSize({ width: 360, height: 780 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
@@ -168,11 +168,11 @@ test('LAS-34: the stem session loads, explains, plays, seeks and mixes; single-t
 
   // Closing pauses the stems; the single track plays again with exactly one source.
   await dialog.getByRole('button', { name: 'Close stems' }).click();
-  await transport.getByRole('button', { name: 'Play' }).click();
+  await transport.getByRole('button', { name: 'Play', exact: true }).click();
   await expect(transport.getByRole('status')).toHaveText('Playing');
   await expect.poll(() => audioSources(page)).toMatchObject({ playing: 1 });
   await page.getByRole('region', { name: 'Mixer', exact: true }).getByRole('button', { name: 'Stems…' }).click();
-  await dialog.getByRole('button', { name: 'Play' }).click();
+  await dialog.getByRole('button', { name: 'Play', exact: true }).click();
   // The stems resume from the paused position (about 6 s), where the 5 s vocal has already ended.
   await expect(timer).toHaveText(/^0:0[67]\.\d \/ 0:08\.0$/);
   await expect.poll(() => audioSources(page)).toMatchObject({ playing: 2 });

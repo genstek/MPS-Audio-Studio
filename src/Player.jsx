@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useSyncExternalStore } from 'react';
+import { HelpTip, WithHelp } from './HelpTip.jsx';
 
 // Player (LAS-67): FF/RWD, a seekable timeline with a time ruler, Left/Right needle meters, electronic
 // level/peak bars with a clip indicator and an output spectrum. Behaviour only; the tape-deck or
@@ -143,7 +144,8 @@ export function BarMeters({ store }) {
           <span className="bar-value" aria-hidden="true">{dbText(m[side].hold)}</span>
         </div>
       ))}
-      <button type="button" className={`clip-led${m.clip ? ' on' : ''}`} aria-pressed={m.clip} aria-label={m.clip ? 'Clipping detected at the output; reset' : 'No clipping at the output'} onClick={() => store.resetClip()}>CLIP</button>
+      <WithHelp id="transport.clip" className="clip-wrap"><button type="button" className={`clip-led${m.clip ? ' on' : ''}`} aria-pressed={m.clip} aria-label={m.clip ? 'Clipping detected at the output; reset' : 'No clipping at the output'} onClick={() => store.resetClip()}>CLIP</button></WithHelp>
+      <HelpTip id="transport.meters" className="inline meters-help" />
     </div>
   );
 }
@@ -232,8 +234,8 @@ export function OutputSpectrum({ engine, store }) {
 export function PlayerDisplay({ engine, store }) {
   return (
     <div className="player-display" role="group" aria-label="Output meters">
-      <NeedleMeter store={store} side="left" />
-      <OutputSpectrum engine={engine} store={store} />
+      <WithHelp id="transport.needles" className="display-help"><NeedleMeter store={store} side="left" /></WithHelp>
+      <WithHelp id="transport.spectrum" className="display-help"><OutputSpectrum engine={engine} store={store} /></WithHelp>
       <NeedleMeter store={store} side="right" />
     </div>
   );

@@ -1,5 +1,6 @@
 import React, { useId } from 'react';
 import { MASTER_MAX_DB, MASTER_MIN_DB } from './monitor-bus.js';
+import { HelpTip } from './HelpTip.jsx';
 
 // Master Level fader (LAS-68): a monitor volume from mute (−∞ dB) to 0 dB (unity) in 0.5 dB steps,
 // after the Original/Processed switch, for the single track and the stems. It changes what you
@@ -28,7 +29,7 @@ export function MasterLevel({ value, onChange, disabled, reason, compact = false
   return (
     <div className={compact ? 'master-fader compact' : 'master-fader'}>
       <div className="master-fader-row">
-        <label htmlFor={id}>Master level</label>
+        <label htmlFor={id}>Master level</label>{!compact && <HelpTip id="master.level" className="inline" />}
         <span className="master-value" aria-hidden="true">{disabled ? '—' : formatMasterDb(value)}</span>
         <button type="button" className="master-reset" onClick={() => onChange(0)} disabled={disabled || value === 0} aria-label="Reset master level to 0 dB">0 dB</button>
       </div>

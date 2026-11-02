@@ -92,7 +92,7 @@ test('LAS48-TC-012/013/014: playback, paused position and stop survive resizing'
   const timer = transport.getByRole('timer', { name: 'Playback position' });
   await page.getByLabel('Import WAV').setInputFiles({ name: 'long-tone.wav', mimeType: 'audio/wav', buffer: makeWav({ seconds: 90 }) });
   await expect(status).toHaveText('Ready');
-  await transport.getByRole('button', { name: 'Play' }).click();
+  await transport.getByRole('button', { name: 'Play', exact: true }).click();
   await expect(status).toHaveText('Playing');
 
   // Playing: the position keeps advancing through every resize and the source is never restarted.
@@ -106,7 +106,7 @@ test('LAS48-TC-012/013/014: playback, paused position and stop survive resizing'
   expect(await audioSources(page), 'one source, never restarted').toEqual({ started: 1, playing: 1, connected: 1 });
 
   // Paused: the position does not move while the window changes, and Play resumes from it.
-  await transport.getByRole('button', { name: 'Pause' }).click();
+  await transport.getByRole('button', { name: 'Pause', exact: true }).click();
   await expect(status).toHaveText('Paused');
   const pausedAt = await elapsed(timer);
   for (const [width, height] of [[1280, 720], [600, 650], [1440, 900]]) {
@@ -114,18 +114,18 @@ test('LAS48-TC-012/013/014: playback, paused position and stop survive resizing'
     await expect(status).toHaveText('Paused');
     expect(await elapsed(timer), `paused position at ${width}x${height}`).toBe(pausedAt);
   }
-  await transport.getByRole('button', { name: 'Play' }).click();
+  await transport.getByRole('button', { name: 'Play', exact: true }).click();
   await expect(status).toHaveText('Playing');
   expect(Math.abs((await startOffsets(page)).at(-1) - pausedAt)).toBeLessThanOrEqual(0.051);
 
   // Stopped: stays stopped at zero with the established button rules.
-  await transport.getByRole('button', { name: 'Stop' }).click();
+  await transport.getByRole('button', { name: 'Stop', exact: true }).click();
   for (const [width, height] of [[785, 520], [390, 844], [1280, 720]]) {
     await page.setViewportSize({ width, height });
     await expect(status).toHaveText('Stopped');
     await expect(timer).toHaveText('00:00.0 / 01:30.0');
-    await expect(transport.getByRole('button', { name: 'Play' })).toBeEnabled();
-    await expect(transport.getByRole('button', { name: 'Pause' })).toBeDisabled();
+    await expect(transport.getByRole('button', { name: 'Play', exact: true })).toBeEnabled();
+    await expect(transport.getByRole('button', { name: 'Pause', exact: true })).toBeDisabled();
   }
   expect((await audioSources(page)).playing).toBe(0);
   await expect(page.getByRole('heading', { name: 'long-tone.wav' })).toBeVisible();
@@ -137,9 +137,11 @@ test('LAS48-TC-011: keyboard focus stays visible on its control across resizes',
   await page.getByLabel('Import WAV').setInputFiles({ name: 'tone.wav', mimeType: 'audio/wav', buffer: makeWav() });
   await expect(page.getByRole('status')).toHaveText('Ready');
   const transport = page.getByRole('region', { name: 'Transport', exact: true });
-  await transport.getByRole('button', { name: 'Play' }).focus();
-  await page.keyboard.press('Tab'); // Pause is disabled in Ready, so Tab goes to Stop.
-  const stop = transport.getByRole('button', { name: 'Stop' });
+  await transport.getByRole('button', { name: 'Play', exact: true }).focus();
+  // Pause is disabled in Ready; since LAS-70 each transport button is followed by its ⓘ in the Tab
+  // order, so Tab moves on until Stop has keyboard focus.
+  const stop = transport.getByRole('button', { name: 'Stop', exact: true });
+  for (let presses = 0; presses < 6 && !(await stop.evaluate(e => e === document.activeElement)); presses++) await page.keyboard.press('Tab');
   for (const [width, height] of [[1280, 720], [761, 450], [760, 520], [390, 844], [1440, 900]]) {
     await page.setViewportSize({ width, height });
     await expect(stop, `focused at ${width}x${height}`).toBeFocused();

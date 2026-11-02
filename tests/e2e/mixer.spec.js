@@ -12,9 +12,9 @@ test('TC-001: mixer loads and displays its main UI elements', async ({ page }) =
   const transport = page.getByRole('region', { name: 'Transport', exact: true });
   await expect(transport).toBeVisible();
   await expect(transport.getByRole('status')).toHaveText('No audio loaded');
-  await expect(transport.getByRole('button', { name: 'Play', exact: false })).toBeDisabled();
-  await expect(transport.getByRole('button', { name: 'Pause', exact: false })).toBeDisabled();
-  await expect(transport.getByRole('button', { name: 'Stop', exact: false })).toBeDisabled();
+  await expect(transport.getByRole('button', { name: 'Play', exact: true })).toBeDisabled();
+  await expect(transport.getByRole('button', { name: 'Pause', exact: true })).toBeDisabled();
+  await expect(transport.getByRole('button', { name: 'Stop', exact: true })).toBeDisabled();
 
   const tracks = page.getByRole('region', { name: 'Tracks', exact: true });
   await expect(tracks).toBeVisible();
@@ -37,5 +37,5 @@ test('TC-001: mixer loads and displays its main UI elements', async ({ page }) =
   await expect(master).toBeVisible();
   await expect(master.getByRole('slider', { name: 'Master level' })).toBeDisabled();
   // Export needs a track first (LAS-28).
-  await expect(master.getByRole('button', { name: 'Export WAV' })).toBeDisabled();
+  await expect(master.getByRole('button', { name: 'Export WAV', exact: true })).toBeDisabled();
 });

@@ -13,11 +13,11 @@ function studio(page) {
     tracks,
     status: transport.getByRole('status'),
     timer: transport.getByRole('timer', { name: 'Playback position' }),
-    play: transport.getByRole('button', { name: 'Play' }),
-    pause: transport.getByRole('button', { name: 'Pause' }),
-    stop: transport.getByRole('button', { name: 'Stop' }),
+    play: transport.getByRole('button', { name: 'Play', exact: true }),
+    pause: transport.getByRole('button', { name: 'Pause', exact: true }),
+    stop: transport.getByRole('button', { name: 'Stop', exact: true }),
     upload: page.getByLabel('Import WAV'),
-    remove: tracks.getByRole('button', { name: 'Remove track' }),
+    remove: tracks.getByRole('button', { name: 'Remove track', exact: true }),
   };
 }
 

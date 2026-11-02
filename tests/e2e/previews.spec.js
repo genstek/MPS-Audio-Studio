@@ -46,7 +46,7 @@ test('LAS-63: without playback, cards show on/bypassed and edited state, and the
 
   // No track loaded, nothing playing: switch Dynamics on and edit it.
   await ui.open('dynamics');
-  await ui.window('Dynamics').getByLabel('Compressor on').check();
+  await ui.window('Dynamics').getByLabel('Compressor on', { exact: true }).check();
   await expect(ui.strip('Dynamics')).toHaveAttribute('data-state', 'on');
   await expect(ui.strip('Dynamics').getByText('edited', { exact: true })).toBeVisible();
   const onShape = await page.locator(DYN_PATH).getAttribute('d');
@@ -67,8 +67,8 @@ test('LAS-63: without playback, cards show on/bypassed and edited state, and the
   expect(await paramsMessageCount(page)).toBe(sent);
 
   // Undo back to the defaults: shape, state and the edited marker follow.
-  await ui.window('Dynamics').getByRole('button', { name: 'Undo' }).click();
-  await ui.window('Dynamics').getByRole('button', { name: 'Undo' }).click();
+  await ui.window('Dynamics').getByRole('button', { name: 'Undo', exact: true }).click();
+  await ui.window('Dynamics').getByRole('button', { name: 'Undo', exact: true }).click();
   await expect(ui.strip('Dynamics')).toHaveAttribute('data-state', 'bypassed');
   await expect(ui.strip('Dynamics').getByText('edited', { exact: true })).toHaveCount(0);
   await expect.poll(() => page.locator(DYN_PATH).getAttribute('d')).toBe(bypassedShape);
@@ -77,7 +77,7 @@ test('LAS-63: without playback, cards show on/bypassed and edited state, and the
   await ui.window('Dynamics').getByRole('button', { name: 'Close Dynamics' }).click();
   await ui.open('space');
   const spaceBefore = await ui.strip('Space').locator('.preview-line').first().getAttribute('d');
-  await ui.window('Space').getByLabel('Space on').check();
+  await ui.window('Space').getByLabel('Space on', { exact: true }).check();
   await ui.window('Space').getByRole('combobox', { name: 'Space preset' }).selectOption('Hall');
   await expect(ui.strip('Space')).toHaveAttribute('data-state', 'on');
   await expect.poll(() => ui.strip('Space').locator('.preview-line').first().getAttribute('d')).not.toBe(spaceBefore);
@@ -88,7 +88,7 @@ test('LAS-63: with reduced motion the shape changes at once, without intermediat
   await page.goto('/');
   const ui = studio(page);
   await ui.open('dynamics');
-  await ui.window('Dynamics').getByLabel('Compressor on').check();
+  await ui.window('Dynamics').getByLabel('Compressor on', { exact: true }).check();
   const threshold = ui.window('Dynamics').getByRole('spinbutton', { name: 'Threshold (dB)' });
   const shapes = await shapesDuring(page, DYN_PATH, async () => { await threshold.fill('-40'); await threshold.press('Enter'); });
   expect(new Set(shapes).size, 'one jump from the old to the new shape').toBe(2);
@@ -100,7 +100,7 @@ test('LAS-63: gain-reduction meters are idle while stopped or paused and follow 
   await page.getByLabel('Import WAV').setInputFiles({ name: 'loud.wav', mimeType: 'audio/wav', buffer: makeWav({ seconds: 10, channels: 2, frequency: 220, dbfs: -1 }) });
   await expect(page.getByRole('region', { name: 'Transport', exact: true }).getByRole('status')).toHaveText('Ready');
   await ui.open('dynamics');
-  await ui.window('Dynamics').getByLabel('Compressor on').check();
+  await ui.window('Dynamics').getByLabel('Compressor on', { exact: true }).check();
   const threshold = ui.window('Dynamics').getByRole('spinbutton', { name: 'Threshold (dB)' });
   await threshold.fill('-40');
   await threshold.press('Enter');
@@ -108,9 +108,9 @@ test('LAS-63: gain-reduction meters are idle while stopped or paused and follow 
   // Configured for heavy compression, but stopped: the meter shows no activity.
   await page.waitForTimeout(400);
   await expect(meter).toHaveAttribute('aria-valuenow', '0');
-  await page.getByRole('button', { name: 'Play' }).click();
+  await page.getByRole('button', { name: 'Play', exact: true }).click();
   await expect.poll(async () => Number(await meter.getAttribute('aria-valuenow'))).toBeGreaterThan(10);
-  await page.getByRole('button', { name: 'Pause' }).click();
+  await page.getByRole('button', { name: 'Pause', exact: true }).click();
   await expect.poll(async () => Number(await meter.getAttribute('aria-valuenow')), { timeout: 2000 }).toBe(0);
 });
 
@@ -119,12 +119,12 @@ test('LAS-63: with every card edited, a 360 px phone still has no sideways scrol
   const ui = studio(page);
   for (const [name, label] of [['dynamics', 'Compressor on'], ['space', 'Space on']]) {
     await ui.open(name);
-    await ui.window(name === 'dynamics' ? 'Dynamics' : 'Space').getByLabel(label).check();
+    await ui.window(name === 'dynamics' ? 'Dynamics' : 'Space').getByLabel(label, { exact: true }).check();
   }
   await ui.window('Space').getByRole('button', { name: 'Close Space' }).click();
   await ui.window('Dynamics').getByRole('button', { name: 'Close Dynamics' }).click();
   await ui.open('limiter');
-  await ui.window('Limiter').getByLabel('Limiter on').uncheck();
+  await ui.window('Limiter').getByLabel('Limiter on', { exact: true }).uncheck();
   await ui.window('Limiter').getByRole('button', { name: 'Close Limiter' }).click();
   await expect(ui.mixer.getByText('edited', { exact: true })).toHaveCount(3);
   await page.setViewportSize({ width: 360, height: 780 });

@@ -16,6 +16,7 @@ import { clampMasterDb } from './monitor-bus.js';
 import { BarMeters, PlayerDisplay, SeekButton, Timeline, createMeterStore } from './Player.jsx';
 import { NewProjectDialog, ProjectArea, RelinkDialog, UnsavedDialog } from './ProjectBar.jsx';
 import { useProject } from './useProject.js';
+import { HelpButton, HelpTip, HelpView, WithHelp } from './HelpTip.jsx';
 
 // Master Level is a listening preference of this browser (LAS-68), kept across reloads when the
 // browser allows storage; it is not part of a project, a preset or an export.
@@ -198,20 +199,20 @@ function App() {
         <div className="brand"><span className="brand-mark" aria-hidden="true">MPS</span><div><p className="eyebrow">LOCAL AUDIO WORKSPACE</p><h1>MPS Audio Studio</h1></div></div>
         <div className="masthead-tools">
           {/* Project save state (LAS-69); a polite live region, not a second role=status. */}
-          <span className={`version project-status${project.dirty ? ' is-dirty' : ''}${project.phase === 'error' ? ' is-error' : ''}`} aria-live="polite" title={project.status}>{project.status}</span>
+          <span className={`version project-status${project.dirty ? ' is-dirty' : ''}${project.phase === 'error' ? ' is-error' : ''}`} aria-live="polite" title={project.status}>{project.status}</span><HelpTip id="project.status" className="inline" />
           {project.missingCount > 0 && <button type="button" className="heading-button" onClick={project.openRelink}>{project.missingCount} audio file{project.missingCount > 1 ? 's' : ''} missing — Relink…</button>}
-          <ReferencesDialog /><AccountDialog currentFile={currentFile} />
+          <WithHelp id="dialogs.references"><ReferencesDialog /></WithHelp><WithHelp id="dialogs.account"><AccountDialog currentFile={currentFile} /></WithHelp><HelpButton />
         </div>
       </header>
 
       <section className="transport panel" aria-label="Transport">
         <ProjectArea name={project.project.name} onNew={project.requestNew} onOpen={project.open} onSave={project.save} onSaveAs={project.saveAs} disabled={Boolean(busy)} />
         <div className="transport-buttons">
-          <SeekButton direction={-1} onSkip={skip} disabled={!track || Boolean(busy)} />
-          <button className="primary" onClick={play} disabled={!track || busy || status === 'Playing'}>▶ Play</button>
-          <button onClick={togglePause} aria-pressed={status === 'Paused'} disabled={busy || (status !== 'Playing' && status !== 'Paused')}>Ⅱ Pause</button>
-          <button onClick={stop} disabled={!track || busy}>■ Stop</button>
-          <SeekButton direction={1} onSkip={skip} disabled={!track || Boolean(busy)} />
+          <WithHelp id="transport.rewind"><SeekButton direction={-1} onSkip={skip} disabled={!track || Boolean(busy)} /></WithHelp>
+          <WithHelp id="transport.play"><button className="primary" onClick={play} disabled={!track || busy || status === 'Playing'}><span aria-hidden="true">▶</span> Play</button></WithHelp>
+          <WithHelp id="transport.pause"><button onClick={togglePause} aria-pressed={status === 'Paused'} disabled={busy || (status !== 'Playing' && status !== 'Paused')}><span aria-hidden="true">Ⅱ</span> Pause</button></WithHelp>
+          <WithHelp id="transport.stop"><button onClick={stop} disabled={!track || busy}><span aria-hidden="true">■</span> Stop</button></WithHelp>
+          <WithHelp id="transport.forward"><SeekButton direction={1} onSkip={skip} disabled={!track || Boolean(busy)} /></WithHelp>
         </div>
         <div className="transport-state">
           <p role="status" className="status">{busy || status}</p>
@@ -221,20 +222,21 @@ function App() {
 
       <div className="workspace">
         <section className="tracks panel" aria-labelledby="tracks-title">
-          <div className="panel-heading"><h2 id="tracks-title">Tracks</h2><div className="heading-tools">{track && <><AnalysisDialog file={currentFile} /><CompareDialog engine={engine} file={currentFile} track={track} chain={chain} onMonitorStart={monitorStarted} /><button className="remove-track" onClick={removeTrack}>Remove track</button></>}<span className="badge">{track ? '01 TRACK' : '00 TRACKS'}</span></div></div>
+          <div className="panel-heading"><h2 id="tracks-title">Tracks</h2><div className="heading-tools">{track && <><WithHelp id="tracks.analyze"><AnalysisDialog file={currentFile} /></WithHelp><WithHelp id="tracks.compare"><CompareDialog engine={engine} file={currentFile} track={track} chain={chain} onMonitorStart={monitorStarted} /></WithHelp><WithHelp id="tracks.remove"><button className="remove-track" onClick={removeTrack}>Remove track</button></WithHelp></>}<span className="badge">{track ? '01 TRACK' : '00 TRACKS'}</span></div></div>
           <div className="track-space">{track && <PlayerDisplay engine={engine} store={meters} />}<div className="track-content">
             <span className="audio-icon" aria-hidden="true"><span>♫</span></span>
             <h3 title={track ? track.name : undefined}>{track ? track.name : 'Your session starts here'}</h3>
             <p className="track-info">{track ? `${track.duration.toFixed(1)} seconds · ${track.channels} channel(s) · ${track.sampleRate.toLocaleString()} Hz decoded` : 'Import a WAV file to start listening.'}</p>
-            <label className="file-picker">{track ? 'Replace WAV' : 'Import WAV'}
+            <WithHelp id="tracks.import" className="picker-wrap"><label className="file-picker">{track ? 'Replace WAV' : 'Import WAV'}
               <input ref={importInput} type="file" accept=".wav,audio/wav" aria-label="Import WAV" onChange={importAudio} disabled={busy} />
-            </label>
+            </label></WithHelp>
             <p className="fine-print">WAV up to {MAX_AUDIO_FILE_LABEL} · Files stay on your device</p>
           </div></div>
           {error && <p role="alert" className="error">{error}</p>}
           {project.problem && <p role="alert" className="error">{project.problem} <button type="button" className="link" onClick={project.clearProblem}>Dismiss</button></p>}
           <div className="track-footer player-footer">
             <Timeline position={position} duration={track ? track.duration : 0} onSeek={seek} disabled={!track || Boolean(busy)} scrub={scrub} setScrub={setScrub} />
+            <HelpTip id="transport.timeline" className="inline" />
             <BarMeters store={meters} />
           </div>
         </section>
@@ -243,7 +245,7 @@ function App() {
           <div className="panel-heading"><h2 id="master-title">Master</h2><span className="badge">STEREO</span></div>
           <div className="master-body" role="region" aria-label="Master details" tabIndex={0}>
             <p className="eyebrow">OUTPUT STAGE</p>
-            <ListenSwitch value={listening} onChange={listen} disabled={!track} />
+            <ListenSwitch value={listening} onChange={listen} disabled={!track} help="master.listen" />
             <LoudnessMatch engine={engine} file={currentFile} params={chain.params} />
           </div>
           <div className="master-level">
@@ -254,7 +256,8 @@ function App() {
         </section>
       </div>
 
-      <MixerPanel windows={windows} setWindows={setWindows} chain={chain} engine={engine} track={track} sampleRate={track ? track.sampleRate : 48000} listening={listening} onListen={listen} tools={<StemsDialog engine={engine} chain={chain} listening={listening} onListen={listen} onStemsPlay={monitorStarted} onStemsChange={setStems} masterLevel={{ value: masterDb, onChange: changeMaster }} />} />
+      <MixerPanel windows={windows} setWindows={setWindows} chain={chain} engine={engine} track={track} sampleRate={track ? track.sampleRate : 48000} listening={listening} onListen={listen} tools={<WithHelp id="mixer.stems"><StemsDialog engine={engine} chain={chain} listening={listening} onListen={listen} onStemsPlay={monitorStarted} onStemsChange={setStems} masterLevel={{ value: masterDb, onChange: changeMaster }} /></WithHelp>} />
+      <HelpView />
       <NewProjectDialog open={project.newOpen} onCreate={project.create} onCancel={project.cancelNew} />
       <UnsavedDialog prompt={project.prompt} onChoose={project.answer} />
       <RelinkDialog missing={project.missing} open={project.relink.open} busy={project.relink.busy} problem={project.relink.problem} onRelink={project.relinkFile} onClose={project.closeRelink} />

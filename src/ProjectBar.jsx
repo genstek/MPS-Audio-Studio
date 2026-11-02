@@ -1,6 +1,7 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
 import { MODULES, ModulePresetError, MODULE_PRESET_LIMIT, applyModulePreset, modulePresetFileName, serializeModulePreset } from './module-presets.js';
 import { cleanProjectName } from './project.js';
+import { HelpTip, WithHelp } from './HelpTip.jsx';
 
 // Project area (LAS-60/69): a visible New project button and a Project menu (Open, Save, Save As)
 // where "SESSION 001" used to be, the project name, and the dialogs of the project workflow.
@@ -40,8 +41,8 @@ export function ProjectArea({ name, onNew, onOpen, onSave, onSaveAs, disabled })
   return (
     <div className="project-area">
       <div className="project-toolbar">
-        <button type="button" className="project-button" onClick={onNew} disabled={disabled} aria-label="New project" title="New project">+ New</button>
-        <span className="project-menu-wrap">
+        <WithHelp id="project.new"><button type="button" className="project-button" onClick={onNew} disabled={disabled} aria-label="New project" title="New project">+ New</button></WithHelp>
+        <span className="project-menu-wrap with-help">
           <button ref={button} type="button" className="project-button" aria-haspopup="menu" aria-expanded={menu} aria-controls={id} onClick={() => setMenu(!menu)} disabled={disabled}>Project ▾</button>
           {menu && (
             <ul ref={list} id={id} className="project-menu" role="menu" aria-label="Project" onKeyDown={keyDown}>
@@ -50,6 +51,7 @@ export function ProjectArea({ name, onNew, onOpen, onSave, onSaveAs, disabled })
               <li role="none"><button type="button" role="menuitem" aria-label="Save project as" aria-keyshortcuts="Control+Shift+S Meta+Shift+S" onClick={() => run(onSaveAs)}>Save project as… <kbd>⇧ Ctrl/⌘ S</kbd></button></li>
             </ul>
           )}
+          <HelpTip id="project.menu" />
         </span>
       </div>
       <h2 className="project-name" title={name}>{name}</h2>
@@ -164,6 +166,7 @@ export function ModulePresets({ module, params, update }) {
       <button type="button" className="heading-button" onClick={() => { download(serializeModulePreset(params, module), modulePresetFileName(module)); setProblem(''); setMessage(`Saved the ${label} settings as ${modulePresetFileName(module)}.`); }}>Save {label} preset</button>
       <label className="file-picker small">Load {label} preset…<input type="file" accept=".json,application/json" aria-label={`Load ${label} preset`} onChange={load} /></label>
       <span className="fine-print">Only {label}; not the project, not audio.</span>
+      <HelpTip id="presets.section" className="inline" />
       {message && <p className="fine-print" aria-live="polite">{message}</p>}
       {problem && <p className="account-error" role="alert">{problem}</p>}
     </div>

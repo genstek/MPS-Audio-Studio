@@ -14,7 +14,7 @@ function studio(page) {
     tracks,
     dialog,
     status: transport.getByRole('status'),
-    play: transport.getByRole('button', { name: 'Play' }),
+    play: transport.getByRole('button', { name: 'Play', exact: true }),
     upload: page.getByLabel('Import WAV'),
     analyze: tracks.getByRole('button', { name: /^Analyz/ }),
     analysisStatus: dialog.getByRole('status'),

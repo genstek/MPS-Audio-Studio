@@ -4,6 +4,7 @@ import { designBand } from './dsp/eq-design.js';
 import { biquadResponseDb } from './dsp/biquad.js';
 import { ParamField } from './ParamField.jsx';
 import { useEased } from './ProcessorPreviews.jsx';
+import { HelpTip } from './HelpTip.jsx';
 
 // The 24-band EQ editor (LAS-28). The curve is the real transfer function of the enabled bands at
 // the playback sample rate; the spectrum behind it is measured from what is being heard.
@@ -183,12 +184,13 @@ export function EqEditor({ params, update, sampleRate, engine }) {
     <div className="eq-editor">
       <div className="eq-toolbar">
         <fieldset className="segmented">
-          <legend>Edit</legend>
+          <legend>Edit <HelpTip id="eq.channels" className="inline" /></legend>
           {[['link', 'Link'], ['left', 'Left'], ['right', 'Right']].map(([value, label]) => (
             <label key={value}><input type="radio" name="eq-channel" value={value} checked={(linked ? 'link' : side) === value} onChange={() => chooseChannel(value)} />{label}</label>
           ))}
         </fieldset>
-        <label className="toggle"><input type="checkbox" checked={params.eq.enabled} onChange={e => update(p => ({ ...p, eq: { ...p.eq, enabled: e.target.checked } }))} />EQ on</label>
+        <label className="toggle"><input type="checkbox" checked={params.eq.enabled} onChange={e => update(p => ({ ...p, eq: { ...p.eq, enabled: e.target.checked } }))} />EQ on</label><HelpTip id="eq.on" className="inline" />
+        <HelpTip id="eq.curve" className="inline" /><span className="fine-print" aria-hidden="true">Curve</span>
       </div>
       <div className="eq-plot">
         <Spectrum engine={engine} sampleRate={sampleRate} scale={scale} />
@@ -212,6 +214,7 @@ export function EqEditor({ params, update, sampleRate, engine }) {
         </svg>
       </div>
       <p className="fine-print">Drag a point, or focus it and use the arrow keys (Shift for bigger steps, Page Up/Down for Q, Delete to switch off). Double-click to add a band. The shaded area is the live spectrum of what you hear.</p>
+      <HelpTip id="eq.bands" className="inline" />
       <div className="band-picker" role="group" aria-label="Bands">
         {params.eq[channel].map((b, index) => (
           <button key={index} type="button" className={b.enabled ? 'on' : ''} aria-pressed={index === selected} onClick={() => setSelected(index)}
@@ -220,18 +223,18 @@ export function EqEditor({ params, update, sampleRate, engine }) {
       </div>
       <section className="band-fields" aria-label={`Band ${selected + 1} settings`}>
         <div className="band-fields-row">
-          <label className="toggle"><input type="checkbox" checked={band.enabled} onChange={e => edit(selected, { enabled: e.target.checked })} />Band {selected + 1} on</label>
+          <label className="toggle"><input type="checkbox" checked={band.enabled} onChange={e => edit(selected, { enabled: e.target.checked })} />Band {selected + 1} on</label><HelpTip id="eq.band-on" className="inline" />
           <label className="select-field">Type
             <select value={band.type} onChange={e => edit(selected, { type: e.target.value })}>
               {BAND_TYPES.map(type => <option key={type} value={type}>{TYPE_LABELS[type]}</option>)}
             </select>
-          </label>
+          </label><HelpTip id="eq.type" className="inline" />
         </div>
-        <ParamField label="Frequency" unit="Hz" min={BOUNDS.frequency[0]} max={BOUNDS.frequency[1]} step={1} value={band.frequency} log
+        <ParamField label="Frequency" unit="Hz" min={BOUNDS.frequency[0]} max={BOUNDS.frequency[1]} step={1} value={band.frequency} log help="eq.frequency"
           onChange={value => edit(selected, { frequency: roundFrequency(value) }, `field-f-${channel}-${selected}`)} />
-        <ParamField label="Gain" unit="dB" min={BOUNDS.gain[0]} max={BOUNDS.gain[1]} step={0.1} value={band.gain} disabled={!hasGain(band.type)}
+        <ParamField label="Gain" unit="dB" min={BOUNDS.gain[0]} max={BOUNDS.gain[1]} step={0.1} value={band.gain} disabled={!hasGain(band.type)} help="eq.gain"
           onChange={value => edit(selected, { gain: Math.round(value * 10) / 10 }, `field-g-${channel}-${selected}`)} />
-        <ParamField label="Q" unit="" min={BOUNDS.q[0]} max={BOUNDS.q[1]} step={0.01} value={band.q} log
+        <ParamField label="Q" unit="" min={BOUNDS.q[0]} max={BOUNDS.q[1]} step={0.01} value={band.q} log help="eq.q"
           onChange={value => edit(selected, { q: Math.round(value * 100) / 100 }, `field-q-${channel}-${selected}`)} />
         {band.frequency > scale.fMax && <p className="fine-print">Above {frequencyLabel(scale.fMax)} for this sample rate: it runs at {frequencyLabel(scale.fMax)}.</p>}
       </section>

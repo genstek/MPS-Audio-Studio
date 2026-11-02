@@ -13,12 +13,12 @@ test('LAS-20: local-only workflow sends no audio and no data to any server', asy
   const transport = page.getByRole('region', { name: 'Transport', exact: true });
   await page.getByLabel('Import WAV').setInputFiles({ name: 'private-mix.wav', mimeType: 'audio/wav', buffer: makeWav({ seconds: 5 }) });
   await expect(transport.getByRole('status')).toHaveText('Ready');
-  await transport.getByRole('button', { name: 'Play' }).click();
+  await transport.getByRole('button', { name: 'Play', exact: true }).click();
   await expect(transport.getByRole('status')).toHaveText('Playing');
-  await transport.getByRole('button', { name: 'Pause' }).click();
-  await transport.getByRole('button', { name: 'Stop' }).click();
+  await transport.getByRole('button', { name: 'Pause', exact: true }).click();
+  await transport.getByRole('button', { name: 'Stop', exact: true }).click();
   await expect(transport.getByRole('status')).toHaveText('Stopped');
-  await page.getByRole('button', { name: 'Remove track' }).click();
+  await page.getByRole('button', { name: 'Remove track', exact: true }).click();
   await expect(transport.getByRole('status')).toHaveText('No audio loaded');
 
   const origin = new URL(baseURL).origin;

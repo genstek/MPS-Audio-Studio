@@ -47,7 +47,7 @@ function studio(page) {
     status: transport.getByRole('status'),
     projectName: transport.locator('.project-name'),
     projectStatus: page.locator('.project-status'),
-    newButton: transport.getByRole('button', { name: 'New project' }),
+    newButton: transport.getByRole('button', { name: 'New project', exact: true }),
     menu: async item => { await transport.getByRole('button', { name: 'Project ▾' }).click(); await page.getByRole('menuitem', { name: item, exact: true }).click(); },
     newDialog: page.getByRole('dialog', { name: 'New project' }),
     prompt: page.locator('dialog[aria-labelledby="unsaved-title"]'),
@@ -95,7 +95,7 @@ test('LAS-60: New project asks for a name, validates it, Cancel keeps the sessio
 
   // Discard: a clean new project with its name; defaults; no audio; editors closed.
   await ui.openEditor('limiter');
-  await page.getByRole('dialog', { name: 'Limiter' }).getByLabel('Limiter on').uncheck();
+  await page.getByRole('dialog', { name: 'Limiter' }).getByLabel('Limiter on', { exact: true }).uncheck();
   await ui.newButton.click();
   await ui.newDialog.getByLabel('Project name').fill('  Album master  ');
   await ui.newDialog.getByRole('button', { name: 'Create' }).click();
@@ -127,7 +127,7 @@ test('LAS-69: Save, Save again, Save As, reopen after a restart with relink: set
   // Settings in several modules, with their editors closed afterwards (still saved).
   await ui.openEditor('space');
   const space = page.getByRole('dialog', { name: 'Space' });
-  await space.getByLabel('Space on').check();
+  await space.getByLabel('Space on', { exact: true }).check();
   await space.getByRole('combobox', { name: 'Space preset' }).selectOption('Hall');
   await space.getByRole('button', { name: 'Close Space' }).click();
   await ui.openEditor('limiter');
@@ -164,7 +164,7 @@ test('LAS-69: Save, Save again, Save As, reopen after a restart with relink: set
   expect(JSON.stringify(first).length).toBeLessThan(40_000); // settings only, no audio
 
   // Edit → unsaved; Save updates the same file without asking again.
-  await limiter.getByLabel('Limiter on').uncheck();
+  await limiter.getByLabel('Limiter on', { exact: true }).uncheck();
   await expect(ui.projectStatus).toHaveText('Unsaved changes');
   await ui.menu('Save project');
   await expect(ui.projectStatus).toHaveText('Saved to Album master.mps-project.json');
@@ -176,7 +176,7 @@ test('LAS-69: Save, Save again, Save As, reopen after a restart with relink: set
   await page.evaluate(() => { window.__fs.nextSaveName = 'Album master copy.mps-project.json'; });
   await ui.menu('Save project as');
   await expect(ui.projectStatus).toHaveText('Saved to Album master copy.mps-project.json');
-  await limiter.getByLabel('Limiter on').check();
+  await limiter.getByLabel('Limiter on', { exact: true }).check();
   await page.keyboard.press('Control+s');
   await expect(ui.projectStatus).toHaveText('Saved to Album master copy.mps-project.json');
   store = await files(page);
@@ -240,7 +240,7 @@ test('LAS-69: cancelled and failed saves keep the session and the last saved fil
 
   await ui.openEditor('limiter');
   const limiter = page.getByRole('dialog', { name: 'Limiter' });
-  await limiter.getByLabel('Limiter on').uncheck();
+  await limiter.getByLabel('Limiter on', { exact: true }).uncheck();
   // Save As cancelled in the picker: nothing changes.
   await page.evaluate(() => { window.__fs.cancelNext = true; });
   await ui.menu('Save project as');
@@ -250,7 +250,7 @@ test('LAS-69: cancelled and failed saves keep the session and the last saved fil
   await page.keyboard.press('Control+s');
   await expect(ui.projectStatus).toHaveText('Save failed: The disk is full. Your work is still here.');
   expect((await files(page))['Untitled project.mps-project.json']).toBe(good);
-  await expect(limiter.getByLabel('Limiter on')).not.toBeChecked();
+  await expect(limiter.getByLabel('Limiter on', { exact: true })).not.toBeChecked();
   // An edit made while a save is in progress is not covered by that save.
   await page.evaluate(() => { window.__fs.holdClose = new Promise(resolve => { window.__fs.release = resolve; }); });
   await page.keyboard.press('Control+s');
@@ -307,7 +307,7 @@ test('LAS-69: section presets save and load one module only, with undo; whole fi
   await expect(ui.status).toHaveText('Ready');
   await ui.openEditor('space');
   const space = page.getByRole('dialog', { name: 'Space' });
-  await space.getByLabel('Space on').check();
+  await space.getByLabel('Space on', { exact: true }).check();
   await space.getByRole('combobox', { name: 'Space preset' }).selectOption('Plate');
   const downloading = page.waitForEvent('download');
   await space.getByRole('button', { name: 'Save Space preset' }).click();
@@ -320,13 +320,13 @@ test('LAS-69: section presets save and load one module only, with undo; whole fi
   await space.getByRole('combobox', { name: 'Space preset' }).selectOption('Hall');
   await ui.openEditor('limiter');
   const limiter = page.getByRole('dialog', { name: 'Limiter' });
-  await limiter.getByLabel('Limiter on').uncheck();
+  await limiter.getByLabel('Limiter on', { exact: true }).uncheck();
   await space.getByLabel('Load Space preset').setInputFiles(path);
   await expect(space.getByText('Loaded space.json into Space only (one undo step).')).toBeVisible();
   let params = await lastChainParams(page);
   expect(params.space).toMatchObject({ enabled: true, mix: 20, decay: 1.6 });
   expect(params.limiter.enabled).toBe(false);
-  await space.getByRole('button', { name: 'Undo' }).focus(); // the Limiter window may cover it
+  await space.getByRole('button', { name: 'Undo', exact: true }).focus(); // the Limiter window may cover it
   await page.keyboard.press('Enter');
   await expect.poll(async () => (await lastChainParams(page)).space.decay).toBe(2.6);
   // The Space preset in the Limiter editor is refused; nothing changes.

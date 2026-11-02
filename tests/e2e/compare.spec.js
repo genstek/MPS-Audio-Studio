@@ -25,10 +25,10 @@ function studio(page) {
   const dialog = page.getByRole('dialog', { name: 'Compare with a reference' });
   return {
     status: transport.getByRole('status'),
-    play: transport.getByRole('button', { name: 'Play' }),
+    play: transport.getByRole('button', { name: 'Play', exact: true }),
     upload: page.getByLabel('Import WAV'),
     dialog,
-    open: () => page.getByRole('button', { name: 'Compare with a reference' }).click(),
+    open: () => page.getByRole('button', { name: 'Compare with a reference', exact: true }).click(),
     dialogStatus: dialog.getByRole('status'),
     alert: dialog.getByRole('alert'),
     compare: dialog.getByRole('button', { name: 'Measure and compare' }),
@@ -156,7 +156,7 @@ async function signIn(page, request) {
 
 async function saveReference(page, buffer, name, segment) {
   const dialog = page.getByRole('dialog', { name: 'Reference profiles' });
-  await page.getByRole('button', { name: 'References' }).click();
+  await page.getByRole('button', { name: 'References', exact: true }).click();
   await dialog.getByLabel('Choose reference WAV').setInputFiles({ name: `${name}.wav`, mimeType: 'audio/wav', buffer });
   await dialog.getByLabel('Start (s)').fill(segment[0]);
   await dialog.getByLabel('End (s)').fill(segment[1]);

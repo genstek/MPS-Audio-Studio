@@ -41,7 +41,7 @@ for (const viewport of viewports) {
     await expect(master.getByRole('slider', { name: 'Master level' })).toBeDisabled();
     await expect(master.getByText('Import a WAV or add stems to use the master level.')).toBeVisible();
     await expect(master.getByText('Level control unavailable')).toHaveCount(0);
-    await expect(master.getByRole('button', { name: 'Export WAV' })).toBeDisabled(); // needs a track
+    await expect(master.getByRole('button', { name: 'Export WAV', exact: true })).toBeDisabled(); // needs a track
 
     // A screenshot of each size is kept with the report as evidence.
     const screenshot = testInfo.outputPath(`LAS-7-shell-${size}.png`);

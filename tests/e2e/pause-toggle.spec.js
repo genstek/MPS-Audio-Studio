@@ -17,9 +17,9 @@ async function openWithTrack(page) {
   return {
     status: transport.getByRole('status'),
     timer: transport.getByRole('timer', { name: 'Playback position' }),
-    play: transport.getByRole('button', { name: 'Play' }),
-    pause: transport.getByRole('button', { name: 'Pause' }),
-    stop: transport.getByRole('button', { name: 'Stop' }),
+    play: transport.getByRole('button', { name: 'Play', exact: true }),
+    pause: transport.getByRole('button', { name: 'Pause', exact: true }),
+    stop: transport.getByRole('button', { name: 'Stop', exact: true }),
   };
 }
 

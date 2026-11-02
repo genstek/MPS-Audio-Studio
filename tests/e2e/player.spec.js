@@ -11,9 +11,9 @@ function studio(page) {
   return {
     status: transport.getByRole('status'),
     timer: transport.getByRole('timer', { name: 'Playback position' }),
-    play: transport.getByRole('button', { name: 'Play' }),
-    pause: transport.getByRole('button', { name: 'Pause' }),
-    stop: transport.getByRole('button', { name: 'Stop' }),
+    play: transport.getByRole('button', { name: 'Play', exact: true }),
+    pause: transport.getByRole('button', { name: 'Pause', exact: true }),
+    stop: transport.getByRole('button', { name: 'Stop', exact: true }),
     rwd: transport.getByRole('button', { name: 'Rewind 5 seconds' }),
     ff: transport.getByRole('button', { name: 'Fast forward 5 seconds' }),
     timeline: tracks.getByRole('slider', { name: 'Timeline' }),
@@ -186,7 +186,7 @@ test('LAS-67: the clip indicator lights only when full scale reaches the speaker
   await expect(ui.clip).toHaveAttribute('aria-pressed', 'false');
   // Original path (matching off so it is not turned down): the full-scale square reaches the output.
   const master = page.getByRole('region', { name: 'Master', exact: true });
-  await master.getByLabel('Match loudness').uncheck();
+  await master.getByLabel('Match loudness', { exact: true }).uncheck();
   await master.getByRole('radio', { name: 'Original' }).check();
   await expect(ui.clip).toHaveAttribute('aria-pressed', 'true', { timeout: 3000 });
   await expect(ui.clip).toHaveAccessibleName('Clipping detected at the output; reset');
@@ -241,7 +241,7 @@ test('LAS-67: replacing and removing the track during rapid seeking stays safe',
   await expect(ui.timer).toHaveText('00:00.0 / 00:12.0');
   await ui.play.click();
   await ui.ff.click();
-  await page.getByRole('button', { name: 'Remove track' }).click();
+  await page.getByRole('button', { name: 'Remove track', exact: true }).click();
   await expect(ui.ff).toBeDisabled();
   await expect(ui.timeline).toBeDisabled();
   expect((await audioSources(page)).playing).toBe(0);

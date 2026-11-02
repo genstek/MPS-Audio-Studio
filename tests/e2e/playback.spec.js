@@ -7,18 +7,18 @@ test('WAV playback and recovery after a replacement cannot decode', async ({ pag
   await upload.setInputFiles({ name: 'tone.wav', mimeType: 'audio/wav', buffer: makeWav() });
   await expect(page.getByRole('status')).toHaveText('Ready');
   await expect(page.getByRole('heading', { name: 'tone.wav' })).toBeVisible();
-  await page.getByRole('button', { name: 'Play' }).click();
+  await page.getByRole('button', { name: 'Play', exact: true }).click();
   await expect(page.getByRole('status')).toHaveText('Playing');
-  await page.getByRole('button', { name: 'Pause' }).click();
+  await page.getByRole('button', { name: 'Pause', exact: true }).click();
   await expect(page.getByRole('status')).toHaveText('Paused');
 
   // Valid RIFF/WAVE signature with no decodable audio payload.
   await upload.setInputFiles({ name: 'broken.wav', mimeType: 'audio/wav', buffer: Buffer.from('RIFF0000WAVE') });
   await expect(page.getByRole('alert')).toContainText('Unable to decode');
   await expect(page.getByRole('heading', { name: 'tone.wav' })).toBeVisible();
-  await page.getByRole('button', { name: 'Play' }).click();
+  await page.getByRole('button', { name: 'Play', exact: true }).click();
   await expect(page.getByRole('status')).toHaveText('Playing');
-  await page.getByRole('button', { name: 'Stop' }).click();
+  await page.getByRole('button', { name: 'Stop', exact: true }).click();
   await expect(page.getByRole('status')).toHaveText('Stopped');
 
   await upload.setInputFiles({ name: 'replacement.wav', mimeType: 'audio/wav', buffer: makeWav() });

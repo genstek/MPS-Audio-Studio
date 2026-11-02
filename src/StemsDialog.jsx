@@ -219,9 +219,9 @@ export function StemsDialog({ engine, chain, listening, onListen, onStemsPlay, o
         {stems.length > 0 && (
           <>
             <section className="stems-transport" aria-label="Stem transport">
-              <button className="primary" onClick={play} disabled={state.playing}>▶ Play</button>
-              <button onClick={() => act('pause')} disabled={!state.playing}>Ⅱ Pause</button>
-              <button onClick={() => act('stop')}>■ Stop</button>
+              <button className="primary" onClick={play} disabled={state.playing}><span aria-hidden="true">▶</span> Play</button>
+              <button onClick={() => act('pause')} disabled={!state.playing}><span aria-hidden="true">Ⅱ</span> Pause</button>
+              <button onClick={() => act('stop')}><span aria-hidden="true">■</span> Stop</button>
               <label className="stems-seek">Position
                 <input type="range" min="0" max={state.duration} step="0.01" value={state.position} aria-valuetext={`${clock(state.position)} of ${clock(state.duration)}`} onChange={e => act('seek', Number(e.target.value))} />
               </label>
