@@ -1,5 +1,6 @@
 import { afterEach, expect, test, vi } from 'vitest';
 import { createAudioEngine } from '../../src/audio-engine.js';
+import { MAX_AUDIO_FILE_BYTES, audioFileSizeProblem } from '../../src/file-limits.js';
 
 function setup() {
   const sources = [];
@@ -88,7 +89,7 @@ test('natural end disconnects the source and permits playback from the start', a
 test('unsupported names, oversized files and invalid headers are rejected', async () => {
   const { engine, file, context } = setup();
   await expect(engine.load({ ...file, name: 'song.mp3' })).rejects.toThrow('Choose a WAV');
-  await expect(engine.load({ ...file, size: 101 * 1024 * 1024 })).rejects.toThrow('100 MiB');
+  await expect(engine.load({ ...file, size: 251 * 1024 * 1024 })).rejects.toThrow('at most 250 MiB');
   await expect(engine.load({ ...file, arrayBuffer: async () => new ArrayBuffer(12) })).rejects.toThrow('not a valid WAV');
   expect(context.decodeAudioData).not.toHaveBeenCalled();
   engine.dispose();
@@ -140,11 +141,36 @@ test('replacing a playing track stops and disconnects its source before the next
   engine.dispose();
 });
 
-test('100 MiB is the largest accepted file size', async () => {
-  const { engine, file } = setup();
-  const limit = 100 * 1024 * 1024;
-  await expect(engine.load({ ...file, size: limit })).resolves.toMatchObject({ duration: 10 });
-  await expect(engine.load({ ...file, size: limit + 1 })).rejects.toThrow('100 MiB');
+// LAS-71: 250 MiB = 262,144,000 bytes is the largest accepted file; one byte more is refused.
+test('250 MiB (262,144,000 bytes) is the largest accepted file size, for tracks and stems', async () => {
+  const { engine, file, context } = setup();
+  expect(MAX_AUDIO_FILE_BYTES).toBe(262_144_000);
+  await expect(engine.load({ ...file, size: MAX_AUDIO_FILE_BYTES - 1 })).resolves.toMatchObject({ duration: 10 });
+  await expect(engine.load({ ...file, size: MAX_AUDIO_FILE_BYTES })).resolves.toMatchObject({ duration: 10 });
+  const decodes = context.decodeAudioData.mock.calls.length;
+  await expect(engine.load({ ...file, size: MAX_AUDIO_FILE_BYTES + 1 })).rejects.toThrow('WAV files can be at most 250 MiB (262,144,000 bytes)');
+  expect(context.decodeAudioData.mock.calls.length, 'an oversized file is never read or decoded').toBe(decodes);
+  stubNodes();
+  await engine.openStems();
+  await expect(engine.addStem({ ...file, size: MAX_AUDIO_FILE_BYTES + 1 })).rejects.toThrow('at most 250 MiB');
+  engine.dispose();
+});
+
+test('LAS-71: the size message names the file size and the limit in MiB', () => {
+  expect(audioFileSizeProblem(MAX_AUDIO_FILE_BYTES)).toBeNull();
+  expect(audioFileSizeProblem(300 * 1048576)).toBe('This file is 300.0 MiB. WAV files can be at most 250 MiB (262,144,000 bytes); choose a smaller file.');
+});
+
+test('LAS-71: a read or memory failure during replacement keeps the previous track and explains what to do', async () => {
+  const { engine, file, context, sources } = setup();
+  await engine.load(file);
+  await expect(engine.load({ ...file, name: 'big.wav', arrayBuffer: async () => { throw new DOMException('read failed', 'NotReadableError'); } }))
+    .rejects.toThrow('not enough memory for it; close other tabs or choose a smaller file. Nothing was changed.');
+  context.decodeAudioData.mockRejectedValueOnce(new RangeError('Array buffer allocation failed'));
+  await expect(engine.load({ ...file, name: 'huge.wav' })).rejects.toThrow('There was not enough memory to decode this WAV');
+  await engine.play();
+  expect(sources).toHaveLength(1);
+  expect(sources[0].buffer.duration).toBe(10);
   engine.dispose();
 });
 

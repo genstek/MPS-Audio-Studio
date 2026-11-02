@@ -4,6 +4,7 @@ import { parseChain } from './dsp/chain-params.js';
 import { bypassChain } from './dsp/stem-render.js';
 import { parsePresetFile } from './presets.js';
 import { startRender } from './render-client.js';
+import { MAX_AUDIO_FILE_LABEL } from './file-limits.js';
 import { matchStems, parseStemSession, serializeStemSession } from './stem-session-file.js';
 
 const download = (blob, name) => {
@@ -210,6 +211,7 @@ export function StemsDialog({ engine, chain, listening, onListen, onStemsPlay })
         {message && <p className="fine-print" aria-live="polite">{message}</p>}
         {error && <p className="account-error" role="alert">{error}</p>}
         <label className="file-picker small">Add stem WAVs<input type="file" accept=".wav,audio/wav" multiple aria-label="Add stem WAVs" onChange={add} /></label>
+        <p className="fine-print">Each stem WAV up to {MAX_AUDIO_FILE_LABEL}. Every stem is decoded into memory, so several long stems need much more memory than one file.</p>
         {notes.length > 0 && <ul className="comparison-conditions" aria-label="Alignment notes">{notes.map(note => <li key={note}>{note}</li>)}</ul>}
         {stems.length > 0 && (
           <>

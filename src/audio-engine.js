@@ -4,6 +4,24 @@ import { createOutputStage } from './output-stage.js';
 import { createStemSession } from './stem-session.js';
 import { createChainNode } from './dsp/chain-node.js';
 import { bypassChain } from './dsp/stem-render.js';
+import { audioFileSizeProblem } from './file-limits.js';
+
+// Reading or decoding a large file can fail for lack of memory (LAS-71). Both failures leave the
+// current session unchanged, so the messages say what to try instead of reporting a dead end.
+async function readFile(file) {
+  try {
+    return await file.arrayBuffer();
+  } catch {
+    throw new Error('The file could not be read. It may have been moved, or there was not enough memory for it; close other tabs or choose a smaller file. Nothing was changed.');
+  }
+}
+
+function decodeFailure(failure) {
+  const memory = failure?.name === 'RangeError' || /memory|allocat/i.test(failure?.message ?? '');
+  return new Error(memory
+    ? 'There was not enough memory to decode this WAV. Close other tabs or choose a shorter file. Nothing was changed.'
+    : 'Unable to decode this WAV. Try another WAV file.');
+}
 
 // One engine owns the audio context, the current source and the output stage (mastering chain
 // and original/processed switch, LAS-28), outside React state. createOutput can be replaced in
@@ -85,8 +103,9 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
     async load(file) {
       const load = ++latestLoad;
       if (!/\.wav$/i.test(file.name)) throw new Error('Choose a WAV file.');
-      if (file.size > 100 * 1024 * 1024) throw new Error('Choose a WAV smaller than 100 MiB.');
-      const bytes = await file.arrayBuffer();
+      const tooLarge = audioFileSizeProblem(file.size);
+      if (tooLarge) throw new Error(tooLarge);
+      const bytes = await readFile(file);
       if (load !== latestLoad) throw superseded();
       // Compare raw bytes: the four size bytes between the tags are a number, not text, and
       // decoding them as UTF-8 could merge them into fewer characters and shift 'WAVE'.
@@ -99,9 +118,9 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
       let decoded;
       try {
         decoded = await context.decodeAudioData(bytes);
-      } catch {
+      } catch (failure) {
         if (load !== latestLoad) throw superseded();
-        throw new Error('Unable to decode this WAV. Try another WAV file.');
+        throw decodeFailure(failure);
       }
       if (load !== latestLoad) throw superseded();
       // The chain is mono or stereo; files with more channels play as a stereo downmix.
@@ -275,16 +294,17 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
     async addStem(file) {
       if (!stemSession) throw new Error('Open the stem session first.');
       if (!/\.wav$/i.test(file.name)) throw new Error('Choose a WAV file.');
-      if (file.size > 100 * 1024 * 1024) throw new Error('Choose a WAV smaller than 100 MiB.');
-      const bytes = await file.arrayBuffer();
+      const tooLarge = audioFileSizeProblem(file.size);
+      if (tooLarge) throw new Error(tooLarge);
+      const bytes = await readFile(file);
       const header = readWavHeader(bytes.slice(0, 65536), file.size);
       const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', bytes));
       const sha256 = Array.from(digest, byte => byte.toString(16).padStart(2, '0')).join('');
       let decoded;
       try {
         decoded = await context.decodeAudioData(bytes);
-      } catch {
-        throw new Error('Unable to decode this WAV.');
+      } catch (failure) {
+        throw decodeFailure(failure);
       }
       // Each stem gets its own chain (LAS-35), sized to its channels so mono stems keep the mono pan
       // law; it starts bypassed.

@@ -1,4 +1,5 @@
 import { resolve } from 'node:path';
+import { MAX_AUDIO_FILE_BYTES } from '../src/file-limits.js';
 
 // Stands in for a future external processing service; it keeps what it "receives" in a table.
 export const TEST_RECIPIENT = {
@@ -23,7 +24,8 @@ export function configFromEnv(env = process.env) {
       .split(',').map(origin => origin.trim()).filter(Boolean),
     appUrl: env.MPS_APP_URL ?? 'http://127.0.0.1:5174',
     limitScale: Number(env.MPS_LIMIT_SCALE ?? 1),
-    maxUploadBytes: Number(env.MPS_MAX_UPLOAD_BYTES ?? 100 * 1024 * 1024),
+    // Per-file upload limit (LAS-71): 250 MiB = 262,144,000 bytes, the studio's own file limit.
+    maxUploadBytes: Number(env.MPS_MAX_UPLOAD_BYTES ?? MAX_AUDIO_FILE_BYTES),
     // No external service is configured. A local stand-in can be enabled for tests (LAS-24).
     externalRecipients: env.MPS_TEST_RECIPIENT === '1' ? [TEST_RECIPIENT] : [],
   };

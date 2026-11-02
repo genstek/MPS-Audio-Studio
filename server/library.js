@@ -5,8 +5,10 @@ import { pipeline } from 'node:stream/promises';
 import { HttpError, readJson } from './http.js';
 import { randomToken } from './security.js';
 import { WavError, inspectWav, measureLevels } from './wav.js';
+import { MAX_AUDIO_FILE_BYTES } from '../src/file-limits.js';
 
-export const DEFAULT_MAX_UPLOAD_BYTES = 100 * 1024 * 1024;
+// Per-file upload limit (LAS-71): the studio's own audio file limit, 250 MiB = 262,144,000 bytes.
+export const DEFAULT_MAX_UPLOAD_BYTES = MAX_AUDIO_FILE_BYTES;
 export const DOWNLOAD_LINK_MS = 5 * 60_000;
 export const JOB_TIME_LIMIT_MS = 60_000;
 const KINDS = ['source', 'reference', 'stem', 'preview', 'export'];
@@ -25,6 +27,7 @@ export function libraryRoutes({ route, db, now, config, secret, requireUser, aud
   mkdirSync(blobDir, { recursive: true });
   mkdirSync(tmpDir, { recursive: true });
   const maxUpload = config.maxUploadBytes ?? DEFAULT_MAX_UPLOAD_BYTES;
+  const tooLarge = `Files can be at most ${Number((maxUpload / 1048576).toFixed(2))} MiB (${maxUpload.toLocaleString('en-US')} bytes).`;
   const running = new Map();
 
   const ownProject = (id, user) => {
@@ -116,7 +119,7 @@ export function libraryRoutes({ route, db, now, config, secret, requireUser, aud
     const kind = url.searchParams.get('kind') ?? 'source';
     if (!KINDS.includes(kind)) throw new HttpError(400, 'invalid_kind', 'Unknown asset kind.');
     const declared = Number(request.headers['content-length'] ?? 0);
-    if (declared > maxUpload) throw new HttpError(413, 'too_large', `Files can be at most ${Math.floor(maxUpload / 1048576)} MiB.`);
+    if (declared > maxUpload) throw new HttpError(413, 'too_large', tooLarge);
     const temp = join(tmpDir, randomToken(16));
     const hash = createHash('sha256');
     let size = 0;
@@ -124,7 +127,7 @@ export function libraryRoutes({ route, db, now, config, secret, requireUser, aud
       await pipeline(request, async function* limit(source) {
         for await (const chunk of source) {
           size += chunk.length;
-          if (size > maxUpload) throw new HttpError(413, 'too_large', `Files can be at most ${Math.floor(maxUpload / 1048576)} MiB.`);
+          if (size > maxUpload) throw new HttpError(413, 'too_large', tooLarge);
           hash.update(chunk);
           yield chunk;
         }

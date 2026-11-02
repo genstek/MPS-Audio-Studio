@@ -20,7 +20,7 @@ test('TC-001: mixer loads and displays its main UI elements', async ({ page }) =
   await expect(tracks).toBeVisible();
   await expect(tracks.getByRole('heading', { name: 'Your session starts here' })).toBeVisible();
   await expect(tracks.getByLabel('Import WAV')).toBeEnabled();
-  await expect(tracks.getByText('WAV up to 100 MiB · Files stay on your device')).toBeVisible();
+  await expect(tracks.getByText('WAV up to 250 MiB · Files stay on your device')).toBeVisible();
 
   const mixer = page.getByRole('region', { name: 'Mixer', exact: true });
   await expect(mixer).toBeVisible();

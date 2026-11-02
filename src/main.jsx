@@ -10,6 +10,7 @@ import { useChainSettings } from './useChainSettings.js';
 import { ReferencesDialog } from './ReferencesDialog.jsx';
 import { CompareDialog } from './CompareDialog.jsx';
 import { StemsDialog } from './StemsDialog.jsx';
+import { MAX_AUDIO_FILE_LABEL } from './file-limits.js';
 import './styles.css';
 
 // Seconds as mm:ss.t, rounded to a tenth of a second.
@@ -155,7 +156,7 @@ function App() {
             <label className="file-picker">{track ? 'Replace WAV' : 'Import WAV'}
               <input ref={importInput} type="file" accept=".wav,audio/wav" aria-label="Import WAV" onChange={importAudio} disabled={busy} />
             </label>
-            <p className="fine-print">WAV up to 100 MiB · Files stay on your device</p>
+            <p className="fine-print">WAV up to {MAX_AUDIO_FILE_LABEL} · Files stay on your device</p>
           </div></div>
           {error && <p role="alert" className="error">{error}</p>}
           <div className="track-footer">SINGLE-TRACK PLAYBACK <span>Waveform & seeking coming soon</span></div>

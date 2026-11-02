@@ -3,6 +3,7 @@ import { api } from './account-api.js';
 import { startAnalysis } from './analysis-client.js';
 import { startRender } from './render-client.js';
 import { readWavHeader } from './dsp/wav-decode.js';
+import { audioFileSizeProblem } from './file-limits.js';
 import { compareToReference, matchLevels } from './reference-comparison.js';
 import { ProposalPanel } from './ProposalPanel.jsx';
 
@@ -116,6 +117,8 @@ export function CompareDialog({ engine, file, track, chain, onMonitorStart }) {
     event.target.value = '';
     if (!chosen) return;
     try {
+      const tooLarge = audioFileSizeProblem(chosen.size);
+      if (tooLarge) throw new Error(tooLarge);
       const header = readWavHeader(await chosen.slice(0, 65536).arrayBuffer(), chosen.size);
       setLocal({ file: chosen, header });
       setReferenceRange({ start: 0, end: Number(Math.min(header.duration, 30).toFixed(1)) });
