@@ -1,5 +1,7 @@
 # MPS Apple standalone build kit — LAS-58
 
+> **2 November update:** macOS universal compilation, iOS simulator compilation, 275 JavaScript tests and one asset-server XCTest passed. An unsigned development DMG is available. Native UI/audio/device QA and signing remain pending. [Latest build evidence](../docs/delivery/LAS-58/BUILD-2026-11-02.md). Earlier NOT_RUN statements below describe the initial source delivery; the latest evidence table supersedes those build-only statements.
+
 **Source/build kit, not a verified installer.** Baseline: `02963867dc1c5d5e3fb93cbf7eee85b9fa929771` from `delivery/LAS-40-all-sprints`. No main merge is required to test this branch.
 
 This adds two native app targets containing the existing audio editor and shared DSP. It does not require a web browser, a manually running dev server, Node or an internet connection after installation. Compilation and runtime behavior still need the Apple validation below. Online account/library features are unavailable in this local edition. Save processed audio and JSON settings/session files before closing; reopening starts a new in-memory session.

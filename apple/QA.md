@@ -1,5 +1,7 @@
 # Apple release validation — all results NOT_RUN until recorded
 
+> **2 November update:** macOS universal compilation, iOS simulator compilation, 275 JavaScript tests and one asset-server XCTest passed. An unsigned development DMG is available. Native UI/audio/device QA and signing remain pending. [Latest build evidence](../docs/delivery/LAS-58/BUILD-2026-11-02.md). Earlier NOT_RUN statements below describe the initial source delivery; the latest evidence table supersedes those build-only statements.
+
 For every run record Git SHA, Xcode/OS/device/CPU versions, audio route, source WAV format, commands, actual outcomes and evidence in `docs/delivery/LAS-58/`. Browser test counts from LAS-40 are baseline evidence only.
 
 | Gate | Required checks | Current result |

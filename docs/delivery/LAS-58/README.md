@@ -1,5 +1,7 @@
 # LAS-58 delivery receipt
 
+> **2 November update:** macOS universal compilation, iOS simulator compilation, 275 JavaScript tests and one asset-server XCTest passed. An unsigned development DMG is available. Native UI/audio/device QA and signing remain pending. [Latest build evidence](BUILD-2026-11-02.md). Earlier NOT_RUN statements below describe the initial source delivery; the latest evidence table supersedes those build-only statements.
+
 Baseline: 02963867dc1c5d5e3fb93cbf7eee85b9fa929771. Date: 2026-10-30.
 
 Delivered source: additive SwiftUI/WKWebView macOS/iOS targets; bundled asset server; native download routing; XcodeGen specification; build/archive/DMG scripts; Apple CI definition; asset-server XCTest; architecture and operator/QA guides.
