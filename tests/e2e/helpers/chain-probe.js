@@ -93,3 +93,23 @@ export const speakersRmsDb = page => page.evaluate(() => {
   };
   return { left: read(tap.left), right: read(tap.right) };
 });
+
+// LAS-64: speakers RMS (as above) read every 20 ms for `seconds` of audio-clock time, each with the
+// AudioContext time it was read at (seconds since the first reading).
+export const speakersReadings = (page, seconds) => page.evaluate(async duration => {
+  const tap = window.__chainProbe.speakers;
+  const read = analyser => {
+    const data = new Float32Array(analyser.fftSize);
+    analyser.getFloatTimeDomainData(data);
+    const rms = Math.sqrt(data.reduce((sum, v) => sum + v * v, 0) / data.length);
+    return rms > 1e-7 ? Number((20 * Math.log10(rms)).toFixed(2)) : null;
+  };
+  const clock = tap.left.context;
+  const start = clock.currentTime;
+  const readings = [];
+  while (clock.currentTime - start < duration) {
+    readings.push({ time: clock.currentTime - start, left: read(tap.left), right: read(tap.right) });
+    await new Promise(resolve => setTimeout(resolve, 20));
+  }
+  return readings;
+}, seconds);

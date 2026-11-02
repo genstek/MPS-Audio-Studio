@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 import { makeWav } from '../fixtures/wav.js';
 import { decodeWav } from '../../src/dsp/wav-decode.js';
 import { renderChain, spaceTailSeconds } from '../../src/dsp/chain.js';
-import { installChainProbe, lastChainParams, speakersRmsDb } from './helpers/chain-probe.js';
+import { installChainProbe, lastChainParams, speakersReadings } from './helpers/chain-probe.js';
 
 // LAS-64 Space (reverb). The DSP itself is verified numerically in tests/unit/space.test.js; these
 // checks prove the editor drives the real preview chain and the export, and that the reverb is
@@ -20,7 +20,6 @@ function studio(page) {
     openSpace: async () => { await mixer.getByRole('button', { name: 'Edit space' }).focus(); await page.keyboard.press('Enter'); },
   };
 }
-const seconds = text => { const [m, s] = text.split(' / ')[0].split(':'); return Number(m) * 60 + Number(s); };
 
 // One second of a 1 kHz tone, then silence: anything heard in the silence is reverb.
 function toneThenSilence() {
@@ -70,23 +69,32 @@ test('LAS-64: with Space on, reverb is measurable at the speakers after the tone
   const ui = studio(page);
   await page.getByLabel('Import WAV').setInputFiles({ name: 'tone-then-silence.wav', mimeType: 'audio/wav', buffer: toneThenSilence() });
   await expect(ui.status).toHaveText('Ready');
-  const levelAt = async at => {
+  // Plays and reads the speakers tap every 20 ms on the audio clock. The measurement window is
+  // placed by the signal itself: 0.25–0.8 s after the last reading that still holds the tone, so
+  // the result does not depend on when the test process happens to look (the tail falls by tens of
+  // dB per second, so a late look would measure a different moment).
+  const tailAfterTone = async () => {
     await page.getByRole('button', { name: 'Play', exact: true }).click();
-    await expect.poll(async () => seconds(await ui.timer.textContent()), { timeout: 5000 }).toBeGreaterThanOrEqual(at);
-    const level = await speakersRmsDb(page);
+    const readings = await speakersReadings(page, 2.5);
     await page.getByRole('button', { name: 'Stop', exact: true }).click();
-    return level;
+    const toneEnd = Math.max(...readings.filter(r => (r.left ?? -200) > -25).map(r => r.time));
+    const tail = readings.filter(r => r.time >= toneEnd + 0.25 && r.time <= toneEnd + 0.8);
+    expect(Number.isFinite(toneEnd), 'the tone was heard').toBe(true);
+    expect(tail.length, 'readings inside the window after the tone').toBeGreaterThan(3);
+    const loudest = side => tail.reduce((max, r) => (r[side] === null ? max : Math.max(max ?? -Infinity, r[side])), null);
+    return { left: loudest('left'), right: loudest('right'), readings: tail.length };
   };
-  const dry = await levelAt(1.6);
+  const dry = await tailAfterTone();
   expect(dry.left, 'Space off: silence after the tone').toBeNull();
+  expect(dry.right, 'Space off: silence after the tone').toBeNull();
   await ui.openSpace();
   await ui.space.getByLabel('Space on', { exact: true }).check();
   await ui.space.getByRole('combobox', { name: 'Space preset' }).selectOption('Hall');
   await expect.poll(async () => (await lastChainParams(page)).space.enabled).toBe(true);
   // Let any tail of the first pass die away before measuring again.
   await page.waitForTimeout(500);
-  const wet = await levelAt(1.6);
-  test.info().annotations.push({ type: 'speakers RMS 0.6 s after the tone ends', description: `Space off: silence; Space Hall: L ${wet.left} dBFS, R ${wet.right} dBFS` });
+  const wet = await tailAfterTone();
+  test.info().annotations.push({ type: 'loudest speakers RMS 0.25–0.8 s after the tone ends', description: `Space off: silence (${dry.readings} readings); Space Hall: L ${wet.left} dBFS, R ${wet.right} dBFS (${wet.readings} readings)` });
   expect(wet.left).toBeGreaterThan(-70);
   expect(wet.right).toBeGreaterThan(-70);
 });
