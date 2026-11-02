@@ -84,6 +84,29 @@ export function createMeterStore() {
 }
 const useMeters = store => useSyncExternalStore(store.subscribe, store.get);
 
+// The playback position, outside React state: it changes ten times a second while playing, and only
+// the clock and the timeline read it, so the rest of the studio does not re-render with it.
+export function createPositionStore() {
+  let value = 0;
+  const listeners = new Set();
+  return {
+    get: () => value,
+    set(next) { if (next === value) return; value = next; listeners.forEach(listener => listener()); },
+    subscribe(listener) { listeners.add(listener); return () => listeners.delete(listener); },
+  };
+}
+const usePosition = store => useSyncExternalStore(store.subscribe, store.get);
+
+// The transport clock: mm:ss.t of the position and of the track length.
+const transportClock = seconds => {
+  const tenths = Math.round(seconds * 10);
+  return `${String(Math.floor(tenths / 600)).padStart(2, '0')}:${((tenths % 600) / 10).toFixed(1).padStart(4, '0')}`;
+};
+export function PlaybackClock({ store, duration }) {
+  const position = usePosition(store);
+  return <p role="timer" aria-label="Playback position" className="position">{transportClock(position)} / {transportClock(duration)}</p>;
+}
+
 // FF / RWD: a click (or Enter/Space) skips 5 s; holding the pointer repeats every 200 ms after
 // 400 ms. Navigation only: audio never plays backwards.
 export function SeekButton({ direction, onSkip, disabled }) {
@@ -95,8 +118,12 @@ export function SeekButton({ direction, onSkip, disabled }) {
     if (event.button !== 0 || disabled) return;
     event.preventDefault();
     stop();
-    onSkip(direction * SKIP_SECONDS);
-    timers.current.delay = setTimeout(() => { timers.current.repeat = setInterval(() => onSkip(direction * SKIP_SECONDS), HOLD_REPEAT_MS); }, HOLD_DELAY_MS);
+    // onSkip returns false at the start or end of the track: holding stops there instead of
+    // walking on after playback has ended.
+    if (onSkip(direction * SKIP_SECONDS) === false) return;
+    timers.current.delay = setTimeout(() => {
+      timers.current.repeat = setInterval(() => { if (onSkip(direction * SKIP_SECONDS) === false) stop(); }, HOLD_REPEAT_MS);
+    }, HOLD_DELAY_MS);
   }
   return (
     <button type="button" className="seek-button" aria-label={label} title={`${label} (hold to keep going)`} disabled={disabled}
@@ -109,7 +136,8 @@ export function SeekButton({ direction, onSkip, disabled }) {
 
 // Seekable timeline with a time ruler. Dragging shows the target and seeks on release; the keyboard
 // seeks at once: ←/→ 1 s, Page Down/Up 10 s, Home start, End end.
-export function Timeline({ position, duration, onSeek, disabled, scrub, setScrub }) {
+export function Timeline({ store, duration, onSeek, disabled, scrub, setScrub }) {
+  const position = usePosition(store);
   const shown = scrub ?? position;
   const ticks = duration > 0 ? [0, 0.25, 0.5, 0.75, 1].map(f => f * duration) : [];
   function keyDown(event) {
@@ -182,15 +210,20 @@ export function OutputSpectrum({ engine, store }) {
   const m = useMeters(store);
   useEffect(() => {
     if (!m.running) return undefined;
-    let frame, last = 0, data;
+    let frame, last = 0, data, size = null;
+    // The canvas size comes from a ResizeObserver, so drawing never forces a layout.
+    const observer = new ResizeObserver(([entry]) => {
+      size = { width: Math.round(entry.contentRect.width * devicePixelRatio), height: Math.round(entry.contentRect.height * devicePixelRatio) };
+    });
+    if (canvas.current) observer.observe(canvas.current);
     const draw = time => {
       frame = requestAnimationFrame(draw);
       if (time - last < FRAME_MS || document.hidden) return;
       last = time;
       const element = canvas.current;
       const analyser = engine.current?.outputAnalyser();
-      if (!element) return;
-      const width = Math.round(element.clientWidth * devicePixelRatio), height = Math.round(element.clientHeight * devicePixelRatio);
+      if (!element || !size) return;
+      const { width, height } = size;
       if (element.width !== width) element.width = width;
       if (element.height !== height) element.height = height;
       const g = element.getContext('2d');
@@ -216,7 +249,7 @@ export function OutputSpectrum({ engine, store }) {
       g.stroke();
     };
     frame = requestAnimationFrame(draw);
-    return () => cancelAnimationFrame(frame);
+    return () => { cancelAnimationFrame(frame); observer.disconnect(); };
   }, [engine, m.running]);
   const xPct = f => `${(Math.log(f / SPEC_MIN_HZ) / Math.log(SPEC_MAX_HZ / SPEC_MIN_HZ)) * 100}%`;
   return (

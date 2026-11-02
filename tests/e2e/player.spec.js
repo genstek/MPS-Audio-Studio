@@ -108,6 +108,21 @@ test('LAS-67: holding FF seeks 5 s every 200 ms after 400 ms; it stops at the en
   await page.keyboard.press('End');
   await expect(ui.status).toHaveText('Stopped');
   await expect(ui.timer).toHaveText('00:00.0 / 00:30.0');
+  // Holding FF while playing through the end stops there: the held button does not walk the
+  // playhead on after playback has ended.
+  await ui.play.click();
+  await expect(ui.status).toHaveText('Playing');
+  await ui.timeline.focus();
+  await page.keyboard.press('PageUp');
+  await page.keyboard.press('PageUp'); // about 20 s
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.waitForTimeout(1800); // 5 s at once, then repeats: the end is reached within ~0.6 s
+  await expect(ui.status).toHaveText('Stopped');
+  await expect(ui.timer).toHaveText('00:00.0 / 00:30.0');
+  await page.waitForTimeout(600);
+  await page.mouse.up();
+  await expect(ui.timer).toHaveText('00:00.0 / 00:30.0');
 });
 
 test('LAS-67: the timeline seeks with the keyboard and the pointer, while playing and paused', async ({ page }) => {

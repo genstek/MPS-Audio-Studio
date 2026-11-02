@@ -13,7 +13,7 @@ import { StemsDialog } from './StemsDialog.jsx';
 import { MAX_AUDIO_FILE_LABEL } from './file-limits.js';
 import { MasterLevel } from './MasterLevel.jsx';
 import { clampMasterDb } from './monitor-bus.js';
-import { BarMeters, PlayerDisplay, SeekButton, Timeline, createMeterStore } from './Player.jsx';
+import { BarMeters, PlaybackClock, PlayerDisplay, SeekButton, Timeline, createMeterStore, createPositionStore } from './Player.jsx';
 import { NewProjectDialog, ProjectArea, RelinkDialog, UnsavedDialog } from './ProjectBar.jsx';
 import { useProject } from './useProject.js';
 import { HelpButton, HelpTip, HelpView, WithHelp } from './HelpTip.jsx';
@@ -31,21 +31,16 @@ function storedMasterDb() {
 }
 import './styles.css';
 
-// Seconds as mm:ss.t, rounded to a tenth of a second.
-function clock(seconds) {
-  const tenths = Math.round(seconds * 10);
-  const minutes = String(Math.floor(tenths / 600)).padStart(2, '0');
-  const rest = ((tenths % 600) / 10).toFixed(1).padStart(4, '0');
-  return `${minutes}:${rest}`;
-}
-
 function App() {
   const [track, setTrack] = useState(null);
   const [status, setStatus] = useState('No audio loaded');
   const [error, setError] = useState('');
   // What the app is waiting for ('' when idle); shown instead of the status meanwhile.
   const [busy, setBusy] = useState('');
-  const [position, setPosition] = useState(0);
+  // The position lives outside React state (LAS-26/LAS-67): only the clock and the timeline re-render
+  // with it, not the whole studio ten times a second.
+  const [positionStore] = useState(createPositionStore);
+  const setPosition = positionStore.set;
   // The imported File, kept only so a signed-in user can choose to save it (LAS-23).
   const [currentFile, setCurrentFile] = useState(null);
   const engine = useRef(null);
@@ -69,16 +64,19 @@ function App() {
   useEffect(() => {
     engine.current = createAudioEngine(() => {
       setStatus('Stopped');
-      setPosition(0);
+      positionStore.set(0);
     });
     engine.current.setMasterLevel(storedMasterDb());
     meters.attach(() => engine.current);
     return () => { meters.stop(); engine.current.dispose(); };
-  }, [meters]);
+  }, [meters, positionStore]);
   useEffect(() => meters.setPlaying(status === 'Playing'), [meters, status]);
   // Seeking moves the one source (LAS-67); while paused or stopped it cues the next Play.
+  // Returns false once the playhead is at either end, so a held FF/RWD stops repeating there.
   function seek(seconds) {
-    setPosition(engine.current.seek(seconds));
+    const target = engine.current.seek(seconds);
+    setPosition(target);
+    return target > 0 && target < (track?.duration ?? 0);
   }
   const skip = delta => seek(engine.current.position() + delta);
 
@@ -93,9 +91,9 @@ function App() {
   // While playing, the elapsed time is read from the engine's audio clock ten times a second.
   useEffect(() => {
     if (status !== 'Playing') return;
-    const timer = setInterval(() => setPosition(engine.current.position()), 100);
+    const timer = setInterval(() => positionStore.set(engine.current.position()), 100);
     return () => clearInterval(timer);
-  }, [status]);
+  }, [status, positionStore]);
 
   // Loads a track (import, replacement and project relink). Rejects with the reason it failed.
   async function loadTrack(file) {
@@ -216,7 +214,7 @@ function App() {
         </div>
         <div className="transport-state">
           <p role="status" className="status">{busy || status}</p>
-          <p role="timer" aria-label="Playback position" className="position">{clock(position)} / {clock(track ? track.duration : 0)}</p>
+          <PlaybackClock store={positionStore} duration={track ? track.duration : 0} />
         </div>
       </section>
 
@@ -235,7 +233,7 @@ function App() {
           {error && <p role="alert" className="error">{error}</p>}
           {project.problem && <p role="alert" className="error">{project.problem} <button type="button" className="link" onClick={project.clearProblem}>Dismiss</button></p>}
           <div className="track-footer player-footer">
-            <Timeline position={position} duration={track ? track.duration : 0} onSeek={seek} disabled={!track || Boolean(busy)} scrub={scrub} setScrub={setScrub} />
+            <Timeline store={positionStore} duration={track ? track.duration : 0} onSeek={seek} disabled={!track || Boolean(busy)} scrub={scrub} setScrub={setScrub} />
             <HelpTip id="transport.timeline" className="inline" />
             <BarMeters store={meters} />
           </div>
