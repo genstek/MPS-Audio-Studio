@@ -49,5 +49,8 @@ Development server: local disk, no encryption at rest, no antivirus, no quotas p
   - Against the old server code both new assertions fail ("expected 'close' to be 'keep-alive'"; the slow-client test fails).
   - With the fix: the storage and upload-limit tests passed 10 of 10 runs, and the slow-client reproduction passed 40 of 40.
   - Evidence: `evidence/post-delivery-oversize-uploads.txt`, `evidence/post-delivery-vitest-storage.log`.
-- **Not run here:** the macOS job itself. It runs on GitHub when the fix reaches the PR, and its result is recorded there.
+- **macOS result:** `apple-build` on `main` `b5d6028` (which includes the fix), [run 41598466382](https://github.com/genstek/MPS-Audio-Studio/actions/runs/41598466382) on macos-14, started manually because the PR was merged before a pull-request run started. Result: **success**.
+  - Vitest 314/314, including `storage.test.js` (24) and `upload-limit.test.js` (3).
+  - The macOS build, the asset-server tests and the iOS simulator build succeeded, and packaging and upload went through.
+  - Evidence: `evidence/post-delivery-apple-build-macos.log`.
 

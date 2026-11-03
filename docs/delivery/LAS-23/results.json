@@ -40,11 +40,11 @@
       "evidence": ["evidence/post-delivery-oversize-uploads.txt", "evidence/post-delivery-vitest-storage.log"]
     },
     {
-      "name": "macOS apple-build job with the fix (GitHub Actions, macos-14)",
-      "status": "NOT_RUN",
-      "command": null,
-      "exitCode": null,
-      "evidence": []
+      "name": "macOS apple-build job with the fix on main b5d6028 (GitHub Actions run 41598466382, macos-14): Vitest 314/314, macOS build, asset-server tests, iOS simulator build",
+      "status": "PASS",
+      "command": "GitHub Actions workflow_dispatch: .github/workflows/apple-build.yml on main",
+      "exitCode": 0,
+      "evidence": ["evidence/post-delivery-apple-build-macos.log"]
     }
   ],
   "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],

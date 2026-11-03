@@ -1,0 +1,52 @@
+LAS-23 post-delivery fix: macOS apple-build on main b5d6028 (includes the fix 941deb5)
+Run https://github.com/genstek/MPS-Audio-Studio/actions/runs/41598466382 (workflow_dispatch, macos-14), job 125791299213: success.
+Excerpt of the 1209-line job log: step starts, Vitest file results and totals, Xcode results.
+
+2026-11-03T07:45:56.1171840Z ##[group]Runner Image Provisioner
+2026-11-03T07:45:56.1173160Z Version: 20260828.587
+2026-11-03T07:45:56.1178100Z ##[group]Runner Image
+2026-11-03T07:45:56.1178540Z Image: macos-14-arm64
+2026-11-03T07:45:56.1178960Z Version: 20260831.0302.1
+2026-11-03T07:45:56.7448370Z Complete job name: apple-build
+2026-11-03T07:45:56.7855250Z ##[group]Run actions/checkout@v4
+2026-11-03T07:46:01.0702770Z ##[group]Run actions/setup-node@v4
+2026-11-03T07:46:02.0674490Z ##[group]Run brew install xcodegen
+2026-11-03T07:46:04.6187760Z ##[group]Run bash scripts/apple/prepare.sh
+2026-11-03T07:46:07.1381570Z ##[group]Run npm run lint && npm run test:unit
+2026-11-03T07:46:11.8894830Z  ✓ tests/unit/audio-engine.test.js (35 tests) 202ms
+2026-11-03T07:46:12.5900760Z  ✓ tests/server/presets.test.js (11 tests) 577ms
+2026-11-03T07:46:12.9935550Z  ✓ tests/server/storage.test.js (24 tests) 1250ms
+2026-11-03T07:46:13.4387110Z  ✓ tests/server/auth.test.js (9 tests) 315ms
+2026-11-03T07:46:18.7530660Z  ✓ tests/unit/analysis.test.js (29 tests) 5195ms
+2026-11-03T07:46:19.2582080Z  ✓ tests/server/privacy.test.js (5 tests) 368ms
+2026-11-03T07:46:20.9452230Z  ✓ tests/unit/reference-comparison.test.js (15 tests) 8198ms
+2026-11-03T07:46:23.5070390Z  ✓ tests/server/references.test.js (13 tests) 3624ms
+2026-11-03T07:46:23.9598960Z  ✓ tests/unit/chain.test.js (47 tests) 12281ms
+2026-11-03T07:46:24.1015100Z  ✓ tests/server/recovery.test.js (9 tests) 480ms
+2026-11-03T07:46:24.2031370Z  ✓ tests/unit/presets.test.js (6 tests) 11ms
+2026-11-03T07:46:24.4567580Z  ✓ tests/server/authorization-matrix.test.js (20 tests) 369ms
+2026-11-03T07:46:24.5533180Z  ✓ tests/unit/wav-decode.test.js (22 tests) 25ms
+2026-11-03T07:46:24.6365850Z  ✓ tests/unit/project.test.js (6 tests) 9ms
+2026-11-03T07:46:24.6837040Z  ✓ tests/unit/stem-render.test.js (5 tests) 396ms
+2026-11-03T07:46:24.7630960Z  ✓ tests/unit/space.test.js (14 tests) 13099ms
+2026-11-03T07:46:25.0058320Z  ✓ tests/server/upload-limit.test.js (3 tests) 225ms
+2026-11-03T07:46:25.0771120Z  ✓ tests/unit/monitor-bus.test.js (3 tests) 4ms
+2026-11-03T07:46:25.1019880Z  ✓ tests/unit/wav-encode.test.js (5 tests) 251ms
+2026-11-03T07:46:26.3990870Z  ✓ tests/unit/previews.test.js (3 tests) 1246ms
+2026-11-03T07:46:26.5317130Z  ✓ tests/unit/stem-session-file.test.js (3 tests) 5ms
+2026-11-03T07:46:26.5820250Z  ✓ tests/unit/listening-set.test.js (4 tests) 1108ms
+2026-11-03T07:46:26.6122880Z  ✓ tests/unit/module-presets.test.js (2 tests) 4ms
+2026-11-03T07:46:26.9685300Z  ✓ tests/server/security.test.js (1 test) 295ms
+2026-11-03T07:46:37.3093630Z  ✓ tests/unit/dsp-regression.test.js (12 tests) 12250ms
+2026-11-03T07:46:50.8467680Z  ✓ tests/unit/proposal.test.js (8 tests) 29701ms
+2026-11-03T07:46:50.8540530Z  Test Files  26 passed (26)
+2026-11-03T07:46:50.8556090Z       Tests  314 passed (314)
+2026-11-03T07:46:50.8722950Z ##[group]Run xcodebuild -project apple/MPSAudioStudio.xcodeproj -scheme MPSMac -configuration Debug -destination 'platform=macOS' -derivedDataPath apple/build CODE_SIGNING_ALLOWED=NO build
+2026-11-03T07:47:11.2666110Z ** BUILD SUCCEEDED **
+2026-11-03T07:47:11.2817180Z ##[group]Run xcodebuild -project apple/MPSAudioStudio.xcodeproj -scheme AssetServerTests -destination 'platform=macOS' -derivedDataPath apple/test-build CODE_SIGNING_ALLOWED=NO test
+2026-11-03T07:47:24.4645630Z ** TEST SUCCEEDED **
+2026-11-03T07:47:24.4792160Z ##[group]Run xcodebuild -project apple/MPSAudioStudio.xcodeproj -scheme MPSiOS -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath apple/ios-build CODE_SIGNING_ALLOWED=NO build
+2026-11-03T07:47:31.7320070Z ** BUILD SUCCEEDED **
+2026-11-03T07:47:31.7431670Z ##[group]Run mkdir -p artifacts/apple-ci
+2026-11-03T07:47:37.3590200Z ##[group]Run actions/upload-artifact@v4
+2026-11-03T07:47:39.8967210Z Cleaning up orphan processes
