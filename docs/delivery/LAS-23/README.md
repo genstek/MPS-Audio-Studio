@@ -27,4 +27,27 @@ Vitest `tests/server/storage.test.js` (23): owner flow incl. byte-identical down
 Playwright `tests/e2e/library.spec.js` (3): save → download unchanged (SHA-256) → delete; second account sees nothing and gets 404 for the first account's ids; save after the session ended shows the session message.
 
 ## Limits
-Development server: local disk, no encryption at rest, no antivirus, no quotas per user beyond the per-file limit; the analysis job runs in the server process (bounded by streaming, time limit and cancellation, not by a separate sandbox). Over-limit uploads close the connection, so through a proxy the browser may see a generic error (the studio itself refuses files over 100 MiB before upload). Linux Chromium 141.
+Development server: local disk, no encryption at rest, no antivirus, no quotas per user beyond the per-file limit; the analysis job runs in the server process (bounded by streaming, time limit and cancellation, not by a separate sandbox). Over-limit uploads are answered at once and the connection lingers (up to 5 s and 16 MiB) so a client that is still sending gets the answer; a body that goes on beyond that is cut off and that client may see a connection error (the studio itself refuses files over its limit before upload). Linux Chromium 141.
+
+## Post-delivery fix (2026-11-03): over-limit uploads answered reliably on macOS
+- **Found by:** the new macOS CI job `apple-build` (LAS-58) on the aggregate PR #42, head `beff5c2`.
+  - `tests/server/storage.test.js` › "files over the size limit are refused, declared or streamed" failed with `TypeError: fetch failed` (`write EPIPE`).
+  - The other 312 Vitest tests passed, and the macOS build, the asset-server tests and the iOS build all succeeded.
+- **Cause:** for a body over the limit the server answered `413` with `Connection: close` without reading the body, so it closed the connection while the client was still sending.
+  - Closing with unread data resets the connection, and a client still writing loses the answer.
+  - On Linux the 2.2 MB test body fits in the loopback socket buffers, so the test passed there; macOS's smaller buffers leave it in flight.
+  - The streamed variant had a second path: `pipeline()` destroyed the request at the limit. It reset 1 time in 5 on Linux too.
+- **Fix** (`server/app.js`, `server/library.js`, `server/http.js`):
+  - The answer still goes out at once, before any body is needed, as LAS-71's headers-only test requires.
+  - The connection then **lingers**: what the client is still sending is read and discarded, for at most 5 s and 16 MiB, then the connection closes. This is the lingering close of RFC 9112 §9.6.
+  - Readers stop at a limit without destroying the request, and a remainder within the limit is drained before answering.
+  - Bodies are still never stored past the limit.
+  - A first attempt drained over-limit bodies *before* answering. It broke the LAS-71 requirement (the headers-only test timed out in the full check) and was replaced before any commit.
+- **Tests:**
+  - Both size-limit tests now also assert that the answer keeps the connection usable (`keep-alive`).
+  - A new test sends 2.2 MB in 64 KiB pieces 2 ms apart, declared and streamed, three times each. It reproduces "client still sending when the answer is ready" on Linux.
+  - Against the old server code both new assertions fail ("expected 'close' to be 'keep-alive'"; the slow-client test fails).
+  - With the fix: the storage and upload-limit tests passed 10 of 10 runs, and the slow-client reproduction passed 40 of 40.
+  - Evidence: `evidence/post-delivery-oversize-uploads.txt`, `evidence/post-delivery-vitest-storage.log`.
+- **Not run here:** the macOS job itself. It runs on GitHub when the fix reaches the PR, and its result is recorded there.
+
