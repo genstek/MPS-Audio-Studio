@@ -146,7 +146,11 @@ describe('LAS-23 uploads are checked by content, size and name', () => {
     const owner = await signedInUser(server, 'dee@example.test');
     const project = (await owner.request('/api/projects', { method: 'POST', body: {} })).data;
     const big = wav({ frames: 1_100_000 }); // 2.2 MB, over the 2 MiB test limit
-    expect((await upload(owner, project.id, big)).status).toBe(413);
+    const declared = await upload(owner, project.id, big);
+    expect(declared.status).toBe(413);
+    // The body was read before the answer, so the connection stays usable; an unread body made
+    // the answer close it, and a client still sending (macOS) lost the answer (EPIPE).
+    expect(declared.headers.get('connection')).toBe('keep-alive');
     // Without Content-Length the server counts while streaming and stops at the limit.
     const streamed = await fetch(`${server.url}/api/projects/${project.id}/assets?name=big.wav`, {
       method: 'POST', duplex: 'half',
@@ -154,6 +158,35 @@ describe('LAS-23 uploads are checked by content, size and name', () => {
       body: new ReadableStream({ start(controller) { controller.enqueue(big); controller.close(); } }),
     });
     expect(streamed.status).toBe(413);
+    expect(streamed.headers.get('connection')).toBe('keep-alive');
+    expect(readdirSync(join(server.dataDir, 'tmp'))).toEqual([]);
+    expect(readdirSync(join(server.dataDir, 'blobs'))).toEqual([]);
+  });
+
+  test('a client still sending when the limit is reached receives the answer', async () => {
+    const owner = await signedInUser(server, 'fay@example.test');
+    const project = (await owner.request('/api/projects', { method: 'POST', body: {} })).data;
+    // 2.2 MB in 64 KiB pieces 2 ms apart: the server reaches its answer while the upload continues.
+    const slowBody = () => {
+      let sent = 0;
+      return new ReadableStream({
+        async pull(controller) {
+          if (sent >= 2_200_000) return controller.close();
+          await new Promise(resolve => setTimeout(resolve, 2));
+          const piece = Math.min(65536, 2_200_000 - sent);
+          sent += piece;
+          controller.enqueue(new Uint8Array(piece));
+        },
+      });
+    };
+    const headers = { Cookie: owner.cookie, 'X-MPS-Request': '1', Origin: 'http://studio.test', 'Content-Type': 'audio/wav' };
+    for (const extra of [{ 'Content-Length': '2200000' }, {}]) {
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const response = await fetch(`${server.url}/api/projects/${project.id}/assets?name=big.wav`, { method: 'POST', duplex: 'half', headers: { ...headers, ...extra }, body: slowBody() });
+        expect(response.status).toBe(413);
+        expect((await response.json()).error).toBe('too_large');
+      }
+    }
     expect(readdirSync(join(server.dataDir, 'tmp'))).toEqual([]);
     expect(readdirSync(join(server.dataDir, 'blobs'))).toEqual([]);
   });
