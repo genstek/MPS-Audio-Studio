@@ -1,0 +1,40 @@
+
+ RUN  v5.0.5 <worktree>
+
+(node:6813) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6814) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/server/storage.test.js > LAS-23 private library for the owner > upload, list, inspect, download byte-for-byte and delete 233ms
+ ✓ tests/server/storage.test.js > LAS-23 private library for the owner > supported formats are accepted: 24-bit stereo extensible PCM and 32-bit float 71ms
+ ✓ tests/server/upload-limit.test.js > the default limit is 250 MiB = 262,144,000 bytes in the server configuration and the library 2ms
+ ✓ tests/server/upload-limit.test.js > limit - 2, limit and limit + 1 bytes at the server gate (2 MiB test limit) 400ms
+ ✓ tests/server/upload-limit.test.js > with the default configuration, a declared 262,144,001-byte upload gets a clean 413 before any body is sent 62ms
+ ✓ tests/server/storage.test.js > LAS-23 another user cannot reach the owner's data > every operation with guessed or reused ids answers 404 and changes nothing 139ms
+ ✓ tests/server/storage.test.js > LAS-23 another user cannot reach the owner's data > anonymous requests are rejected everywhere, even with a valid download link 72ms
+ ✓ tests/server/storage.test.js > LAS-23 another user cannot reach the owner's data > download links expire after 5 minutes and cannot be altered or moved to another file 68ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > text renamed to .wav is rejected with 422 and leaves no file behind 43ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > MP3 bytes is rejected with 422 and leaves no file behind 42ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > too short is rejected with 422 and leaves no file behind 53ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > chunk longer than the file is rejected with 422 and leaves no file behind 54ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > data before fmt is rejected with 422 and leaves no file behind 47ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > no data in the first 64 chunks is rejected with 422 and leaves no file behind 53ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > unsupported ADPCM encoding is rejected with 422 and leaves no file behind 53ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > zero channels is rejected with 422 and leaves no file behind 36ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > 4 kHz sample rate is rejected with 422 and leaves no file behind 49ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > inconsistent block align is rejected with 422 and leaves no file behind 44ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > 12-bit samples is rejected with 422 and leaves no file behind 61ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > partial last frame is rejected with 422 and leaves no file behind 48ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > empty audio is rejected with 422 and leaves no file behind 37ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > files over the size limit are refused, declared or streamed 119ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > a client still sending when the limit is reached receives the answer 308ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > file names are display text only: no folders, no control characters 56ms
+ ✓ tests/server/storage.test.js > LAS-23 level analysis jobs > measures peak and RMS of the stored file 61ms
+ ✓ tests/server/storage.test.js > LAS-23 level analysis jobs > a cancelled job never runs, and the time limit stops a slow one 120ms
+ ✓ tests/server/storage.test.js > LAS-23 refused uploads still get their answer > through a proxy, an unauthenticated or misdirected upload receives 401/404 232ms
+
+ Test Files  2 passed (2)
+      Tests  27 passed (27)
+   Start at  07:43:17
+   Duration  2.42s (tests 90%, import 6%, transform 4%)
+

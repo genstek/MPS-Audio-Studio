@@ -1,0 +1,26 @@
+{
+  "issue": "LAS-43",
+  "applicationCommit": null,
+  "deliveryStatus": "BLOCKED",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "Scripted walkthrough of all screens, links and states (Chromium 141)",
+      "status": "PASS",
+      "command": "node check-wireframes.mjs docs/design/LAS-43/wireframes.html <out>",
+      "exitCode": 0,
+      "evidence": ["evidence/wireframe-check.json", "evidence/screens/"]
+    },
+    {
+      "name": "Gennady's walkthrough and feedback",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": []
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/", "../../design/LAS-43/wireframes.html"],
+  "blockers": ["Gennady's walkthrough pending (and LAS-42 visual direction pending)"],
+  "jiraSync": "SYNC_PENDING",
+  "branch": "design/LAS-43-wireframes"
+}

@@ -1,0 +1,66 @@
+{
+  "issue": "LAS-25",
+  "applicationCommit": "d2d415d873d5efe626e39041fa4c200366136dbc",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (lint, Vitest 84/84 incl. matrix and security tests, build, Playwright 47/47)",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-d2d415d873d5efe626e39041fa4c200366136dbc.log", "evidence/html-report-d2d415d873d5efe626e39041fa4c200366136dbc.zip"]
+    },
+    {
+      "name": "Authorization matrix with observed statuses",
+      "status": "PASS",
+      "command": "MPS_MATRIX_OUT=<file> npx vitest run tests/server/authorization-matrix.test.js",
+      "exitCode": 0,
+      "evidence": ["evidence/authorization-matrix-observed.md"]
+    },
+    {
+      "name": "Artifact, bundle and log scan (0 findings, server secret checked)",
+      "status": "PASS",
+      "command": "npm run scan:artifacts",
+      "exitCode": 0,
+      "evidence": ["evidence/scan-artifacts-d2d415d873d5efe626e39041fa4c200366136dbc.json"]
+    },
+    {
+      "name": "Scanner negative control: planted secrets detected (expected exit 1)",
+      "status": "PASS",
+      "command": "node scripts/scan-artifacts.js <folder with planted secrets>",
+      "exitCode": 1,
+      "evidence": ["evidence/scanner-negative-control/scan.json"]
+    },
+    {
+      "name": "F-01 timing regression test on the old registration code (expected to fail, exit 1)",
+      "status": "PASS",
+      "command": "npx vitest run tests/server/security.test.js (old server/app.js temporarily restored)",
+      "exitCode": 1,
+      "evidence": ["evidence/timing-old-code/vitest.log"]
+    },
+    {
+      "name": "npm audit --omit=dev and full npm audit (0 vulnerabilities)",
+      "status": "PASS",
+      "command": "npm audit --omit=dev --json; npm audit --json",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-audit-runtime.json", "evidence/npm-audit-all.json"]
+    },
+    {
+      "name": "Production configuration (TLS, CSP/HSTS, mail, shared limits)",
+      "status": "NOT_APPLICABLE",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["README.md (release gates; nothing deployed)"]
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],
+  "blockers": [],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "test/LAS-25-security-baseline",
+  "defects": [
+    {"severity": "Medium", "summary": "Registration timing revealed existing accounts", "fixedIn": "d2d415d873d5efe626e39041fa4c200366136dbc"},
+    {"severity": "Medium", "summary": "Email tokens in query string (logs, artifacts)", "fixedIn": "d2d415d873d5efe626e39041fa4c200366136dbc"}
+  ]
+}

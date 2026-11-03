@@ -1,0 +1,345 @@
+commit 2c5d0ceda20e5cb2ffe527386420f1e35f675f3c
+
+ RUN  v5.0.5 /home/user/MPS-Audio-Studio
+
+ ✓ tests/unit/space.test.js > LAS-64 Space settings > schema v2 puts Space before the limiter; defaults are off; presets are valid 5ms
+ ✓ tests/unit/space.test.js > LAS-64 Space settings > version 1 settings are upgraded with Space off and otherwise unchanged; out-of-range values are refused 5ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > bypassed Space is bit-identical, whatever its stored settings 724ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > pre-delay: the first reverb sample arrives exactly after the pre-delay 231ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > decay: the measured low-frequency RT60 follows the setting within 10 % at 44.1, 48 and 96 kHz 3328ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > damping shortens the high-frequency tail but not the low-frequency decay 361ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > stereo: a centred mono source gives decorrelated left/right reverb of equal level; a mono chain stays mono 381ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > mix: 0 % is the dry signal, 100 % the reverb alone; the dry path stays aligned 815ms
+ ✓ tests/unit/proposal.test.js > reference-guided proposal > towards a mastered reference: every module explains itself and the rendered result is closer 5853ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > no NaN, Infinity or runaway feedback with extreme settings and loud noise for 20 s 2901ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > parameter changes while running are smooth: no step larger than the signal itself makes 213ms
+ ✓ tests/unit/proposal.test.js > reference-guided proposal > extreme tonal differences are bounded by the EQ guards and say so 3220ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > preview equals export: any block size gives identical samples, and the tail option only appends 1044ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > a section render keeps reverb that started before the section: the pre-roll covers pre-delay + decay 1844ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > reset() clears the tail at once: silence in gives silence out afterwards 158ms
+ ✓ tests/unit/dsp-regression.test.js > LAS-29 DSP regression against the golden results > golden file matches the current fixture set, schema and analysis versions 3ms
+ ✓ tests/unit/dsp-regression.test.js > LAS-29 DSP regression against the golden results > every fixture × preset at 44.1 kHz passes the render checks and matches the golden results 18283ms
+ ✓ tests/unit/dsp-regression.test.js > LAS-29 render checks catch deliberately broken renders > the correct render has no findings 141ms
+ ✓ tests/unit/dsp-regression.test.js > LAS-29 render checks catch deliberately broken renders > NaN and Infinity is reported 5ms
+ ✓ tests/unit/dsp-regression.test.js > LAS-29 render checks catch deliberately broken renders > a lost channel is reported 2ms
+ ✓ tests/unit/dsp-regression.test.js > LAS-29 render checks catch deliberately broken renders > a shortened render is reported 4ms
+ ✓ tests/unit/dsp-regression.test.js > LAS-29 render checks catch deliberately broken renders > uncompensated latency (83 samples late) is reported 140ms
+ ✓ tests/unit/dsp-regression.test.js > LAS-29 render checks catch deliberately broken renders > clipping is reported 149ms
+ ✓ tests/unit/dsp-regression.test.js > LAS-29 render checks catch deliberately broken renders > a true peak over the ceiling is reported 144ms
+ ✓ tests/unit/dsp-regression.test.js > LAS-29 render checks catch deliberately broken renders > swapped channels are reported for the left-only fixture 208ms
+ ✓ tests/unit/dsp-regression.test.js > LAS-29 render checks catch deliberately broken renders > a bypass that is not an exact identity is reported 331ms
+ ✓ tests/unit/dsp-regression.test.js > LAS-29 render checks catch deliberately broken renders > a processing regression is reported by the golden comparison 225ms
+stdout | tests/unit/space.test.js > LAS-64 Space processing > performance: real-time factor with Space on, measured (not asserted beyond real time)
+LAS-64 performance: 10 s stereo at 48 kHz, default chain 0.89 s (11.2x real time), with Space 1.07 s (9.3x real time)
+
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > performance: real-time factor with Space on, measured (not asserted beyond real time) 8529ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > the defaults are valid and survive a serialise/parse round trip unchanged 5ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > every band keeps its own frequency, gain, Q and type in the serialised text 3ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > not JSON is refused with a clear message 1ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > another file type is refused with a clear message 1ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > a newer version is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > an unknown old version is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > another processing order is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > 23 bands is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > gain +19 dB is refused with a clear message 1ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > Q 0.1 is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > 10 Hz is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > an unknown band type is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > ratio 30 is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > attack as text is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > ceiling 0 dBTP is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > a missing limiter is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > bands above 0.45 × sample rate run at that limit and are reported 1ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > Link edits both channels; independent edits one; switching to Link copies left to right 1ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > every band type is stable across the whole parameter range at 44.1, 48 and 96 kHz 36ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > the measured response of each band type equals its transfer function at 44100 Hz 264ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > the measured response of each band type equals its transfer function at 48000 Hz 116ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > the measured response of each band type equals its transfer function at 96000 Hz 101ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > a bell reaches its gain at its centre; a 0.707 high-pass is 3 dB down at its corner 1ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > a left-channel band changes only the left channel in independent mode, both in Link mode 411ms
+ ✓ tests/unit/chain.test.js > LAS-27 compressor > static curve: hard knee, soft knee and RMS detector follow the gain computer 761ms
+ ✓ tests/unit/chain.test.js > LAS-27 compressor > attack and release: 63 % of a level step after the set times 56ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for noise driven 12 dB over full scale at 44100 Hz 366ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for a 0 dBTP intersample peak (fs/4 at 45°) at 44100 Hz 144ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for bursts over silence at 44100 Hz 87ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for noise driven 12 dB over full scale at 48000 Hz 260ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for a 0 dBTP intersample peak (fs/4 at 45°) at 48000 Hz 98ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for bursts over silence at 48000 Hz 94ms
+ ✓ tests/unit/reference-comparison.test.js > section render (pre-roll) > the pre-roll covers five of the slowest time constants and at least 3 s 3ms
+ ✓ tests/unit/reference-comparison.test.js > section render (pre-roll) > a rendered section measures as the same section of the whole-track render 2626ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for noise driven 12 dB over full scale at 96000 Hz 485ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for a 0 dBTP intersample peak (fs/4 at 45°) at 96000 Hz 201ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for bursts over silence at 96000 Hz 180ms
+ ✓ tests/unit/reference-comparison.test.js > section render (pre-roll) > with a slow compressor release the pre-roll is needed: without it the section measures differently 2966ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > the same audio: every difference is zero and nothing large is interpreted 328ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > a louder mix shows a level difference with units, not a quality judgement, and tonal shape is unchanged 773ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > a brighter and a duller mix: measured band differences and a cautious interpretation, kept apart 1984ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > sections of different length: compared, but flagged and interpretations marked uncertain 423ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > a short section is flagged as less reliable 128ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > mono against stereo: stereo measures are not compared, the rest is 1014ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > silent or too-short sections are refused with a reason, never divided by zero 754ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > a band with no energy is "not measurable", not a number 330ms
+ ✓ tests/unit/proposal.test.js > reference-guided proposal > a mix with a wide loudness range against a compressed reference: slow compression within the guard brings the range closer 23189ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > different sample rates compare only the shared octave bands, renormalised 499ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > section selection: comparing the matching section of a track gives no level difference 247ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > reports from different analysis versions are refused 343ms
+ ✓ tests/unit/reference-comparison.test.js > mix versus reference > matched-loudness gains turn the louder versions down to the quietest, never up 1ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > K-weighting at 48 kHz equals the coefficients printed in BS.1770-4 3ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > EBU Tech 3341 test 1: −23 dBFS sine, 20 s → -23 LUFS ±0.1 193ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > EBU Tech 3341 test 2: −33 dBFS sine, 20 s → -33 LUFS ±0.1 155ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > EBU Tech 3341 test 3: relative gate (−36 / −23 / −36 dBFS) → -23 LUFS ±0.1 743ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > measured with a 32× reference meter, limited noise stays within +0.1 dB of the ceiling (44.1 kHz) 10878ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > latency: the delay is look-ahead + 12 samples, compensated in offline renders 5ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > audio under the ceiling passes unchanged; input gain is applied before limiting 199ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > EBU Tech 3341 test 4: absolute gate (−72 / −36 / −23 / −36 / −72 dBFS) → -23 LUFS ±0.1 841ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > the same −23 dBFS sine reads −23 LUFS ±0.1 at 44100 Hz 136ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > release: gain recovers with the set time after a burst ends 56ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > with every processor bypassed the render is the input, sample for sample 462ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > neutral enabled settings (flat EQ, compressor under threshold, limiter under ceiling) are transparent 191ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > the same −23 dBFS sine reads −23 LUFS ±0.1 at 96000 Hz 319ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > every enabled processor changes a known signal 302ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > EBU Tech 3342 sequence [[20,-20],[20,-30]] → LRA 10 LU ±1 352ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > EBU Tech 3342 sequence [[20,-20],[20,-15]] → LRA 5 LU ±1 307ms
+ ✓ tests/unit/proposal.test.js > reference-guided proposal > a mix already denser and louder than the reference gets no compression and no gain 4324ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > EBU Tech 3342 sequence [[20,-40],[20,-20]] → LRA 20 LU ±1 330ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > EBU Tech 3342 sequence [[20,-50],[20,-35],[20,-20],[20,-35],[20,-50]] → LRA 15 LU ±1 840ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > the same settings render the same output for any block size, and after a reload 1568ms
+ ✓ tests/unit/analysis.test.js > LAS-26 loudness (ITU-R BS.1770-4, EBU R128) > silence and very short audio are labelled, not given numbers 18ms
+ ✓ tests/unit/analysis.test.js > LAS-26 peaks > true peak finds the intersample peak a sample peak misses 20ms
+ ✓ tests/unit/analysis.test.js > LAS-26 peaks > a 997 Hz sine reads its quarter-sample peak within 0.05 dB at any phase 30ms
+ ✓ tests/unit/analysis.test.js > LAS-26 peaks > a 6000 Hz sine reads its quarter-sample peak within 0.05 dB at any phase 25ms
+ ✓ tests/unit/analysis.test.js > LAS-26 peaks > a 12000 Hz sine reads its quarter-sample peak within 0.05 dB at any phase 13ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > live parameter changes ramp smoothly and land on the same sample for any block size 432ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > switching a band, its type and a processor on or off cross-fades without a click 213ms
+ ✓ tests/unit/analysis.test.js > LAS-26 peaks > a 15000 Hz sine reads its quarter-sample peak within 0.05 dB at any phase 13ms
+ ✓ tests/unit/analysis.test.js > LAS-26 peaks > a 18000 Hz sine reads its quarter-sample peak within 0.05 dB at any phase 13ms
+ ✓ tests/unit/analysis.test.js > LAS-26 peaks > a 20000 Hz sine reads its quarter-sample peak within 0.05 dB at any phase 13ms
+ ✓ tests/unit/analysis.test.js > LAS-26 peaks > audio is treated as starting and ending in silence, as on playback 3ms
+ ✓ tests/unit/analysis.test.js > LAS-26 peaks > sample peak of a single impulse is exact and labelled as a sample peak 54ms
+ ✓ tests/unit/analysis.test.js > LAS-26 report > levels, crest factor and PLR of the EBU −23 dBFS stereo sine 659ms
+ ✓ tests/unit/analysis.test.js > LAS-26 report > stereo indicators: inverted, uncorrelated and unbalanced channels 608ms
+ ✓ tests/unit/analysis.test.js > LAS-26 report > clipping is counted only for clipped audio 80ms
+ ✓ tests/unit/analysis.test.js > LAS-26 report > mono audio has no stereo indicators; silence has no peak levels 92ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > non-finite input samples become silence; the output stays finite and is counted 87ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > the input is never modified; mono renders with the left/linked bands 906ms
+(node:17383) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/unit/analysis.test.js > LAS-26 report > a segment is analysed on its own and reported with its bounds 637ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > a profile records the source, segment, analysis version and measurement definitions 747ms
+ ✓ tests/unit/proposal.test.js > reference-guided proposal > a very quiet mix: input gain within its guard and the limiter guard; the crest difference is explained 5060ms
+ ✓ tests/unit/analysis.test.js > LAS-26 report > analysis is reproducible and leaves the input untouched 2323ms
+ ✓ tests/unit/analysis.test.js > LAS-26 report > more than two channels are refused clearly 1ms
+ ✓ tests/unit/analysis.test.js > LAS-26 FFT > matches a direct DFT 3ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > different source versions and styles stay separate profiles 908ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > measurements of another file is refused 307ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > a segment outside the file is refused 353ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > a segment shorter than 5 s is refused 342ms
+ ✓ tests/unit/previews.test.js > LAS-63 previews match the processors > compressor curve (threshold, ratio, soft knee, makeup) equals the chain at steady levels 1098ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > measurements of another segment is refused 329ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > another analysis version is refused 349ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > a silent segment is refused as unsuitable 186ms
+ ✓ tests/unit/previews.test.js > LAS-63 previews match the processors > limiter curve (input gain, ceiling) equals the chain at steady levels 797ms
+ ✓ tests/unit/previews.test.js > LAS-63 previews match the processors > "edited" marks exactly the modules that differ from the defaults 1ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > only reference files can have profiles 342ms
+ ✓ tests/unit/proposal.test.js > reference-guided proposal > width is measured but never proposed; a negative correlation warns about mono 3286ms
+ ✓ tests/unit/listening-set.test.js > LAS-29 blind listening set > versions are matched to the quietest loudness by turning the louder ones down 142ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > another user cannot see, use or delete the profile or the reference 710ms
+ ✓ tests/unit/listening-set.test.js > LAS-29 blind listening set > blind labels are shuffled reproducibly from the seed and recorded only in the key 1198ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > deleting the profile, the reference file or the account leaves no profile behind 1214ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > reanalysing the same file and segment gives an identical profile 664ms
+ ✓ tests/server/references.test.js > LAS-30 reference profiles > a database from sprint 02 (schema v3) upgrades to v4 in place 45ms
+(node:17412) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/unit/listening-set.test.js > LAS-29 blind listening set > a reference recording is found at its offset; an unrelated one correlates weakly 686ms
+ ✓ tests/unit/listening-set.test.js > LAS-29 blind listening set > silent segments are refused 26ms
+(node:17423) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/server/storage.test.js > LAS-23 private library for the owner > upload, list, inspect, download byte-for-byte and delete 217ms
+ ✓ tests/server/storage.test.js > LAS-23 private library for the owner > supported formats are accepted: 24-bit stereo extensible PCM and 32-bit float 76ms
+ ✓ tests/server/presets.test.js > presets > save, list, read back the complete chain, rename and delete 153ms
+ ✓ tests/server/storage.test.js > LAS-23 another user cannot reach the owner's data > every operation with guessed or reused ids answers 404 and changes nothing 128ms
+ ✓ tests/server/storage.test.js > LAS-23 another user cannot reach the owner's data > anonymous requests are rejected everywhere, even with a valid download link 76ms
+ ✓ tests/server/presets.test.js > presets > a proposal preset keeps its analysis and proposal versions and strength 60ms
+ ✓ tests/server/presets.test.js > presets > invalid, newer-version and oversized presets are refused and nothing is stored 71ms
+ ✓ tests/server/storage.test.js > LAS-23 another user cannot reach the owner's data > download links expire after 5 minutes and cannot be altered or moved to another file 70ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > text renamed to .wav is rejected with 422 and leaves no file behind 50ms
+ ✓ tests/server/presets.test.js > presets > another account cannot list, read, rename or delete them; signed out gets 401 75ms
+ ✓ tests/server/presets.test.js > presets > state changes need the studio request header (CSRF rule) 49ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > MP3 bytes is rejected with 422 and leaves no file behind 56ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > too short is rejected with 422 and leaves no file behind 50ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > chunk longer than the file is rejected with 422 and leaves no file behind 46ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > data before fmt is rejected with 422 and leaves no file behind 44ms
+ ✓ tests/server/presets.test.js > preferences > defaults until saved; save, read, reset; validated; owner-only 85ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > no data in the first 64 chunks is rejected with 422 and leaves no file behind 43ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > unsupported ADPCM encoding is rejected with 422 and leaves no file behind 38ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > zero channels is rejected with 422 and leaves no file behind 50ms
+ ✓ tests/server/presets.test.js > remembered decisions > stored only when sent, listed, forgotten one by one or all; owner-only 79ms
+ ✓ tests/server/presets.test.js > remembered decisions > bad decisions are refused: unknown decision, rating, strength, version, oversized or missing summary 45ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > 4 kHz sample rate is rejected with 422 and leaves no file behind 41ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > inconsistent block align is rejected with 422 and leaves no file behind 39ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > 12-bit samples is rejected with 422 and leaves no file behind 46ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > partial last frame is rejected with 422 and leaves no file behind 46ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > empty audio is rejected with 422 and leaves no file behind 64ms
+ ✓ tests/server/presets.test.js > links to reference profiles and deletion > only your own reference profile can be linked; deleting it keeps presets and decisions but forgets the link 397ms
+ ✓ tests/server/presets.test.js > links to reference profiles and deletion > deleting the account deletes its presets, preferences and decisions (0 rows left) 83ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > files over the size limit are refused, declared or streamed 176ms
+ ✓ tests/server/presets.test.js > links to reference profiles and deletion > a database from sprint 05 (schema v4) upgrades to v5 in place 73ms
+ ✓ tests/server/storage.test.js > LAS-23 uploads are checked by content, size and name > file names are display text only: no folders, no control characters 70ms
+ ✓ tests/server/storage.test.js > LAS-23 level analysis jobs > measures peak and RMS of the stored file 89ms
+ ✓ tests/server/storage.test.js > LAS-23 level analysis jobs > a cancelled job never runs, and the time limit stops a slow one 152ms
+ ✓ tests/server/storage.test.js > LAS-23 refused uploads still get their answer > through a proxy, an unauthenticated or misdirected upload receives 401/404 273ms
+(node:17441) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/server/recovery.test.js > LAS-22 password recovery > a reset link changes the password and signs out every session 179ms
+ ✓ tests/server/recovery.test.js > LAS-22 password recovery > reset links are single-use, expire after 30 minutes, are replaced by a newer request and cannot be forged 90ms
+ ✓ tests/server/recovery.test.js > LAS-22 password recovery > a too-short new password does not use up the link 58ms
+ ✓ tests/server/recovery.test.js > LAS-22 password recovery > recovery answers the same for unknown addresses and sends them nothing 34ms
+ ✓ tests/server/recovery.test.js > LAS-22 session expiry > a session ends after 24 hours without activity 35ms
+ ✓ tests/server/recovery.test.js > LAS-22 session expiry > activity keeps a session alive, but never longer than 7 days 49ms
+ ✓ tests/unit/stem-render.test.js > offline stem master > bypassed stems sum exactly with the Web Audio pan law 86ms
+ ✓ tests/unit/stem-render.test.js > offline stem master > a stem's own chain changes only that stem, and stays sample-aligned with bypassed stems (latency compensated) 969ms
+ ✓ tests/unit/stem-render.test.js > offline stem master > mute and solo route like the live session; offsets are exact; the length is the longest stem 18ms
+ ✓ tests/unit/stem-render.test.js > offline stem master > unsupported inputs are refused with a reason; the inputs are never modified 21ms
+ ✓ tests/unit/stem-render.test.js > a short stem's chain tail runs on to the end of the session instead of being cut 40ms
+ ✓ tests/server/recovery.test.js > LAS-22 abuse limits > five failed sign-ins lock that address for 15 minutes, known or unknown, without revealing which 104ms
+ ✓ tests/server/recovery.test.js > LAS-22 abuse limits > recovery and verification mails are limited per address and per client 60ms
+ ✓ tests/server/recovery.test.js > LAS-22 abuse limits > registration is limited per client 93ms
+ ✓ tests/unit/proposal.test.js > reference-guided proposal > the same inputs give the same proposal 5047ms
+ ✓ tests/unit/proposal.test.js > reference-guided proposal > strength scales every move towards neutral and stays valid 3ms
+(node:17459) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17466) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/server/auth.test.js > LAS-21 registration, verification, login and logout > register, verify by link, sign in, reach a protected endpoint, sign out 146ms
+ ✓ tests/server/privacy.test.js > LAS-24 deletion > deleting a project removes every kind of file, cancels its jobs and leaves other projects alone 277ms
+ ✓ tests/server/auth.test.js > LAS-21 registration, verification, login and logout > unknown email and wrong password get the same answer; unverified is only revealed after the right password 68ms
+ ✓ tests/server/auth.test.js > LAS-21 registration, verification, login and logout > registering an existing address answers the same and changes nothing 62ms
+ ✓ tests/unit/wav-encode.test.js > LAS-28 WAV export encoding > 24-bit stereo: header and samples round-trip within half a step 43ms
+ ✓ tests/unit/wav-encode.test.js > LAS-28 WAV export encoding > samples beyond full scale are clipped and counted 1ms
+ ✓ tests/unit/wav-encode.test.js > LAS-28 WAV export encoding > 16-bit adds deterministic TPDF dither of at most ±1 step and keeps low-level signals 550ms
+ ✓ tests/server/privacy.test.js > LAS-24 deletion > deleting the account needs the password, then removes everything it owns at once 128ms
+ ✓ tests/server/auth.test.js > LAS-21 registration, verification, login and logout > verification links work once, expire after 24 hours and are replaced by a resend 61ms
+ ✓ tests/server/auth.test.js > LAS-21 registration, verification, login and logout > state changes need the studio header and an allowed origin 36ms
+ ✓ tests/server/auth.test.js > LAS-21 registration, verification, login and logout > invalid input is rejected with clear errors 30ms
+ ✓ tests/server/privacy.test.js > LAS-24 consent for external processing > nothing is sent without consent for that recipient; consent can be withdrawn 125ms
+ ✓ tests/server/privacy.test.js > LAS-24 consent for external processing > with no external service configured nothing can be consented to or sent 64ms
+ ✓ tests/unit/wav-encode.test.js > LAS-28 WAV export encoding > other bit depths are refused 1ms
+ ✓ tests/unit/wav-encode.test.js > LAS-28 WAV export encoding > an exported render equals the offline chain output within 24-bit rounding 199ms
+ ✓ tests/server/auth.test.js > LAS-21 registration, verification, login and logout > secrets are not stored, logged or exposed in plain form 46ms
+ ✓ tests/server/privacy.test.js > LAS-24 audit trail > audit events hold no audio, credentials, emails or reusable links 113ms
+ ✓ tests/server/auth.test.js > LAS-21 registration, verification, login and logout > production password hashing uses scrypt N=2^15 128ms
+ ✓ tests/server/auth.test.js > LAS-21 registration, verification, login and logout > development endpoints exist only when enabled 50ms
+(node:17481) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17488) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17495) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/server/upload-limit.test.js > the default limit is 250 MiB = 262,144,000 bytes in the server configuration and the library 3ms
+ ✓ tests/server/authorization-matrix.test.js > GET /api/account 18ms
+ ✓ tests/server/authorization-matrix.test.js > GET /api/projects (list) 11ms
+ ✓ tests/server/authorization-matrix.test.js > POST /api/projects 18ms
+ ✓ tests/server/authorization-matrix.test.js > GET /api/projects/:id 9ms
+ ✓ tests/server/authorization-matrix.test.js > PATCH /api/projects/:id 10ms
+ ✓ tests/server/authorization-matrix.test.js > GET /api/projects/:id/assets 9ms
+ ✓ tests/server/authorization-matrix.test.js > POST /api/projects/:id/assets (upload) 21ms
+ ✓ tests/server/authorization-matrix.test.js > GET /api/assets/:id 8ms
+ ✓ tests/server/authorization-matrix.test.js > POST /api/assets/:id/download-link 6ms
+ ✓ tests/server/authorization-matrix.test.js > GET /api/download/:id (owner's signed link) 9ms
+ ✓ tests/server/authorization-matrix.test.js > POST /api/assets/:id/jobs 12ms
+ ✓ tests/server/authorization-matrix.test.js > GET /api/jobs/:id 21ms
+ ✓ tests/server/authorization-matrix.test.js > DELETE /api/jobs/:id (cancel) 10ms
+ ✓ tests/server/authorization-matrix.test.js > POST /api/assets/:id/external-jobs (both have consent) 22ms
+ ✓ tests/server/authorization-matrix.test.js > GET /api/account/consents 10ms
+ ✓ tests/server/authorization-matrix.test.js > GET /api/external-recipients 9ms
+ ✓ tests/server/upload-limit.test.js > limit - 2, limit and limit + 1 bytes at the server gate (2 MiB test limit) 427ms
+ ✓ tests/server/upload-limit.test.js > with the default configuration, a declared 262,144,001-byte upload gets a clean 413 before any body is sent 51ms
+ ✓ tests/server/security.test.js > registering an existing address takes about as long as registering a new one 608ms
+ ✓ tests/server/authorization-matrix.test.js > DELETE /api/assets/:id 18ms
+ ✓ tests/server/authorization-matrix.test.js > DELETE /api/projects/:id 10ms
+ ✓ tests/server/authorization-matrix.test.js > DELETE /api/account/consents/:recipient 18ms
+ ✓ tests/server/authorization-matrix.test.js > DELETE /api/account (each caller can delete only their own) 50ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > 8-bit PCM keeps sample values, channels and rate 4ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > 16-bit PCM keeps sample values, channels and rate 1ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > 24-bit PCM keeps sample values, channels and rate 0ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > 32-bit PCM keeps sample values, channels and rate 1ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > 32-bit float keeps sample values, channels and rate 1ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > 64-bit float keeps sample values, channels and rate 0ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > extensible 24-bit PCM keeps sample values, channels and rate 1ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > extensible 32-bit float keeps sample values, channels and rate 0ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > a 96 kHz file is decoded at 96 kHz, not at a playback rate 1ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > chunks before fmt (such as LIST) are skipped and padding is respected 0ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > the project fixture decodes to its known tone 25ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > the file bytes are not changed by decoding 7ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > the default fixture is byte-identical to the original LAS-TC002 tone 7ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > too short fails with a clear message 1ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > not RIFF fails with a clear message 0ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > compressed (ADPCM) fails with a clear message 0ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > 12-bit PCM fails with a clear message 0ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > inconsistent block size fails with a clear message 0ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > data larger than the file fails with a clear message 0ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > partial frame fails with a clear message 0ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > no data chunk fails with a clear message 0ms
+ ✓ tests/unit/wav-decode.test.js > LAS-26 WAV decoding at the source sample rate > sample rate 4 kHz fails with a clear message 0ms
+ ✓ tests/unit/presets.test.js > preset files > save → load restores the complete preset, including independent L/R bands and the chain order 6ms
+ ✓ tests/unit/presets.test.js > preset files > an LAS-28 settings file (mps-chain v1) is migrated into a preset, with Space off (LAS-64) 5ms
+ ✓ tests/unit/presets.test.js > preset files > a current settings file (mps-chain v2, with Space) becomes a preset unchanged 1ms
+ ✓ tests/unit/presets.test.js > preset files > newer, unknown, broken and invalid files are refused with a reason 2ms
+ ✓ tests/unit/presets.test.js > preferences > validated against their bounds and version 2ms
+ ✓ tests/unit/presets.test.js > preferences > reference targets and preference adjustments stay separate and either can be switched off 5ms
+ ✓ tests/unit/audio-engine.test.js > pause preserves the offset, stop resets it, and dispose closes the context 8ms
+ ✓ tests/unit/audio-engine.test.js > decode failure preserves the previously loaded track 3ms
+ ✓ tests/unit/audio-engine.test.js > natural end disconnects the source and permits playback from the start 1ms
+ ✓ tests/unit/audio-engine.test.js > unsupported names, oversized files and invalid headers are rejected 1ms
+ ✓ tests/unit/audio-engine.test.js > a newer import wins over a slower earlier one 55ms
+ ✓ tests/unit/audio-engine.test.js > disposing during an import discards it without creating an audio context 1ms
+ ✓ tests/unit/audio-engine.test.js > replacing a playing track stops and disconnects its source before the next play 2ms
+ ✓ tests/unit/audio-engine.test.js > 250 MiB (262,144,000 bytes) is the largest accepted file size, for tracks and stems 3ms
+ ✓ tests/unit/audio-engine.test.js > LAS-71: the size message names the file size and the limit in MiB 1ms
+ ✓ tests/unit/audio-engine.test.js > LAS-71: a read or memory failure during replacement keeps the previous track and explains what to do 9ms
+ ✓ tests/unit/audio-engine.test.js > files without a RIFF/WAVE header are rejected before decoding; the extension is case-insensitive 2ms
+ ✓ tests/unit/audio-engine.test.js > a failed first import leaves nothing to play 1ms
+ ✓ tests/unit/audio-engine.test.js > position follows the audio clock, freezes on pause and resets on stop and natural end 1ms
+ ✓ tests/unit/audio-engine.test.js > a second Play while the first is starting does not add a source 1ms
+ ✓ tests/unit/audio-engine.test.js > stop, pause or a new track while the context resumes cancels the start 2ms
+ ✓ tests/unit/audio-engine.test.js > a failed resume can be retried 1ms
+ ✓ tests/unit/audio-engine.test.js > unload stops playback, forgets the track and keeps the engine for the next import 1ms
+ ✓ tests/unit/project.test.js > LAS-69 project files > save → open round trip keeps every value; the text is stable 7ms
+ ✓ tests/unit/project.test.js > LAS-69 project files > older chain settings inside a project are migrated (Space off); newer, corrupt and foreign files are refused 8ms
+ ✓ tests/unit/project.test.js > LAS-69 project files > names are cleaned for display and file names 3ms
+ ✓ tests/unit/project.test.js > LAS-69 project files > the "unsaved changes" key changes with settings, media, listening and layout, not with time 1ms
+ ✓ tests/unit/project.test.js > LAS-69 project files > replacing the track with another file of the same name and size is an unsaved change; a verified relink is not 1ms
+ ✓ tests/unit/project.test.js > LAS-69 project files > SHA-256 of a file is computed locally (known vector) 4ms
+ ✓ tests/unit/audio-engine.test.js > unload cancels an import in progress and a start waiting for the context 52ms
+ ✓ tests/unit/audio-engine.test.js > a valid header is accepted whatever bytes its RIFF size field contains 1ms
+ ✓ tests/unit/audio-engine.test.js > playback feeds both output paths; one stage is reused until the channel count changes 1ms
+ ✓ tests/unit/audio-engine.test.js > chain settings, listening choice and loudness match reach the stage, also one built later 1ms
+ ✓ tests/unit/audio-engine.test.js > meters from the stage reach every listener until it unsubscribes 1ms
+ ✓ tests/unit/module-presets.test.js > a section preset round-trips its module and changes nothing else 8ms
+ ✓ tests/unit/module-presets.test.js > wrong module, whole-chain files, projects, invalid and newer presets are refused with a reason 4ms
+ ✓ tests/unit/audio-engine.test.js > a stage built for a superseded import is disposed; a stage failure is reported clearly 61ms
+ ✓ tests/unit/audio-engine.test.js > files with more than two channels get a stereo output stage (played as a downmix) 2ms
+ ✓ tests/unit/audio-engine.test.js > the comparison monitor loops both sections, replaces playback and never touches the chain settings 4ms
+ ✓ tests/unit/audio-engine.test.js > play, stop, a new import and removal each end the comparison monitor 2ms
+ ✓ tests/unit/audio-engine.test.js > a comparison cancelled while the reference decodes never starts, and a bad reference is refused 1ms
+ ✓ tests/unit/audio-engine.test.js > LAS-32: the monitor takes new matching gains after the previewed proposal was measured 1ms
+ ✓ tests/unit/audio-engine.test.js > LAS-34: stems get their own stereo stage, follow the chain settings and the listening switch, and take turns with the single track 28ms
+ ✓ tests/unit/audio-engine.test.js > LAS-34: a stem that is not a decodable WAV is refused with a reason 9ms
+ ✓ tests/unit/audio-engine.test.js > LAS-35: each stem gets its own chain, bypassed and sized to its channels; new settings reach its live node 10ms
+ ✓ tests/unit/audio-engine.test.js > LAS-68: one monitor bus is made with the context; every output stage plays into it 1ms
+ ✓ tests/unit/audio-engine.test.js > LAS-68: the level is clamped to mute…0 dB, kept through transport, unload and replacement, and never sent with the chain settings 1ms
+ ✓ tests/unit/audio-engine.test.js > LAS-67: seek while playing restarts the single source at the new place; while paused it cues the next Play 6ms
+ ✓ tests/unit/audio-engine.test.js > LAS-67: seeking to the end clamps; Play from the end starts again at 0; an invalid time seeks to 0 1ms
+ ✓ tests/unit/monitor-bus.test.js > gain law: 0 dB is unity, −6.02 dB halves, −∞ is silence; requests are clamped to mute…0 dB 3ms
+ ✓ tests/unit/monitor-bus.test.js > routing: master gain → speakers, → splitter → left/right analysers, → spectrum; mono is spread to both sides 4ms
+ ✓ tests/unit/monitor-bus.test.js > levels: sample peak, RMS and clipping per channel, after the master gain 4ms
+ ✓ tests/unit/stem-session-file.test.js > a stem session round-trips with every strip setting and chain 5ms
+ ✓ tests/unit/stem-session-file.test.js > recall applies only to stems with the same checksum; the rest are reported 1ms
+ ✓ tests/unit/stem-session-file.test.js > newer, foreign, broken and out-of-range files are refused with a reason 2ms
+
+ Test Files  26 passed (26)
+      Tests  313 passed (313)
+   Start at  23:59:08
+   Duration  52.63s (tests 98%, import 2%)
+
+UNIT_EXIT=0

@@ -1,0 +1,56 @@
+
+ RUN  v5.0.5 /home/user/MPS-Audio-Studio-delivery
+
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > the defaults are valid and survive a serialise/parse round trip unchanged 4ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > every band keeps its own frequency, gain, Q and type in the serialised text 1ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > not JSON is refused with a clear message 1ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > another file type is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > a newer version is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > an unknown old version is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > another processing order is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > 23 bands is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > gain +19 dB is refused with a clear message 1ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > Q 0.1 is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > 10 Hz is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > an unknown band type is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > ratio 30 is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > attack as text is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > ceiling 0 dBTP is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > a missing limiter is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > bands above 0.45 × sample rate run at that limit and are reported 1ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > Link edits both channels; independent edits one; switching to Link copies left to right 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > every band type is stable across the whole parameter range at 44.1, 48 and 96 kHz 14ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > the measured response of each band type equals its transfer function at 44100 Hz 167ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > the measured response of each band type equals its transfer function at 48000 Hz 59ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > the measured response of each band type equals its transfer function at 96000 Hz 60ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > a bell reaches its gain at its centre; a 0.707 high-pass is 3 dB down at its corner 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > a left-channel band changes only the left channel in independent mode, both in Link mode 308ms
+ ✓ tests/unit/chain.test.js > LAS-27 compressor > static curve: hard knee, soft knee and RMS detector follow the gain computer 463ms
+ ✓ tests/unit/chain.test.js > LAS-27 compressor > attack and release: 63 % of a level step after the set times 52ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for noise driven 12 dB over full scale at 44100 Hz 201ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for a 0 dBTP intersample peak (fs/4 at 45°) at 44100 Hz 80ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for bursts over silence at 44100 Hz 53ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for noise driven 12 dB over full scale at 48000 Hz 120ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for a 0 dBTP intersample peak (fs/4 at 45°) at 48000 Hz 53ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for bursts over silence at 48000 Hz 54ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for noise driven 12 dB over full scale at 96000 Hz 241ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for a 0 dBTP intersample peak (fs/4 at 45°) at 96000 Hz 109ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for bursts over silence at 96000 Hz 120ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > latency: the delay is look-ahead + 12 samples, compensated in offline renders 5ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > audio under the ceiling passes unchanged; input gain is applied before limiting 159ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > release: gain recovers with the set time after a burst ends 48ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > with every processor bypassed the render is the input, sample for sample 300ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > neutral enabled settings (flat EQ, compressor under threshold, limiter under ceiling) are transparent 71ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > every enabled processor changes a known signal 181ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > the same settings render the same output for any block size, and after a reload 1060ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > live parameter changes ramp smoothly and land on the same sample for any block size 280ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > switching a band, its type and a processor on or off cross-fades without a click 108ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > non-finite input samples become silence; the output stays finite and is counted 49ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > the input is never modified; mono renders with the left/linked bands 464ms
+
+ Test Files  1 passed (1)
+      Tests  46 passed (46)
+   Start at  23:19:01
+   Duration  5.05s (tests 99%, import 1%)
+
+exit 0

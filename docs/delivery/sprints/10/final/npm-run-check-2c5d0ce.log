@@ -1,0 +1,189 @@
+commit 2c5d0ceda20e5cb2ffe527386420f1e35f675f3c
+started 2026-11-02T23:49:03Z
+
+> mps-audio-studio@0.1.0 check
+> npm run lint && npm run test:unit && npm run build && npm run test:e2e
+
+
+> mps-audio-studio@0.1.0 lint
+> eslint .
+
+
+> mps-audio-studio@0.1.0 test:unit
+> vitest run
+
+
+ RUN  v5.0.5 /home/user/MPS-Audio-Studio
+
+(node:11149) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11187) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11198) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11216) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11227) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11238) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11256) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11263) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11278) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ Test Files  26 passed (26)
+      Tests  313 passed (313)
+   Start at  23:49:12
+   Duration  54.48s (tests 98%, import 2%)
+
+
+> mps-audio-studio@0.1.0 build
+> vite build
+
+vite v8.3.4 building client environment for production...
+transforming...
+✓ 67 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                            0.48 kB │ gzip:   0.30 kB
+dist/assets/analysis.worker-BHxm-sti.js   10.44 kB
+dist/assets/chain.worklet-B0D8WvHZ.js     14.86 kB
+dist/assets/render.worker-6irCAED-.js     47.78 kB
+dist/assets/index-DMwJAGP8.css            31.87 kB │ gzip:   7.68 kB
+dist/assets/index-BvSBM0-E.js            418.12 kB │ gzip: 129.67 kB
+
+✓ built in 1.60s
+
+> mps-audio-studio@0.1.0 test:e2e
+> playwright test
+
+Testing the app served from /home/user/MPS-Audio-Studio (pid 11432) at http://127.0.0.1:5173, accounts at http://127.0.0.1:8788
+
+Running 119 tests using 2 workers
+
+  ✓    1 [chromium] › tests/e2e/account.spec.js:8:1 › LAS-21: register, verify from the email link, sign in and sign out (2.4s)
+  ✓    3 [chromium] › tests/e2e/account.spec.js:35:1 › LAS-21: wrong password and unverified email are refused without opening a session (2.6s)
+  ✓    4 [chromium] › tests/e2e/account.spec.js:69:1 › LAS-21: without the account server the studio still plays and says accounts are unavailable (2.1s)
+  ✓    2 [chromium] › tests/e2e/compare.spec.js:58:1 › LAS-31: compare a mix section with a local reference, listen level-matched, no settings change (8.1s)
+  ✓    5 [chromium] › tests/e2e/library.spec.js:31:1 › LAS-23: save the current track to the private library, download it unchanged and delete it (2.6s)
+  ✓    7 [chromium] › tests/e2e/library.spec.js:52:1 › LAS-23: another account cannot see or reach the first account's files (4.4s)
+  ✓    6 [chromium] › tests/e2e/compare.spec.js:113:1 › LAS-31: mono, unequal, short and silent sections give honest outcomes (7.8s)
+  ✓    8 [chromium] › tests/e2e/library.spec.js:71:1 › LAS-23/LAS-22: saving after the session ended shows that, never a false success (2.1s)
+  ✓   10 [chromium] › tests/e2e/presets.spec.js:74:1 › LAS-33: save a customised chain as a preset, reload, apply it exactly, rename, export and delete (4.5s)
+  ✓   11 [chromium] › tests/e2e/presets.spec.js:130:1 › LAS-33: imported files are migrated or refused with a reason, without touching the current settings (2.4s)
+  ✓    9 [chromium] › tests/e2e/compare.spec.js:173:1 › LAS-31: saved references use their stored measurements, switching them changes no settings, a mismatched file is refused (12.4s)
+  ✓   13 [chromium] › tests/e2e/compare.spec.js:206:1 › LAS-31: the comparison fits 360×780 and 1440×900; the table scrolls inside its own region (4.4s)
+  ✓   14 [chromium] › tests/e2e/privacy.spec.js:29:1 › LAS-24: Cancel sends nothing; Allow sends once to the named recipient; permission can be withdrawn (2.6s)
+  ✓   12 [chromium] › tests/e2e/presets.spec.js:157:1 › LAS-33: preferences stay apart from reference targets, either can be reset, decisions are remembered only on request, and a second account sees nothing (13.8s)
+  ✓   15 [chromium] › tests/e2e/privacy.spec.js:59:1 › LAS-24: deleting the account needs the password and removes the library (3.1s)
+  ✓   16 [chromium] › tests/e2e/recovery.spec.js:13:1 › LAS-22: reset a forgotten password from the email link; other sessions are signed out (4.0s)
+  ✓   18 [chromium] › tests/e2e/recovery.spec.js:52:1 › LAS-22: used and forged reset links are refused with a way to ask again (1.9s)
+  ✓   17 [chromium] › tests/e2e/references.spec.js:41:1 › LAS-30: measure a reference segment, save it privately, reanalyse it reproducibly and delete it (4.5s)
+  ✓   20 [chromium] › tests/e2e/references.spec.js:67:1 › LAS-30: without an account measuring works and saving asks to sign in (2.6s)
+  ✓   19 [chromium] › tests/e2e/recovery.spec.js:77:1 › LAS-22: repeated wrong passwords are throttled, for unknown addresses too (4.3s)
+  ✓   21 [chromium] › tests/e2e/references.spec.js:79:1 › LAS-30: short, outside and silent segments are refused clearly (2.0s)
+  ✓   22 [chromium] › tests/e2e/references.spec.js:94:1 › LAS-30: another account does not see the first account's references (4.9s)
+  ✓   23 [chromium] › tests/e2e/analysis.spec.js:29:1 › LAS-26: a -23 dBFS 1 kHz stereo tone reads -23.0 LUFS with labelled peaks; repeatable, file unchanged (5.0s)
+  ✓   24 [chromium] › tests/e2e/references.spec.js:117:1 › LAS-30: the reference file picker stays inside the dialog at 360 px (1.2s)
+  ✓   26 [chromium] › tests/e2e/chain-parity.spec.js:47:3 › LAS-27: worklet preview equals the offline render (stereo, 48000 Hz) (1.6s)
+  ✓   27 [chromium] › tests/e2e/chain-parity.spec.js:47:3 › LAS-27: worklet preview equals the offline render (stereo, 44100 Hz) (1.5s)
+  ✓   28 [chromium] › tests/e2e/chain-parity.spec.js:47:3 › LAS-27: worklet preview equals the offline render (mono, 96000 Hz) (1.6s)
+  ✓   29 [chromium] › tests/e2e/chain-parity.spec.js:58:1 › LAS-27: the worklet applies valid settings, refuses invalid ones and reports clamped bands (1.3s)
+  ✓   30 [chromium] › tests/e2e/editor-windows.spec.js:35:1 › LAS-62: EQ, Dynamics and Limiter stay open together; opening an open editor focuses it; edits reach the right processor (7.5s)
+  ✓   25 [chromium] › tests/e2e/analysis.spec.js:68:1 › LAS-26: a long analysis runs off the main thread, can be cancelled, retried and left running (19.4s)
+  ✓   32 [chromium] › tests/e2e/analysis.spec.js:109:1 › LAS-26: replacing the track during analysis never shows the old file's report (4.2s)
+  ✓   31 [chromium] › tests/e2e/editor-windows.spec.js:89:1 › LAS-61: windows move by their title bar while playing, come to the front when clicked, and keep their place when reopened (9.6s)
+  ✓   33 [chromium] › tests/e2e/analysis.spec.js:132:1 › LAS-26: unsupported audio fails clearly and the session keeps working (2.4s)
+  ✓   35 [chromium] › tests/e2e/analysis.spec.js:146:1 › LAS-26: the Analyze button fits the Tracks heading from 320 px wide (1.8s)
+  ✓   34 [chromium] › tests/e2e/editor-windows.spec.js:137:1 › LAS-61: keyboard positioning, Escape on the focused window, Reset window layout and resize recovery (5.3s)
+  ✓   36 [chromium] › tests/e2e/help.spec.js:20:1 › LAS-70: hovering the ⓘ opens after 3 s; leaving earlier cancels; a click opens at once; one popover at a time (2.2s)
+  ✓   38 [chromium] › tests/e2e/help.spec.js:60:1 › LAS-70: keyboard: Enter opens, Tab reaches the link, Escape closes and returns focus; screen-reader names (1.9s)
+  ✓   37 [chromium] › tests/e2e/editor-windows.spec.js:185:1 › LAS-61/62: on a phone-sized screen every open window keeps its title and close button reachable; the transport stays usable (3.9s)
+  ✓   39 [chromium] › tests/e2e/help.spec.js:82:1 › LAS-70: using a help icon never presses, toggles or moves the control next to it (3.7s)
+  ✓   40 [chromium] › tests/e2e/import-errors.spec.js:12:1 › TC-003: unsupported or invalid files show a recoverable error (2.2s)
+  ✓   41 [chromium] › tests/e2e/help.spec.js:112:1 › LAS-70: "More about" opens the in-app help at that function; playback continues; closing returns to the icon (4.5s)
+  ✓   42 [chromium] › tests/e2e/import-lifecycle.spec.js:7:1 › LAS-8: reimport, failed replacement and retry leave one audio source (5.2s)
+  ✓   44 [chromium] › tests/e2e/import-lifecycle.spec.js:45:1 › LAS-8: track information comes from the decoded file (1.6s)
+  ✓   45 [chromium] › tests/e2e/import-lifecycle.spec.js:62:1 › LAS-8: a 5-second mono WAV imports (size bytes that look like text) (1.6s)
+  ✓   43 [chromium] › tests/e2e/help.spec.js:133:1 › LAS-70: every help entry has a real anchor in the help view; the studio controls listed in the inventory have their icon (6.1s)
+  ✓   46 [chromium] › tests/e2e/import-valid-wav.spec.js:6:1 › TC-002 (LAS-57): a valid WAV file is imported successfully (2.7s)
+  ✓   47 [chromium] › tests/e2e/help.spec.js:164:1 › LAS-70: the popover stays inside a phone viewport and above editor windows; a pending hover is cancelled when its editor closes (2.2s)
+  ✓   48 [chromium] › tests/e2e/LAS48-coverage.spec.js:20:3 › LAS48-TC-001..004, 007: proposed QA matrix, empty (9.5s)
+  ✓   50 [chromium] › tests/e2e/LAS48-coverage.spec.js:20:3 › LAS48-TC-001..004, 007: proposed QA matrix, WAV-loaded (15.3s)
+  ✓   51 [chromium] › tests/e2e/LAS48-coverage.spec.js:43:3 › LAS48-TC-003: width-only resize at height 900 (12.7s)
+  ✓   52 [chromium] › tests/e2e/LAS48-coverage.spec.js:43:3 › LAS48-TC-004: height-only resize at width 1280, then 1024x768 and 800x600 (10.9s)
+  ✓   53 [chromium] › tests/e2e/LAS48-coverage.spec.js:70:5 › zoom-equivalent 125% › LAS48-TC-010/021 (emulated): layout at 125% zoom-equivalent sizes, DPR 1.25 (4.3s)
+  ✓   54 [chromium] › tests/e2e/LAS48-coverage.spec.js:70:5 › zoom-equivalent 200% › LAS48-TC-010/021 (emulated): layout at 200% zoom-equivalent sizes, DPR 2 (4.7s)
+  ✓   55 [chromium] › tests/e2e/LAS48-coverage.spec.js:86:1 › LAS48-TC-012/013/014: playback, paused position and stop survive resizing (6.3s)
+  ✓   56 [chromium] › tests/e2e/LAS48-coverage.spec.js:134:1 › LAS48-TC-011: keyboard focus stays visible on its control across resizes (2.5s)
+  ✓   49 [chromium] › tests/e2e/LAS51-layout.spec.js:256:3 › LAS-51: empty layout survives viewport changes (1.5m)
+  ✓   58 [chromium] › tests/e2e/LAS51-layout.spec.js:267:1 › LAS-51: long file name keeps essential controls visible (48.5s)
+  ✓   57 [chromium] › tests/e2e/LAS51-layout.spec.js:256:3 › LAS-51: WAV-loaded layout survives viewport changes (1.7m)
+  ✓   59 [chromium] › tests/e2e/LAS51-layout.spec.js:277:1 › LAS-51: load error keeps essential controls visible (48.6s)
+  ✓   60 [chromium] › tests/e2e/LAS51-layout.spec.js:298:3 › LAS-51: essential controls visible before scrolling, height 450-1080 at width 761 (29.4s)
+  ✓   61 [chromium] › tests/e2e/LAS51-layout.spec.js:298:3 › LAS-51: essential controls visible before scrolling, height 450-1080 at width 1024 (27.6s)
+  ✓   62 [chromium] › tests/e2e/LAS51-layout.spec.js:298:3 › LAS-51: essential controls visible before scrolling, height 450-1080 at width 1440 (27.3s)
+  ✓   64 [chromium] › tests/e2e/LAS51-layout.spec.js:310:1 › LAS-51: playback state survives viewport changes (2.6s)
+  ✓   63 [chromium] › tests/e2e/LAS51-layout.spec.js:298:3 › LAS-51: essential controls visible before scrolling, width 761-1440 at height 450 (11.1s)
+  ✓   65 [chromium] › tests/e2e/LAS51-responsive.spec.js:3:1 › LAS-51: Import WAV stays fully visible after resizing to 785x520 (1.4s)
+  ✓   66 [chromium] › tests/e2e/local-only.spec.js:7:1 › LAS-20: local-only workflow sends no audio and no data to any server (2.5s)
+  ✓   67 [chromium] › tests/e2e/master-level.spec.js:52:1 › LAS-68: the fader explains why it is disabled, then sets 0 dB, −6 dB and mute on what reaches the speakers, in both A/B paths, without interrupting playback (7.0s)
+  ✓   68 [chromium] › tests/e2e/mastering-controls.spec.js:49:1 › LAS-28: an EQ edit reaches the preview chain and the exported WAV; undo and redo restore it (6.1s)
+  ✓   69 [chromium] › tests/e2e/master-level.spec.js:105:1 › LAS-68: left-only, right-only and mono files are attenuated equally on the channels that carry sound (6.0s)
+  ✓   70 [chromium] › tests/e2e/mastering-controls.spec.js:97:1 › LAS-28: Original/Processed keeps the position and the single source; loudness matching turns the louder one down (8.5s)
+  ✓   71 [chromium] › tests/e2e/master-level.spec.js:126:1 › LAS-68: the level is kept through pause, stop, editors, replacement, unload and reload, and never changes the exported WAV (14.1s)
+  ✓   72 [chromium] › tests/e2e/mastering-controls.spec.js:129:1 › LAS-28: export can be cancelled; 16-bit dithered mono export keeps format and length (11.7s)
+  ✓   73 [chromium] › tests/e2e/master-level.spec.js:181:1 › LAS-68: one Master Level for the stem mix too, also reachable inside the stem session (3.0s)
+  ✓   75 [chromium] › tests/e2e/mixer.spec.js:4:1 › TC-001: mixer loads and displays its main UI elements (1.8s)
+  ✓   74 [chromium] › tests/e2e/mastering-controls.spec.js:148:1 › LAS-28: EQ points follow the pointer and the keyboard; a whole drag is one undo step (5.9s)
+  ✓   76 [chromium] › tests/e2e/pause-toggle.spec.js:31:1 › LAS-11: Pause toggles, and Play also resumes from the paused position (5.4s)
+  ✓   77 [chromium] › tests/e2e/mastering-controls.spec.js:195:1 › LAS-28: settings files and snapshots round-trip; an invalid file changes nothing (3.4s)
+  ✓   78 [chromium] › tests/e2e/pause-toggle.spec.js:77:1 › LAS-11: bursts of transport clicks never play two sources at once (3.7s)
+  ✓   79 [chromium] › tests/e2e/mastering-controls.spec.js:226:1 › LAS-28: editors and dialogs fit small and regression-size screens (5.6s)
+  ✓   80 [chromium] › tests/e2e/playback.spec.js:4:1 › WAV playback and recovery after a replacement cannot decode (3.6s)
+  ✓   81 [chromium] › tests/e2e/mastering-controls.spec.js:247:1 › LAS-28: the live spectrum measures the audio being played (2.5s)
+  ✓   83 [chromium] › tests/e2e/previews.spec.js:33:1 › LAS-63: without playback, cards show on/bypassed and edited state, and the configured shape follows edits, undo and presets (4.6s)
+  ✓   82 [chromium] › tests/e2e/player.spec.js:42:1 › LAS-67: FF/RWD skip 5 s, clamp at both ends, work while paused and playing, and keep one source (6.5s)
+  ✓   84 [chromium] › tests/e2e/previews.spec.js:86:1 › LAS-63: with reduced motion the shape changes at once, without intermediate frames (2.6s)
+  ✓   86 [chromium] › tests/e2e/previews.spec.js:97:1 › LAS-63: gain-reduction meters are idle while stopped or paused and follow the real signal while playing (4.6s)
+  ✓   85 [chromium] › tests/e2e/player.spec.js:86:1 › LAS-67: holding FF seeks 5 s every 200 ms after 400 ms; it stops at the end; Play from the end restarts at 0 (8.9s)
+  ✓   87 [chromium] › tests/e2e/previews.spec.js:117:1 › LAS-63: with every card edited, a 360 px phone still has no sideways scroll (2.5s)
+  ✓   88 [chromium] › tests/e2e/player.spec.js:128:1 › LAS-67: the timeline seeks with the keyboard and the pointer, while playing and paused (4.3s)
+  ✓   89 [chromium] › tests/e2e/project.spec.js:62:1 › LAS-60: New project asks for a name, validates it, Cancel keeps the session, and work in progress is protected (4.2s)
+  ✓   91 [chromium] › tests/e2e/project.spec.js:117:1 › LAS-69: Save, Save again, Save As, reopen after a restart with relink: settings, stems, layout and media identity come back (11.1s)
+  ✓   90 [chromium] › tests/e2e/player.spec.js:155:1 › LAS-67: needles and bars follow the real output: left-only, right-only, mono, Master Level, silence and pause (16.0s)
+  ✓   92 [chromium] › tests/e2e/project.spec.js:230:1 › LAS-69: the same WAV on two stems is relinked as two strips; replacing the track with a same-name, same-size file is unsaved (6.2s)
+  ✓   93 [chromium] › tests/e2e/player.spec.js:193:1 › LAS-67: the clip indicator lights only when full scale reaches the speakers, and resets on click (4.7s)
+  ✓   94 [chromium] › tests/e2e/project.spec.js:282:1 › LAS-69: cancelled and failed saves keep the session and the last saved file; edits made while saving stay unsaved; bad files are refused (5.1s)
+  ✓   96 [chromium] › tests/e2e/project.spec.js:331:1 › LAS-69: without the File System Access API, Save downloads a project file and Open uses the file picker (3.2s)
+  ✓   97 [chromium] › tests/e2e/project.spec.js:354:1 › LAS-69: section presets save and load one module only, with undo; whole files and other modules are refused (4.2s)
+  ✓   95 [chromium] › tests/e2e/player.spec.js:213:1 › LAS-67: the spectrum draws the real output while playing and says so when there is no signal; playback stays smooth (9.6s)
+  ✓   98 [chromium] › tests/e2e/project.spec.js:391:1 › LAS-69: leaving the page with unsaved changes asks first (1.9s)
+  ✓   99 [chromium] › tests/e2e/player.spec.js:245:1 › LAS-67: replacing and removing the track during rapid seeking stays safe (6.3s)
+  ✓  101 [chromium] › tests/e2e/player.spec.js:266:1 › LAS-67: on a 360 px phone the player fits without sideways scrolling and every control is reachable (3.5s)
+  ✓  102 [chromium] › tests/e2e/responsive.spec.js:3:1 › LAS48-TC-001: Initial empty workspace fits desktop viewports (1.3s)
+  ✓  103 [chromium] › tests/e2e/shell-smoke.spec.js:14:3 › LAS-7: studio shell opens without console errors at 1280x720 (1.6s)
+  ✓  104 [chromium] › tests/e2e/shell-smoke.spec.js:14:3 › LAS-7: studio shell opens without console errors at 1440x900 (1.6s)
+  ✓  105 [chromium] › tests/e2e/shell-smoke.spec.js:14:3 › LAS-7: studio shell opens without console errors at 761x450 (1.5s)
+  ✓  106 [chromium] › tests/e2e/space.spec.js:32:1 › LAS-64: the Space editor switches the reverb on, applies presets and values to the running chain, and undo restores them (3.7s)
+  ✓  107 [chromium] › tests/e2e/space.spec.js:66:1 › LAS-64: with Space on, reverb is measurable at the speakers after the tone stops; with Space off the silence stays silent (9.0s)
+  ✓  108 [chromium] › tests/e2e/space.spec.js:102:1 › LAS-64: the export equals the offline chain with Space, with the tail included or cut (5.5s)
+  ✓  100 [chromium] › tests/e2e/proposal.spec.js:39:1 › LAS-32: propose, preview at a strength, check, reject, apply and undo (33.1s)
+  ✓  109 [chromium] › tests/e2e/stem-render.spec.js:20:1 › LAS-35: live stem playback through per-stem chains equals the offline render (latency compensated) (2.6s)
+  ✓  110 [chromium] › tests/e2e/stems.spec.js:6:1 › LAS-34: stems stay sample-aligned through repeated pause, resume and seek; summing and pan law as documented (1.4s)
+  ✓  112 [chromium] › tests/e2e/stems.spec.js:52:1 › LAS-34: gain, pan, mute, solo and offsets change only the intended stem; the sum is exact (1.6s)
+  ✓  111 [chromium] › tests/e2e/stem-render.spec.js:73:1 › LAS-35: per-stem chains, stem master render, exact downloads, session recall and refusal of mixed rates (8.3s)
+  ✓  113 [chromium] › tests/e2e/stems.spec.js:112:1 › LAS-34: the stem session loads, explains, plays, seeks and mixes; single-track playback is unaffected (10.0s)
+  ✓  114 [chromium] › tests/e2e/transport-position.spec.js:13:1 › LAS-9: elapsed time follows the engine through pause, resume, stop and natural end (6.9s)
+  ✓  115 [chromium] › tests/e2e/unload-track.spec.js:39:1 › LAS-12: Remove track empties the session from Playing, Paused and Stopped (6.9s)
+  ✓  117 [chromium] › tests/e2e/unload-track.spec.js:67:1 › LAS-12: removing during a replacement import keeps the session empty (2.3s)
+  ✓  118 [chromium] › tests/e2e/unload-track.spec.js:85:1 › LAS-12: the same and a different WAV import and play after removal; the file is unchanged (5.1s)
+  ✓  116 [chromium] › tests/e2e/upload-limit.spec.js:16:1 › LAS-71: a WAV of exactly 250 MiB imports and plays; 250 MiB + 1 byte is refused and the track is kept (13.2s)
+  ✓  119 [chromium] › tests/e2e/upload-limit.spec.js:57:1 › LAS-71: stems and local references use the same 250 MiB limit (2.0s)
+
+  119 passed (8.2m)
+CHECK_EXIT=0
+finished 2026-11-02T23:58:25Z

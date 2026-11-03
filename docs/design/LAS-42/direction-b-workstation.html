@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Direction B — Focused workstation (LAS-42 mockup)</title>
+<style>
+  /* Static design mockup for review. Nothing here is functional; numbers are placeholders, not measurements. */
+  :root { --bg: #f4f5f7; --surface: #ffffff; --line: #d9dde3; --text: #16191d; --muted: #59606a; --accent: #2f5bea; --accent-soft: #e6ecfd; --ok: #1d7f4e; --warn: #a15c00; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.4 -apple-system, "Segoe UI", sans-serif; }
+  .app { height: 100vh; display: grid; grid-template-columns: 220px 1fr 340px; grid-template-rows: 56px 1fr 64px; }
+  .note { position: fixed; left: 12px; bottom: 74px; background: #16191dd9; color: #fff; font-size: 12px; padding: 6px 10px; border-radius: 6px; }
+  .top { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; padding: 0 18px; background: var(--surface); border-bottom: 1px solid var(--line); }
+  .top .mark { font-weight: 800; letter-spacing: 1px; }
+  .crumbs { color: var(--muted); }
+  .crumbs strong { color: var(--text); }
+  .saved { margin-left: auto; color: var(--ok); font-size: 13px; }
+  .account { border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 13px; background: var(--surface); }
+  nav { background: var(--surface); border-right: 1px solid var(--line); padding: 14px 10px; display: grid; align-content: start; gap: 4px; }
+  nav a { display: block; padding: 9px 12px; border-radius: 8px; color: var(--text); text-decoration: none; }
+  nav a.on { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  nav h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin: 14px 12px 4px; }
+  main { padding: 18px; display: grid; grid-template-rows: auto auto 1fr; gap: 14px; min-width: 0; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .timeline svg { width: 100%; height: 150px; display: block; }
+  .row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .seg button { border: 0; background: var(--surface); padding: 8px 14px; font: inherit; }
+  .seg button.on { background: var(--accent); color: #fff; }
+  .tabs { display: flex; gap: 6px; }
+  .tabs button { border: 1px solid var(--line); background: var(--surface); padding: 8px 14px; border-radius: 8px; font: inherit; }
+  .tabs button.on { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .tabs .seg button.on { color: #fff; border-color: transparent; }
+  .eq svg { width: 100%; height: 100%; min-height: 220px; display: block; }
+  aside { background: var(--surface); border-left: 1px solid var(--line); padding: 16px; display: grid; align-content: start; gap: 14px; }
+  aside h2 { font-size: 15px; margin: 0; }
+  .field { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; font-size: 14px; }
+  .field input[type=range] { grid-column: 1 / -1; width: 100%; }
+  .value { font: 600 14px ui-monospace, Menlo, monospace; }
+  .meters { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .meters div { border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; font-size: 13px; color: var(--muted); }
+  .meters strong { display: block; font: 700 22px ui-monospace, Menlo, monospace; color: var(--text); }
+  .bar { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; padding: 0 18px; background: var(--surface); border-top: 1px solid var(--line); }
+  .play { width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--accent); color: #fff; font-size: 18px; }
+  .tbtn { height: 36px; padding: 0 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); font: inherit; }
+  .time { font: 600 18px ui-monospace, Menlo, monospace; }
+  .spacer { flex: 1; }
+  .export { height: 40px; padding: 0 18px; border: 0; border-radius: 8px; background: var(--text); color: #fff; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><span class="mark">MPS Audio Studio</span><span class="crumbs">Projects / <strong>Demo song</strong></span><span class="saved">● Saved locally</span><span class="account">Signed in · private library</span></div>
+  <nav aria-label="Workspace (mockup)">
+    <a class="on" href="#">Master</a><a href="#">Mix · stems</a><a href="#">References</a><a href="#">Presets</a><a href="#">Export</a>
+    <h3>Project</h3><a href="#">demo-song.wav</a><a href="#">reference-track.wav</a>
+  </nav>
+  <main>
+    <section class="card timeline">
+      <div class="row" style="justify-content:space-between;margin-bottom:8px"><strong>demo-song.wav · 3:41 · 48 kHz</strong><span class="seg"><button class="on">Processed</button><button>Original</button><button>Reference</button></span></div>
+      <svg viewBox="0 0 1000 150" preserveAspectRatio="none" aria-label="Waveform (mockup)"><rect width="1000" height="150" rx="8" fill="#f0f2f6"/><path d="M0 75 C 60 10, 90 140, 150 75 S 260 10, 320 75 S 420 140, 480 75 S 580 15, 640 75 S 760 135, 820 75 S 930 20, 1000 75" stroke="#2f5bea" stroke-width="58" fill="none" opacity=".22"/><path d="M0 75 C 60 10, 90 140, 150 75 S 260 10, 320 75 S 420 140, 480 75 S 580 15, 640 75 S 760 135, 820 75 S 930 20, 1000 75" stroke="#2f5bea" stroke-width="2" fill="none"/><rect x="300" y="0" width="160" height="150" fill="#2f5bea" opacity=".08"/><line x1="380" y1="0" x2="380" y2="150" stroke="#16191d" stroke-width="2"/></svg>
+    </section>
+    <div class="tabs"><button class="on">EQ</button><button>Dynamics</button><button>Space</button><button>Loudness</button><span class="spacer"></span><span class="seg"><button class="on">Link L/R</button><button>Left</button><button>Right</button></span></div>
+    <section class="card eq"><svg viewBox="0 0 1000 300" preserveAspectRatio="none" aria-label="EQ curve (mockup)"><rect width="1000" height="300" fill="#fbfcfd"/><g stroke="#e3e7ec"><line x1="0" y1="150" x2="1000" y2="150"/><line x1="200" y1="0" x2="200" y2="300"/><line x1="500" y1="0" x2="500" y2="300"/><line x1="800" y1="0" x2="800" y2="300"/></g><path d="M0 150 C 120 150, 150 105, 220 110 S 400 160, 500 155 S 700 175, 760 160 S 900 120, 1000 115" stroke="#2f5bea" stroke-width="3" fill="none"/><g fill="#2f5bea"><circle cx="220" cy="110" r="8"/><circle cx="500" cy="155" r="8"/><circle cx="760" cy="160" r="8"/><circle cx="930" cy="118" r="8"/></g><text x="10" y="290" font-size="16" fill="#59606a">20 Hz</text><text x="930" y="290" font-size="16" fill="#59606a">20 kHz</text></svg></section>
+  </main>
+  <aside>
+    <h2>Band 2 · Bell</h2>
+    <div class="field">Frequency<span class="value">180 Hz</span><input type="range" aria-label="Frequency (mockup)"></div>
+    <div class="field">Gain<span class="value">+1.5 dB</span><input type="range" aria-label="Gain (mockup)"></div>
+    <div class="field">Q<span class="value">0.9</span><input type="range" aria-label="Q (mockup)"></div>
+    <h2>Loudness</h2>
+    <div class="meters"><div>Integrated<strong>−13.8</strong>LUFS</div><div>True peak<strong>−1.1</strong>dBTP</div><div>Range<strong>6.2</strong>LU</div><div>vs reference<strong style="color:var(--warn)">+0.4</strong>LU</div></div>
+    <p style="margin:0;color:var(--muted);font-size:13px">Processing runs on this computer. Nothing is uploaded unless you choose “Save to library”.</p>
+  </aside>
+  <div class="bar"><button class="play">▶</button><button class="tbtn">Ⅱ Pause</button><button class="tbtn">■ Stop</button><span class="time">01:12.4 / 03:41.0</span><button class="tbtn">Loop A–B</button><span class="spacer"></span><button class="tbtn">Undo</button><button class="tbtn">A/B level-matched</button><button class="export">Export WAV…</button></div>
+</div>
+<p class="note">Direction B mockup — not functional; all numbers are placeholders, not measurements.</p>
+</body>
+</html>

@@ -1,0 +1,55 @@
+{
+  "issue": "LAS-33",
+  "applicationCommit": "d490a50fad2e84629605a0cf5b35ca5f7fa5ccee",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (ESLint, Vitest 264/264, Vite build, Playwright 76/76) on the staged tree committed unchanged",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-d490a50fad2e84629605a0cf5b35ca5f7fa5ccee.log", "evidence/html-report-d490a50fad2e84629605a0cf5b35ca5f7fa5ccee.zip"]
+    },
+    {
+      "name": "First npm run check: 1 of 76 failed (LAS-32 test's unscoped output locator after the preferences card was added; fixed by scoping it)",
+      "status": "FAIL",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 1,
+      "evidence": ["evidence/npm-run-check-attempt1-failed.log"]
+    },
+    {
+      "name": "Presets, preferences and decisions server and unit tests (isolation, CSRF, validation, cascades, migration v4 to v5, file migration and refusals)",
+      "status": "PASS",
+      "command": "npx vitest run tests/server/presets.test.js tests/unit/presets.test.js --reporter=verbose",
+      "exitCode": 0,
+      "evidence": ["evidence/vitest-presets-verbose.log"]
+    },
+    {
+      "name": "Presets browser workflows plus LAS-28 mastering controls and LAS-32 proposal (Chromium 141; 360x780 and 1280x720)",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npx playwright test tests/e2e/presets.spec.js tests/e2e/proposal.spec.js tests/e2e/mastering-controls.spec.js --reporter=list",
+      "exitCode": 0,
+      "evidence": ["evidence/playwright-presets.txt", "evidence/screenshots/settings-presets-360x780.png", "evidence/screenshots/settings-presets-1280x720.png", "evidence/screenshots/proposal-preferences-1280x720.png"]
+    },
+    {
+      "name": "Artifact, bundle and log scan after the PUT allowlist follow-up (136 pieces, 0 findings)",
+      "status": "PASS",
+      "command": "npm run scan:artifacts",
+      "exitCode": 0,
+      "evidence": ["evidence/scan-artifacts-65f727828d227cd8103cd18c95126ec77b387f20.json", "evidence/scan-artifacts-before-put-allowlist.json"]
+    },
+    {
+      "name": "Mac/Chrome run with Gennady's own presets",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["manual-qa.md"]
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],
+  "blockers": [],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "feat/LAS-33-presets-preferences"
+}

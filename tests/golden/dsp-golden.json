@@ -1,0 +1,1818 @@
+{
+ "goldenVersion": 2,
+ "fixtureSetVersion": "mps-fixtures-1",
+ "chainSchemaVersion": 2,
+ "analysisVersion": "mps-analysis-1",
+ "limiterOversampling": 8,
+ "node": "v22.23.4",
+ "history": [
+  {
+   "goldenVersion": 1,
+   "date": "2026-10-30",
+   "reason": "Initial golden results (LAS-29): fixtures mps-fixtures-1, chain schema v1 with the 8x limiter detector"
+  },
+  {
+   "goldenVersion": 2,
+   "date": "2026-11-02",
+   "reason": "LAS-64: chain schema v2 adds Space (reverb before the limiter, off by default); all 96 existing renders are byte-identical to golden v1; adds the 'space' preset (Hall) renders"
+  }
+ ],
+ "fixtures": {
+  "silence-stereo@44100": "bbbf3baab8a5dc22f0ccabe9c9e753a0ec5a58713d6eab66ea37813498a1625a",
+  "impulse-mono@44100": "90257a47378f77ce2c4d7f4d61f0d050453dc302e4854195abb6fa7e96c9cffa",
+  "tone-1k-stereo@44100": "fbc882ebe493772ad5ac0c3caa4de7047168b7ce409b5a72a22778c05c4e094c",
+  "tone-100-mono@44100": "8fd5cba5a79faee05767f598f4d9003c92c6da8948c29559419d84bace8c50ce",
+  "tone-10k-stereo@44100": "2fe0b772df62dc12e16d40b4789ad8bac5ad63fbe73893a7ddc12cf5e18805c4",
+  "sweep-mono@44100": "3b8cec101aa8904a4852097ad60ecfb9b5908f04401cdfc9d887ff7106972928",
+  "phase-inverted@44100": "ca60d64cc9b71e62a87b1a12d32efd99a04118be9455f1ed1c36517305bb0967",
+  "phase-quadrature@44100": "17c7f224f4c5e31dd9dcb3077e54e5af61fd3f097e5f7509891abad18404f939",
+  "left-only@44100": "790450950532c23e3f739ee9da7bd80511b8b27cdd67ffe5e14935ec6f7407d4",
+  "transients@44100": "e9da88f7a6f0785a3184acbb875adfcf0c2f6d6b173122e0266401384bd5f262",
+  "programme@44100": "3de967f076706c15451f495eec0156142dde2f097baa081e99f04f5d468d82c1",
+  "programme-hot@44100": "78c8c7850551c9c8e11827a3434da97d6076a54d206f3a50688e6d4006177403",
+  "silence-stereo@48000": "351a8054b23144894668c6a51d5dbba82f56523ef43cc45b6f4d7060a969c31a",
+  "impulse-mono@48000": "a1f615c9ba1b0e0f99df56c1c798bc76bbcd01c327d37dd884a9eb768deff4ac",
+  "tone-1k-stereo@48000": "ce85b1a13c2c280a123f35e9b339f7e01a824fb453f63acd2b21b939e8d3877b",
+  "tone-100-mono@48000": "db68f8b494d0bec270d2e2319e1113ced63cacc6ab1114a9c0b51fdd74170d7c",
+  "tone-10k-stereo@48000": "b6de971a2c4d04b940e0c82b919b30a03a03406179dce0abc37be0600eeb7556",
+  "sweep-mono@48000": "0a73ae22aed3f3c3805f6957814c0717ea4dfe24dbbebd3c2aaf2d291fb5c10a",
+  "phase-inverted@48000": "f4ad024f762e0d927dd248866a9a254aab0120e5f093391974104c7bffe0cbb9",
+  "phase-quadrature@48000": "74ea9235f012cc4ea89d9fc732d8c64a476624be6ed5adefb4e839e4c0913740",
+  "left-only@48000": "e9a2ded68182e0bfb45005d390dfe1aafea2491f883588620efa6680eeb357fe",
+  "transients@48000": "18058f2c337af52984cca371298e06ffe5b9dcf49dc2d32c014a38b1c024ce45",
+  "programme@48000": "23f1dd1c36516c42f6fa69948b2131bc0169d3ec801ab8e41ef75f0bb58d9e47",
+  "programme-hot@48000": "ea43411c58d53c61ddc1f6dd5b4ee9dda30b6c66f03f8bbab5df001ec46c4d1a"
+ },
+ "renders": {
+  "silence-stereo@44100/bypass": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": null,
+   "truePeakDbtp": null,
+   "samplePeakDbfs": null,
+   "rmsDbfs": [
+    null,
+    null
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "31bba6717d9de1925431b5ff544b1f4129215b45a3d85dd7575cd5fa8c16f70f"
+  },
+  "silence-stereo@44100/default": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": null,
+   "truePeakDbtp": null,
+   "samplePeakDbfs": null,
+   "rmsDbfs": [
+    null,
+    null
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "31bba6717d9de1925431b5ff544b1f4129215b45a3d85dd7575cd5fa8c16f70f"
+  },
+  "silence-stereo@44100/master": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": null,
+   "truePeakDbtp": null,
+   "samplePeakDbfs": null,
+   "rmsDbfs": [
+    null,
+    null
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "31bba6717d9de1925431b5ff544b1f4129215b45a3d85dd7575cd5fa8c16f70f"
+  },
+  "silence-stereo@44100/independent": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": null,
+   "truePeakDbtp": null,
+   "samplePeakDbfs": null,
+   "rmsDbfs": [
+    null,
+    null
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "31bba6717d9de1925431b5ff544b1f4129215b45a3d85dd7575cd5fa8c16f70f"
+  },
+  "silence-stereo@44100/space": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": null,
+   "truePeakDbtp": null,
+   "samplePeakDbfs": null,
+   "rmsDbfs": [
+    null,
+    null
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "31bba6717d9de1925431b5ff544b1f4129215b45a3d85dd7575cd5fa8c16f70f"
+  },
+  "impulse-mono@44100/bypass": {
+   "frames": 88200,
+   "channels": 1,
+   "integratedLufs": -45.3629,
+   "truePeakDbtp": -6.0206,
+   "samplePeakDbfs": -6.0206,
+   "rmsDbfs": [
+    -55.4753
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "bf4d1916e83d2dcc927ad387c96c8304c288192603cc4c5e2170c2c4b9232f8e"
+  },
+  "impulse-mono@44100/default": {
+   "frames": 88200,
+   "channels": 1,
+   "integratedLufs": -45.3629,
+   "truePeakDbtp": -6.0206,
+   "samplePeakDbfs": -6.0206,
+   "rmsDbfs": [
+    -55.4753
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "bf4d1916e83d2dcc927ad387c96c8304c288192603cc4c5e2170c2c4b9232f8e"
+  },
+  "impulse-mono@44100/master": {
+   "frames": 88200,
+   "channels": 1,
+   "integratedLufs": -40.0461,
+   "truePeakDbtp": -1,
+   "samplePeakDbfs": -1,
+   "rmsDbfs": [
+    -50.259
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "0259fc590c01003c00916cbd35b2fd6c126a5affaea54587f1fbc7a410679302"
+  },
+  "impulse-mono@44100/independent": {
+   "frames": 88200,
+   "channels": 1,
+   "integratedLufs": -45.1388,
+   "truePeakDbtp": -5.7535,
+   "samplePeakDbfs": -5.7535,
+   "rmsDbfs": [
+    -55.1382
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "446a95055e806fbf52090548016483cb08f08ffd141f310aad66f89060ad40b2"
+  },
+  "impulse-mono@44100/space": {
+   "frames": 88200,
+   "channels": 1,
+   "integratedLufs": -47.4322,
+   "truePeakDbtp": -8.1787,
+   "samplePeakDbfs": -8.1787,
+   "rmsDbfs": [
+    -57.5159
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "e238f14098f5a95124032ef7234f04bfccc35f0584014de38d8414eea509ef4b"
+  },
+  "tone-1k-stereo@44100/bypass": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -20.0065,
+   "truePeakDbtp": -19.9966,
+   "samplePeakDbfs": -20.0001,
+   "rmsDbfs": [
+    -23.065,
+    -23.065
+   ],
+   "correlation": 1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "d79cca2abd04ba1cf3916e1b4bf47cb041363705f5d914148c88a52e065b4210"
+  },
+  "tone-1k-stereo@44100/default": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -20.0065,
+   "truePeakDbtp": -19.9966,
+   "samplePeakDbfs": -20.0001,
+   "rmsDbfs": [
+    -23.065,
+    -23.065
+   ],
+   "correlation": 1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "d79cca2abd04ba1cf3916e1b4bf47cb041363705f5d914148c88a52e065b4210"
+  },
+  "tone-1k-stereo@44100/master": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -14.2785,
+   "truePeakDbtp": -14.2685,
+   "samplePeakDbfs": -14.272,
+   "rmsDbfs": [
+    -17.337,
+    -17.337
+   ],
+   "correlation": 1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "a0f1022d891134be80ce69cfa7f8d3e595587f96ef1ca6a86b6f710e912d65e2"
+  },
+  "tone-1k-stereo@44100/independent": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -18.3779,
+   "truePeakDbtp": -15.9966,
+   "samplePeakDbfs": -16.0001,
+   "rmsDbfs": [
+    -19.065,
+    -27.065
+   ],
+   "correlation": 1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "c4e3c6ec2c2c2f0f82083d6308b25aa496d38a36b3f5fda1c848d21b214f6a8a"
+  },
+  "tone-1k-stereo@44100/space": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -21.7181,
+   "truePeakDbtp": -20.2119,
+   "samplePeakDbfs": -20.2137,
+   "rmsDbfs": [
+    -23.6527,
+    -26.2599
+   ],
+   "correlation": 0.9932,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "a67367d211d02c58a723ab555e7d8a36b070d54706f82e558b2f4fed868edfbc"
+  },
+  "tone-100-mono@44100/bypass": {
+   "frames": 88200,
+   "channels": 1,
+   "integratedLufs": -16.8471,
+   "truePeakDbtp": -12,
+   "samplePeakDbfs": -12.0001,
+   "rmsDbfs": [
+    -15.065
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "b1583600446a46f5272c91b036da4a3dd84713bc14ce3755f07cfdcb3edf9fa7"
+  },
+  "tone-100-mono@44100/default": {
+   "frames": 88200,
+   "channels": 1,
+   "integratedLufs": -16.8471,
+   "truePeakDbtp": -12,
+   "samplePeakDbfs": -12.0001,
+   "rmsDbfs": [
+    -15.065
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "b1583600446a46f5272c91b036da4a3dd84713bc14ce3755f07cfdcb3edf9fa7"
+  },
+  "tone-100-mono@44100/master": {
+   "frames": 88200,
+   "channels": 1,
+   "integratedLufs": -12.3939,
+   "truePeakDbtp": -5.183,
+   "samplePeakDbfs": -5.1832,
+   "rmsDbfs": [
+    -10.5781
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "a86fe79b672ad6912326634b3c7b6ffae11a0d956759afd8b019b27362d00b63"
+  },
+  "tone-100-mono@44100/independent": {
+   "frames": 88200,
+   "channels": 1,
+   "integratedLufs": -16.8054,
+   "truePeakDbtp": -11.9583,
+   "samplePeakDbfs": -11.9583,
+   "rmsDbfs": [
+    -15.0233
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "cdb11c20f8596fe26ce8ead51b6b0632d398b02b638358c66e9eae3a8cd5cef4"
+  },
+  "tone-100-mono@44100/space": {
+   "frames": 88200,
+   "channels": 1,
+   "integratedLufs": -19.1771,
+   "truePeakDbtp": -13.154,
+   "samplePeakDbfs": -13.154,
+   "rmsDbfs": [
+    -17.3673
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "7a96718b7ff71319ba9b64127e42a402987cb2892ce3064035be95736b654229"
+  },
+  "tone-10k-stereo@44100/bypass": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -14.6612,
+   "truePeakDbtp": -17.9989,
+   "samplePeakDbfs": -18.0001,
+   "rmsDbfs": [
+    -21.065,
+    -21.065
+   ],
+   "correlation": 1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "ea64d91218a2afdb3462d3a2ef49b059ab00dd75ac3135f75e18cd53376fd628"
+  },
+  "tone-10k-stereo@44100/default": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -14.6612,
+   "truePeakDbtp": -17.9989,
+   "samplePeakDbfs": -18.0001,
+   "rmsDbfs": [
+    -21.065,
+    -21.065
+   ],
+   "correlation": 1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "ea64d91218a2afdb3462d3a2ef49b059ab00dd75ac3135f75e18cd53376fd628"
+  },
+  "tone-10k-stereo@44100/master": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -6.6265,
+   "truePeakDbtp": -9.704,
+   "samplePeakDbfs": -9.7053,
+   "rmsDbfs": [
+    -13.0266,
+    -13.0266
+   ],
+   "correlation": 1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "52b7fee2efcd3229f0ece612b3305257c080a842690a634503ce7cad0a180362"
+  },
+  "tone-10k-stereo@44100/independent": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -14.6611,
+   "truePeakDbtp": -17.9704,
+   "samplePeakDbfs": -17.9716,
+   "rmsDbfs": [
+    -21.0365,
+    -21.0934
+   ],
+   "correlation": 0.9971,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "c87042469674b561ab52a4472f1b0f777fe4d7d91c7666cbebc1fc22ba952fed"
+  },
+  "tone-10k-stereo@44100/space": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -15.7244,
+   "truePeakDbtp": -18.7003,
+   "samplePeakDbfs": -18.7015,
+   "rmsDbfs": [
+    -22.4656,
+    -21.8817
+   ],
+   "correlation": 0.9948,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "7f866bf6e9313b89314df2b7533eb5e34e99e1f7ca74cd55ea281569dd2202ca"
+  },
+  "sweep-mono@44100/bypass": {
+   "frames": 132300,
+   "channels": 1,
+   "integratedLufs": -14.2642,
+   "truePeakDbtp": -11.9849,
+   "samplePeakDbfs": -12,
+   "rmsDbfs": [
+    -15.0469
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "1f1dbb85efe449fd1096e01570577d2bec50ffdb72c572be1ca44b398fe07f3f"
+  },
+  "sweep-mono@44100/default": {
+   "frames": 132300,
+   "channels": 1,
+   "integratedLufs": -14.2642,
+   "truePeakDbtp": -11.9849,
+   "samplePeakDbfs": -12,
+   "rmsDbfs": [
+    -15.0469
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "1f1dbb85efe449fd1096e01570577d2bec50ffdb72c572be1ca44b398fe07f3f"
+  },
+  "sweep-mono@44100/master": {
+   "frames": 132300,
+   "channels": 1,
+   "integratedLufs": -9.9207,
+   "truePeakDbtp": -6.5758,
+   "samplePeakDbfs": -6.5891,
+   "rmsDbfs": [
+    -10.7888
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "d23ac4965b6dbdac9375ffb6c6c75db694c6564339a6607c9813373641b957a8"
+  },
+  "sweep-mono@44100/independent": {
+   "frames": 132300,
+   "channels": 1,
+   "integratedLufs": -13.3615,
+   "truePeakDbtp": -7.9961,
+   "samplePeakDbfs": -7.9988,
+   "rmsDbfs": [
+    -14.1817
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "2d8d45424fba46f18464f9808e79150e70b510728b7668b1d9b5cd5a5ea62157"
+  },
+  "sweep-mono@44100/space": {
+   "frames": 132300,
+   "channels": 1,
+   "integratedLufs": -16.2729,
+   "truePeakDbtp": -10.4033,
+   "samplePeakDbfs": -10.4033,
+   "rmsDbfs": [
+    -17.0618
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "0f756f087005362cb7385ddadb76c2e05fc50e5d465bdda0ec22bc243db85197"
+  },
+  "phase-inverted@44100/bypass": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -14.6951,
+   "truePeakDbtp": -13.9992,
+   "samplePeakDbfs": -14,
+   "rmsDbfs": [
+    -17.065,
+    -17.065
+   ],
+   "correlation": -1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "53f24caf6da97ffd1a3412f8686e9b96589475fc93dea041241325c05fbfc27b"
+  },
+  "phase-inverted@44100/default": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -14.6951,
+   "truePeakDbtp": -13.9992,
+   "samplePeakDbfs": -14,
+   "rmsDbfs": [
+    -17.065,
+    -17.065
+   ],
+   "correlation": -1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "53f24caf6da97ffd1a3412f8686e9b96589475fc93dea041241325c05fbfc27b"
+  },
+  "phase-inverted@44100/master": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -10.8176,
+   "truePeakDbtp": -9.8809,
+   "samplePeakDbfs": -9.8835,
+   "rmsDbfs": [
+    -13.1839,
+    -13.1839
+   ],
+   "correlation": -1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "0ceadeeb093b0b46730007bf2496b2fd136ea816b3815ffb3ebada439c1989e4"
+  },
+  "phase-inverted@44100/independent": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -14.5967,
+   "truePeakDbtp": -13.07,
+   "samplePeakDbfs": -13.0701,
+   "rmsDbfs": [
+    -16.1368,
+    -17.9932
+   ],
+   "correlation": -0.9266,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "eecd307bcf182e95eeb92a379a63dd9d858f5cfe43e5d387aaca4c4ab0650cc8"
+  },
+  "phase-inverted@44100/space": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -16.8532,
+   "truePeakDbtp": -16.1573,
+   "samplePeakDbfs": -16.1581,
+   "rmsDbfs": [
+    -19.2231,
+    -19.2231
+   ],
+   "correlation": -1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "5912e61da78c0a8134bb4caad8adc3eeddcaa4fdfb2f82bc2a40598f3935f576"
+  },
+  "phase-quadrature@44100/bypass": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -14.6951,
+   "truePeakDbtp": -13.9992,
+   "samplePeakDbfs": -14,
+   "rmsDbfs": [
+    -17.065,
+    -17.065
+   ],
+   "correlation": 0,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "18fdbb9388f087a75d45ea1ea8fec2519f4206b11638541ee71ed2e53113562b"
+  },
+  "phase-quadrature@44100/default": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -14.6951,
+   "truePeakDbtp": -13.9992,
+   "samplePeakDbfs": -14,
+   "rmsDbfs": [
+    -17.065,
+    -17.065
+   ],
+   "correlation": 0,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "18fdbb9388f087a75d45ea1ea8fec2519f4206b11638541ee71ed2e53113562b"
+  },
+  "phase-quadrature@44100/master": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -11.4839,
+   "truePeakDbtp": -9.8849,
+   "samplePeakDbfs": -9.8875,
+   "rmsDbfs": [
+    -13.8424,
+    -13.8424
+   ],
+   "correlation": 0,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "c7ed69ee8bafb71e2decca6d02ff4a523dd1d1e932e8cfe95deceb2e59a4f7d1"
+  },
+  "phase-quadrature@44100/independent": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -14.5967,
+   "truePeakDbtp": -13.07,
+   "samplePeakDbfs": -13.0701,
+   "rmsDbfs": [
+    -16.1368,
+    -17.9932
+   ],
+   "correlation": 0.3759,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "23020c059d34958bd7068acf3c8c615cb6582ca3f52dd963b72f8d99297a1111"
+  },
+  "phase-quadrature@44100/space": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -16.1326,
+   "truePeakDbtp": -14.6003,
+   "samplePeakDbfs": -14.6013,
+   "rmsDbfs": [
+    -17.9911,
+    -19.1286
+   ],
+   "correlation": 0.1731,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "72556e14733709180fadb3fe1169832731fc9e95cba46623e43ca5b51def7956"
+  },
+  "left-only@44100/bypass": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -13.5123,
+   "truePeakDbtp": -9.9986,
+   "samplePeakDbfs": -10.0027,
+   "rmsDbfs": [
+    -13.065,
+    null
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "04a634e76e15a5bcde627891f46da796d8d9a710caf4339bd380dbfca1a88722"
+  },
+  "left-only@44100/default": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -13.5123,
+   "truePeakDbtp": -9.9986,
+   "samplePeakDbfs": -10.0027,
+   "rmsDbfs": [
+    -13.065,
+    null
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "04a634e76e15a5bcde627891f46da796d8d9a710caf4339bd380dbfca1a88722"
+  },
+  "left-only@44100/master": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -10.7774,
+   "truePeakDbtp": -4.7886,
+   "samplePeakDbfs": -4.7937,
+   "rmsDbfs": [
+    -10.2979,
+    null
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "3438377026123976692ebe0f7c85586c360945c891867c525c652c2e921f0146"
+  },
+  "left-only@44100/independent": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -10.9135,
+   "truePeakDbtp": -7.3981,
+   "samplePeakDbfs": -7.4009,
+   "rmsDbfs": [
+    -10.4661,
+    null
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "a62af83314ba2696e7be9d39c66c56f0b4cc8ad7fdf41ae8d3179aab663dc5b1"
+  },
+  "left-only@44100/space": {
+   "frames": 88200,
+   "channels": 2,
+   "integratedLufs": -15.0534,
+   "truePeakDbtp": -11.2665,
+   "samplePeakDbfs": -11.2703,
+   "rmsDbfs": [
+    -14.7679,
+    -29.1729
+   ],
+   "correlation": 0.1943,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "397a650fac26893a99e69a9e5d87f461a83335a78da31584c3fb33ceaa54078c"
+  },
+  "transients@44100/bypass": {
+   "frames": 132300,
+   "channels": 2,
+   "integratedLufs": -16.3319,
+   "truePeakDbtp": 1.1853,
+   "samplePeakDbfs": -0.9152,
+   "rmsDbfs": [
+    -22.1736,
+    -22.2032
+   ],
+   "correlation": -0.0201,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "9825a00c1582f1e23634589cb64f6b8b09fc02413afda4d44fa8095a49418091"
+  },
+  "transients@44100/default": {
+   "frames": 132300,
+   "channels": 2,
+   "integratedLufs": -16.9656,
+   "truePeakDbtp": -0.981,
+   "samplePeakDbfs": -1,
+   "rmsDbfs": [
+    -22.9418,
+    -22.9717
+   ],
+   "correlation": -0.02,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "434ebeda2e654baaa6099fc39ff83298c0ffb5628c01e90b645e07ed8640b7fb"
+  },
+  "transients@44100/master": {
+   "frames": 132300,
+   "channels": 2,
+   "integratedLufs": -17.1621,
+   "truePeakDbtp": -0.9702,
+   "samplePeakDbfs": -1,
+   "rmsDbfs": [
+    -23.3166,
+    -23.3433
+   ],
+   "correlation": -0.02,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "6a12995af76ca09effa9ede7ddd4da92d67c4f53990b8125691650666b6e6750"
+  },
+  "transients@44100/independent": {
+   "frames": 132300,
+   "channels": 2,
+   "integratedLufs": -17.1962,
+   "truePeakDbtp": -0.9905,
+   "samplePeakDbfs": -1,
+   "rmsDbfs": [
+    -22.8781,
+    -23.4602
+   ],
+   "correlation": -0.0209,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "3f668d2c7490660bfba3304cf2541d60cd54d01609532948698ab6362604be0a"
+  },
+  "transients@44100/space": {
+   "frames": 132300,
+   "channels": 2,
+   "integratedLufs": -18.4342,
+   "truePeakDbtp": -0.9998,
+   "samplePeakDbfs": -2.9706,
+   "rmsDbfs": [
+    -24.2783,
+    -24.3087
+   ],
+   "correlation": -0.019,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "f4f6aab2c39a93c048f108d5da55c2646465790210e367970cf9e174fb4e3ccc"
+  },
+  "programme@44100/bypass": {
+   "frames": 176400,
+   "channels": 2,
+   "integratedLufs": -16.5632,
+   "truePeakDbtp": -2.3042,
+   "samplePeakDbfs": -2.4397,
+   "rmsDbfs": [
+    -17.9003,
+    -17.5903
+   ],
+   "correlation": 0.9967,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "0ff4e5ed9bd258d6312becc00892fdf141b00348d74ff6948d125472b694e5cc"
+  },
+  "programme@44100/default": {
+   "frames": 176400,
+   "channels": 2,
+   "integratedLufs": -16.5632,
+   "truePeakDbtp": -2.3042,
+   "samplePeakDbfs": -2.4397,
+   "rmsDbfs": [
+    -17.9003,
+    -17.5903
+   ],
+   "correlation": 0.9967,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "0ff4e5ed9bd258d6312becc00892fdf141b00348d74ff6948d125472b694e5cc"
+  },
+  "programme@44100/master": {
+   "frames": 176400,
+   "channels": 2,
+   "integratedLufs": -12.9852,
+   "truePeakDbtp": -0.9882,
+   "samplePeakDbfs": -1,
+   "rmsDbfs": [
+    -14.6104,
+    -14.3119
+   ],
+   "correlation": 0.9965,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "b192e5589003885981532b6f67e815f2e59c5e33eae06c990bbfdeca4f99cb97"
+  },
+  "programme@44100/independent": {
+   "frames": 176400,
+   "channels": 2,
+   "integratedLufs": -16.5702,
+   "truePeakDbtp": -2.2259,
+   "samplePeakDbfs": -2.3545,
+   "rmsDbfs": [
+    -17.794,
+    -17.7051
+   ],
+   "correlation": 0.9882,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "767b2a52e7d5a4242d7d4392e525c24c526d79c8aadee27725f666aa07061e49"
+  },
+  "programme@44100/space": {
+   "frames": 176400,
+   "channels": 2,
+   "integratedLufs": -18.2997,
+   "truePeakDbtp": -4.3222,
+   "samplePeakDbfs": -4.4612,
+   "rmsDbfs": [
+    -19.7083,
+    -19.3444
+   ],
+   "correlation": 0.967,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "69172cec949e9fbe526a41712f671e63a5b0b6b691bb1d4061722b787fc7fe18"
+  },
+  "programme-hot@44100/bypass": {
+   "frames": 176400,
+   "channels": 2,
+   "integratedLufs": -7.5632,
+   "truePeakDbtp": 6.6958,
+   "samplePeakDbfs": 6.5603,
+   "rmsDbfs": [
+    -8.9003,
+    -8.5903
+   ],
+   "correlation": 0.9967,
+   "clippedSamples": 7923,
+   "nonFinite": 0,
+   "sha256": "62ed44059a6083a26add3c3e5c74a6364c3b4a937337480cbb07fe2c40200bf3"
+  },
+  "programme-hot@44100/default": {
+   "frames": 176400,
+   "channels": 2,
+   "integratedLufs": -9.9087,
+   "truePeakDbtp": -0.9784,
+   "samplePeakDbfs": -1,
+   "rmsDbfs": [
+    -11.5136,
+    -11.0594
+   ],
+   "correlation": 0.9958,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "475acd96d14b5805e2201cdcf148fe569eba1739ccedda1de56fa88ba4c1fae6"
+  },
+  "programme-hot@44100/master": {
+   "frames": 176400,
+   "channels": 2,
+   "integratedLufs": -10.2407,
+   "truePeakDbtp": -0.9798,
+   "samplePeakDbfs": -1,
+   "rmsDbfs": [
+    -11.9319,
+    -11.5108
+   ],
+   "correlation": 0.9958,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "de2b05a1d857cb903110ff8c5e1d1a60f6ac069f5d4eb43c20ef8e705eb3a363"
+  },
+  "programme-hot@44100/independent": {
+   "frames": 176400,
+   "channels": 2,
+   "integratedLufs": -9.9266,
+   "truePeakDbtp": -0.9877,
+   "samplePeakDbfs": -1,
+   "rmsDbfs": [
+    -11.3769,
+    -11.2068
+   ],
+   "correlation": 0.9848,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "4c11bcc8289594649c4f0ae3cf1624df62f66b8361f5e88c87be76ab7cc50910"
+  },
+  "programme-hot@44100/space": {
+   "frames": 176400,
+   "channels": 2,
+   "integratedLufs": -10.8037,
+   "truePeakDbtp": -0.99,
+   "samplePeakDbfs": -1,
+   "rmsDbfs": [
+    -12.3938,
+    -11.9183
+   ],
+   "correlation": 0.9592,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "f949edc9f8521e19ce04bdf23c2a031afa08d2825769966f2b66c25274e0cd8e"
+  },
+  "silence-stereo@48000/bypass": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": null,
+   "truePeakDbtp": null,
+   "samplePeakDbfs": null,
+   "rmsDbfs": [
+    null,
+    null
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "af49089ff49f4ebe4e67e7ab4bfa3461454e312b948a91f153c48b3c5da2f4d8"
+  },
+  "silence-stereo@48000/default": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": null,
+   "truePeakDbtp": null,
+   "samplePeakDbfs": null,
+   "rmsDbfs": [
+    null,
+    null
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "af49089ff49f4ebe4e67e7ab4bfa3461454e312b948a91f153c48b3c5da2f4d8"
+  },
+  "silence-stereo@48000/master": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": null,
+   "truePeakDbtp": null,
+   "samplePeakDbfs": null,
+   "rmsDbfs": [
+    null,
+    null
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "af49089ff49f4ebe4e67e7ab4bfa3461454e312b948a91f153c48b3c5da2f4d8"
+  },
+  "silence-stereo@48000/independent": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": null,
+   "truePeakDbtp": null,
+   "samplePeakDbfs": null,
+   "rmsDbfs": [
+    null,
+    null
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "af49089ff49f4ebe4e67e7ab4bfa3461454e312b948a91f153c48b3c5da2f4d8"
+  },
+  "silence-stereo@48000/space": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": null,
+   "truePeakDbtp": null,
+   "samplePeakDbfs": null,
+   "rmsDbfs": [
+    null,
+    null
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "af49089ff49f4ebe4e67e7ab4bfa3461454e312b948a91f153c48b3c5da2f4d8"
+  },
+  "impulse-mono@48000/bypass": {
+   "frames": 96000,
+   "channels": 1,
+   "integratedLufs": -45.7156,
+   "truePeakDbtp": -6.0206,
+   "samplePeakDbfs": -6.0206,
+   "rmsDbfs": [
+    -55.8433
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "e9040f336c71ad0401cc05b9601fab787b9530b8e6c4bfeaeef2ae7ae4e3c073"
+  },
+  "impulse-mono@48000/default": {
+   "frames": 96000,
+   "channels": 1,
+   "integratedLufs": -45.7156,
+   "truePeakDbtp": -6.0206,
+   "samplePeakDbfs": -6.0206,
+   "rmsDbfs": [
+    -55.8433
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "e9040f336c71ad0401cc05b9601fab787b9530b8e6c4bfeaeef2ae7ae4e3c073"
+  },
+  "impulse-mono@48000/master": {
+   "frames": 96000,
+   "channels": 1,
+   "integratedLufs": -40.4142,
+   "truePeakDbtp": -1,
+   "samplePeakDbfs": -1,
+   "rmsDbfs": [
+    -50.6362
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "f517d5ed6f0aedb9a08479c37dce47583222153db853990551790daa19d0136f"
+  },
+  "impulse-mono@48000/independent": {
+   "frames": 96000,
+   "channels": 1,
+   "integratedLufs": -45.5086,
+   "truePeakDbtp": -5.7738,
+   "samplePeakDbfs": -5.7738,
+   "rmsDbfs": [
+    -55.5312
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "fda3fb8487073a231647d15ea86ca2d4e4d3f61b219043eb1daf75d6bbf464c4"
+  },
+  "impulse-mono@48000/space": {
+   "frames": 96000,
+   "channels": 1,
+   "integratedLufs": -47.7846,
+   "truePeakDbtp": -8.1787,
+   "samplePeakDbfs": -8.1787,
+   "rmsDbfs": [
+    -57.8836
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "cc764f889fa92d0204fe79ed761b24366e896e6202e436bd885decb57afa2c67"
+  },
+  "tone-1k-stereo@48000/bypass": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -20.0093,
+   "truePeakDbtp": -20,
+   "samplePeakDbfs": -20,
+   "rmsDbfs": [
+    -23.065,
+    -23.065
+   ],
+   "correlation": 1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "dc9041cb38912471d014177205b77b93c7429861528f3463680c120c63c4d061"
+  },
+  "tone-1k-stereo@48000/default": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -20.0093,
+   "truePeakDbtp": -20,
+   "samplePeakDbfs": -20,
+   "rmsDbfs": [
+    -23.065,
+    -23.065
+   ],
+   "correlation": 1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "dc9041cb38912471d014177205b77b93c7429861528f3463680c120c63c4d061"
+  },
+  "tone-1k-stereo@48000/master": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -14.2814,
+   "truePeakDbtp": -14.2721,
+   "samplePeakDbfs": -14.2721,
+   "rmsDbfs": [
+    -17.3371,
+    -17.3371
+   ],
+   "correlation": 1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "25ba2d717bf9a2d8b87a07505bd5389f15582bbf7a36e7ac59479ac0b9125717"
+  },
+  "tone-1k-stereo@48000/independent": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -18.3807,
+   "truePeakDbtp": -16,
+   "samplePeakDbfs": -16,
+   "rmsDbfs": [
+    -19.065,
+    -27.0649
+   ],
+   "correlation": 1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "cec4a90545434e8fb94a0b05dc7ae5dc89905de2a614f96101af07f39d624fe3"
+  },
+  "tone-1k-stereo@48000/space": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -21.6573,
+   "truePeakDbtp": -20.1401,
+   "samplePeakDbfs": -20.1569,
+   "rmsDbfs": [
+    -23.6518,
+    -26.0908
+   ],
+   "correlation": 0.9924,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "928b7d5a36b20424bc6c6d04b223085c75329f482bf1f83a150d2f3ce0d5f7dd"
+  },
+  "tone-100-mono@48000/bypass": {
+   "frames": 96000,
+   "channels": 1,
+   "integratedLufs": -16.8509,
+   "truePeakDbtp": -12,
+   "samplePeakDbfs": -12,
+   "rmsDbfs": [
+    -15.065
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "1cba1d1d11207d8819c68679919614a979014f32b7a540ec76b36d6b49a9e45b"
+  },
+  "tone-100-mono@48000/default": {
+   "frames": 96000,
+   "channels": 1,
+   "integratedLufs": -16.8509,
+   "truePeakDbtp": -12,
+   "samplePeakDbfs": -12,
+   "rmsDbfs": [
+    -15.065
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "1cba1d1d11207d8819c68679919614a979014f32b7a540ec76b36d6b49a9e45b"
+  },
+  "tone-100-mono@48000/master": {
+   "frames": 96000,
+   "channels": 1,
+   "integratedLufs": -12.3977,
+   "truePeakDbtp": -5.1829,
+   "samplePeakDbfs": -5.1829,
+   "rmsDbfs": [
+    -10.5781
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "88f6a323b9337a36f0bec98f0ac250e18c17cea57b3712bdeff53f3b6c6f8c6e"
+  },
+  "tone-100-mono@48000/independent": {
+   "frames": 96000,
+   "channels": 1,
+   "integratedLufs": -16.8092,
+   "truePeakDbtp": -11.9583,
+   "samplePeakDbfs": -11.9585,
+   "rmsDbfs": [
+    -15.0233
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "4239344321b878b4c7729d6f625c67f0bba070eca42acd18a622965fb62c0ef3"
+  },
+  "tone-100-mono@48000/space": {
+   "frames": 96000,
+   "channels": 1,
+   "integratedLufs": -19.1512,
+   "truePeakDbtp": -13.1385,
+   "samplePeakDbfs": -13.1386,
+   "rmsDbfs": [
+    -17.3395
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "26d0de081c7edfff8980bcebc28a8a7a57b57ed6c4465153f12d1c27954bfcbf"
+  },
+  "tone-10k-stereo@48000/bypass": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -14.6651,
+   "truePeakDbtp": -18,
+   "samplePeakDbfs": -18,
+   "rmsDbfs": [
+    -21.065,
+    -21.065
+   ],
+   "correlation": 1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "a500c74ed2f7c62d8644fec7d2a7d1381fa6491c6b674a367d0893fed57684eb"
+  },
+  "tone-10k-stereo@48000/default": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -14.6651,
+   "truePeakDbtp": -18,
+   "samplePeakDbfs": -18,
+   "rmsDbfs": [
+    -21.065,
+    -21.065
+   ],
+   "correlation": 1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "a500c74ed2f7c62d8644fec7d2a7d1381fa6491c6b674a367d0893fed57684eb"
+  },
+  "tone-10k-stereo@48000/master": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -6.6539,
+   "truePeakDbtp": -9.735,
+   "samplePeakDbfs": -9.7412,
+   "rmsDbfs": [
+    -13.0502,
+    -13.0502
+   ],
+   "correlation": 1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "04c539fe3f7a69c45cdf5f9d7a6ba38f29422417256d17e02c4b297df9bda465"
+  },
+  "tone-10k-stereo@48000/independent": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -14.665,
+   "truePeakDbtp": -17.9682,
+   "samplePeakDbfs": -17.9764,
+   "rmsDbfs": [
+    -21.0346,
+    -21.0954
+   ],
+   "correlation": 0.9969,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "19c4f13a7742eb031921c08c05c7a8b11fdfde57c23d42a2d70f31751ca169af"
+  },
+  "tone-10k-stereo@48000/space": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -16.8547,
+   "truePeakDbtp": -19.2264,
+   "samplePeakDbfs": -19.2339,
+   "rmsDbfs": [
+    -23.6746,
+    -22.8271
+   ],
+   "correlation": 0.9976,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "e5631b86c480162f6b33fd0973bac45ee6e9f0cef1c8d851dd727aac8adbd5bd"
+  },
+  "sweep-mono@48000/bypass": {
+   "frames": 144000,
+   "channels": 1,
+   "integratedLufs": -14.2639,
+   "truePeakDbtp": -11.9903,
+   "samplePeakDbfs": -12,
+   "rmsDbfs": [
+    -15.0469
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "9164513ae5fd061c71355717fe516b65c3807208e11dec008a947dd19c5f0dc8"
+  },
+  "sweep-mono@48000/default": {
+   "frames": 144000,
+   "channels": 1,
+   "integratedLufs": -14.2639,
+   "truePeakDbtp": -11.9903,
+   "samplePeakDbfs": -12,
+   "rmsDbfs": [
+    -15.0469
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "9164513ae5fd061c71355717fe516b65c3807208e11dec008a947dd19c5f0dc8"
+  },
+  "sweep-mono@48000/master": {
+   "frames": 144000,
+   "channels": 1,
+   "integratedLufs": -9.9187,
+   "truePeakDbtp": -6.5811,
+   "samplePeakDbfs": -6.5906,
+   "rmsDbfs": [
+    -10.7881
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "87c55f68264b06294aced248dcf69b67292f5a6cf58e3f33931e47bab6684570"
+  },
+  "sweep-mono@48000/independent": {
+   "frames": 144000,
+   "channels": 1,
+   "integratedLufs": -13.3615,
+   "truePeakDbtp": -7.9964,
+   "samplePeakDbfs": -7.9989,
+   "rmsDbfs": [
+    -14.1817
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "15945879ed00397897a3226d89bbff68b7fb2d8b67f2d5dfe5097e94b438a797"
+  },
+  "sweep-mono@48000/space": {
+   "frames": 144000,
+   "channels": 1,
+   "integratedLufs": -16.2697,
+   "truePeakDbtp": -10.0817,
+   "samplePeakDbfs": -10.148,
+   "rmsDbfs": [
+    -17.0597
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "82eccd2f7fb89dc9b267d23efe313d001829944f419d2090a79f1377b13d0418"
+  },
+  "phase-inverted@48000/bypass": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -14.6988,
+   "truePeakDbtp": -13.9993,
+   "samplePeakDbfs": -14,
+   "rmsDbfs": [
+    -17.065,
+    -17.065
+   ],
+   "correlation": -1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "4012eb321bdfbda2bd25ba279dcd28a7dea0f400e4c9854231afa9f52dbe4f89"
+  },
+  "phase-inverted@48000/default": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -14.6988,
+   "truePeakDbtp": -13.9993,
+   "samplePeakDbfs": -14,
+   "rmsDbfs": [
+    -17.065,
+    -17.065
+   ],
+   "correlation": -1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "4012eb321bdfbda2bd25ba279dcd28a7dea0f400e4c9854231afa9f52dbe4f89"
+  },
+  "phase-inverted@48000/master": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -10.8213,
+   "truePeakDbtp": -9.8808,
+   "samplePeakDbfs": -9.8822,
+   "rmsDbfs": [
+    -13.1839,
+    -13.1839
+   ],
+   "correlation": -1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "38f1343b84454f31cdb7a4184856ee0fa0d8b673d0d024f984c57fc11a3dc871"
+  },
+  "phase-inverted@48000/independent": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -14.6003,
+   "truePeakDbtp": -13.0691,
+   "samplePeakDbfs": -13.0703,
+   "rmsDbfs": [
+    -16.1363,
+    -17.9936
+   ],
+   "correlation": -0.9266,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "2d53d8ccd01ae9dea3edfc1df8af5d7dd53363dc0a64edb7c304322869d60ed3"
+  },
+  "phase-inverted@48000/space": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -16.8569,
+   "truePeakDbtp": -16.1574,
+   "samplePeakDbfs": -16.1581,
+   "rmsDbfs": [
+    -19.2231,
+    -19.2231
+   ],
+   "correlation": -1,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "f369785e4e9cfad66ac084f14721d408fb9b27c23bbb237ce54f3f8a56957da6"
+  },
+  "phase-quadrature@48000/bypass": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -14.6988,
+   "truePeakDbtp": -13.9993,
+   "samplePeakDbfs": -14,
+   "rmsDbfs": [
+    -17.065,
+    -17.065
+   ],
+   "correlation": 0,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "07c94031d8e7308fb156db5a8003ac3973fc076d221fa7516cf6aadf73e5cb45"
+  },
+  "phase-quadrature@48000/default": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -14.6988,
+   "truePeakDbtp": -13.9993,
+   "samplePeakDbfs": -14,
+   "rmsDbfs": [
+    -17.065,
+    -17.065
+   ],
+   "correlation": 0,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "07c94031d8e7308fb156db5a8003ac3973fc076d221fa7516cf6aadf73e5cb45"
+  },
+  "phase-quadrature@48000/master": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -11.4877,
+   "truePeakDbtp": -9.8849,
+   "samplePeakDbfs": -9.8862,
+   "rmsDbfs": [
+    -13.8424,
+    -13.8424
+   ],
+   "correlation": 0,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "36317589a8ad33ad8300751a1ace018ac6c861562ca88812d9e485d9aab934f3"
+  },
+  "phase-quadrature@48000/independent": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -14.6003,
+   "truePeakDbtp": -13.0691,
+   "samplePeakDbfs": -13.0703,
+   "rmsDbfs": [
+    -16.1363,
+    -17.9936
+   ],
+   "correlation": 0.376,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "dfe15ede0ec5ef3b156fccae84a1b59831e2ca98a4ad1796a7ebc9b9e1014c3f"
+  },
+  "phase-quadrature@48000/space": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -16.0932,
+   "truePeakDbtp": -14.5411,
+   "samplePeakDbfs": -14.5419,
+   "rmsDbfs": [
+    -17.9393,
+    -19.1006
+   ],
+   "correlation": 0.1732,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "f9a3d96e42c81e0b1b6c33daeaf323a019d1013c95623717a834521d09af668d"
+  },
+  "left-only@48000/bypass": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -13.5157,
+   "truePeakDbtp": -9.9985,
+   "samplePeakDbfs": -10,
+   "rmsDbfs": [
+    -13.065,
+    null
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "274f578b3b3121855d24986c9eea57adf8209fc49c8e739d21c3a8fe405a17ae"
+  },
+  "left-only@48000/default": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -13.5157,
+   "truePeakDbtp": -9.9985,
+   "samplePeakDbfs": -10,
+   "rmsDbfs": [
+    -13.065,
+    null
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "274f578b3b3121855d24986c9eea57adf8209fc49c8e739d21c3a8fe405a17ae"
+  },
+  "left-only@48000/master": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -10.7808,
+   "truePeakDbtp": -4.789,
+   "samplePeakDbfs": -4.791,
+   "rmsDbfs": [
+    -10.298,
+    null
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "d53860ae0b8e8db2590fe328cf7e9fcba8b88ad5562d2a6df744399901f2d183"
+  },
+  "left-only@48000/independent": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -10.9162,
+   "truePeakDbtp": -7.3979,
+   "samplePeakDbfs": -7.4001,
+   "rmsDbfs": [
+    -10.4654,
+    null
+   ],
+   "correlation": null,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "c091cfeaffc9cdb2bd9bf58323ece34f009d0b2a5e28a5d362503df0ffe8a4cf"
+  },
+  "left-only@48000/space": {
+   "frames": 96000,
+   "channels": 2,
+   "integratedLufs": -14.8983,
+   "truePeakDbtp": -11.2175,
+   "samplePeakDbfs": -11.2213,
+   "rmsDbfs": [
+    -14.6032,
+    -29.3644
+   ],
+   "correlation": 0.0914,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "91c3d2eae207b94524b866737cccfde7a2dfbccda1a883fec3694dd0234580e6"
+  },
+  "transients@48000/bypass": {
+   "frames": 144000,
+   "channels": 2,
+   "integratedLufs": -16.3241,
+   "truePeakDbtp": 1.8396,
+   "samplePeakDbfs": -0.9152,
+   "rmsDbfs": [
+    -22.1985,
+    -22.2219
+   ],
+   "correlation": -0.0102,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "e2c502b747196d1b0833d18d7de26fb36be83a97ce3dd7a27b7705bf87c0bd5f"
+  },
+  "transients@48000/default": {
+   "frames": 144000,
+   "channels": 2,
+   "integratedLufs": -17.12,
+   "truePeakDbtp": -0.9839,
+   "samplePeakDbfs": -1,
+   "rmsDbfs": [
+    -23.1112,
+    -23.1363
+   ],
+   "correlation": -0.0136,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "0f1b1ed3ae20a0c6bc1e072cfe8c5307044ec1cda5b1f517e7f55407e09a3758"
+  },
+  "transients@48000/master": {
+   "frames": 144000,
+   "channels": 2,
+   "integratedLufs": -17.2419,
+   "truePeakDbtp": -0.9881,
+   "samplePeakDbfs": -1,
+   "rmsDbfs": [
+    -23.4112,
+    -23.4455
+   ],
+   "correlation": -0.0105,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "9dfef63e83e2d9495f4097d8792219a3de991a5805e36bad0c23efef7f6580e6"
+  },
+  "transients@48000/independent": {
+   "frames": 144000,
+   "channels": 2,
+   "integratedLufs": -17.3471,
+   "truePeakDbtp": -0.9918,
+   "samplePeakDbfs": -1,
+   "rmsDbfs": [
+    -23.0873,
+    -23.5959
+   ],
+   "correlation": -0.0124,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "8a5a8e16f712965d6ea42f095b7e0fbd31eef09c8111e390c8534cda653d75af"
+  },
+  "transients@48000/space": {
+   "frames": 144000,
+   "channels": 2,
+   "integratedLufs": -18.5344,
+   "truePeakDbtp": -0.9944,
+   "samplePeakDbfs": -2.9646,
+   "rmsDbfs": [
+    -24.4005,
+    -24.4241
+   ],
+   "correlation": -0.0095,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "45e371ab9f52a9677a4b2270abbf6bfe494c98b6ec23ad5a0dfdb351dd0a8822"
+  },
+  "programme@48000/bypass": {
+   "frames": 192000,
+   "channels": 2,
+   "integratedLufs": -16.5617,
+   "truePeakDbtp": -2.3622,
+   "samplePeakDbfs": -2.4523,
+   "rmsDbfs": [
+    -17.8991,
+    -17.5895
+   ],
+   "correlation": 0.9967,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "c421c8cda041da9bdd04badfbfb876074b844dc8f9a9fda3af72a4665dd35f14"
+  },
+  "programme@48000/default": {
+   "frames": 192000,
+   "channels": 2,
+   "integratedLufs": -16.5617,
+   "truePeakDbtp": -2.3622,
+   "samplePeakDbfs": -2.4523,
+   "rmsDbfs": [
+    -17.8991,
+    -17.5895
+   ],
+   "correlation": 0.9967,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "c421c8cda041da9bdd04badfbfb876074b844dc8f9a9fda3af72a4665dd35f14"
+  },
+  "programme@48000/master": {
+   "frames": 192000,
+   "channels": 2,
+   "integratedLufs": -12.9789,
+   "truePeakDbtp": -0.9974,
+   "samplePeakDbfs": -1,
+   "rmsDbfs": [
+    -14.6097,
+    -14.3123
+   ],
+   "correlation": 0.9965,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "d83808242ed2bb4f73a6525d2a8c06423530f5e81367086cb4312289fa6a177e"
+  },
+  "programme@48000/independent": {
+   "frames": 192000,
+   "channels": 2,
+   "integratedLufs": -16.5691,
+   "truePeakDbtp": -2.3027,
+   "samplePeakDbfs": -2.3437,
+   "rmsDbfs": [
+    -17.7936,
+    -17.704
+   ],
+   "correlation": 0.9882,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "cfee3f8707bb8f04a5f88f07411d154fbb2762fbdb9576a0aa20b0a15b2b11bb"
+  },
+  "programme@48000/space": {
+   "frames": 192000,
+   "channels": 2,
+   "integratedLufs": -18.2989,
+   "truePeakDbtp": -4.4017,
+   "samplePeakDbfs": -4.4637,
+   "rmsDbfs": [
+    -19.7064,
+    -19.3448
+   ],
+   "correlation": 0.9668,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "092192810dc7ccae45c1de7eca879dcea5c738d0ddf7c3a5760620abcf2483ba"
+  },
+  "programme-hot@48000/bypass": {
+   "frames": 192000,
+   "channels": 2,
+   "integratedLufs": -7.5617,
+   "truePeakDbtp": 6.6378,
+   "samplePeakDbfs": 6.5477,
+   "rmsDbfs": [
+    -8.8991,
+    -8.5895
+   ],
+   "correlation": 0.9967,
+   "clippedSamples": 8607,
+   "nonFinite": 0,
+   "sha256": "931fb63863bf089531e06eb6b2e4dc9b190a330fd8d56fffd2bd98c387a1196b"
+  },
+  "programme-hot@48000/default": {
+   "frames": 192000,
+   "channels": 2,
+   "integratedLufs": -9.9378,
+   "truePeakDbtp": -0.9968,
+   "samplePeakDbfs": -1.0009,
+   "rmsDbfs": [
+    -11.5338,
+    -11.0791
+   ],
+   "correlation": 0.9958,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "cbd8536ed7c3f628118f7d6e8b7c85a047b9d631efc35ba01ca656ad5aab78d2"
+  },
+  "programme-hot@48000/master": {
+   "frames": 192000,
+   "channels": 2,
+   "integratedLufs": -10.2439,
+   "truePeakDbtp": -0.99,
+   "samplePeakDbfs": -1,
+   "rmsDbfs": [
+    -11.9364,
+    -11.5154
+   ],
+   "correlation": 0.9958,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "bfd98783bd597bd01d5658fcb60cea9a217ee853368a237c986208643f905ac0"
+  },
+  "programme-hot@48000/independent": {
+   "frames": 192000,
+   "channels": 2,
+   "integratedLufs": -9.9637,
+   "truePeakDbtp": -0.9945,
+   "samplePeakDbfs": -1,
+   "rmsDbfs": [
+    -11.4047,
+    -11.2329
+   ],
+   "correlation": 0.9849,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "44f6a81df75e1657ada0df4d2b7c278408c0012c4dadb7f12915b20e9548face"
+  },
+  "programme-hot@48000/space": {
+   "frames": 192000,
+   "channels": 2,
+   "integratedLufs": -10.8164,
+   "truePeakDbtp": -0.9975,
+   "samplePeakDbfs": -1.0056,
+   "rmsDbfs": [
+    -12.3994,
+    -11.9273
+   ],
+   "correlation": 0.959,
+   "clippedSamples": 0,
+   "nonFinite": 0,
+   "sha256": "e2dd55e3d6fd80837bbaf89270f175929879be34fef7f5f5fde6349b3fa133e8"
+  }
+ }
+}

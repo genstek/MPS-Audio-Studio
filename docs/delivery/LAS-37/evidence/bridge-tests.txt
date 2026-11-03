@@ -1,0 +1,15 @@
+✔ requests without the pairing token or from another origin are refused; the studio preflight is answered (61.910629ms)
+✔ discovery lists plugins with their identity and parameters (8.604046ms)
+✔ processing through an isolated instance changes the audio measurably; bypass is exact; the input is untouched (275.689723ms)
+✔ state saved from one instance restores identical processing in a new one; foreign state is refused (315.727468ms)
+✔ a crashing plugin loses only its own process; the bridge and other instances keep working (173.838394ms)
+✔ a hanging plugin is stopped after the timeout instead of blocking the bridge (819.770458ms)
+✔ oversized bodies, bad formats and unknown plugins or instances are refused clearly (37.416432ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1876.216291

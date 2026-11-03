@@ -13,21 +13,21 @@ await expect(transport).toBeVisible();
 await expect(transport).toBeInViewport({ ratio: 1 });
 const play = transport.getByRole('button', {
   name: 'Play',
-  exact: false,
+  exact: true, // LAS-70: an ⓘ named "Help for …" sits next to each transport button
 });
 
 await expect(play).toBeInViewport({ ratio: 1 });
 
 const pause = transport.getByRole('button', {
     name: 'Pause',
-    exact: false,
+    exact: true, // LAS-70: an ⓘ named "Help for …" sits next to each transport button
     });
 
     await expect(pause).toBeInViewport({ ratio: 1 });
 
 const stop = transport.getByRole('button', {
     name: 'Stop',
-    exact: false,
+    exact: true, // LAS-70: an ⓘ named "Help for …" sits next to each transport button
     });
 
     await expect(stop).toBeInViewport({ ratio: 1 });

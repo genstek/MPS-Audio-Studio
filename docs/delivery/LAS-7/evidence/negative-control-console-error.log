@@ -1,0 +1,51 @@
+Testing the app served from /home/user/MPS-Audio-Studio-delivery (pid 3357) at http://127.0.0.1:5173
+
+Running 1 test using 1 worker
+
+[WebServer] 5:06:17 PM [vite] (client) [console.error] LAS-7 negative control
+  ✘  1 [chromium] › tests/e2e/shell-smoke.spec.js:14:3 › LAS-7: studio shell opens without console errors at 1280x720 (1.3s)
+
+
+  1) [chromium] › tests/e2e/shell-smoke.spec.js:14:3 › LAS-7: studio shell opens without console errors at 1280x720
+
+    Error: console errors, page errors or failed requests
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "console: LAS-7 negative control",
+    + ]
+
+      48 |     await testInfo.attach(`shell ${size}`, { path: screenshot, contentType: 'image/png' });
+      49 |
+    > 50 |     expect(problems, 'console errors, page errors or failed requests').toEqual([]);
+         |                                                                        ^
+      51 |   });
+      52 | }
+      53 |
+        at /home/user/MPS-Audio-Studio-delivery/tests/e2e/shell-smoke.spec.js:50:72
+
+    attachment #1: shell 1280x720 (image/png) ──────────────────────────────────────────────────────
+    test-results/shell-smoke-LAS-7-studio-s-f2f3d--console-errors-at-1280x720-chromium/attachments/shell-1280x720-5423ca113859439d0cce6ac089e8b063c8aca628.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/shell-smoke-LAS-7-studio-s-f2f3d--console-errors-at-1280x720-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/shell-smoke-LAS-7-studio-s-f2f3d--console-errors-at-1280x720-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/shell-smoke-LAS-7-studio-s-f2f3d--console-errors-at-1280x720-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/shell-smoke-LAS-7-studio-s-f2f3d--console-errors-at-1280x720-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests/e2e/shell-smoke.spec.js:14:3 › LAS-7: studio shell opens without console errors at 1280x720

@@ -1,0 +1,48 @@
+{
+  "issue": "LAS-39",
+  "applicationCommit": null,
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "Protocol tests: grouped split, leakage detection, ridge, 1-NN, labels, chain fit, determinism, bootstrap, shape metric",
+      "status": "PASS",
+      "command": "node --test --test-reporter=spec docs/delivery/LAS-39/experiment/protocol.test.js",
+      "exitCode": 0,
+      "evidence": ["evidence/protocol-tests.txt"]
+    },
+    {
+      "name": "Synthetic experiment: LAS-32 deterministic vs ridge vs 1-NN on 8 unseen songs (48 items), with leakage demonstration and learning curve",
+      "status": "PASS",
+      "command": "node docs/delivery/LAS-39/experiment/experiment.js <scratch>/results-full.json",
+      "exitCode": 0,
+      "evidence": ["evidence/experiment-summary.json", "evidence/experiment-results.json"]
+    },
+    {
+      "name": "Reproducibility: two complete runs compared item by item (1440 values, 0 differences)",
+      "status": "PASS",
+      "command": "python3 -I docs/delivery/LAS-39/experiment/compare-runs.py <scratch>/results-full.json <scratch>/run2/results-full.json",
+      "exitCode": 0,
+      "evidence": ["evidence/reproducibility.txt"]
+    },
+    {
+      "name": "Experiment on real, permitted songs and decisions",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["README.md"]
+    },
+    {
+      "name": "Blind level-matched listening evaluation",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["README.md"]
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "experiment/", "evidence/"],
+  "blockers": ["No permitted real dataset (own projects or consented decisions)", "Using remembered decisions for training needs a new purpose-specific opt-in", "Listening evaluation needs Gennady"],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "research/LAS-39-model-training-assessment"
+}

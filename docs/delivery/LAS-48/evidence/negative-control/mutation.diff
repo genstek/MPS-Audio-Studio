@@ -1,0 +1,2 @@
+119a120
+> .strip button { min-width: 15rem; } /* LAS-48 negative control */

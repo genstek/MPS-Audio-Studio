@@ -1,0 +1,52 @@
+{
+  "issue": "LAS-44",
+  "sprint": "LAS Sprint 10 - Pro Mixer (ID 36)",
+  "package": "docs/claude-code/2026-11-02/SPRINT-10.md @ d005b9d",
+  "applicationCommit": "2c5d0ceda20e5cb2ffe527386420f1e35f675f3c",
+  "implementationCommits": [
+    "849ba64"
+  ],
+  "deliveryStatus": "READY_FOR_REVIEW",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "Proposals rendered without page errors (Chromium 153, 1440 px)",
+      "status": "PASS",
+      "command": null,
+      "exitCode": null,
+      "evidence": [
+        "evidence/studio-proposals-1440.png",
+        "evidence/studio-proposal-2-crop.png"
+      ]
+    },
+    {
+      "name": "Gennady's design selection",
+      "status": "PENDING",
+      "command": null,
+      "exitCode": null,
+      "evidence": [
+        "manual-qa.md"
+      ]
+    }
+  ],
+  "environment": "Ubuntu 24.04.5 (Linux 6.18, x86_64) · Node 22.23.4 · Chromium 153.0.8010.12 headless via PLAYWRIGHT_EXECUTABLE_PATH · Playwright 1.64.1 · Vitest 5.0.5 · Vite 8.3.4 · default viewport 1280×720 (DPR 1, zoom 100 %) unless a test sets one · synthetic WAV fixtures only",
+  "artifacts": [
+    "README.md",
+    "acceptance.md",
+    "manual-qa.md",
+    "results.json",
+    "jira-update.md"
+  ],
+  "limitations": [
+    "Account, reference and stems screens are shown as frames using the same components; detailed screens follow the chosen direction.",
+    "The Fostex photo could not be downloaded in this session."
+  ],
+  "blockers": [
+    "Gennady's selection (Proposal 1, 2, a mix or changes; player A or B; viewport matrix)"
+  ],
+  "jiraSync": "POSTED",
+  "jiraStatus": "In Review",
+  "jiraCommentId": "10200",
+  "branch": "delivery/LAS-40-sprint-10",
+  "pullRequest": "https://github.com/genstek/MPS-Audio-Studio/pull/45"
+}

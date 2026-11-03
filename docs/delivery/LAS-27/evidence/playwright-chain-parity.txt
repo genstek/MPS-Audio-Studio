@@ -1,0 +1,5 @@
+passed	799 ms	LAS-27: worklet preview equals the offline render (stereo, 48000 Hz)	largest difference 0, latency 83 samples, limiter up to 8.08 dB, 2 s rendered in 85 ms
+passed	769 ms	LAS-27: worklet preview equals the offline render (stereo, 44100 Hz)	largest difference 0, latency 77 samples, limiter up to 7.93 dB, 2 s rendered in 111 ms
+passed	765 ms	LAS-27: worklet preview equals the offline render (mono, 96000 Hz)	largest difference 0, latency 155 samples, limiter up to 9.36 dB, 2 s rendered in 85 ms
+passed	427 ms	LAS-27: the worklet applies valid settings, refuses invalid ones and reports clamped bands
+{"startTime": "2026-10-29T23:19:22.004Z", "duration": 4438.083, "expected": 4, "skipped": 0, "unexpected": 0, "flaky": 0}

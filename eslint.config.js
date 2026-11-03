@@ -3,10 +3,10 @@ import globals from 'globals';
 import reactHooks from 'eslint-plugin-react-hooks';
 
 export default [
-  { ignores: ['dist/**', 'playwright-report/**', 'test-results/**', 'legacy/**'] },
+  { ignores: ['dist/**', 'playwright-report/**', 'test-results/**', 'legacy/**', 'apple/WebAssets/**', 'apple/build/**', 'apple/ios-build/**', 'apple/test-build/**', 'artifacts/**'] },
   js.configs.recommended,
   {
-    files: ['**/*.{js,jsx}'],
+    files: ['**/*.{js,jsx,mjs}'],
     languageOptions: {
       globals: { ...globals.browser, ...globals.node },
       parserOptions: { ecmaFeatures: { jsx: true } },

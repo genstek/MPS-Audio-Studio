@@ -1,0 +1,12 @@
+LAS-70 — test results on 2c5d0ce (extract; full logs in docs/delivery/sprints/10/final/)
+
+Playwright (npm run check):
+  ✓   36 [chromium] › tests/e2e/help.spec.js:20:1 › LAS-70: hovering the ⓘ opens after 3 s; leaving earlier cancels; a click opens at once; one popover at a time (2.2s)
+  ✓   38 [chromium] › tests/e2e/help.spec.js:60:1 › LAS-70: keyboard: Enter opens, Tab reaches the link, Escape closes and returns focus; screen-reader names (1.9s)
+  ✓   39 [chromium] › tests/e2e/help.spec.js:82:1 › LAS-70: using a help icon never presses, toggles or moves the control next to it (3.7s)
+  ✓   41 [chromium] › tests/e2e/help.spec.js:112:1 › LAS-70: "More about" opens the in-app help at that function; playback continues; closing returns to the icon (4.5s)
+  ✓   43 [chromium] › tests/e2e/help.spec.js:133:1 › LAS-70: every help entry has a real anchor in the help view; the studio controls listed in the inventory have their icon (6.1s)
+  ✓   47 [chromium] › tests/e2e/help.spec.js:164:1 › LAS-70: the popover stays inside a phone viewport and above editor windows; a pending hover is cancelled when its editor closes (2.2s)
+
+Vitest (verbose run of the same commit):
+  (no unit tests)

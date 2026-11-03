@@ -1,0 +1,34 @@
+// Usage: node check-wireframes.mjs <wireframes.html> <outDir> — visits every screen and state, fails on broken links or errors.
+import { chromium } from '/home/user/MPS-Audio-Studio-delivery/node_modules/@playwright/test/index.mjs';
+const [file, out] = process.argv.slice(2);
+const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+const problems = [];
+page.on('pageerror', e => problems.push(`page error: ${e.message}`));
+page.on('console', m => { if (m.type() === 'error') problems.push(`console: ${m.text()}`); });
+await page.goto(`file://${file}`);
+const ids = await page.$$eval('.screen', screens => screens.map(s => s.id));
+const hrefs = await page.$$eval('a[href^="#"]', links => [...new Set(links.map(a => a.getAttribute('href')))]);
+for (const href of hrefs) if (!ids.includes(href.slice(1)) && href !== '#presets-note') problems.push(`link to missing screen ${href}`);
+const report = [];
+for (const id of ids) {
+  await page.goto(`file://${file}#${id}`);
+  const visible = await page.locator(`#${id}`).evaluate(e => e.classList.contains('active'));
+  const crumb = await page.locator('#crumb').textContent();
+  report.push({ screen: id, active: visible, crumb });
+  if (!visible) problems.push(`screen ${id} not shown`);
+  await page.screenshot({ path: `${out}/screen-${id}.png` });
+}
+await page.goto(`file://${file}#master`);
+for (const state of ['empty', 'loading', 'ready', 'playing', 'paused', 'error', 'unsaved']) {
+  await page.click(`[data-state="${state}"]`);
+  const snapshot = { state, status: await page.locator('#status').textContent(), play: await page.locator('#play').isEnabled(), pause: await page.locator('#pause').isEnabled(), error: await page.locator('#error-line').isVisible(), save: await page.locator('#save-state').textContent() };
+  report.push(snapshot);
+  await page.screenshot({ path: `${out}/master-state-${state}.png` });
+}
+await page.setViewportSize({ width: 390, height: 844 });
+await page.goto(`file://${file}#master`);
+await page.screenshot({ path: `${out}/master-390x844.png`, fullPage: true });
+console.log(JSON.stringify({ screens: ids.length, links: hrefs.length, problems, report }, null, 1));
+await browser.close();
+process.exit(problems.length ? 1 : 0);

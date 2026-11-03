@@ -1,0 +1,2 @@
+45a46
+>       fetch('/upload-test', { method: 'POST', body: file }).catch(() => {}); // LAS-20 negative control

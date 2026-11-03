@@ -1,0 +1,22 @@
+// LAS-32 evidence: how much a compressor alone changes the crest factor (sample peak − RMS) of the
+// LAS-29 programme, section 4–8 s, limiter off. Motivates basing the compressor on loudness range.
+import { analyze } from '<worktree>/src/dsp/analysis.js';
+import { defaultChain, validateChain } from '<worktree>/src/dsp/chain-params.js';
+import { renderSegment } from '<worktree>/src/dsp/segment-render.js';
+import { FIXTURES } from '<worktree>/tests/fixtures/dsp-fixtures.js';
+import { concat } from '<worktree>/tests/fixtures/signals.js';
+
+const RATE = 44100, S = { start: 4, end: 8 };
+const P = FIXTURES.programme(RATE).map(c => Float32Array.from(concat(c, c, c)));
+const base = analyze(P, RATE, S);
+const lines = ['# Compressor alone vs crest factor (LAS-29 programme, 4–8 s, limiter off)', '', `Uncompressed crest factor ${base.levels.crestFactorDb.toFixed(2)} dB, RMS ${base.levels.rmsDbfs.toFixed(1)} dBFS.`, '', '| Detector | Attack (ms) | Threshold | Ratio | Crest factor (dB) | Change (dB) | Largest GR (dB) |', '| --- | --- | --- | --- | --- | --- | --- |'];
+let best = Infinity;
+for (const detector of ['rms', 'peak']) for (const attack of [1, 3, 10]) for (const offset of [0, 6, 10]) for (const ratio of [2, 3]) {
+  const params = validateChain({ ...defaultChain(), limiter: { ...defaultChain().limiter, enabled: false }, compressor: { enabled: true, threshold: Math.round(base.levels.rmsDbfs + offset), ratio, attack, release: 150, knee: 6, makeup: 0, detector } });
+  const rendered = renderSegment(params, P, RATE, S);
+  const crest = analyze(rendered.channels, RATE).levels.crestFactorDb;
+  best = Math.min(best, crest - base.levels.crestFactorDb);
+  lines.push(`| ${detector} | ${attack} | RMS + ${offset} dB | ${ratio} | ${crest.toFixed(2)} | ${(crest - base.levels.crestFactorDb).toFixed(2)} | ${rendered.meters.maxCompressorGainReductionDb.toFixed(1)} |`);
+}
+lines.push('', `36 settings; the largest reduction of the crest factor is ${(-best).toFixed(2)} dB.`);
+console.log(lines.join('\n'));

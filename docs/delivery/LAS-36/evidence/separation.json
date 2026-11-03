@@ -1,0 +1,116 @@
+{
+ "stemSet": "mps-stemset-1 (synthetic, generated)",
+ "rate": 44100,
+ "seconds": 12,
+ "python": "3.13.16",
+ "numpy": "2.5.4",
+ "results": [
+  {
+   "approach": "A: HPSS hard masks + band split",
+   "seconds": 2.44,
+   "realTimeFactor": 4.9,
+   "stems": {
+    "vocals": {
+     "siSdrDb": -9.8,
+     "bleedDb": {
+      "drums": -60.7,
+      "bass": -70.6,
+      "other": -12.5
+     },
+     "correlationEstimate": 1.0,
+     "correlationTruth": 1.0,
+     "monoLossDb": 0.0
+    },
+    "drums": {
+     "siSdrDb": 2.4,
+     "bleedDb": {
+      "vocals": -36.1,
+      "bass": -19.6,
+      "other": -32.0
+     },
+     "correlationEstimate": 0.998,
+     "correlationTruth": 0.999,
+     "monoLossDb": -0.0,
+     "transientPeakRatioDb": -16.3
+    },
+    "bass": {
+     "siSdrDb": 4.0,
+     "bleedDb": {
+      "vocals": -87.7,
+      "drums": -6.7,
+      "other": -46.2
+     },
+     "correlationEstimate": 1.0,
+     "correlationTruth": 1.0,
+     "monoLossDb": -0.0
+    },
+    "other": {
+     "siSdrDb": 7.0,
+     "bleedDb": {
+      "vocals": -41.6,
+      "drums": -25.1,
+      "bass": -10.0
+     },
+     "correlationEstimate": 0.996,
+     "correlationTruth": 1.0,
+     "monoLossDb": -0.04
+    }
+   },
+   "recombinationResidualDb": -242.7
+  },
+  {
+   "approach": "B: HPSS soft masks + mid/side vocal mask",
+   "seconds": 2.52,
+   "realTimeFactor": 4.8,
+   "stems": {
+    "vocals": {
+     "siSdrDb": -10.6,
+     "bleedDb": {
+      "drums": -53.6,
+      "bass": -67.6,
+      "other": -12.4
+     },
+     "correlationEstimate": 0.998,
+     "correlationTruth": 1.0,
+     "monoLossDb": -0.04
+    },
+    "drums": {
+     "siSdrDb": 3.4,
+     "bleedDb": {
+      "vocals": -34.8,
+      "bass": -16.7,
+      "other": -21.1
+     },
+     "correlationEstimate": 0.998,
+     "correlationTruth": 0.999,
+     "monoLossDb": -0.0,
+     "transientPeakRatioDb": -13.0
+    },
+    "bass": {
+     "siSdrDb": 4.2,
+     "bleedDb": {
+      "vocals": -85.7,
+      "drums": -6.6,
+      "other": -46.3
+     },
+     "correlationEstimate": 1.0,
+     "correlationTruth": 1.0,
+     "monoLossDb": -0.0
+    },
+    "other": {
+     "siSdrDb": 6.6,
+     "bleedDb": {
+      "vocals": -43.8,
+      "drums": -25.0,
+      "bass": -9.7
+     },
+     "correlationEstimate": 0.997,
+     "correlationTruth": 1.0,
+     "monoLossDb": -0.04
+    }
+   },
+   "recombinationResidualDb": -242.7
+  }
+ ],
+ "peakMemoryMiB": 484
+}

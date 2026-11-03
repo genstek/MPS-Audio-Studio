@@ -1,0 +1,12 @@
+// Usage: node shot-files.mjs <outDir> <file.html>... — screenshots each file at 1440x900 and 1280x720.
+import { basename } from 'node:path';
+import { chromium } from '/home/user/MPS-Audio-Studio-delivery/node_modules/@playwright/test/index.mjs';
+const [out, ...files] = process.argv.slice(2);
+const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+for (const file of files) for (const [width, height] of [[1440, 900], [1280, 720]]) {
+  const page = await browser.newPage({ viewport: { width, height } });
+  await page.goto(`file://${file}`);
+  await page.screenshot({ path: `${out}/${basename(file, '.html')}-${width}x${height}.png` });
+  await page.close();
+}
+await browser.close();

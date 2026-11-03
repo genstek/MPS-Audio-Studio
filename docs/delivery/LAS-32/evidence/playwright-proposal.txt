@@ -1,0 +1,11 @@
+Testing the app served from <worktree> (pid 22930) at http://127.0.0.1:5173, accounts at http://127.0.0.1:8788
+
+Running 5 tests using 2 workers
+
+  ✓  1 [chromium] › tests/e2e/compare.spec.js:58:1 › LAS-31: compare a mix section with a local reference, listen level-matched, no settings change (8.3s)
+  ✓  3 [chromium] › tests/e2e/compare.spec.js:113:1 › LAS-31: mono, unequal, short and silent sections give honest outcomes (9.3s)
+  ✓  4 [chromium] › tests/e2e/compare.spec.js:173:1 › LAS-31: saved references use their stored measurements, switching them changes no settings, a mismatched file is refused (13.4s)
+  ✓  5 [chromium] › tests/e2e/compare.spec.js:206:1 › LAS-31: the comparison fits 360×780 and 1440×900; the table scrolls inside its own region (5.4s)
+  ✓  2 [chromium] › tests/e2e/proposal.spec.js:39:1 › LAS-32: propose, preview at a strength, check, reject, apply and undo (38.5s)
+
+  5 passed (44.3s)

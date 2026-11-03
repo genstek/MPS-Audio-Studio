@@ -1,0 +1,22 @@
+LAS-23 post-delivery fix (2026-11-03): over-limit uploads answered reliably
+
+1) A client still uploading when the server answers (what macOS's smaller socket buffers cause):
+   2.2 MB sent in 64 KiB pieces 2 ms apart, 2 MiB limit.
+   Before the fix (delivery beff5c2), 5 runs each:
+   declared {"413 too_large":5}   streamed {"413 too_large":4,"fetch failed: ECONNRESET":1}
+   After the fix, 20 runs each:
+   declared {"413 too_large":20}
+   streamed {"413 too_large":20}
+   tmp files left: 0 | blobs: 0
+
+2) Over-limit uploads at full speed, after the fix (5 runs each; above 2 MiB + 16 MiB the linger is cut off):
+   2.2 MB declared: 413 too_large  streamed: 413 too_large
+   16 MB declared: 413 too_large  streamed: 413 too_large
+   64 MB declared: 413 too_large  streamed: 413 too_large
+   server still answers: 200
+
+3) tests/server/storage.test.js + tests/server/upload-limit.test.js repeated 10 times after the fix: pass=10 fail=0.
+   Against the old server code the two new assertions fail: "expected 'close' to be 'keep-alive'" and the slow-client test.
+
+4) PLAYWRIGHT_EXECUTABLE_PATH=<chromium> npm run check on the fix: exit 0 (ESLint clean, Vitest 314/314, build, Playwright 119/119).
+   npm run scan:artifacts: 159 pieces, 0 findings.

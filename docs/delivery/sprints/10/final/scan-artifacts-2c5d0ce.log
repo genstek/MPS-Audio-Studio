@@ -1,0 +1,18 @@
+commit 2c5d0ceda20e5cb2ffe527386420f1e35f675f3c
+
+> mps-audio-studio@0.1.0 scan:artifacts
+> node scripts/scan-artifacts.js
+
+{
+  "targets": [
+    "playwright-report",
+    "test-results",
+    "dist",
+    ".data/e2e/server.log"
+  ],
+  "scannedPieces": 159,
+  "serverSecretChecked": true,
+  "summary": {},
+  "findings": []
+}
+SCAN_EXIT=0

@@ -1,0 +1,3 @@
+PASS: bash -n (4 scripts); node --check; YAML (2); entitlements plist; target paths.
+PASS: asset-copy succeeds with relative assets; rejects absolute-root assets before replacing prior bundle.
+NOT_RUN: XcodeGen, Swift compile, XCTest, native launch/audio/export, signing/install.

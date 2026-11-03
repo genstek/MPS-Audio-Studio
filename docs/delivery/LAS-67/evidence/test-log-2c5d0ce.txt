@@ -1,0 +1,49 @@
+LAS-67 — test results on 2c5d0ce (extract; full logs in docs/delivery/sprints/10/final/)
+
+Playwright (npm run check):
+  ✓   25 [chromium] › tests/e2e/analysis.spec.js:68:1 › LAS-26: a long analysis runs off the main thread, can be cancelled, retried and left running (19.4s)
+  ✓   82 [chromium] › tests/e2e/player.spec.js:42:1 › LAS-67: FF/RWD skip 5 s, clamp at both ends, work while paused and playing, and keep one source (6.5s)
+  ✓   85 [chromium] › tests/e2e/player.spec.js:86:1 › LAS-67: holding FF seeks 5 s every 200 ms after 400 ms; it stops at the end; Play from the end restarts at 0 (8.9s)
+  ✓   88 [chromium] › tests/e2e/player.spec.js:128:1 › LAS-67: the timeline seeks with the keyboard and the pointer, while playing and paused (4.3s)
+  ✓   90 [chromium] › tests/e2e/player.spec.js:155:1 › LAS-67: needles and bars follow the real output: left-only, right-only, mono, Master Level, silence and pause (16.0s)
+  ✓   93 [chromium] › tests/e2e/player.spec.js:193:1 › LAS-67: the clip indicator lights only when full scale reaches the speakers, and resets on click (4.7s)
+  ✓   95 [chromium] › tests/e2e/player.spec.js:213:1 › LAS-67: the spectrum draws the real output while playing and says so when there is no signal; playback stays smooth (9.6s)
+  ✓   99 [chromium] › tests/e2e/player.spec.js:245:1 › LAS-67: replacing and removing the track during rapid seeking stays safe (6.3s)
+  ✓  101 [chromium] › tests/e2e/player.spec.js:266:1 › LAS-67: on a 360 px phone the player fits without sideways scrolling and every control is reachable (3.5s)
+
+Vitest (verbose run of the same commit):
+ ✓ tests/unit/audio-engine.test.js > pause preserves the offset, stop resets it, and dispose closes the context 8ms
+ ✓ tests/unit/audio-engine.test.js > decode failure preserves the previously loaded track 3ms
+ ✓ tests/unit/audio-engine.test.js > natural end disconnects the source and permits playback from the start 1ms
+ ✓ tests/unit/audio-engine.test.js > unsupported names, oversized files and invalid headers are rejected 1ms
+ ✓ tests/unit/audio-engine.test.js > a newer import wins over a slower earlier one 55ms
+ ✓ tests/unit/audio-engine.test.js > disposing during an import discards it without creating an audio context 1ms
+ ✓ tests/unit/audio-engine.test.js > replacing a playing track stops and disconnects its source before the next play 2ms
+ ✓ tests/unit/audio-engine.test.js > 250 MiB (262,144,000 bytes) is the largest accepted file size, for tracks and stems 3ms
+ ✓ tests/unit/audio-engine.test.js > LAS-71: the size message names the file size and the limit in MiB 1ms
+ ✓ tests/unit/audio-engine.test.js > LAS-71: a read or memory failure during replacement keeps the previous track and explains what to do 9ms
+ ✓ tests/unit/audio-engine.test.js > files without a RIFF/WAVE header are rejected before decoding; the extension is case-insensitive 2ms
+ ✓ tests/unit/audio-engine.test.js > a failed first import leaves nothing to play 1ms
+ ✓ tests/unit/audio-engine.test.js > position follows the audio clock, freezes on pause and resets on stop and natural end 1ms
+ ✓ tests/unit/audio-engine.test.js > a second Play while the first is starting does not add a source 1ms
+ ✓ tests/unit/audio-engine.test.js > stop, pause or a new track while the context resumes cancels the start 2ms
+ ✓ tests/unit/audio-engine.test.js > a failed resume can be retried 1ms
+ ✓ tests/unit/audio-engine.test.js > unload stops playback, forgets the track and keeps the engine for the next import 1ms
+ ✓ tests/unit/audio-engine.test.js > unload cancels an import in progress and a start waiting for the context 52ms
+ ✓ tests/unit/audio-engine.test.js > a valid header is accepted whatever bytes its RIFF size field contains 1ms
+ ✓ tests/unit/audio-engine.test.js > playback feeds both output paths; one stage is reused until the channel count changes 1ms
+ ✓ tests/unit/audio-engine.test.js > chain settings, listening choice and loudness match reach the stage, also one built later 1ms
+ ✓ tests/unit/audio-engine.test.js > meters from the stage reach every listener until it unsubscribes 1ms
+ ✓ tests/unit/audio-engine.test.js > a stage built for a superseded import is disposed; a stage failure is reported clearly 61ms
+ ✓ tests/unit/audio-engine.test.js > files with more than two channels get a stereo output stage (played as a downmix) 2ms
+ ✓ tests/unit/audio-engine.test.js > the comparison monitor loops both sections, replaces playback and never touches the chain settings 4ms
+ ✓ tests/unit/audio-engine.test.js > play, stop, a new import and removal each end the comparison monitor 2ms
+ ✓ tests/unit/audio-engine.test.js > a comparison cancelled while the reference decodes never starts, and a bad reference is refused 1ms
+ ✓ tests/unit/audio-engine.test.js > LAS-32: the monitor takes new matching gains after the previewed proposal was measured 1ms
+ ✓ tests/unit/audio-engine.test.js > LAS-34: stems get their own stereo stage, follow the chain settings and the listening switch, and take turns with the single track 28ms
+ ✓ tests/unit/audio-engine.test.js > LAS-34: a stem that is not a decodable WAV is refused with a reason 9ms
+ ✓ tests/unit/audio-engine.test.js > LAS-35: each stem gets its own chain, bypassed and sized to its channels; new settings reach its live node 10ms
+ ✓ tests/unit/audio-engine.test.js > LAS-68: one monitor bus is made with the context; every output stage plays into it 1ms
+ ✓ tests/unit/audio-engine.test.js > LAS-68: the level is clamped to mute…0 dB, kept through transport, unload and replacement, and never sent with the chain settings 1ms
+ ✓ tests/unit/audio-engine.test.js > LAS-67: seek while playing restarts the single source at the new place; while paused it cues the next Play 6ms
+ ✓ tests/unit/audio-engine.test.js > LAS-67: seeking to the end clamps; Play from the end starts again at 0; an invalid time seeks to 0 1ms

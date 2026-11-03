@@ -1,0 +1,48 @@
+{
+  "issue": "LAS-11",
+  "applicationCommit": "760dc13b749ded8f5344d1e98dd9e09bb7fd3c9e",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (lint, Vitest 14/14, build, Playwright 23/23) on Linux Chromium 141",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-760dc13b749ded8f5344d1e98dd9e09bb7fd3c9e.log", "evidence/html-report-760dc13b749ded8f5344d1e98dd9e09bb7fd3c9e.zip"]
+    },
+    {
+      "name": "Mutation: engine pending-start check removed -> unit test fails (expected exit 1)",
+      "status": "PASS",
+      "command": "npx vitest run (guard temporarily removed)",
+      "exitCode": 1,
+      "evidence": ["evidence/mutation-start-guard/mutation.diff", "evidence/mutation-start-guard/vitest.log"]
+    },
+    {
+      "name": "Mutation: start cancellation removed from disconnect() -> unit test fails (expected exit 1)",
+      "status": "PASS",
+      "command": "npx vitest run (cancellation temporarily removed)",
+      "exitCode": 1,
+      "evidence": ["evidence/mutation-cancel/mutation.diff", "evidence/mutation-cancel/vitest.log"]
+    },
+    {
+      "name": "Playwright burst test with all start guards removed (observation: still passes, so it does not isolate the guards)",
+      "status": "PASS",
+      "command": "npx playwright test tests/e2e/pause-toggle.spec.js --grep bursts (guards temporarily removed)",
+      "exitCode": 0,
+      "evidence": ["evidence/burst-without-guards-playwright.log"]
+    },
+    {
+      "name": "Google Chrome on macOS; listening check",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": []
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],
+  "blockers": [],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "feat/LAS-11-pause-toggle"
+}

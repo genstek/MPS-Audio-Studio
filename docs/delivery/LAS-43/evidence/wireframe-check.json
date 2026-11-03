@@ -1,0 +1,123 @@
+{
+ "screens": 12,
+ "links": 13,
+ "problems": [],
+ "report": [
+  {
+   "screen": "projects",
+   "active": true,
+   "crumb": "Projects"
+  },
+  {
+   "screen": "master",
+   "active": true,
+   "crumb": "Demo song / Master"
+  },
+  {
+   "screen": "references",
+   "active": true,
+   "crumb": "Demo song / References"
+  },
+  {
+   "screen": "stems",
+   "active": true,
+   "crumb": "Demo song / Stems"
+  },
+  {
+   "screen": "export",
+   "active": true,
+   "crumb": "Demo song / Export"
+  },
+  {
+   "screen": "account",
+   "active": true,
+   "crumb": "Account & privacy"
+  },
+  {
+   "screen": "signin",
+   "active": true,
+   "crumb": "Sign in"
+  },
+  {
+   "screen": "register",
+   "active": true,
+   "crumb": "Create account"
+  },
+  {
+   "screen": "check-email",
+   "active": true,
+   "crumb": "Check your email"
+  },
+  {
+   "screen": "recover",
+   "active": true,
+   "crumb": "Reset your password"
+  },
+  {
+   "screen": "reset",
+   "active": true,
+   "crumb": "Choose a new password"
+  },
+  {
+   "screen": "consent",
+   "active": true,
+   "crumb": "Processing location"
+  },
+  {
+   "state": "empty",
+   "status": "No audio loaded",
+   "play": false,
+   "pause": false,
+   "error": false,
+   "save": "All changes saved on this computer"
+  },
+  {
+   "state": "loading",
+   "status": "Loading audio…",
+   "play": false,
+   "pause": false,
+   "error": false,
+   "save": "All changes saved on this computer"
+  },
+  {
+   "state": "ready",
+   "status": "Ready",
+   "play": true,
+   "pause": false,
+   "error": false,
+   "save": "All changes saved on this computer"
+  },
+  {
+   "state": "playing",
+   "status": "Playing",
+   "play": false,
+   "pause": true,
+   "error": false,
+   "save": "All changes saved on this computer"
+  },
+  {
+   "state": "paused",
+   "status": "Paused",
+   "play": true,
+   "pause": true,
+   "error": false,
+   "save": "All changes saved on this computer"
+  },
+  {
+   "state": "error",
+   "status": "Ready",
+   "play": true,
+   "pause": false,
+   "error": true,
+   "save": "All changes saved on this computer"
+  },
+  {
+   "state": "unsaved",
+   "status": "Ready",
+   "play": true,
+   "pause": false,
+   "error": false,
+   "save": "● Unsaved changes — Save (⌘S)"
+  }
+ ]
+}

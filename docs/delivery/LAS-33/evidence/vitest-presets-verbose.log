@@ -1,0 +1,27 @@
+
+ RUN  v5.0.5 <worktree>
+
+(node:32220) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/unit/presets.test.js > preset files > save → load restores the complete preset, including independent L/R bands and the chain order 9ms
+ ✓ tests/unit/presets.test.js > preset files > an LAS-28 settings file (mps-chain v1) is migrated into a preset 6ms
+ ✓ tests/unit/presets.test.js > preset files > newer, unknown, broken and invalid files are refused with a reason 5ms
+ ✓ tests/unit/presets.test.js > preferences > validated against their bounds and version 3ms
+ ✓ tests/unit/presets.test.js > preferences > reference targets and preference adjustments stay separate and either can be switched off 8ms
+ ✓ tests/server/presets.test.js > presets > save, list, read back the complete chain, rename and delete 181ms
+ ✓ tests/server/presets.test.js > presets > a proposal preset keeps its analysis and proposal versions and strength 76ms
+ ✓ tests/server/presets.test.js > presets > invalid, newer-version and oversized presets are refused and nothing is stored 102ms
+ ✓ tests/server/presets.test.js > presets > another account cannot list, read, rename or delete them; signed out gets 401 106ms
+ ✓ tests/server/presets.test.js > presets > state changes need the studio request header (CSRF rule) 68ms
+ ✓ tests/server/presets.test.js > preferences > defaults until saved; save, read, reset; validated; owner-only 125ms
+ ✓ tests/server/presets.test.js > remembered decisions > stored only when sent, listed, forgotten one by one or all; owner-only 118ms
+ ✓ tests/server/presets.test.js > remembered decisions > bad decisions are refused: unknown decision, rating, strength, version, oversized or missing summary 67ms
+ ✓ tests/server/presets.test.js > links to reference profiles and deletion > only your own reference profile can be linked; deleting it keeps presets and decisions but forgets the link 642ms
+ ✓ tests/server/presets.test.js > links to reference profiles and deletion > deleting the account deletes its presets, preferences and decisions (0 rows left) 90ms
+ ✓ tests/server/presets.test.js > links to reference profiles and deletion > a database from sprint 05 (schema v4) upgrades to v5 in place 65ms
+
+ Test Files  2 passed (2)
+      Tests  16 passed (16)
+   Start at  04:54:10
+   Duration  2.09s (tests 84%, import 10%, transform 5%, worker 1%)
+

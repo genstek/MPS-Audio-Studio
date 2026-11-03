@@ -1,0 +1,85 @@
+name: MPSAudioStudio
+options:
+  projectFormat: xcode14_0
+  xcodeVersion: '14.3'
+  deploymentTarget:
+    iOS: '16.0'
+    macOS: '13.0'
+settings:
+  base:
+    SWIFT_VERSION: '5.0'
+    MARKETING_VERSION: '0.1.0'
+    CURRENT_PROJECT_VERSION: '1'
+    GENERATE_INFOPLIST_FILE: YES
+    INFOPLIST_KEY_CFBundleDisplayName: MPS Audio Studio
+    CODE_SIGN_STYLE: Automatic
+targets:
+  AssetServerTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - Sources/LocalAssetServer.swift
+      - Tests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.genstek.mpsaudio.asset-tests
+        GENERATE_INFOPLIST_FILE: YES
+  MPSMac:
+    type: application
+    platform: macOS
+    info:
+      path: Generated/Mac-Info.plist
+      properties:
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+    sources:
+      - Sources
+      - path: WebAssets
+        type: folder
+        buildPhase: resources
+    settings:
+      base:
+        ARCHS: 'arm64 x86_64'
+        ONLY_ACTIVE_ARCH: NO
+        PRODUCT_BUNDLE_IDENTIFIER: com.genstek.mpsaudio.mac
+        ENABLE_HARDENED_RUNTIME: YES
+        CODE_SIGN_ENTITLEMENTS: Mac.entitlements
+  MPSiOS:
+    type: application
+    platform: iOS
+    info:
+      path: Generated/iOS-Info.plist
+      properties:
+        UILaunchScreen: {}
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+    sources:
+      - Sources
+      - path: WebAssets
+        type: folder
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.genstek.mpsaudio.ios
+        TARGETED_DEVICE_FAMILY: '1,2'
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+schemes:
+  AssetServerTests:
+    build:
+      targets:
+        AssetServerTests: all
+    test:
+      targets:
+        - AssetServerTests
+  MPSMac:
+    build:
+      targets:
+        MPSMac: all
+  MPSiOS:
+    build:
+      targets:
+        MPSiOS: all

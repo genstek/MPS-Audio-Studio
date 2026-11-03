@@ -1,0 +1,12 @@
+LAS-68 — test results on 2c5d0ce (extract; full logs in docs/delivery/sprints/10/final/)
+
+Playwright (npm run check):
+  ✓   67 [chromium] › tests/e2e/master-level.spec.js:52:1 › LAS-68: the fader explains why it is disabled, then sets 0 dB, −6 dB and mute on what reaches the speakers, in both A/B paths, without interrupting playback (7.0s)
+  ✓   69 [chromium] › tests/e2e/master-level.spec.js:105:1 › LAS-68: left-only, right-only and mono files are attenuated equally on the channels that carry sound (6.0s)
+  ✓   71 [chromium] › tests/e2e/master-level.spec.js:126:1 › LAS-68: the level is kept through pause, stop, editors, replacement, unload and reload, and never changes the exported WAV (14.1s)
+  ✓   73 [chromium] › tests/e2e/master-level.spec.js:181:1 › LAS-68: one Master Level for the stem mix too, also reachable inside the stem session (3.0s)
+
+Vitest (verbose run of the same commit):
+ ✓ tests/unit/monitor-bus.test.js > gain law: 0 dB is unity, −6.02 dB halves, −∞ is silence; requests are clamped to mute…0 dB 3ms
+ ✓ tests/unit/monitor-bus.test.js > routing: master gain → speakers, → splitter → left/right analysers, → spectrum; mono is spread to both sides 4ms
+ ✓ tests/unit/monitor-bus.test.js > levels: sample peak, RMS and clipping per channel, after the master gain 4ms

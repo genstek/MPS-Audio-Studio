@@ -1,0 +1,41 @@
+{
+  "issue": "LAS-36",
+  "applicationCommit": null,
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "Classical separation candidates A and B on the synthetic stem set (SI-SDR, bleed, transients, phase/mono, recombination, runtime, memory)",
+      "status": "PASS",
+      "command": "python -I docs/delivery/LAS-36/tools/separation_eval.py --export <out>",
+      "exitCode": 0,
+      "evidence": ["evidence/separation.json", "evidence/venv-freeze.txt"]
+    },
+    {
+      "name": "Scorer round trip through WAV files reproduces the in-memory SI-SDR",
+      "status": "PASS",
+      "command": "python -I docs/delivery/LAS-36/tools/separation_eval.py --score <out>/truth <out>/estimates-A",
+      "exitCode": 0,
+      "evidence": ["evidence/score-roundtrip.json"]
+    },
+    {
+      "name": "ML candidates (Demucs v4, Open-Unmix, Spleeter): model and runtime hosts refused by the network policy",
+      "status": "NOT_RUN",
+      "command": "pip install torch --index-url https://download.pytorch.org/whl/cpu; curl probes of model hosts",
+      "exitCode": 1,
+      "evidence": ["evidence/model-hosts.md"]
+    },
+    {
+      "name": "Matched listening comparison of separated stems",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["manual-qa.md"]
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "tools/", "evidence/"],
+  "blockers": ["ML separation candidates cannot be installed or downloaded here: download.pytorch.org, dl.fbaipublicfiles.com, zenodo.org, huggingface.co and github.com release downloads are refused by the proxy (403)", "Listening comparison needs Gennady"],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "research/LAS-36-stem-separation"
+}

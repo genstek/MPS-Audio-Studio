@@ -12,27 +12,30 @@ test('TC-001: mixer loads and displays its main UI elements', async ({ page }) =
   const transport = page.getByRole('region', { name: 'Transport', exact: true });
   await expect(transport).toBeVisible();
   await expect(transport.getByRole('status')).toHaveText('No audio loaded');
-  await expect(transport.getByRole('button', { name: 'Play', exact: false })).toBeDisabled();
-  await expect(transport.getByRole('button', { name: 'Pause', exact: false })).toBeDisabled();
-  await expect(transport.getByRole('button', { name: 'Stop', exact: false })).toBeDisabled();
+  await expect(transport.getByRole('button', { name: 'Play', exact: true })).toBeDisabled();
+  await expect(transport.getByRole('button', { name: 'Pause', exact: true })).toBeDisabled();
+  await expect(transport.getByRole('button', { name: 'Stop', exact: true })).toBeDisabled();
 
   const tracks = page.getByRole('region', { name: 'Tracks', exact: true });
   await expect(tracks).toBeVisible();
   await expect(tracks.getByRole('heading', { name: 'Your session starts here' })).toBeVisible();
   await expect(tracks.getByLabel('Import WAV')).toBeEnabled();
-  await expect(tracks.getByText('WAV up to 100 MiB · Files stay on your device')).toBeVisible();
+  await expect(tracks.getByText('WAV up to 250 MiB · Files stay on your device')).toBeVisible();
 
   const mixer = page.getByRole('region', { name: 'Mixer', exact: true });
   await expect(mixer).toBeVisible();
-  // A small loop checks the same promise for each planned processing strip.
-  for (const name of ['Input', 'EQ', 'Dynamics', 'Space']) {
+  // A small loop checks each processing strip. Since LAS-28 the EQ, Dynamics and Limiter strips are
+  // working modules with an editor, and since LAS-64 Space (reverb) is one too, off by default.
+  for (const [name, button] of [['EQ', 'Edit EQ'], ['Dynamics', 'Edit dynamics'], ['Limiter', 'Edit limiter'], ['Space', 'Edit space']]) {
     const strip = mixer.getByRole('region', { name: `${name} channel strip` });
     await expect(strip).toBeVisible();
-    await expect(strip.getByRole('button', { name: `${name} processing unavailable` })).toBeDisabled();
+    await expect(strip.getByRole('button', { name: button })).toBeEnabled();
   }
+  await expect(mixer.getByRole('region', { name: 'Space channel strip' }).getByText('Off', { exact: true })).toBeVisible();
 
   const master = page.getByRole('region', { name: 'Master', exact: true });
   await expect(master).toBeVisible();
   await expect(master.getByRole('slider', { name: 'Master level' })).toBeDisabled();
-  await expect(master.getByRole('button', { name: 'Export WAV — coming soon' })).toBeDisabled();
+  // Export needs a track first (LAS-28).
+  await expect(master.getByRole('button', { name: 'Export WAV', exact: true })).toBeDisabled();
 });

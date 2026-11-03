@@ -1,0 +1,141 @@
+
+> mps-audio-studio@0.1.0 check
+> npm run lint && npm run test:unit && npm run build && npm run test:e2e
+
+
+> mps-audio-studio@0.1.0 lint
+> eslint .
+
+
+> mps-audio-studio@0.1.0 test:unit
+> vitest run
+
+
+ RUN  v5.0.5 /home/user/MPS-Audio-Studio-delivery
+
+(node:2862) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2863) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2864) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ Test Files  4 passed (4)
+      Tests  57 passed (57)
+   Start at  18:46:33
+   Duration  1.75s (tests 89%, import 6%, transform 4%, worker 1%)
+
+
+> mps-audio-studio@0.1.0 build
+> vite build
+
+vite v8.3.4 building client environment for production...
+transforming...
+✓ 19 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.48 kB │ gzip:  0.30 kB
+dist/assets/index-BmI5jgwz.css    9.25 kB │ gzip:  2.90 kB
+dist/assets/index-DASOO3fJ.js   237.30 kB │ gzip: 74.02 kB
+
+✓ built in 490ms
+
+> mps-audio-studio@0.1.0 test:e2e
+> playwright test
+
+Testing the app served from /home/user/MPS-Audio-Studio-delivery (pid 2993) at http://127.0.0.1:5173, accounts at http://127.0.0.1:8788
+
+Running 45 tests using 2 workers
+
+  ✓   2 [chromium] › tests/e2e/account.spec.js:8:1 › LAS-21: register, verify from the email link, sign in and sign out (1.7s)
+  ✓   1 [chromium] › tests/e2e/library.spec.js:31:1 › LAS-23: save the current track to the private library, download it unchanged and delete it (2.4s)
+  ✓   3 [chromium] › tests/e2e/account.spec.js:35:1 › LAS-21: wrong password and unverified email are refused without opening a session (1.9s)
+  ✓   5 [chromium] › tests/e2e/account.spec.js:69:1 › LAS-21: without the account server the studio still plays and says accounts are unavailable (966ms)
+  ✓   4 [chromium] › tests/e2e/library.spec.js:52:1 › LAS-23: another account cannot see or reach the first account's files (3.5s)
+[WebServer] 6:46:47 PM [vite] http proxy error: /api/projects/cvNR6ExDgxmnD6XwF5p-zA/assets?kind=source&name=cy-mix.wav
+[WebServer] Error: write EPIPE
+[WebServer]     at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+[WebServer]     at writeGeneric (node:internal/stream_base_commons:150:3)
+[WebServer]     at Socket._writeGeneric (node:net:966:11)
+[WebServer]     at Socket._write (node:net:978:8)
+[WebServer]     at doWrite (node:internal/streams/writable:598:12)
+[WebServer]     at clearBuffer (node:internal/streams/writable:783:7)
+[WebServer]     at Writable.uncork (node:internal/streams/writable:531:7)
+[WebServer]     at connectionCorkNT (node:_http_outgoing:1032:8)
+[WebServer]     at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+  ✓   6 [chromium] › tests/e2e/recovery.spec.js:13:1 › LAS-22: reset a forgotten password from the email link; other sessions are signed out (3.2s)
+  ✓   8 [chromium] › tests/e2e/recovery.spec.js:52:1 › LAS-22: used and forged reset links are refused with a way to ask again (2.0s)
+  ✘   7 [chromium] › tests/e2e/library.spec.js:71:1 › LAS-23/LAS-22: saving after the session ended shows that, never a false success (6.8s)
+  ✓   9 [chromium] › tests/e2e/recovery.spec.js:77:1 › LAS-22: repeated wrong passwords are throttled, for unknown addresses too (4.1s)
+  ✓  10 [chromium] › tests/e2e/import-errors.spec.js:12:1 › TC-003: unsupported or invalid files show a recoverable error (1.4s)
+  ✓  12 [chromium] › tests/e2e/import-valid-wav.spec.js:6:1 › TC-002 (LAS-57): a valid WAV file is imported successfully (1.3s)
+  ✓  11 [chromium] › tests/e2e/import-lifecycle.spec.js:7:1 › LAS-8: reimport, failed replacement and retry leave one audio source (3.0s)
+  ✓  14 [chromium] › tests/e2e/import-lifecycle.spec.js:45:1 › LAS-8: track information comes from the decoded file (996ms)
+  ✓  15 [chromium] › tests/e2e/import-lifecycle.spec.js:62:1 › LAS-8: a 5-second mono WAV imports (size bytes that look like text) (1.0s)
+  ✓  13 [chromium] › tests/e2e/LAS48-coverage.spec.js:20:3 › LAS48-TC-001..004, 007: proposed QA matrix, empty (6.6s)
+  ✓  17 [chromium] › tests/e2e/LAS48-coverage.spec.js:20:3 › LAS48-TC-001..004, 007: proposed QA matrix, WAV-loaded (12.9s)
+  ✓  18 [chromium] › tests/e2e/LAS48-coverage.spec.js:43:3 › LAS48-TC-003: width-only resize at height 900 (11.8s)
+  ✓  19 [chromium] › tests/e2e/LAS48-coverage.spec.js:43:3 › LAS48-TC-004: height-only resize at width 1280, then 1024x768 and 800x600 (10.1s)
+  ✓  20 [chromium] › tests/e2e/LAS48-coverage.spec.js:70:5 › zoom-equivalent 125% › LAS48-TC-010/021 (emulated): layout at 125% zoom-equivalent sizes, DPR 1.25 (2.6s)
+  ✓  21 [chromium] › tests/e2e/LAS48-coverage.spec.js:70:5 › zoom-equivalent 200% › LAS48-TC-010/021 (emulated): layout at 200% zoom-equivalent sizes, DPR 2 (2.9s)
+  ✓  22 [chromium] › tests/e2e/LAS48-coverage.spec.js:86:1 › LAS48-TC-012/013/014: playback, paused position and stop survive resizing (4.5s)
+  ✓  23 [chromium] › tests/e2e/LAS48-coverage.spec.js:134:1 › LAS48-TC-011: keyboard focus stays visible on its control across resizes (1.5s)
+  ✓  16 [chromium] › tests/e2e/LAS51-layout.spec.js:249:3 › LAS-51: empty layout survives viewport changes (50.8s)
+  ✓  25 [chromium] › tests/e2e/LAS51-layout.spec.js:260:1 › LAS-51: long file name keeps essential controls visible (25.8s)
+  ✓  24 [chromium] › tests/e2e/LAS51-layout.spec.js:249:3 › LAS-51: WAV-loaded layout survives viewport changes (51.0s)
+  ✓  26 [chromium] › tests/e2e/LAS51-layout.spec.js:270:1 › LAS-51: load error keeps essential controls visible (25.8s)
+  ✓  27 [chromium] › tests/e2e/LAS51-layout.spec.js:291:3 › LAS-51: essential controls visible before scrolling, height 450-1080 at width 761 (19.1s)
+  ✓  28 [chromium] › tests/e2e/LAS51-layout.spec.js:291:3 › LAS-51: essential controls visible before scrolling, height 450-1080 at width 1024 (18.8s)
+  ✓  30 [chromium] › tests/e2e/LAS51-layout.spec.js:291:3 › LAS-51: essential controls visible before scrolling, width 761-1440 at height 450 (7.8s)
+  ✓  31 [chromium] › tests/e2e/LAS51-layout.spec.js:303:1 › LAS-51: playback state survives viewport changes (1.4s)
+  ✓  32 [chromium] › tests/e2e/LAS51-responsive.spec.js:3:1 › LAS-51: Import WAV stays fully visible after resizing to 785x520 (776ms)
+  ✓  33 [chromium] › tests/e2e/local-only.spec.js:7:1 › LAS-20: local-only workflow sends no audio and no data to any server (1.4s)
+  ✓  34 [chromium] › tests/e2e/mixer.spec.js:4:1 › TC-001: mixer loads and displays its main UI elements (1.1s)
+  ✓  35 [chromium] › tests/e2e/pause-toggle.spec.js:31:1 › LAS-11: Pause toggles, and Play also resumes from the paused position (3.0s)
+  ✓  36 [chromium] › tests/e2e/pause-toggle.spec.js:77:1 › LAS-11: bursts of transport clicks never play two sources at once (1.8s)
+  ✓  37 [chromium] › tests/e2e/playback.spec.js:4:1 › WAV playback and recovery after a replacement cannot decode (1.6s)
+  ✓  29 [chromium] › tests/e2e/LAS51-layout.spec.js:291:3 › LAS-51: essential controls visible before scrolling, height 450-1080 at width 1440 (20.8s)
+  ✓  38 [chromium] › tests/e2e/responsive.spec.js:3:1 › LAS48-TC-001: Initial empty workspace fits desktop viewports (1.0s)
+  ✓  39 [chromium] › tests/e2e/shell-smoke.spec.js:14:3 › LAS-7: studio shell opens without console errors at 1280x720 (1.2s)
+  ✓  41 [chromium] › tests/e2e/shell-smoke.spec.js:14:3 › LAS-7: studio shell opens without console errors at 1440x900 (1.2s)
+  ✓  42 [chromium] › tests/e2e/shell-smoke.spec.js:14:3 › LAS-7: studio shell opens without console errors at 761x450 (972ms)
+  ✓  40 [chromium] › tests/e2e/transport-position.spec.js:13:1 › LAS-9: elapsed time follows the engine through pause, resume, stop and natural end (5.4s)
+  ✓  43 [chromium] › tests/e2e/unload-track.spec.js:39:1 › LAS-12: Remove track empties the session from Playing, Paused and Stopped (4.0s)
+  ✓  44 [chromium] › tests/e2e/unload-track.spec.js:67:1 › LAS-12: removing during a replacement import keeps the session empty (1.1s)
+  ✓  45 [chromium] › tests/e2e/unload-track.spec.js:85:1 › LAS-12: the same and a different WAV import and play after removal; the file is unchanged (1.9s)
+
+
+  1) [chromium] › tests/e2e/library.spec.js:71:1 › LAS-23/LAS-22: saving after the session ended shows that, never a false success
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator:  getByRole('dialog').getByRole('alert')
+    Expected: "Your session has ended. Sign in again."
+    Received: "The library is unavailable right now."
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveText" getByRole('dialog').getByRole('alert') with timeout 5000ms
+      - waiting for getByRole('dialog').getByRole('alert')
+        13 × locator resolved to <p role="alert" class="account-error">The library is unavailable right now.</p>
+           - unexpected value "The library is unavailable right now."
+
+
+      74 |   expect((await page.request.post('/api/auth/logout', { headers: { 'X-MPS-Request': '1' } })).status()).toBe(204);
+      75 |   await ui.dialog.getByRole('button', { name: 'Save “cy-mix.wav” to my library' }).click();
+    > 76 |   await expect(ui.alert).toHaveText('Your session has ended. Sign in again.');
+         |                          ^
+      77 |   await expect(ui.dialog.getByRole('heading', { name: 'Sign in' })).toBeVisible();
+      78 |   await expect(ui.dialog.getByText(/Saved cy-mix.wav/)).toHaveCount(0);
+      79 | });
+        at /home/user/MPS-Audio-Studio-delivery/tests/e2e/library.spec.js:76:26
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/library-LAS-23-LAS-22-savi-a9398--that-never-a-false-success-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/library-LAS-23-LAS-22-savi-a9398--that-never-a-false-success-chromium/error-context.md
+
+  1 failed
+    [chromium] › tests/e2e/library.spec.js:71:1 › LAS-23/LAS-22: saving after the session ended shows that, never a false success
+  44 passed (2.9m)

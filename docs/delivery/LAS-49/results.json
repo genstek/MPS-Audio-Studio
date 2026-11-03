@@ -1,0 +1,35 @@
+{
+  "issue": "LAS-49",
+  "applicationCommit": "b06590ba02bf5209d67cbf6a5b0e5c83345ec5cd",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "Reconciliation of 24 cases to automated tests, historical builds and blockers (documentation review)",
+      "status": "PASS",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["README.md"]
+    },
+    {
+      "name": "Automated results reused from the LAS-48 run on b06590b",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["../LAS-48/evidence/npm-run-check-b06590ba02bf5209d67cbf6a5b0e5c83345ec5cd.log", "../LAS-48/evidence/html-report-b06590ba02bf5209d67cbf6a5b0e5c83345ec5cd.zip"]
+    },
+    {
+      "name": "Manual execution of the 24 cases",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": []
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md"],
+  "blockers": [
+    "8 cases need controls or browsers that do not exist here (see README.md)"
+  ],
+  "jiraSync": "SYNC_PENDING",
+  "branch": "docs/LAS-49-test-plan-reconciliation"
+}

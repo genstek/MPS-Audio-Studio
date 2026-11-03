@@ -1,0 +1,73 @@
+// Usage: node ui-audit.mjs <appUrl> <outDir>
+// Measures text size/contrast and interactive target sizes, and saves annotated screenshots.
+import { writeFileSync } from 'node:fs';
+import { chromium } from '/home/user/MPS-Audio-Studio-delivery/node_modules/@playwright/test/index.mjs';
+import { makeWav } from '/home/user/MPS-Audio-Studio-delivery/tests/fixtures/wav.js';
+const [url, out] = process.argv.slice(2);
+const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+
+async function measure(page) {
+  return page.evaluate(() => {
+    const parse = c => (c.match(/[\d.]+/g) || []).map(Number);
+    const lum = ([r, g, b]) => { const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
+    const background = el => { for (let e = el; e; e = e.parentElement) { const c = parse(getComputedStyle(e).backgroundColor); if (c.length === 4 ? c[3] > 0.5 : c.length === 3) return c.slice(0, 3); } return [17, 21, 25]; };
+    const texts = [];
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      const text = n.textContent.trim(); const el = n.parentElement;
+      if (!text || !el.getClientRects().length || el.closest('[aria-hidden="true"]')) continue;
+      const style = getComputedStyle(el); const fg = parse(style.color).slice(0, 3); const bg = background(el);
+      const [l1, l2] = [lum(fg), lum(bg)].sort((a, b) => b - a);
+      const opacity = Number(style.opacity) * (el.closest('button:disabled') ? 0.58 : 1);
+      texts.push({ text: text.slice(0, 50), fontSize: parseFloat(style.fontSize), weight: style.fontWeight, contrast: +((l1 + 0.05) / (l2 + 0.05)).toFixed(2), disabledOpacity: opacity < 1 });
+    }
+    const targets = [...document.querySelectorAll('button, input, label.file-picker, [tabindex="0"]')].filter(e => e.getClientRects().length && !(e.tagName === 'INPUT' && e.type === 'file')).map(e => {
+      const r = e.getBoundingClientRect();
+      return { name: e.getAttribute('aria-label') || e.textContent.trim().slice(0, 40) || e.tagName, width: Math.round(r.width), height: Math.round(r.height), disabled: !!e.disabled };
+    });
+    return { texts, targets };
+  });
+}
+
+async function annotate(page, notes) {
+  await page.evaluate(items => {
+    for (const [index, [selector, label]] of items.entries()) {
+      const el = document.querySelector(selector); if (!el) continue;
+      const r = el.getBoundingClientRect();
+      const box = document.createElement('div');
+      Object.assign(box.style, { position: 'fixed', left: `${r.left - 3}px`, top: `${r.top - 3}px`, width: `${r.width + 6}px`, height: `${r.height + 6}px`, border: '2px solid #ff4fd8', borderRadius: '6px', zIndex: 9999, pointerEvents: 'none' });
+      const tag = document.createElement('div');
+      tag.textContent = `${index + 1}`;
+      Object.assign(tag.style, { position: 'fixed', left: `${r.left - 12}px`, top: `${r.top - 12}px`, background: '#ff4fd8', color: '#000', font: '700 12px sans-serif', padding: '2px 6px', borderRadius: '10px', zIndex: 10000 });
+      tag.title = label;
+      document.body.append(box, tag);
+    }
+  }, notes);
+}
+
+const results = {};
+const NOTES = [
+  ['.transport-buttons .primary', 'Disabled Play keeps the gold primary colour'],
+  ['.status', 'One amber dot for every state; colour does not distinguish Playing/Paused/Stopped'],
+  ['.version', 'Development label "SPRINT 0 / WEB MIXER" shown to users'],
+  ['.track-space', 'Large empty Tracks area; no waveform or seek'],
+  ['.master-symbol', 'Decorative "L | R" may read as a meter'],
+  ['.strips', 'Four placeholder strips with decorative knobs take a whole row'],
+  ['footer', 'Roadmap text in the product footer; 10 px'],
+];
+for (const [width, height, state] of [[1280, 720, 'empty'], [1280, 720, 'loaded'], [761, 450, 'loaded'], [390, 844, 'empty']]) {
+  const page = await browser.newPage({ viewport: { width, height } });
+  await page.goto(url);
+  if (state === 'loaded') {
+    await page.getByLabel('Import WAV').setInputFiles({ name: 'tone.wav', mimeType: 'audio/wav', buffer: makeWav() });
+    await page.getByRole('status').filter({ hasText: 'Ready' }).waitFor();
+  }
+  const key = `${state}-${width}x${height}`;
+  results[key] = await measure(page);
+  await page.screenshot({ path: `${out}/current-${key}.png`, fullPage: width < 761 });
+  await annotate(page, NOTES);
+  await page.screenshot({ path: `${out}/annotated-${key}.png`, fullPage: width < 761 });
+  await page.close();
+}
+writeFileSync(`${out}/measurements.json`, JSON.stringify({ app: url, notes: NOTES.map(([s, l], i) => ({ number: i + 1, selector: s, issue: l })), results }, null, 2));
+await browser.close();

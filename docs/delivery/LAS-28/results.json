@@ -1,0 +1,74 @@
+{
+  "issue": "LAS-28",
+  "applicationCommit": "c43345d8c4e6369ece63817d1199fe5f14c08677",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (ESLint, Vitest 192/192, Vite build, Playwright 63/63)",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-c43345d8c4e6369ece63817d1199fe5f14c08677.log", "evidence/html-report-c43345d8c4e6369ece63817d1199fe5f14c08677.zip"]
+    },
+    {
+      "name": "LAS-28 browser workflows (EQ to export parity, A/B and matching, cancel/16-bit, pointer/keyboard EQ, settings files, small screens, live spectrum)",
+      "status": "PASS",
+      "command": "npx playwright test tests/e2e/mastering-controls.spec.js --reporter=json",
+      "exitCode": 0,
+      "evidence": ["evidence/playwright-mastering-controls.txt", "evidence/screenshots/"]
+    },
+    {
+      "name": "Unit tests: engine output stage, WAV encoder, chain incl. 32x reference-meter limiter test",
+      "status": "PASS",
+      "command": "npx vitest run tests/unit/audio-engine.test.js tests/unit/wav-encode.test.js tests/unit/chain.test.js --reporter=verbose",
+      "exitCode": 0,
+      "evidence": ["evidence/vitest-las28-verbose.log"]
+    },
+    {
+      "name": "Independent inspection of a UI export with ffprobe and FFmpeg ebur128 (format, length, loudness, true peak, decoder parity, source unchanged)",
+      "status": "PASS",
+      "command": "node <scratch>/las28-export-inspect.mjs <folder> (against the dev server)",
+      "exitCode": 0,
+      "evidence": ["evidence/export-inspection.json", "evidence/export-inspection-script.mjs.txt"]
+    },
+    {
+      "name": "Limiter 32x test with the old 4x detector (expected to fail, exit 1)",
+      "status": "PASS",
+      "command": "npx vitest run tests/unit/chain.test.js -t 32x (LIMITER_OVERSAMPLING temporarily 4)",
+      "exitCode": 1,
+      "evidence": ["evidence/limiter-4x-negative-control.md"]
+    },
+    {
+      "name": "Chain characterisation with the 8x detector (4x and 32x meters)",
+      "status": "PASS",
+      "command": "npm run characterize:chain -- <folder>",
+      "exitCode": 0,
+      "evidence": ["evidence/chain-report-8x-detector.md", "evidence/chain-report-8x-detector.json"]
+    },
+    {
+      "name": "Artifact, bundle and log scan (124 pieces, 0 findings)",
+      "status": "PASS",
+      "command": "npm run scan:artifacts",
+      "exitCode": 0,
+      "evidence": ["evidence/scan-artifacts-c43345d8c4e6369ece63817d1199fe5f14c08677.json"]
+    },
+    {
+      "name": "Listening review and Mac/Chrome run",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["manual-qa.md"]
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],
+  "blockers": [],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "feat/LAS-28-controls-ab-export",
+  "defects": [
+    {"severity": "Major", "summary": "Limiter output read up to 0.23 dB over the ceiling by finer meters (4x detector); now 8x", "fixedIn": "c43345d8c4e6369ece63817d1199fe5f14c08677"},
+    {"severity": "Minor", "summary": "Undo hidden behind an open editor panel", "fixedIn": "c43345d8c4e6369ece63817d1199fe5f14c08677"},
+    {"severity": "Minor", "summary": "Escape did not close an editor after focus fell to the page", "fixedIn": "c43345d8c4e6369ece63817d1199fe5f14c08677"}
+  ]
+}

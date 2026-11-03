@@ -1,0 +1,91 @@
+{
+  "issue": "LAS-10",
+  "applicationCommit": "8b2068f5d64a74a48223eeb4d3b5c300b64809df",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (lint, Vitest 4/4, build, Playwright 14/14) on Linux Chromium 141",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": [
+        "evidence/npm-run-check-8b2068f5d64a74a48223eeb4d3b5c300b64809df.log",
+        "evidence/html-report-8b2068f5d64a74a48223eeb4d3b5c300b64809df.zip"
+      ]
+    },
+    {
+      "name": "TC-003 invalid file rejection and recovery",
+      "status": "PASS",
+      "command": "npm run test:e2e (part of npm run check)",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-8b2068f5d64a74a48223eeb4d3b5c300b64809df.log"]
+    },
+    {
+      "name": "Server guard: no server, Playwright starts its own (case 1)",
+      "status": "PASS",
+      "command": "npx playwright test --grep TC-001",
+      "exitCode": 0,
+      "evidence": ["evidence/server-guard/case1.log"]
+    },
+    {
+      "name": "Server guard: foreign server without identity endpoint is refused (case 2, expected exit 1)",
+      "status": "PASS",
+      "command": "npx playwright test --grep TC-001 (with an older checkout serving 5173)",
+      "exitCode": 1,
+      "evidence": ["evidence/server-guard/case2.log"]
+    },
+    {
+      "name": "Server guard: foreign checkout with identity endpoint is refused and named (case 3, expected exit 1)",
+      "status": "PASS",
+      "command": "npx playwright test --grep TC-001 (with a copy of this checkout serving 5173)",
+      "exitCode": 1,
+      "evidence": ["evidence/server-guard/case3.log"]
+    },
+    {
+      "name": "Server guard: own running server is reused (case 4)",
+      "status": "PASS",
+      "command": "npx playwright test --grep TC-001 (with this checkout serving 5173)",
+      "exitCode": 0,
+      "evidence": ["evidence/server-guard/case4.log"]
+    },
+    {
+      "name": "Controlled failure produces screenshot, trace, error context and HTML report (expected exit 1)",
+      "status": "PASS",
+      "command": "npx playwright test -c throwaway-failure.config.mjs (temporary file, deleted after the run)",
+      "exitCode": 1,
+      "evidence": [
+        "evidence/controlled-failure/console.log",
+        "evidence/controlled-failure/test-failed-1.png",
+        "evidence/controlled-failure/trace.zip",
+        "evidence/controlled-failure/error-context.md",
+        "evidence/controlled-failure/html-report.zip"
+      ]
+    },
+    {
+      "name": "npm run check with installed Google Chrome on macOS",
+      "status": "NOT_RUN",
+      "command": "npm run check",
+      "exitCode": null,
+      "evidence": []
+    },
+    {
+      "name": "GitHub Actions CI",
+      "status": "NOT_APPLICABLE",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["README.md (proposal only, AC-05)"]
+    }
+  ],
+  "artifacts": [
+    "README.md",
+    "acceptance.md",
+    "manual-qa.md",
+    "jira-update.md",
+    "evidence/"
+  ],
+  "blockers": [],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "feat/LAS-10-playwright-ownership"
+}

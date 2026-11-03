@@ -1,0 +1,84 @@
+
+ RUN  v5.0.5 /home/user/MPS-Audio-Studio-delivery
+
+ ✓ tests/unit/audio-engine.test.js > pause preserves the offset, stop resets it, and dispose closes the context 5ms
+ ✓ tests/unit/audio-engine.test.js > decode failure preserves the previously loaded track 2ms
+ ✓ tests/unit/audio-engine.test.js > natural end disconnects the source and permits playback from the start 1ms
+ ✓ tests/unit/audio-engine.test.js > unsupported names, oversized files and invalid headers are rejected 1ms
+ ✓ tests/unit/audio-engine.test.js > a newer import wins over a slower earlier one 57ms
+ ✓ tests/unit/audio-engine.test.js > disposing during an import discards it without creating an audio context 1ms
+ ✓ tests/unit/audio-engine.test.js > replacing a playing track stops and disconnects its source before the next play 1ms
+ ✓ tests/unit/audio-engine.test.js > 100 MiB is the largest accepted file size 1ms
+ ✓ tests/unit/audio-engine.test.js > files without a RIFF/WAVE header are rejected before decoding; the extension is case-insensitive 3ms
+ ✓ tests/unit/audio-engine.test.js > a failed first import leaves nothing to play 1ms
+ ✓ tests/unit/audio-engine.test.js > position follows the audio clock, freezes on pause and resets on stop and natural end 1ms
+ ✓ tests/unit/audio-engine.test.js > a second Play while the first is starting does not add a source 1ms
+ ✓ tests/unit/audio-engine.test.js > stop, pause or a new track while the context resumes cancels the start 3ms
+ ✓ tests/unit/audio-engine.test.js > a failed resume can be retried 3ms
+ ✓ tests/unit/audio-engine.test.js > unload stops playback, forgets the track and keeps the engine for the next import 7ms
+ ✓ tests/unit/audio-engine.test.js > unload cancels an import in progress and a start waiting for the context 56ms
+ ✓ tests/unit/audio-engine.test.js > a valid header is accepted whatever bytes its RIFF size field contains 1ms
+ ✓ tests/unit/audio-engine.test.js > playback feeds both output paths; one stage is reused until the channel count changes 1ms
+ ✓ tests/unit/audio-engine.test.js > chain settings, listening choice and loudness match reach the stage, also one built later 5ms
+ ✓ tests/unit/audio-engine.test.js > meters from the stage reach every listener until it unsubscribes 1ms
+ ✓ tests/unit/audio-engine.test.js > a stage built for a superseded import is disposed; a stage failure is reported clearly 52ms
+ ✓ tests/unit/audio-engine.test.js > files with more than two channels get a stereo output stage (played as a downmix) 1ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > the defaults are valid and survive a serialise/parse round trip unchanged 4ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > every band keeps its own frequency, gain, Q and type in the serialised text 1ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > not JSON is refused with a clear message 1ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > another file type is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > a newer version is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > an unknown old version is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > another processing order is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > 23 bands is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > gain +19 dB is refused with a clear message 1ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > Q 0.1 is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > 10 Hz is refused with a clear message 1ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > an unknown band type is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > ratio 30 is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > attack as text is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > ceiling 0 dBTP is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > a missing limiter is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > bands above 0.45 × sample rate run at that limit and are reported 1ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > Link edits both channels; independent edits one; switching to Link copies left to right 3ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > every band type is stable across the whole parameter range at 44.1, 48 and 96 kHz 27ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > the measured response of each band type equals its transfer function at 44100 Hz 227ms
+ ✓ tests/unit/wav-encode.test.js > LAS-28 WAV export encoding > 24-bit stereo: header and samples round-trip within half a step 27ms
+ ✓ tests/unit/wav-encode.test.js > LAS-28 WAV export encoding > samples beyond full scale are clipped and counted 1ms
+ ✓ tests/unit/wav-encode.test.js > LAS-28 WAV export encoding > 16-bit adds deterministic TPDF dither of at most ±1 step and keeps low-level signals 353ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > the measured response of each band type equals its transfer function at 48000 Hz 72ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > the measured response of each band type equals its transfer function at 96000 Hz 71ms
+ ✓ tests/unit/wav-encode.test.js > LAS-28 WAV export encoding > other bit depths are refused 1ms
+ ✓ tests/unit/wav-encode.test.js > LAS-28 WAV export encoding > an exported render equals the offline chain output within 24-bit rounding 114ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > a bell reaches its gain at its centre; a 0.707 high-pass is 3 dB down at its corner 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > a left-channel band changes only the left channel in independent mode, both in Link mode 331ms
+ ✓ tests/unit/chain.test.js > LAS-27 compressor > static curve: hard knee, soft knee and RMS detector follow the gain computer 494ms
+ ✓ tests/unit/chain.test.js > LAS-27 compressor > attack and release: 63 % of a level step after the set times 34ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for noise driven 12 dB over full scale at 44100 Hz 205ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for a 0 dBTP intersample peak (fs/4 at 45°) at 44100 Hz 96ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for bursts over silence at 44100 Hz 70ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for noise driven 12 dB over full scale at 48000 Hz 156ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for a 0 dBTP intersample peak (fs/4 at 45°) at 48000 Hz 75ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for bursts over silence at 48000 Hz 70ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for noise driven 12 dB over full scale at 96000 Hz 349ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for a 0 dBTP intersample peak (fs/4 at 45°) at 96000 Hz 174ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for bursts over silence at 96000 Hz 146ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > measured with a 32× reference meter, limited noise stays within +0.1 dB of the ceiling (44.1 kHz) 8061ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > latency: the delay is look-ahead + 12 samples, compensated in offline renders 3ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > audio under the ceiling passes unchanged; input gain is applied before limiting 99ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > release: gain recovers with the set time after a burst ends 42ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > with every processor bypassed the render is the input, sample for sample 290ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > neutral enabled settings (flat EQ, compressor under threshold, limiter under ceiling) are transparent 68ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > every enabled processor changes a known signal 223ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > the same settings render the same output for any block size, and after a reload 1209ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > live parameter changes ramp smoothly and land on the same sample for any block size 282ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > switching a band, its type and a processor on or off cross-fades without a click 114ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > non-finite input samples become silence; the output stays finite and is counted 45ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > the input is never modified; mono renders with the left/linked bands 550ms
+
+ Test Files  3 passed (3)
+      Tests  74 passed (74)
+   Start at  23:59:00
+   Duration  13.78s (tests 99%, transform 1%)
+
+exit 0

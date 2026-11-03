@@ -1,0 +1,8 @@
+Testing the app served from /home/user/MPS-Audio-Studio-delivery (pid 11861) at http://127.0.0.1:5173
+
+Running 1 test using 1 worker
+
+  ✓  1 [chromium] › tests/e2e/pause-toggle.spec.js:77:1 › LAS-11: bursts of transport clicks never play two sources at once (2.0s)
+
+  1 passed (4.2s)
+exit=0

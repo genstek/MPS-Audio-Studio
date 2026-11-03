@@ -1,0 +1,48 @@
+{
+  "issue": "LAS-21",
+  "applicationCommit": "ac9ab7c7a1fdfe0165b9e7e171445ae0788a2245",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (lint, Vitest 26/26 incl. 9 server auth tests, build, Playwright 39/39 incl. 3 account tests)",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-ac9ab7c7a1fdfe0165b9e7e171445ae0788a2245.log", "evidence/html-report-ac9ab7c7a1fdfe0165b9e7e171445ae0788a2245.zip"]
+    },
+    {
+      "name": "Global setup refuses a reused 5173 server that forwards /api to 8787 (expected exit 1)",
+      "status": "PASS",
+      "command": "npx playwright test tests/e2e/mixer.spec.js (with a plain Vite already on 5173)",
+      "exitCode": 1,
+      "evidence": ["evidence/api-guard-refusal.log"]
+    },
+    {
+      "name": "HTML report scan: generated passwords (MPSPW-) and session token values absent",
+      "status": "PASS",
+      "command": "python scan of the unzipped report data (0 MPSPW-, 0 token values)",
+      "exitCode": 0,
+      "evidence": ["evidence/html-report-ac9ab7c7a1fdfe0165b9e7e171445ae0788a2245.zip"]
+    },
+    {
+      "name": "Account dialog screenshots (sign in, register, check email, verified, signed in)",
+      "status": "PASS",
+      "command": "node shot-account.mjs (temporary API 8790 and Vite 5199)",
+      "exitCode": 0,
+      "evidence": ["evidence/screenshots/"]
+    },
+    {
+      "name": "Real email delivery, TLS, macOS Chrome",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": []
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],
+  "blockers": ["Production mail provider and HTTPS hosting are external setup items (ADR-003)"],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "feat/LAS-21-accounts"
+}

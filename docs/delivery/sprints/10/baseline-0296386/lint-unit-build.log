@@ -1,0 +1,27 @@
+
+> mps-audio-studio@0.1.0 lint
+> eslint .
+
+LINT_EXIT=0
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:665) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:683) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:694) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:754) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ Test Files  20 passed (20)
+      Tests  275 passed (275)
+   Start at  17:59:29
+   Duration  69.15s (tests 97%, import 2%, transform 1%)
+
+UNIT_EXIT=0
+dist/assets/render.worker-DStw7z4f.js     44.58 kB
+dist/assets/index-CJ9HgspG.css            21.39 kB │ gzip:   5.36 kB
+dist/assets/index-Cswx8gp1.js            350.08 kB │ gzip: 107.32 kB
+
+✓ built in 349ms
+BUILD_EXIT=0

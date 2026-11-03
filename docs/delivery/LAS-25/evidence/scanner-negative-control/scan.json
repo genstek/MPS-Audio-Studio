@@ -1,0 +1,50 @@
+{
+  "targets": [
+    "<scratch>/delivery-runs/LAS-25-planted"
+  ],
+  "scannedPieces": 4,
+  "serverSecretChecked": true,
+  "summary": {
+    "critical:generated-password": 2,
+    "critical:session-token": 2,
+    "warning:one-time-email-token": 2
+  },
+  "findings": [
+    {
+      "rule": "generated-password",
+      "level": "critical",
+      "where": "../../..<scratch>/delivery-runs/LAS-25-planted/planted.txt",
+      "sample": "MPSPW-abcdefgh…"
+    },
+    {
+      "rule": "session-token",
+      "level": "critical",
+      "where": "../../..<scratch>/delivery-runs/LAS-25-planted/planted.txt",
+      "sample": "mps_session=bc…"
+    },
+    {
+      "rule": "one-time-email-token",
+      "level": "warning",
+      "where": "../../..<scratch>/delivery-runs/LAS-25-planted/planted.txt",
+      "sample": "#reset=8AEdbTB…"
+    },
+    {
+      "rule": "generated-password",
+      "level": "critical",
+      "where": "../../..<scratch>/delivery-runs/LAS-25-planted/planted.zip!/planted.txt",
+      "sample": "MPSPW-abcdefgh…"
+    },
+    {
+      "rule": "session-token",
+      "level": "critical",
+      "where": "../../..<scratch>/delivery-runs/LAS-25-planted/planted.zip!/planted.txt",
+      "sample": "mps_session=bc…"
+    },
+    {
+      "rule": "one-time-email-token",
+      "level": "warning",
+      "where": "../../..<scratch>/delivery-runs/LAS-25-planted/planted.zip!/planted.txt",
+      "sample": "#reset=8AEdbTB…"
+    }
+  ]
+}

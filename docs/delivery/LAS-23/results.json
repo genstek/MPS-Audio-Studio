@@ -1,0 +1,60 @@
+{
+  "issue": "LAS-23",
+  "applicationCommit": "d8292b3fb15665374c1d2770267196afd8856cfb",
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "npm run check (lint, Vitest 58/58 incl. 23 storage tests, build, Playwright 45/45 incl. 3 library tests)",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run check",
+      "exitCode": 0,
+      "evidence": ["evidence/npm-run-check-d8292b3fb15665374c1d2770267196afd8856cfb.log", "evidence/html-report-d8292b3fb15665374c1d2770267196afd8856cfb.zip"]
+    },
+    {
+      "name": "Library Playwright tests repeated 5 times (15 runs)",
+      "status": "PASS",
+      "command": "npx playwright test tests/e2e/library.spec.js --repeat-each=5",
+      "exitCode": 0,
+      "evidence": ["evidence/library-repeat-5x.log"]
+    },
+    {
+      "name": "Full check before the proxy fix (e1224001): save-after-session-end failed with a proxy EPIPE",
+      "status": "FAIL",
+      "command": "npm run check",
+      "exitCode": 1,
+      "evidence": ["evidence/npm-run-check-e1224001-before-proxy-fix.log"]
+    },
+    {
+      "name": "Client bundle secret scan",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": ["../LAS-25/"]
+    },
+    {
+      "name": "Post-delivery fix (2026-11-03): over-limit uploads answered while the client is still sending; npm run check exit 0 (Vitest 314/314, Playwright 119/119)",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=<chromium> npm run check; npx vitest run tests/server/storage.test.js tests/server/upload-limit.test.js --reporter=verbose",
+      "exitCode": 0,
+      "evidence": ["evidence/post-delivery-oversize-uploads.txt", "evidence/post-delivery-vitest-storage.log"]
+    },
+    {
+      "name": "macOS apple-build job with the fix (GitHub Actions, macos-14)",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": []
+    }
+  ],
+  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/"],
+  "blockers": [],
+  "jiraSync": "SYNC_PENDING",
+  "environment": "../ENVIRONMENT.md",
+  "branch": "feat/LAS-23-private-storage",
+  "defects": [
+    {"severity": "Major", "summary": "Over-limit uploads lost their 413 when the client was still sending (macOS apple-build: write EPIPE; streamed resets 1 in 5 on Linux)", "foundIn": "beff5c230bd82d4e1426a667f72869ce71d83054", "fixedIn": "e248d44e64c8eef6d02331b7c7cf6c011397df80"},
+    {"severity": "Major", "summary": "Refused uploads lost their 401/404 behind the dev proxy (EPIPE -> 500)", "foundIn": "e1224001ffe2f893051e96c9e5ab2430973dae46", "fixedIn": "d8292b3fb15665374c1d2770267196afd8856cfb"},
+    {"severity": "Major", "summary": "Level analysis returned null: stored format lacked blockAlign", "foundIn": "pre-commit development", "fixedIn": "e1224001ffe2f893051e96c9e5ab2430973dae46"}
+  ]
+}

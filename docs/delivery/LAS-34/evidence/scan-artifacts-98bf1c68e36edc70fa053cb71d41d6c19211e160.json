@@ -1,0 +1,12 @@
+{
+  "targets": [
+    "playwright-report",
+    "test-results",
+    "dist",
+    ".data/e2e/server.log"
+  ],
+  "scannedPieces": 139,
+  "serverSecretChecked": true,
+  "summary": {},
+  "findings": []
+}

@@ -1,0 +1,33 @@
+{
+  "issue": "LAS-42",
+  "applicationCommit": "c7a705bb2bea968a54127459dca32257f68dc7b6",
+  "deliveryStatus": "BLOCKED",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "Measured UI audit with annotated screenshots (4 size/state combinations)",
+      "status": "PASS",
+      "command": "node docs/delivery/LAS-42/evidence/tools/ui-audit.mjs.txt http://127.0.0.1:5199/ <out> (temporary Vite on 5199)",
+      "exitCode": 0,
+      "evidence": ["evidence/audit/measurements.json", "evidence/audit/annotated-empty-1280x720.png", "evidence/audit/annotated-loaded-1280x720.png", "evidence/audit/annotated-loaded-761x450.png", "evidence/audit/annotated-empty-390x844.png"]
+    },
+    {
+      "name": "Two direction mockups rendered at 1440x900 and 1280x720",
+      "status": "PASS",
+      "command": "node docs/delivery/LAS-42/evidence/tools/shot-files.mjs.txt <out> docs/design/LAS-42/*.html",
+      "exitCode": 0,
+      "evidence": ["evidence/directions/"]
+    },
+    {
+      "name": "Gennady's choice of direction",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": []
+    }
+  ],
+  "artifacts": ["README.md", "audit.md", "design-brief.md", "acceptance.md", "manual-qa.md", "jira-update.md", "evidence/", "../../design/LAS-42/"],
+  "blockers": ["Design decision pending: Gennady chooses direction A, B, a hybrid or supplies references"],
+  "jiraSync": "SYNC_PENDING",
+  "branch": "design/LAS-42-ui-audit"
+}

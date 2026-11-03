@@ -1,0 +1,17 @@
+Testing the app served from <worktree> (pid 32291) at http://127.0.0.1:5173, accounts at http://127.0.0.1:8788
+
+Running 11 tests using 2 workers
+
+  ✓   1 [chromium] › tests/e2e/mastering-controls.spec.js:49:1 › LAS-28: an EQ edit reaches the preview chain and the exported WAV; undo and redo restore it (4.8s)
+  ✓   3 [chromium] › tests/e2e/mastering-controls.spec.js:97:1 › LAS-28: Original/Processed keeps the position and the single source; loudness matching turns the louder one down (8.1s)
+  ✓   4 [chromium] › tests/e2e/mastering-controls.spec.js:129:1 › LAS-28: export can be cancelled; 16-bit dithered mono export keeps format and length (11.4s)
+  ✓   5 [chromium] › tests/e2e/mastering-controls.spec.js:148:1 › LAS-28: EQ points follow the pointer and the keyboard; a whole drag is one undo step (4.3s)
+  ✓   6 [chromium] › tests/e2e/mastering-controls.spec.js:195:1 › LAS-28: settings files and snapshots round-trip; an invalid file changes nothing (1.9s)
+  ✓   7 [chromium] › tests/e2e/mastering-controls.spec.js:226:1 › LAS-28: editors and dialogs fit small and regression-size screens (3.6s)
+  ✓   8 [chromium] › tests/e2e/mastering-controls.spec.js:247:1 › LAS-28: the live spectrum measures the audio being played (1.6s)
+  ✓   2 [chromium] › tests/e2e/proposal.spec.js:39:1 › LAS-32: propose, preview at a strength, check, reject, apply and undo (37.5s)
+  ✓   9 [chromium] › tests/e2e/presets.spec.js:74:1 › LAS-33: save a customised chain as a preset, reload, apply it exactly, rename, export and delete (3.7s)
+  ✓  10 [chromium] › tests/e2e/presets.spec.js:130:1 › LAS-33: imported files are migrated or refused with a reason, without touching the current settings (2.0s)
+  ✓  11 [chromium] › tests/e2e/presets.spec.js:154:1 › LAS-33: preferences stay apart from reference targets, either can be reset, decisions are remembered only on request, and a second account sees nothing (15.2s)
+
+  11 passed (1.0m)

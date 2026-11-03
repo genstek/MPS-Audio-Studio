@@ -1,0 +1,4 @@
+101c101
+<       latestLoad++; // an import still running cannot bring the removed audio back
+---
+>       // (mutation) pending imports not invalidated

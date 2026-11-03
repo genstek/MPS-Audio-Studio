@@ -1,0 +1,12 @@
+Error: The server at http://127.0.0.1:5173 serves /<scratch>/foreign-copy (pid 1357), not this checkout /home/user/MPS-Audio-Studio-delivery. Stop that server or run the tests from that folder.
+
+   at global-setup.js:21
+
+  19 |   const served = realpathSync(identity.root);
+  20 |   if (served !== expected) {
+> 21 |     throw new Error(`The server at ${baseURL} serves ${served} (pid ${identity.pid}), not this checkout ${expected}. Stop that server or run the tests from that folder.`);
+     |           ^
+  22 |   }
+  23 |   console.log(`Testing the app served from ${served} (pid ${identity.pid}) at ${baseURL}`);
+  24 | }
+    at globalSetup (/home/user/MPS-Audio-Studio-delivery/tests/e2e/global-setup.js:21:11)
