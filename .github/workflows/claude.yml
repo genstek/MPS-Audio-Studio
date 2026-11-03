@@ -13,11 +13,13 @@ on:
 jobs:
   claude:
     if: |
+      github.actor == 'genstek' && (
       (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
-      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
+      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude'))))
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     permissions:
       contents: write
       pull-requests: write
@@ -35,3 +37,6 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: |
+            --max-turns 80
+            --allowedTools "Bash(git checkout -b *),Bash(git switch -c *),Bash(git add *),Bash(git commit *),Bash(npm ci),Bash(npm run *),Bash(npx playwright *),Bash(gh pr create *)"
