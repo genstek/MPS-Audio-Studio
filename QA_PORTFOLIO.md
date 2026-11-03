@@ -2,7 +2,7 @@
 
 **Focus:** Manual QA, test design, exploratory testing, defect reporting, regression testing, test automation review, and release-quality evidence.
 
-**Project:** MPS Audio Studio is an independent, in-development audio web application used as a hands-on QA learning and demonstration project. It is not presented as a released commercial product.
+**Project:** MPS Audio Studio is an independent, in-development audio web application project. It is not presented as a released commercial product.
 
 ## What I do as QA
 
