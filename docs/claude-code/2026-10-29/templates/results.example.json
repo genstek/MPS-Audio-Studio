@@ -1,0 +1,18 @@
+{
+  "issue": "LAS-11",
+  "applicationCommit": null,
+  "deliveryStatus": "NOT_STARTED",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "pause/resume engine regression",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": []
+    }
+  ],
+  "artifacts": [],
+  "blockers": [],
+  "jiraSync": "NOT_ATTEMPTED"
+}

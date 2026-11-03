@@ -1,0 +1,57 @@
+jira_key,summary,classification,jira_status,sprint,work_order,developer_delivery,gennady_manual_qa
+LAS-1,Task 1,CLOSED_BASELINE,Done,SCRUM Sprint 0,,REFERENCE_ONLY,EXISTING_RECORD
+LAS-2,Task 2,UNSPECIFIED_PLACEHOLDER,In Progress,SCRUM Sprint 0,,REFERENCE_ONLY,EXISTING_RECORD
+LAS-3,Task 3,UNSPECIFIED_PLACEHOLDER,In Progress,,,REFERENCE_ONLY,EXISTING_RECORD
+LAS-4,Subtask 2.1,UNSPECIFIED_PLACEHOLDER,To Do,,,REFERENCE_ONLY,EXISTING_RECORD
+LAS-5,MPS Audio Studio — Web Mixer & QA Automation,EPIC_ROLLUP,To Do,,,REFERENCE_ONLY,EXISTING_RECORD
+LAS-6,Audit MPS repository and align web-first architecture,CLOSED_BASELINE,QA Done,,,REFERENCE_ONLY,EXISTING_RECORD
+LAS-7,Build runnable web mixer shell with Fostex-inspired channel strips,WORK_ORDER,In Progress,SCRUM Sprint 0,tasks/LAS-7.md,NOT_STARTED,NOT_RUN
+LAS-8,Import WAV audio and display a track in the mixer,WORK_ORDER,To Do,,tasks/LAS-8.md,NOT_STARTED,NOT_RUN
+LAS-9,Implement real Play/Pause transport for imported WAV,WORK_ORDER,To Do,,tasks/LAS-9.md,NOT_STARTED,NOT_RUN
+LAS-10,Set up Playwright JS and first browser smoke tests,WORK_ORDER,In Progress,SCRUM Sprint 0,tasks/LAS-10.md,NOT_STARTED,NOT_RUN
+LAS-11,Resume paused audio with either Pause or Play,WORK_ORDER,To Do,,tasks/LAS-11.md,NOT_STARTED,NOT_RUN
+LAS-12,Unload the imported track and return the mixer to its empty state,WORK_ORDER,To Do,,tasks/LAS-12.md,NOT_STARTED,NOT_RUN
+LAS-13,"User accounts — registration, login and account recovery",EPIC_ROLLUP,To Do,,,REFERENCE_ONLY,EXISTING_RECORD
+LAS-14,"Protect user projects, audio files and personal data",EPIC_ROLLUP,To Do,,,REFERENCE_ONLY,EXISTING_RECORD
+LAS-15,Build a measurable mastering engine with preview and WAV export,EPIC_ROLLUP,To Do,,,REFERENCE_ONLY,EXISTING_RECORD
+LAS-16,Reference-guided mastering and reusable sound profiles,EPIC_ROLLUP,To Do,,,REFERENCE_ONLY,EXISTING_RECORD
+LAS-17,"Stem mixing, stem mastering and AI separation research",EPIC_ROLLUP,To Do,,,REFERENCE_ONLY,EXISTING_RECORD
+LAS-18,Research and prototype native VST3/AU plugin hosting,EPIC_ROLLUP,To Do,,,REFERENCE_ONLY,EXISTING_RECORD
+LAS-19,Choose authentication architecture and define account/session flows,WORK_ORDER,To Do,LAS Sprint 01,tasks/LAS-19.md,NOT_STARTED,NOT_RUN
+LAS-20,"Define privacy rules, data lifecycle and threat model for studio assets",WORK_ORDER,To Do,LAS Sprint 01,tasks/LAS-20.md,NOT_STARTED,NOT_RUN
+LAS-21,"Add registration, verified login and logout to the studio",WORK_ORDER,To Do,LAS Sprint 01,tasks/LAS-21.md,NOT_STARTED,NOT_RUN
+LAS-22,"Add password recovery, session expiry and authentication abuse controls",WORK_ORDER,To Do,LAS Sprint 02,tasks/LAS-22.md,NOT_STARTED,NOT_RUN
+LAS-23,"Enforce private audio storage, ownership checks and safe uploads",WORK_ORDER,To Do,LAS Sprint 02,tasks/LAS-23.md,NOT_STARTED,NOT_RUN
+LAS-24,Add project/account deletion and explicit external-processing consent,WORK_ORDER,To Do,LAS Sprint 02,tasks/LAS-24.md,NOT_STARTED,NOT_RUN
+LAS-25,"Verify authentication, cross-user isolation and sensitive-data handling",WORK_ORDER,To Do,LAS Sprint 02,tasks/LAS-25.md,NOT_STARTED,NOT_RUN
+LAS-26,"Analyze WAV loudness, true peaks, spectrum, dynamics and stereo behavior",WORK_ORDER,To Do,LAS Sprint 03,tasks/LAS-26.md,NOT_STARTED,NOT_RUN
+LAS-27,"Implement a reproducible EQ, compressor and limiter processing chain",WORK_ORDER,To Do,LAS Sprint 03,tasks/LAS-27.md,NOT_STARTED,NOT_RUN
+LAS-28,"Add editable mastering controls, level-matched A/B and processed WAV export",WORK_ORDER,To Do,LAS Sprint 04,tasks/LAS-28.md,NOT_STARTED,NOT_RUN
+LAS-29,Establish DSP regression fixtures and a mastering listening-review protocol,WORK_ORDER,To Do,LAS Sprint 04,tasks/LAS-29.md,NOT_STARTED,NOT_RUN
+LAS-30,Import reference audio and save versioned sound profiles,WORK_ORDER,To Do,LAS Sprint 05,tasks/LAS-30.md,NOT_STARTED,NOT_RUN
+LAS-31,Compare a mix with its reference at matched loudness,WORK_ORDER,To Do,LAS Sprint 05,tasks/LAS-31.md,NOT_STARTED,NOT_RUN
+LAS-32,Generate and apply an explainable reference-guided mastering proposal,WORK_ORDER,To Do,LAS Sprint 06,tasks/LAS-32.md,NOT_STARTED,NOT_RUN
+LAS-33,Save mastering preferences and reusable reference-based presets,WORK_ORDER,To Do,LAS Sprint 06,tasks/LAS-33.md,NOT_STARTED,NOT_RUN
+LAS-34,Import original stems and play them through synchronized mixer channels,WORK_ORDER,To Do,LAS Sprint 07,tasks/LAS-34.md,NOT_STARTED,NOT_RUN
+LAS-35,Process individual stems and render a synchronized stem master,WORK_ORDER,To Do,LAS Sprint 07,tasks/LAS-35.md,NOT_STARTED,NOT_RUN
+LAS-36,"Evaluate AI stem separation quality, runtime and deployment options",WORK_ORDER,To Do,LAS Sprint 08,tasks/LAS-36.md,NOT_STARTED,NOT_RUN
+LAS-37,Design and evaluate a native VST3/AU host bridge for the web studio,WORK_ORDER,To Do,LAS Sprint 08,tasks/LAS-37.md,NOT_STARTED,NOT_RUN
+LAS-38,Prototype application-controlled plugin processing after host feasibility passes,WORK_ORDER,To Do,LAS Sprint 09,tasks/LAS-38.md,NOT_STARTED,NOT_RUN
+LAS-39,Assess training a separate audio model from references and user feedback,WORK_ORDER,To Do,LAS Sprint 09,tasks/LAS-39.md,NOT_STARTED,NOT_RUN
+LAS-40,Product roadmap — 7 feature epics and LAS Sprints 01–09,COORDINATION,To Do,,,REFERENCE_ONLY,EXISTING_RECORD
+LAS-41,UI/UX redesign — define and build the intended LoVerse OS studio experience,EPIC_ROLLUP,To Do,,,REFERENCE_ONLY,EXISTING_RECORD
+LAS-42,Audit the prototype UI and agree the studio's visual direction with Gennady,WORK_ORDER,To Do,LAS Sprint 01,tasks/LAS-42.md,NOT_STARTED,NOT_RUN
+LAS-43,Design studio navigation and interactive wireframes for the core user journeys,WORK_ORDER,To Do,LAS Sprint 02,tasks/LAS-43.md,NOT_STARTED,NOT_RUN
+LAS-44,Create a design system and approved high-fidelity studio screen designs,WORK_ORDER,To Do,LAS Sprint 03,tasks/LAS-44.md,NOT_STARTED,NOT_RUN
+LAS-45,"Implement the approved studio shell, mixer controls and shared account components",WORK_ORDER,To Do,LAS Sprint 04,tasks/LAS-45.md,NOT_STARTED,NOT_RUN
+LAS-46,"Implement the approved mastering, reference, stem and export workflows",WORK_ORDER,To Do,LAS Sprint 07,tasks/LAS-46.md,NOT_STARTED,NOT_RUN
+LAS-47,"Review usability, accessibility and visual consistency across the redesigned studio",WORK_ORDER,To Do,LAS Sprint 07,tasks/LAS-47.md,NOT_STARTED,NOT_RUN
+LAS-48,Make the studio workspace responsive to window and screen resizing,WORK_ORDER,In Progress,SCRUM Sprint 0,tasks/LAS-48.md,NOT_STARTED,NOT_RUN
+LAS-49,Test plan — LAS-48 responsive workspace (24 test cases),WORK_ORDER,In Progress,,tasks/LAS-49.md,NOT_STARTED,NOT_RUN
+LAS-50,Mixer is partially outside the viewport at 1280×720 in an empty workspace,CLOSED_BASELINE,Done,SCRUM Sprint 0,,REFERENCE_ONLY,EXISTING_RECORD
+LAS-51,"MPS Audio Studio - Tracks content is clipped, and Export WAV overlaps Master content at smaller viewport sizes",CLOSED_BASELINE,Done,SCRUM Sprint 0,,REFERENCE_ONLY,EXISTING_RECORD
+LAS-52,LAS-10 — Playwright JS Setup & Browser Smoke Tests — Test Plan,CLOSED_BASELINE,Done,SCRUM Sprint 0,,REFERENCE_ONLY,EXISTING_RECORD
+LAS-53,LAS-10-TC-001: Verify that the mixer application loads correctly,CLOSED_BASELINE,Done,SCRUM Sprint 0,,REFERENCE_ONLY,EXISTING_RECORD
+LAS-55,TC-001 — Manual Smoke Execution — 2026-10-25,CLOSED_BASELINE,Done,SCRUM Sprint 0,,REFERENCE_ONLY,EXISTING_RECORD
+LAS-56,TC-001 — Playwright Chromium Execution — 2026-10-25,CLOSED_BASELINE,Done,SCRUM Sprint 0,,REFERENCE_ONLY,EXISTING_RECORD
+LAS-57,LAS-10-TC-002: Verify that a valid WAV file is imported successfully,WORK_ORDER,To Do,SCRUM Sprint 0,tasks/LAS-57.md,NOT_STARTED,NOT_RUN
