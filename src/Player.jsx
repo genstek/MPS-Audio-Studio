@@ -173,7 +173,7 @@ export function BarMeters({ store }) {
         </div>
       ))}
       <WithHelp id="transport.clip" className="clip-wrap"><button type="button" className={`clip-led${m.clip ? ' on' : ''}`} aria-pressed={m.clip} aria-label={m.clip ? 'Clipping detected at the output; reset' : 'No clipping at the output'} onClick={() => store.resetClip()}>CLIP</button></WithHelp>
-      <HelpTip id="transport.meters" className="inline meters-help" />
+      <HelpTip id="transport.meters" />
     </div>
   );
 }

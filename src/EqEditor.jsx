@@ -190,7 +190,7 @@ export function EqEditor({ params, update, sampleRate, engine }) {
           ))}
         </fieldset>
         <label className="toggle"><input type="checkbox" checked={params.eq.enabled} onChange={e => update(p => ({ ...p, eq: { ...p.eq, enabled: e.target.checked } }))} />EQ on</label><HelpTip id="eq.on" className="inline" />
-        <HelpTip id="eq.curve" className="inline" /><span className="fine-print" aria-hidden="true">Curve</span>
+<span className="fine-print" aria-hidden="true">Curve</span><HelpTip id="eq.curve" className="inline" />
       </div>
       <div className="eq-plot">
         <Spectrum engine={engine} sampleRate={sampleRate} scale={scale} />
@@ -214,12 +214,12 @@ export function EqEditor({ params, update, sampleRate, engine }) {
         </svg>
       </div>
       <p className="fine-print">Drag a point, or focus it and use the arrow keys (Shift for bigger steps, Page Up/Down for Q, Delete to switch off). Double-click to add a band. The shaded area is the live spectrum of what you hear.</p>
-      <HelpTip id="eq.bands" className="inline" />
       <div className="band-picker" role="group" aria-label="Bands">
         {params.eq[channel].map((b, index) => (
           <button key={index} type="button" className={b.enabled ? 'on' : ''} aria-pressed={index === selected} onClick={() => setSelected(index)}
             aria-label={`Band ${index + 1}${b.enabled ? ' (on)' : ''}`}>{index + 1}</button>
         ))}
+        <HelpTip id="eq.bands" />
       </div>
       <section className="band-fields" aria-label={`Band ${selected + 1} settings`}>
         <div className="band-fields-row">
