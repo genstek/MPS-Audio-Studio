@@ -1,0 +1,19 @@
+LAS-69 — test results on 2c5d0ce (extract; full logs in docs/delivery/sprints/10/final/)
+
+Playwright (npm run check):
+  ✓   91 [chromium] › tests/e2e/project.spec.js:117:1 › LAS-69: Save, Save again, Save As, reopen after a restart with relink: settings, stems, layout and media identity come back (11.1s)
+  ✓   92 [chromium] › tests/e2e/project.spec.js:230:1 › LAS-69: the same WAV on two stems is relinked as two strips; replacing the track with a same-name, same-size file is unsaved (6.2s)
+  ✓   94 [chromium] › tests/e2e/project.spec.js:282:1 › LAS-69: cancelled and failed saves keep the session and the last saved file; edits made while saving stay unsaved; bad files are refused (5.1s)
+  ✓   96 [chromium] › tests/e2e/project.spec.js:331:1 › LAS-69: without the File System Access API, Save downloads a project file and Open uses the file picker (3.2s)
+  ✓   97 [chromium] › tests/e2e/project.spec.js:354:1 › LAS-69: section presets save and load one module only, with undo; whole files and other modules are refused (4.2s)
+  ✓   98 [chromium] › tests/e2e/project.spec.js:391:1 › LAS-69: leaving the page with unsaved changes asks first (1.9s)
+
+Vitest (verbose run of the same commit):
+ ✓ tests/unit/project.test.js > LAS-69 project files > save → open round trip keeps every value; the text is stable 7ms
+ ✓ tests/unit/project.test.js > LAS-69 project files > older chain settings inside a project are migrated (Space off); newer, corrupt and foreign files are refused 8ms
+ ✓ tests/unit/project.test.js > LAS-69 project files > names are cleaned for display and file names 3ms
+ ✓ tests/unit/project.test.js > LAS-69 project files > the "unsaved changes" key changes with settings, media, listening and layout, not with time 1ms
+ ✓ tests/unit/project.test.js > LAS-69 project files > replacing the track with another file of the same name and size is an unsaved change; a verified relink is not 1ms
+ ✓ tests/unit/project.test.js > LAS-69 project files > SHA-256 of a file is computed locally (known vector) 4ms
+ ✓ tests/unit/module-presets.test.js > a section preset round-trips its module and changes nothing else 8ms
+ ✓ tests/unit/module-presets.test.js > wrong module, whole-chain files, projects, invalid and newer presets are refused with a reason 4ms

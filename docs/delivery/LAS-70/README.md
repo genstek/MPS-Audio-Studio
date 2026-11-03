@@ -2,7 +2,7 @@
 
 Jira: [LAS-70](https://genstek69.atlassian.net/browse/LAS-70) · Sprint 10 package · Mode: IMPLEMENT (shared styling to be finalised with LAS-44/45)
 
-Branch `delivery/LAS-40-sprint-10` · implementation commit `HELP_COMMIT` · tested application commit `TESTED_COMMIT`
+Branch `delivery/LAS-40-sprint-10` · implementation commit `1146068` · tested application commit `2c5d0ce`
 
 Developer status: **READY_FOR_QA** for the covered controls (proposed); **coverage is partial** in older dialogs (see inventory) · Gennady manual QA: **NOT_RUN**
 
@@ -48,3 +48,8 @@ Coverage inventory (control → hint → help anchor, and the gaps): [`coverage-
 - Coverage gaps listed in the inventory; content is English like the studio UI.
 - Real touch devices and screen readers (VoiceOver) were not run; manual QA covers them.
 - Manual QA: [`manual-qa.md`](manual-qa.md) — **NOT_RUN**.
+
+## Evidence on the tested commit `2c5d0ce`
+- Test results: [`evidence/test-log-2c5d0ce.txt`](evidence/test-log-2c5d0ce.txt), an extract of [`../sprints/10/final/`](../sprints/10/final/). The full `npm run check` exited 0: Playwright 119/119 and Vitest 313/313.
+- Screenshots (Chromium 153, headless, synthetic tone; the viewport is in each file name): [`popover-limiter-ceiling-1440x900.png`](evidence/popover-limiter-ceiling-1440x900.png), [`popover-phone-360x780.png`](evidence/popover-phone-360x780.png), [`studio-help-at-limiter-ceiling-1440x900.png`](evidence/studio-help-at-limiter-ceiling-1440x900.png)
+- Records: [`results.json`](results.json) · [`jira-update.md`](jira-update.md) · [`manual-qa.md`](manual-qa.md) (**NOT_RUN**)

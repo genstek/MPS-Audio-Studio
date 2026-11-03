@@ -1,0 +1,86 @@
+{
+  "issue": "LAS-64",
+  "sprint": "LAS Sprint 10 - Pro Mixer (ID 36)",
+  "package": "docs/claude-code/2026-11-02/SPRINT-10.md @ d005b9d",
+  "applicationCommit": "2c5d0ceda20e5cb2ffe527386420f1e35f675f3c",
+  "implementationCommits": [
+    "bef9308",
+    "d65775b",
+    "159e902"
+  ],
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "14 deterministic DSP tests: bypass bit-identical, pre-delay exact, RT60 within 10 % at 44.1/48/96 kHz, damping, stereo, mix, stability, smooth changes, preview = export at any block size, tail, reset, section pre-roll (tests/unit/space.test.js)",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome npm run check",
+      "exitCode": 0,
+      "evidence": [
+        "../sprints/10/final/npm-run-check-2c5d0ce.log"
+      ]
+    },
+    {
+      "name": "Editor drives the running chain; reverb measurable at the speakers; export equals the offline chain with the tail included or cut (tests/e2e/space.spec.js)",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome npm run check",
+      "exitCode": 0,
+      "evidence": [
+        "../sprints/10/final/npm-run-check-2c5d0ce.log"
+      ]
+    },
+    {
+      "name": "DSP regression against golden v2 (npm run dsp:regression) on 2c5d0ce",
+      "status": "PASS",
+      "command": "npm run dsp:regression",
+      "exitCode": 0,
+      "evidence": [
+        "../sprints/10/final/dsp-regression-2c5d0ce.log"
+      ]
+    },
+    {
+      "name": "Gennady's manual QA",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": [
+        "manual-qa.md"
+      ]
+    },
+    {
+      "name": "Gennady's listening check",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": [
+        "manual-qa.md"
+      ]
+    },
+    {
+      "name": "Full regression on 2c5d0ce: ESLint clean, Vitest 313/313 (26 files), Vite build, Playwright 119/119",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome npm run check",
+      "exitCode": 0,
+      "evidence": [
+        "../sprints/10/final/npm-run-check-2c5d0ce.log"
+      ]
+    }
+  ],
+  "environment": "Ubuntu 24.04.5 (Linux 6.18, x86_64) · Node 22.23.4 · Chromium 153.0.8010.12 headless via PLAYWRIGHT_EXECUTABLE_PATH · Playwright 1.64.1 · Vitest 5.0.5 · Vite 8.3.4 · default viewport 1280×720 (DPR 1, zoom 100 %) unless a test sets one · synthetic WAV fixtures only",
+  "artifacts": [
+    "README.md",
+    "manual-qa.md",
+    "results.json",
+    "jira-update.md"
+  ],
+  "limitations": [
+    "Listening NOT_RUN: numbers prove behaviour, not sound quality.",
+    "The stem master render (LAS-35) still ends with the longest stem (no tail option there yet)."
+  ],
+  "blockers": [],
+  "jiraSync": "SYNC_PENDING",
+  "jiraStatus": null,
+  "jiraCommentId": null,
+  "branch": "delivery/LAS-40-sprint-10",
+  "pullRequest": "https://github.com/genstek/MPS-Audio-Studio/pull/45"
+}

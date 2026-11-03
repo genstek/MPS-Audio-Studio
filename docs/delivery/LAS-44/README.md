@@ -1,21 +1,33 @@
-# LAS-44 — Design system and approved high-fidelity studio screens
+# LAS-44 — Design system and high-fidelity studio designs (Sprint 10)
 
-Jira: [LAS-44](https://genstek69.atlassian.net/browse/LAS-44) · Work order: `docs/claude-code/2026-10-29/tasks/LAS-44.md` · Mode: DESIGN_REVIEW_REQUIRED · Prerequisite: LAS-43 (walkthrough pending), which builds on LAS-42 (visual direction pending)
+Jira: [LAS-44](https://genstek69.atlassian.net/browse/LAS-44) · Sprint 10 package (supersedes the Sprint 03 assignment) · Mode: DESIGN_REVIEW_REQUIRED · input: LAS-42/43 (reused, not restarted), LAS-65, Fostex Model 820 direction
 
-Developer status: **BLOCKED** · Gennady design approval: **PENDING** (none recorded) · Jira sync: **SYNC_PENDING**
+Branch `delivery/LAS-40-sprint-10` · commit `849ba64` (design system proposal and studio mockups)
 
-## Why it is blocked
-The work order asks for tokens, components and high-fidelity screens "based on the chosen LAS-42/43 direction". Neither choice exists yet:
-- **LAS-42:** two visual directions are prepared (`docs/design/LAS-42/direction-a-console.html`, `direction-b-workstation.html`); Gennady has not chosen one.
-- **LAS-43:** the greyscale clickable wireframes (`docs/design/LAS-43/wireframes.html`) await his walkthrough and feedback.
+Developer status: **READY FOR GENNADY'S REVIEW** — **no approval exists**; mockups are proposals · Gennady's selection: **PENDING** · LAS-45 stays blocked until a selection is recorded
 
-Drawing high-fidelity screens before those decisions would mean inventing the approval the gate exists to collect, so no hi-fi screens or design system were produced. Nothing here is approved.
+## Deliverables
+| Item | Where |
+| --- | --- |
+| Design tokens (colour with computed WCAG contrast, type, spacing, shape, motion with reduced-motion rule) | [`docs/design/LAS-44/tokens.css`](../../design/LAS-44/tokens.css), [`design-system.md`](../../design/LAS-44/design-system.md) §2 |
+| Component states (default/hover/focus/pressed/disabled/error/loading) and keyboard behaviour for buttons, keys, fields, faders, knobs, meters, needle meters, tabs, dialogs, editor windows, ⓘ help, status | design-system.md §3 |
+| Responsive behaviour and the proposed QA viewport matrix (to be confirmed with Gennady), many-channel strategy | design-system.md §4 |
+| Two whole-studio proposals — 1 "Model 820 console" (hardware-first) and 2 "Hybrid console workstation" — desktop 1440×900 loaded/playing, movable editors, Space editor, ⓘ popover, empty state, 390 px phone, New project / unsaved / missing-audio flows | [`docs/design/LAS-44/studio-proposals.html`](../../design/LAS-44/studio-proposals.html); screenshots in [`evidence/`](evidence/) |
+| Two player proposals for LAS-67 — A classic tape deck with dual needles; B compact professional hybrid with electronic meters | same page, bottom section |
 
-## What continues meanwhile (not blocked)
-- Real controls keep using the current, provisional styling and the existing responsive rules (PR #8 and LAS-48/49 tests). The work order says approval gates the final reskin, not responsive maintenance.
-- Direction-independent interaction rules needed by the code are specified where the code is written. Example: the LAS-28 EQ pointer mapping, keyboard steps and hit areas, documented in `docs/delivery/LAS-28/` when that slice is delivered. LAS-44 will adopt or restyle them once a direction is chosen.
+## Acceptance mapping
+| Criterion | Status |
+| --- | --- |
+| Colour/contrast, typography, spacing, layout, icons, responsive behaviour | DONE (proposal) — icons: text glyphs and the ⓘ only; an icon set is part of the selection |
+| Component states and keyboard behaviour | DONE (proposal) |
+| Hi-fi designs: shell, mixer, analysis/EQ, export, project flows, Space, player, narrow | DONE (proposal); account forms, reference comparison and stems are shown as frames using the same components — their detailed hi-fi screens follow the chosen direction |
+| Gennady's explicit approval or requested changes recorded | **PENDING** |
 
-## To unblock
-1. Gennady chooses direction A or B (or asks for changes) in LAS-42.
-2. Gennady walks through the LAS-43 wireframes and records feedback.
-3. Then: tokens (colour/contrast, type, spacing, layout, icons), component states (default/hover/focus/disabled/error/loading, keyboard), and hi-fi screens (shell, account, mixer, analysis/EQ, reference, stems, export) at the agreed viewports. These go to Gennady for explicit approval.
+## Decision record
+| Date | Decision | By |
+| --- | --- | --- |
+| — | Pending: Proposal 1, 2, a mix, or changes; player A or B; confirm the QA viewport matrix | Gennady |
+
+Records: [`acceptance.md`](acceptance.md) · [`manual-qa.md`](manual-qa.md) (review steps, **NOT_RUN**) · [`results.json`](results.json) · [`jira-update.md`](jira-update.md) · screenshots in [`evidence/`](evidence/) (Chromium 153, 1440 px wide, full page and a crop of Proposal 2, rendered from the committed HTML).
+
+The Fostex photo attached to LAS-44 could not be downloaded in this session (network policy); please compare the proposals with it.

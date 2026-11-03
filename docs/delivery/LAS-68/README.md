@@ -2,7 +2,7 @@
 
 Jira: [LAS-68](https://genstek69.atlassian.net/browse/LAS-68) · Sprint 10 package · Mode: IMPLEMENT (missing functionality; no earlier working baseline)
 
-Branch `delivery/LAS-40-sprint-10` · implementation commit `8e74cc1` · tested application commit `TESTED_COMMIT`
+Branch `delivery/LAS-40-sprint-10` · implementation commit `8e74cc1` · tested application commit `2c5d0ce`
 
 Developer status: **READY_FOR_QA** (proposed) · Gennady manual / listening QA: **NOT_RUN**
 
@@ -52,3 +52,8 @@ The LAS-7 smoke test was updated: it asserted the old "Level control unavailable
 - No listening test; no hardware output was measured (headless Chromium, no audio device). Numeric checks measure the samples sent to the destination.
 - macOS/iOS wrapper not run. Fader appearance is provisional until LAS-44/45 (a long hardware-style fader is proposed there).
 - Manual QA: [`manual-qa.md`](manual-qa.md) — **NOT_RUN**.
+
+## Evidence on the tested commit `2c5d0ce`
+- Test results: [`evidence/test-log-2c5d0ce.txt`](evidence/test-log-2c5d0ce.txt), an extract of [`../sprints/10/final/`](../sprints/10/final/). The full `npm run check` exited 0: Playwright 119/119 and Vitest 313/313.
+- Screenshots (Chromium 153, headless, synthetic tone; the viewport is in each file name): [`master-level-minus6-playing-1440x900.png`](evidence/master-level-minus6-playing-1440x900.png)
+- Records: [`results.json`](results.json) · [`jira-update.md`](jira-update.md) · [`manual-qa.md`](manual-qa.md) (**NOT_RUN**)

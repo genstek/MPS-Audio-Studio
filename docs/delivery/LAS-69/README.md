@@ -2,7 +2,7 @@
 
 Jira: [LAS-69](https://genstek69.atlassian.net/browse/LAS-69) · Sprint 10 package · Mode: IMPLEMENT (enhancement; depends on [LAS-60](../LAS-60/README.md))
 
-Branch `delivery/LAS-40-sprint-10` · implementation commit `6793920` · tested application commit `TESTED_COMMIT`
+Branch `delivery/LAS-40-sprint-10` · implementation commit `6793920`, review fix `e42b2ff` · tested application commit `2c5d0ce`
 
 Developer status: **READY_FOR_QA** (proposed) for the browser flows · Apple native save/share (LAS-58): **NOT_RUN** · Gennady manual QA: **NOT_RUN**
 
@@ -53,6 +53,12 @@ A project file is a **manifest**, not a bundle: it stores each file's **name, si
 | Local save without login; download fallback | API removed: download named `Untitled project.mps-project.json`, Open via file chooser, relink listed | PASS | same |
 | Section presets: scope, undo, refusal | Space preset changes only Space; undo; Space preset refused in Limiter; whole-chain files refused | PASS | same + `tests/unit/module-presets.test.js` |
 | Project includes closed editors' settings | Space set and its editor closed before saving | PASS | same |
+| The same WAV on two strips relinks as two strips | two strips (−3 and −9 dB) from one file: saved, reopened, relinked one at a time ("(1 of 2)"), both restored with their own gain | PASS | `project.spec.js` |
+| A same-name, same-size replacement is unsaved | revised mix with the same byte size → "Unsaved changes"; a SHA-verified relink stays clean | PASS | `project.spec.js`, `project.test.js` |
+
+## Found after the first delivery (PR #45 review)
+- **Duplicate stems collapsed on relink** (Codex P1, Cursor Bugbot): relinking one stem removed every missing entry with that SHA-256, so the second strip and its settings were lost on the next Save. Each missing stem now keeps its saved slot; rows show gain, pan and offset — `e42b2ff`.
+- **Same-name, same-size replacement looked saved** (Codex P2): the unsaved-changes key compared name and size only. It now includes a media identity (a token per loaded file, or the saved SHA-256 after a verified relink) — `e42b2ff`.
 
 ## Not done / limitations
 - **Reference associations are not stored.** The Compare dialog keeps its chosen reference only while it is open (LAS-31); there is no session-level reference selection to save yet. Listed for LAS-66 and a follow-up.
@@ -61,3 +67,8 @@ A project file is a **manifest**, not a bundle: it stores each file's **name, si
 - Apple wrapper native save/share (LAS-58): **NOT_RUN**; PR #43 was inspected, not merged.
 
 Manual QA: [`manual-qa.md`](manual-qa.md) — **NOT_RUN**.
+
+## Evidence on the tested commit `2c5d0ce`
+- Test results: [`evidence/test-log-2c5d0ce.txt`](evidence/test-log-2c5d0ce.txt), an extract of [`../sprints/10/final/`](../sprints/10/final/). The full `npm run check` exited 0: Playwright 119/119 and Vitest 313/313.
+- Screenshots (Chromium 153, headless, synthetic tone; the viewport is in each file name): [`project-menu-1280x720.png`](evidence/project-menu-1280x720.png), [`section-presets-limiter-1280x720.png`](evidence/section-presets-limiter-1280x720.png)
+- Records: [`results.json`](results.json) · [`jira-update.md`](jira-update.md) · [`manual-qa.md`](manual-qa.md) (**NOT_RUN**)

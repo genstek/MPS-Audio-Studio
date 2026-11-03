@@ -1,0 +1,10 @@
+LAS-61 — test results on 2c5d0ce (extract; full logs in docs/delivery/sprints/10/final/)
+
+Playwright (npm run check):
+  ✓   30 [chromium] › tests/e2e/editor-windows.spec.js:35:1 › LAS-62: EQ, Dynamics and Limiter stay open together; opening an open editor focuses it; edits reach the right processor (7.5s)
+  ✓   31 [chromium] › tests/e2e/editor-windows.spec.js:89:1 › LAS-61: windows move by their title bar while playing, come to the front when clicked, and keep their place when reopened (9.6s)
+  ✓   34 [chromium] › tests/e2e/editor-windows.spec.js:137:1 › LAS-61: keyboard positioning, Escape on the focused window, Reset window layout and resize recovery (5.3s)
+  ✓   37 [chromium] › tests/e2e/editor-windows.spec.js:185:1 › LAS-61/62: on a phone-sized screen every open window keeps its title and close button reachable; the transport stays usable (3.9s)
+
+Vitest (verbose run of the same commit):
+  (no unit tests)

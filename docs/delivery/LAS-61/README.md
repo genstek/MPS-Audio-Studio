@@ -2,7 +2,7 @@
 
 Jira: [LAS-61](https://genstek69.atlassian.net/browse/LAS-61) · Sprint 10 package · Mode: IMPLEMENT · shared window management with [LAS-62](../LAS-62/README.md)
 
-Branch `delivery/LAS-40-sprint-10` · implementation commit `ce72cd4` · tested application commit `TESTED_COMMIT`
+Branch `delivery/LAS-40-sprint-10` · implementation commit `ce72cd4` · tested application commit `2c5d0ce`
 
 Developer status: **READY_FOR_QA** (proposed) · Gennady manual QA: **NOT_RUN**
 
@@ -34,3 +34,8 @@ Developer status: **READY_FOR_QA** (proposed) · Gennady manual QA: **NOT_RUN**
 - Window positions are not remembered across reloads except through a saved project (LAS-69).
 
 Manual QA: [`manual-qa.md`](manual-qa.md) — **NOT_RUN**.
+
+## Evidence on the tested commit `2c5d0ce`
+- Test results: [`evidence/test-log-2c5d0ce.txt`](evidence/test-log-2c5d0ce.txt), an extract of [`../sprints/10/final/`](../sprints/10/final/). The full `npm run check` exited 0: Playwright 119/119 and Vitest 313/313.
+- Screenshots (Chromium 153, headless, synthetic tone; the viewport is in each file name): [`three-windows-moved-1440x900.png`](evidence/three-windows-moved-1440x900.png)
+- Records: [`results.json`](results.json) · [`jira-update.md`](jira-update.md) · [`manual-qa.md`](manual-qa.md) (**NOT_RUN**)

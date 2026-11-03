@@ -2,7 +2,7 @@
 
 Jira: [LAS-64](https://genstek69.atlassian.net/browse/LAS-64) · Sprint 10 package · Mode: IMPLEMENT (first delivery: reverb only; no delay/vocoder)
 
-Branch `delivery/LAS-40-sprint-10` · implementation commit `bef9308` · tested application commit `TESTED_COMMIT`
+Branch `delivery/LAS-40-sprint-10` · implementation commit `bef9308`, review fixes `d65775b` (section pre-roll) and `159e902` (speakers test) · tested application commit `2c5d0ce`
 
 Developer status: **READY_FOR_QA** (proposed) · Gennady manual QA and **listening: NOT_RUN** (build and test passes do not establish listening quality)
 
@@ -43,15 +43,25 @@ Presets are starting points of one algorithm; no real room or mechanical plate i
 | Parameter changes do not click | largest sample step with mix/pre-delay/decay/damping/bypass changes mid-stream < 0.05 on a 0.5 110 Hz sine | PASS | same |
 | Preview = export (render parity) | block size 128 vs 997 identical; tail only appends; UI export = offline chain within 24-bit rounding, tail included and cut | PASS | `space.test.js`, `tests/e2e/space.spec.js` |
 | Reset clears the tail | silence out after `reset()` | PASS | `space.test.js` |
-| Audibly and measurably affects playback | speakers tap 0.6 s after a tone ends: silence with Space off, signal with Hall (annotation in the report) | PASS | `space.spec.js` |
+| Audibly and measurably affects playback | speakers tap read every 20 ms on the audio clock, loudest RMS 0.25–0.8 s after the tone ends: silence with Space off; Hall L ≈ −42 dBFS, R ≈ −36 dBFS (bound −70) | PASS | `space.spec.js` |
+| Section renders (reference comparison, proposal checks) match the whole render with Space on | 1 s tone, 10 s decay: the 7–8 s section equals the whole render within 1e-6 | PASS | `space.test.js` |
 | Editor, presets, undo/redo, settings file v2 | browser | PASS | `space.spec.js` |
 | v1 migration in files/presets | unit + LAS-33 browser import of a v1 file | PASS | `presets.test.js`, `presets.spec.js` |
 | Golden results | regenerated as golden v2 with the recorded reason; only header lines changed for existing renders; 24 Space renders added and passing the render checks | PASS | `tests/golden/dsp-golden.json` |
 
 **Performance** (Node 22, this container, 10 s stereo 48 kHz, best of three after warm-up): default chain 10.9× real time, with Space (Hall) 8.5× real time (≈ 28 % more CPU). Recorded by the `performance` test; not a guarantee for other machines.
 
+## Found after the first delivery (PR #45 review and the full regression)
+- **Section pre-roll ignored the reverb** (Codex review, P1): `renderSegment()` pre-rolled only for the dynamics, so with a long decay the section used by Compare and the proposal check lost reverb started earlier. The pre-roll now adds pre-delay + decay. The unit test above failed before the fix (pre-roll 3 s for a 10 s decay) — `d65775b`.
+- **The speakers test measured at a scheduling-dependent moment**: it read once when the displayed position reached 1.6 s, with `expect.poll` backing off up to 1 s. Under load it read late, when the Hall tail at 1 kHz had fallen below the bound (−70.23 dBFS in a full run). The reading now runs on the audio clock in a window placed by the signal; the bound is unchanged — `159e902`.
+
 ## Limitations
 - **Listening NOT_RUN.** Use [`manual-qa.md`](manual-qa.md) (listening checklist). Numbers above prove behaviour, not taste.
 - The stem master render (LAS-35) still ends with the longest stem (no tail option there yet).
 - Loudness matching for A/B compares the processed and original over the source length (no tail).
 - Visual design of the editor is provisional until LAS-44/45; LAS-65 proposes the final look.
+
+## Evidence on the tested commit `2c5d0ce`
+- Test results: [`evidence/test-log-2c5d0ce.txt`](evidence/test-log-2c5d0ce.txt), an extract of [`../sprints/10/final/`](../sprints/10/final/). The full `npm run check` exited 0: Playwright 119/119 and Vitest 313/313.
+- Screenshots (Chromium 153, headless, synthetic tone; the viewport is in each file name): [`space-editor-hall-1440x900.png`](evidence/space-editor-hall-1440x900.png)
+- Records: [`results.json`](results.json) · [`jira-update.md`](jira-update.md) · [`manual-qa.md`](manual-qa.md) (**NOT_RUN**)

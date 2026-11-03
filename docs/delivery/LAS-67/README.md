@@ -2,7 +2,7 @@
 
 Jira: [LAS-67](https://genstek69.atlassian.net/browse/LAS-67) · Sprint 10 package · Mode: IMPLEMENT behaviour; **visual design gated** (tape-deck vs compact hybrid is Gennady's choice in LAS-44/65; LAS-45 applies it)
 
-Branch `delivery/LAS-40-sprint-10` · implementation commit `a915a54` · tested application commit `TESTED_COMMIT`
+Branch `delivery/LAS-40-sprint-10` · implementation commit `a915a54`, review fix `2c5d0ce` · tested application commit `2c5d0ce`
 
 Developer status: **READY_FOR_QA** for behaviour (proposed) · visual selection **PENDING** · Gennady manual / listening QA: **NOT_RUN**
 
@@ -43,11 +43,18 @@ Readings run about 30 times a second only while audio plays or while the meters 
 | Engine seek | single source restarted at the target; paused cue; clamps; NaN → 0 | PASS | `tests/unit/audio-engine.test.js` |
 | Responsive, no LAS-48/51 regressions | RWD, FF and the timeline added to the "essential controls" lists of both layout suites; full matrix; 360 px phone fit | PASS | `LAS51-layout.spec.js`, `LAS48-coverage.spec.js`, `player.spec.js` |
 
-## Defect found and fixed during this slice
+## Defects found and fixed
 - A 360 px phone with edited processor cards scrolled sideways: the LAS-63 "edited" tag did not wrap (found by the LAS-33 preset test's phone check). Strip titles now wrap; a regression test covers it.
+- **Held FF walked on after the end** (Cursor Bugbot on PR #45): holding FF while playing through the end stopped playback (position 0), but the held button kept seeking, so the position moved again while Stopped. `seek()` now reports when it is at either end and a held button stops repeating there; `player.spec.js` holds FF through the end while playing and expects Stopped at 00:00.0 — `2c5d0ce`.
+- **Main-thread long tasks while playing** (found by the LAS-26 test in the full regression: a 212 ms task, bound 200 ms). Long-animation-frame attribution showed whole-studio React renders of 30–60 ms every 100 ms: the playback position was App state, and Sprint 10 made the App larger. Baseline `0296386` had no long tasks in the same scenario. The position now lives in a small store that only the clock and the timeline read, and the spectrum takes its canvas size from a ResizeObserver instead of reading layout every frame. Same scenario after the fix: 0 long tasks in 3 runs — `2c5d0ce`.
 
 ## Limitations
 - Visual styling is provisional: the two player proposals (tape deck with dual needles; compact hybrid) are in `docs/design/LAS-44/studio-proposals.html` for Gennady's selection. No reel animation.
 - The needles are an RMS approximation with VU-like timing; not a calibrated VU or PPM.
 - Hardware output was not measured (no audio device in this container); meters read the samples sent to the destination.
 - Manual QA: [`manual-qa.md`](manual-qa.md) — **NOT_RUN**.
+
+## Evidence on the tested commit `2c5d0ce`
+- Test results: [`evidence/test-log-2c5d0ce.txt`](evidence/test-log-2c5d0ce.txt), an extract of [`../sprints/10/final/`](../sprints/10/final/). The full `npm run check` exited 0: Playwright 119/119 and Vitest 313/313.
+- Screenshots (Chromium 153, headless, synthetic tone; the viewport is in each file name): [`player-playing-1280x720.png`](evidence/player-playing-1280x720.png), [`player-playing-1440x900.png`](evidence/player-playing-1440x900.png), [`player-playing-360x780.png`](evidence/player-playing-360x780.png)
+- Records: [`results.json`](results.json) · [`jira-update.md`](jira-update.md) · [`manual-qa.md`](manual-qa.md) (**NOT_RUN**)

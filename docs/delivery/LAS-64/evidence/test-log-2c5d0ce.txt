@@ -1,0 +1,91 @@
+LAS-64 — test results on 2c5d0ce (extract; full logs in docs/delivery/sprints/10/final/)
+
+Playwright (npm run check):
+  ✓   10 [chromium] › tests/e2e/presets.spec.js:74:1 › LAS-33: save a customised chain as a preset, reload, apply it exactly, rename, export and delete (4.5s)
+  ✓   11 [chromium] › tests/e2e/presets.spec.js:130:1 › LAS-33: imported files are migrated or refused with a reason, without touching the current settings (2.4s)
+  ✓   12 [chromium] › tests/e2e/presets.spec.js:157:1 › LAS-33: preferences stay apart from reference targets, either can be reset, decisions are remembered only on request, and a second account sees nothing (13.8s)
+  ✓  106 [chromium] › tests/e2e/space.spec.js:32:1 › LAS-64: the Space editor switches the reverb on, applies presets and values to the running chain, and undo restores them (3.7s)
+  ✓  107 [chromium] › tests/e2e/space.spec.js:66:1 › LAS-64: with Space on, reverb is measurable at the speakers after the tone stops; with Space off the silence stays silent (9.0s)
+  ✓  108 [chromium] › tests/e2e/space.spec.js:102:1 › LAS-64: the export equals the offline chain with Space, with the tail included or cut (5.5s)
+
+Vitest (verbose run of the same commit):
+ ✓ tests/unit/space.test.js > LAS-64 Space settings > schema v2 puts Space before the limiter; defaults are off; presets are valid 5ms
+ ✓ tests/unit/space.test.js > LAS-64 Space settings > version 1 settings are upgraded with Space off and otherwise unchanged; out-of-range values are refused 5ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > bypassed Space is bit-identical, whatever its stored settings 724ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > pre-delay: the first reverb sample arrives exactly after the pre-delay 231ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > decay: the measured low-frequency RT60 follows the setting within 10 % at 44.1, 48 and 96 kHz 3328ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > damping shortens the high-frequency tail but not the low-frequency decay 361ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > stereo: a centred mono source gives decorrelated left/right reverb of equal level; a mono chain stays mono 381ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > mix: 0 % is the dry signal, 100 % the reverb alone; the dry path stays aligned 815ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > no NaN, Infinity or runaway feedback with extreme settings and loud noise for 20 s 2901ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > parameter changes while running are smooth: no step larger than the signal itself makes 213ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > preview equals export: any block size gives identical samples, and the tail option only appends 1044ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > a section render keeps reverb that started before the section: the pre-roll covers pre-delay + decay 1844ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > reset() clears the tail at once: silence in gives silence out afterwards 158ms
+ ✓ tests/unit/space.test.js > LAS-64 Space processing > performance: real-time factor with Space on, measured (not asserted beyond real time) 8529ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > the defaults are valid and survive a serialise/parse round trip unchanged 5ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > every band keeps its own frequency, gain, Q and type in the serialised text 3ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > not JSON is refused with a clear message 1ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > another file type is refused with a clear message 1ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > a newer version is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > an unknown old version is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > another processing order is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > 23 bands is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > gain +19 dB is refused with a clear message 1ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > Q 0.1 is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > 10 Hz is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > an unknown band type is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > ratio 30 is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > attack as text is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > ceiling 0 dBTP is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > a missing limiter is refused with a clear message 0ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > bands above 0.45 × sample rate run at that limit and are reported 1ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain settings schema > Link edits both channels; independent edits one; switching to Link copies left to right 1ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > every band type is stable across the whole parameter range at 44.1, 48 and 96 kHz 36ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > the measured response of each band type equals its transfer function at 44100 Hz 264ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > the measured response of each band type equals its transfer function at 48000 Hz 116ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > the measured response of each band type equals its transfer function at 96000 Hz 101ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > a bell reaches its gain at its centre; a 0.707 high-pass is 3 dB down at its corner 1ms
+ ✓ tests/unit/chain.test.js > LAS-27 EQ filters > a left-channel band changes only the left channel in independent mode, both in Link mode 411ms
+ ✓ tests/unit/chain.test.js > LAS-27 compressor > static curve: hard knee, soft knee and RMS detector follow the gain computer 761ms
+ ✓ tests/unit/chain.test.js > LAS-27 compressor > attack and release: 63 % of a level step after the set times 56ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for noise driven 12 dB over full scale at 44100 Hz 366ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for a 0 dBTP intersample peak (fs/4 at 45°) at 44100 Hz 144ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for bursts over silence at 44100 Hz 87ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for noise driven 12 dB over full scale at 48000 Hz 260ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for a 0 dBTP intersample peak (fs/4 at 45°) at 48000 Hz 98ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for bursts over silence at 48000 Hz 94ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for noise driven 12 dB over full scale at 96000 Hz 485ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for a 0 dBTP intersample peak (fs/4 at 45°) at 96000 Hz 201ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > true-peak ceiling −1 dBTP holds within +0.2 dB for bursts over silence at 96000 Hz 180ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > measured with a 32× reference meter, limited noise stays within +0.1 dB of the ceiling (44.1 kHz) 10878ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > latency: the delay is look-ahead + 12 samples, compensated in offline renders 5ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > audio under the ceiling passes unchanged; input gain is applied before limiting 199ms
+ ✓ tests/unit/chain.test.js > LAS-27 limiter > release: gain recovers with the set time after a burst ends 56ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > with every processor bypassed the render is the input, sample for sample 462ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > neutral enabled settings (flat EQ, compressor under threshold, limiter under ceiling) are transparent 191ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > every enabled processor changes a known signal 302ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > the same settings render the same output for any block size, and after a reload 1568ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > live parameter changes ramp smoothly and land on the same sample for any block size 432ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > switching a band, its type and a processor on or off cross-fades without a click 213ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > non-finite input samples become silence; the output stays finite and is counted 87ms
+ ✓ tests/unit/chain.test.js > LAS-27 chain behaviour > the input is never modified; mono renders with the left/linked bands 906ms
+ ✓ tests/server/presets.test.js > presets > save, list, read back the complete chain, rename and delete 153ms
+ ✓ tests/server/presets.test.js > presets > a proposal preset keeps its analysis and proposal versions and strength 60ms
+ ✓ tests/server/presets.test.js > presets > invalid, newer-version and oversized presets are refused and nothing is stored 71ms
+ ✓ tests/server/presets.test.js > presets > another account cannot list, read, rename or delete them; signed out gets 401 75ms
+ ✓ tests/server/presets.test.js > presets > state changes need the studio request header (CSRF rule) 49ms
+ ✓ tests/server/presets.test.js > preferences > defaults until saved; save, read, reset; validated; owner-only 85ms
+ ✓ tests/server/presets.test.js > remembered decisions > stored only when sent, listed, forgotten one by one or all; owner-only 79ms
+ ✓ tests/server/presets.test.js > remembered decisions > bad decisions are refused: unknown decision, rating, strength, version, oversized or missing summary 45ms
+ ✓ tests/server/presets.test.js > links to reference profiles and deletion > only your own reference profile can be linked; deleting it keeps presets and decisions but forgets the link 397ms
+ ✓ tests/server/presets.test.js > links to reference profiles and deletion > deleting the account deletes its presets, preferences and decisions (0 rows left) 83ms
+ ✓ tests/server/presets.test.js > links to reference profiles and deletion > a database from sprint 05 (schema v4) upgrades to v5 in place 73ms
+ ✓ tests/unit/presets.test.js > preset files > save → load restores the complete preset, including independent L/R bands and the chain order 6ms
+ ✓ tests/unit/presets.test.js > preset files > an LAS-28 settings file (mps-chain v1) is migrated into a preset, with Space off (LAS-64) 5ms
+ ✓ tests/unit/presets.test.js > preset files > a current settings file (mps-chain v2, with Space) becomes a preset unchanged 1ms
+ ✓ tests/unit/presets.test.js > preset files > newer, unknown, broken and invalid files are refused with a reason 2ms
+ ✓ tests/unit/presets.test.js > preferences > validated against their bounds and version 2ms
+ ✓ tests/unit/presets.test.js > preferences > reference targets and preference adjustments stay separate and either can be switched off 5ms
+ ✓ tests/unit/module-presets.test.js > a section preset round-trips its module and changes nothing else 8ms
+ ✓ tests/unit/module-presets.test.js > wrong module, whole-chain files, projects, invalid and newer presets are refused with a reason 4ms

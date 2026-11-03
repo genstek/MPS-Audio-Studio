@@ -2,7 +2,7 @@
 
 Jira: [LAS-62](https://genstek69.atlassian.net/browse/LAS-62) · Sprint 10 package · Mode: IMPLEMENT · depends on [LAS-61](../LAS-61/README.md) window management (same commit)
 
-Branch `delivery/LAS-40-sprint-10` · implementation commit `ce72cd4` (Space editor added in the LAS-64 commit) · tested application commit `TESTED_COMMIT`
+Branch `delivery/LAS-40-sprint-10` · implementation commit `ce72cd4` (Space editor added in the LAS-64 commit) · tested application commit `2c5d0ce`
 
 Developer status: **READY_FOR_QA** (proposed) · Gennady manual QA: **NOT_RUN**
 
@@ -33,3 +33,8 @@ Developer status: **READY_FOR_QA** (proposed) · Gennady manual QA: **NOT_RUN**
 | Export keeps current settings | LAS-28/LAS-64 export parity tests with editors open | PASS | `mastering-controls.spec.js`, `space.spec.js` |
 
 Manual QA: [`manual-qa.md`](manual-qa.md) — **NOT_RUN**.
+
+## Evidence on the tested commit `2c5d0ce`
+- Test results: [`evidence/test-log-2c5d0ce.txt`](evidence/test-log-2c5d0ce.txt), an extract of [`../sprints/10/final/`](../sprints/10/final/). The full `npm run check` exited 0: Playwright 119/119 and Vitest 313/313.
+- Screenshots (Chromium 153, headless, synthetic tone; the viewport is in each file name): [`eq-dynamics-limiter-open-1440x900.png`](evidence/eq-dynamics-limiter-open-1440x900.png)
+- Records: [`results.json`](results.json) · [`jira-update.md`](jira-update.md) · [`manual-qa.md`](manual-qa.md) (**NOT_RUN**)

@@ -1,0 +1,7 @@
+LAS-60 — test results on 2c5d0ce (extract; full logs in docs/delivery/sprints/10/final/)
+
+Playwright (npm run check):
+  ✓   89 [chromium] › tests/e2e/project.spec.js:62:1 › LAS-60: New project asks for a name, validates it, Cancel keeps the session, and work in progress is protected (4.2s)
+
+Vitest (verbose run of the same commit):
+  (no unit tests)

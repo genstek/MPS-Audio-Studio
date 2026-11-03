@@ -4,6 +4,12 @@ Integration branch: `delivery/LAS-40-all-sprints` (from `origin/main` 364d863; n
 
 Developer outcome uses NOT_STARTED / IN_PROGRESS / BLOCKED / READY_FOR_QA. Gennady's manual status stays **NOT_RUN** until he tests. Every Jira update is **SYNC_PENDING** (no authorized Jira connection in this session); the text to post is in each issue's `jira-update.md`.
 
+**Sprint 10 (2026-11-02):**
+- 14 work orders on `delivery/LAS-40-sprint-10` → [PR #45](https://github.com/genstek/MPS-Audio-Studio/pull/45), not merged.
+- 10 are READY_FOR_QA, LAS-65 and LAS-44 are proposals awaiting Gennady's selection, LAS-45 is BLOCKED, and LAS-66 is IN_PROGRESS.
+- Jira was updated directly for Sprint 10; see each issue's `jira-update.md`.
+- Summary: [sprints/10](sprints/10/README.md).
+
 **Final delivery state (2026-10-30).** All 36 work orders have a delivery record: **29 READY_FOR_QA**, **7 BLOCKED** on decisions only Gennady can make (no NOT_STARTED or IN_PROGRESS rows remain).
 - READY_FOR_QA means developer checks passed for the stated scope. It is not QA Done, Jira Done, owner acceptance or a merge into `main`.
 - Final integration check on `b16c0ba`: `npm run check` exit 0 (Vitest 275/275, Playwright 81/81) and the artifact scan with 0 findings. See [`final-check/`](final-check/).
@@ -39,15 +45,27 @@ Developer outcome uses NOT_STARTED / IN_PROGRESS / BLOCKED / READY_FOR_QA. Genna
 | LAS-39 | 09 | RESEARCH | `research/LAS-39-model-training-assessment` → [#41](https://github.com/genstek/MPS-Audio-Studio/pull/41) | aa46bd5 (report + experiment) | [docs/delivery/LAS-39](LAS-39/) | READY_FOR_QA (protocol + synthetic experiment; production training NO-GO; real data and listening NOT_RUN) | NOT_RUN |
 | LAS-42 | 01 | DESIGN_REVIEW_REQUIRED | `design/LAS-42-ui-audit` → [#22](https://github.com/genstek/MPS-Audio-Studio/pull/22) | c7a705b (audited) | [docs/delivery/LAS-42](LAS-42/) | BLOCKED — direction choice pending | PENDING decision |
 | LAS-43 | 02 | DESIGN_REVIEW_REQUIRED | `design/LAS-43-wireframes` → [#27](https://github.com/genstek/MPS-Audio-Studio/pull/27) | — (design) | [docs/delivery/LAS-43](LAS-43/) | BLOCKED — walkthrough pending | PENDING walkthrough |
-| LAS-44 | 03 | DESIGN_REVIEW_REQUIRED | — (status documents only) → — | — | [docs/delivery/LAS-44](LAS-44/) | BLOCKED (LAS-42 direction, LAS-43 walkthrough pending) | PENDING |
-| LAS-45 | 04 | GATED_IMPLEMENTATION | — (status documents only) → — | — | [docs/delivery/LAS-45](LAS-45/) | BLOCKED (needs approved LAS-44 design) | PENDING |
+| LAS-44 | 10 (was 03) | DESIGN_REVIEW_REQUIRED | `delivery/LAS-40-sprint-10` → [#45](https://github.com/genstek/MPS-Audio-Studio/pull/45) | 849ba64 (design) | [docs/delivery/LAS-44](LAS-44/) | Proposals ready for review; nothing approved | PENDING selection |
+| LAS-45 | 10 (was 04) | GATED_IMPLEMENTATION | — (status documents) → [#45](https://github.com/genstek/MPS-Audio-Studio/pull/45) | — | [docs/delivery/LAS-45](LAS-45/) | BLOCKED (needs the LAS-44 selection; no reskin started) | PENDING |
 | LAS-46 | 07 | GATED_IMPLEMENTATION | — (status documents) → — | — | [docs/delivery/LAS-46](LAS-46/) | BLOCKED (approved design: LAS-42 → 43 → 44 → 45) | PENDING |
 | LAS-47 | 07 | QA_REVIEW_REQUIRED | — (status documents) → — | — | [docs/delivery/LAS-47](LAS-47/) | BLOCKED (needs LAS-46; Gennady's review not prefilled) | PENDING |
 | LAS-48 | 00 | VERIFY_AND_CLOSE_COVERAGE_GAPS | `test/LAS-48-coverage-gaps` → [#17](https://github.com/genstek/MPS-Audio-Studio/pull/17) | b06590b | [docs/delivery/LAS-48](LAS-48/) | READY_FOR_QA (AC-03/06, cross-browser BLOCKED) | NOT_RUN |
 | LAS-49 | 00 (unscheduled) | TEST_PLAN_RECONCILIATION | `docs/LAS-49-test-plan-reconciliation` → [#18](https://github.com/genstek/MPS-Audio-Studio/pull/18) | b06590b | [docs/delivery/LAS-49](LAS-49/) | READY_FOR_QA (24 cases reconciled) | NOT_RUN (24) |
 | LAS-57 | 00 | AUTOMATION_AND_QA_HANDOFF | `test/LAS-57-tc002-valid-wav` → [#12](https://github.com/genstek/MPS-Audio-Studio/pull/12) | f90adfc | [docs/delivery/LAS-57](LAS-57/) | READY_FOR_QA | NOT_RUN |
+| LAS-60 | 10 | IMPLEMENT | `delivery/LAS-40-sprint-10` → [#45](https://github.com/genstek/MPS-Audio-Studio/pull/45) | 6793920 | [docs/delivery/LAS-60](LAS-60/) | READY_FOR_QA | NOT_RUN |
+| LAS-61 | 10 | IMPLEMENT | same | ce72cd4 | [docs/delivery/LAS-61](LAS-61/) | READY_FOR_QA | NOT_RUN |
+| LAS-62 | 10 | IMPLEMENT | same | ce72cd4, bef9308 | [docs/delivery/LAS-62](LAS-62/) | READY_FOR_QA | NOT_RUN |
+| LAS-63 | 10 | IMPLEMENT | same | 569eb45, f9d5ccb | [docs/delivery/LAS-63](LAS-63/) | READY_FOR_QA | NOT_RUN |
+| LAS-64 | 10 | IMPLEMENT | same | bef9308, d65775b, 159e902 | [docs/delivery/LAS-64](LAS-64/) | READY_FOR_QA (listening NOT_RUN) | NOT_RUN |
+| LAS-65 | 10 | RESEARCH + DESIGN_REVIEW_REQUIRED | same | 849ba64 (design) | [docs/delivery/LAS-65](LAS-65/) | Proposals ready for review; nothing approved | PENDING selection |
+| LAS-66 | 10 | QA | same | docs | [docs/delivery/LAS-66](LAS-66/) | IN_PROGRESS (automated regression executed; design acceptance waits for the selection) | NOT_RUN |
+| LAS-67 | 10 | IMPLEMENT | same | a915a54, 2c5d0ce | [docs/delivery/LAS-67](LAS-67/) | READY_FOR_QA (look waits for LAS-44) | NOT_RUN |
+| LAS-68 | 10 | IMPLEMENT | same | 8e74cc1 | [docs/delivery/LAS-68](LAS-68/) | READY_FOR_QA (listening NOT_RUN) | NOT_RUN |
+| LAS-69 | 10 | IMPLEMENT | same | 6793920, e42b2ff | [docs/delivery/LAS-69](LAS-69/) | READY_FOR_QA | NOT_RUN |
+| LAS-70 | 10 | IMPLEMENT | same | 1146068 | [docs/delivery/LAS-70](LAS-70/) | READY_FOR_QA (older dialogs partial, see inventory) | NOT_RUN |
+| LAS-71 | 10 | IMPLEMENT | same | aa8251d | [docs/delivery/LAS-71](LAS-71/) | READY_FOR_QA | NOT_RUN |
 
-Sprint boundaries: [00 foundation](sprints/00-foundation/README.md) · [01](sprints/01/README.md) · [02](sprints/02/README.md) · [03](sprints/03/README.md) · [04](sprints/04/README.md) · [05](sprints/05/README.md) · [06](sprints/06/README.md) · [07](sprints/07/README.md) · [08](sprints/08/README.md) · [09](sprints/09/README.md). Final check: [final-check](final-check/README.md).
+Sprint boundaries: [00 foundation](sprints/00-foundation/README.md) · [01](sprints/01/README.md) · [02](sprints/02/README.md) · [03](sprints/03/README.md) · [04](sprints/04/README.md) · [05](sprints/05/README.md) · [06](sprints/06/README.md) · [07](sprints/07/README.md) · [08](sprints/08/README.md) · [09](sprints/09/README.md) · [10 Pro Mixer](sprints/10/README.md). Final check: [final-check](final-check/README.md) (sprints 00–09); Sprint 10: [sprints/10/final](sprints/10/final/).
 
 ## Blockers and decisions for Gennady
 | Decision or input | Unblocks |

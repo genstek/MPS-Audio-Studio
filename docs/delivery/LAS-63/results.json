@@ -1,0 +1,67 @@
+{
+  "issue": "LAS-63",
+  "sprint": "LAS Sprint 10 - Pro Mixer (ID 36)",
+  "package": "docs/claude-code/2026-11-02/SPRINT-10.md @ d005b9d",
+  "applicationCommit": "2c5d0ceda20e5cb2ffe527386420f1e35f675f3c",
+  "implementationCommits": [
+    "569eb45",
+    "f9d5ccb"
+  ],
+  "deliveryStatus": "READY_FOR_QA",
+  "manualQa": "NOT_RUN",
+  "checks": [
+    {
+      "name": "Configured shape follows edits, undo and presets without playback; no settings sent by animation; reduced motion; idle meters; 360 px phone (tests/e2e/previews.spec.js)",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome npm run check",
+      "exitCode": 0,
+      "evidence": [
+        "../sprints/10/final/npm-run-check-2c5d0ce.log"
+      ]
+    },
+    {
+      "name": "Compressor and limiter curves equal the chain at steady levels; \"edited\" marks exactly the changed modules (tests/unit/previews.test.js)",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome npm run check",
+      "exitCode": 0,
+      "evidence": [
+        "../sprints/10/final/npm-run-check-2c5d0ce.log"
+      ]
+    },
+    {
+      "name": "Gennady's manual QA",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "evidence": [
+        "manual-qa.md"
+      ]
+    },
+    {
+      "name": "Full regression on 2c5d0ce: ESLint clean, Vitest 313/313 (26 files), Vite build, Playwright 119/119",
+      "status": "PASS",
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome npm run check",
+      "exitCode": 0,
+      "evidence": [
+        "../sprints/10/final/npm-run-check-2c5d0ce.log"
+      ]
+    }
+  ],
+  "environment": "Ubuntu 24.04.5 (Linux 6.18, x86_64) · Node 22.23.4 · Chromium 153.0.8010.12 headless via PLAYWRIGHT_EXECUTABLE_PATH · Playwright 1.64.1 · Vitest 5.0.5 · Vite 8.3.4 · default viewport 1280×720 (DPR 1, zoom 100 %) unless a test sets one · synthetic WAV fixtures only",
+  "artifacts": [
+    "README.md",
+    "manual-qa.md",
+    "results.json",
+    "jira-update.md"
+  ],
+  "limitations": [
+    "Card graphics are small (46 px) in the provisional layout; LAS-65/44 propose larger card graphs.",
+    "The EQ card shows the left/linked curve only; independent right-channel curves are in the editor."
+  ],
+  "blockers": [],
+  "jiraSync": "SYNC_PENDING",
+  "jiraStatus": null,
+  "jiraCommentId": null,
+  "branch": "delivery/LAS-40-sprint-10",
+  "pullRequest": "https://github.com/genstek/MPS-Audio-Studio/pull/45"
+}

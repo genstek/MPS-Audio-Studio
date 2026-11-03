@@ -2,7 +2,7 @@
 
 Jira: [LAS-71](https://genstek69.atlassian.net/browse/LAS-71) · Sprint 10 package `docs/claude-code/2026-11-02/SPRINT-10.md` · Mode: IMPLEMENT
 
-Branch `delivery/LAS-40-sprint-10` (from `delivery/LAS-40-all-sprints` @ `0296386`) · implementation commit `aa8251d` · tested application commit `TESTED_COMMIT`
+Branch `delivery/LAS-40-sprint-10` (from `delivery/LAS-40-all-sprints` @ `0296386`) · implementation commit `aa8251d` · tested application commit `2c5d0ce`
 
 Developer status: **READY_FOR_QA** (proposed) · Gennady manual QA: **NOT_RUN** · Jira: updated in this session (see [`jira-update.md`](jira-update.md))
 
@@ -33,10 +33,10 @@ Empty state now reads "WAV up to 250 MiB · Files stay on your device"; no "100 
 
 | File | Import (choose → Ready) | Play start | Longest frame gap while playing + matching | Loudness matching (worker) | Export 24-bit (worker, with matching in parallel) | Peak browser memory (RSS, all processes) | Result |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 126,000,044 bytes (120.2 MiB, 11:54 stereo 44.1 kHz 16-bit) | 1.5 s | 0.09 s | 17 ms | 46 s | 53 s | 3.8 GB | PASS |
-| 262,144,000 bytes (exactly 250 MiB, 24:46) | 2.8 s | 0.09 s | 17 ms | 112 s | 123 s | **6.8 GB** | PASS |
+| 126,000,044 bytes (120.2 MiB, 11:54 stereo 44.1 kHz 16-bit) | 1.5 s | 0.09 s | 17 ms | 46 s | 53 s | 3,829 MiB | PASS |
+| 262,144,000 bytes (exactly 250 MiB, 24:46) | 2.8 s | 0.09 s | 17 ms | 112 s | 123 s | **6,810 MiB** | PASS |
 
-**Resource constraint:** a 250 MiB file needs about 7 GB of browser memory on this machine while matching and exporting run (the source is held as 32-bit float per channel several times: playback buffer, worker decode, render output). Machines with 8 GB or less may hit the memory messages above. Stems are decoded per file, so several long stems add up; the limit is per file, not per session.
+**Resource constraint:** a 250 MiB file needs about 6.7 GiB (6,810 MiB) of browser memory on this machine while matching and exporting run (the source is held as 32-bit float per channel several times: playback buffer, worker decode, render output). Machines with 8 GB or less may hit the memory messages above. Stems are decoded per file, so several long stems add up; the limit is per file, not per session.
 
 ## Server oversize answer and LAS-59
 - Declared `Content-Length` over the limit: clean **413** `{ error: 'too_large', message }` before the body is read (default configuration, 262,144,001 declared bytes, headers only).
@@ -62,3 +62,8 @@ Logs: [`evidence/`](evidence/) (`vitest-las71.log`, `playwright-las71.log`).
 - Memory use at 250 MiB is high (above); no streaming decode exists.
 - No contextual ⓘ help text existed for import before; LAS-70 adds the import/limit hint.
 - Manual QA ([`manual-qa.md`](manual-qa.md)): **NOT_RUN**.
+
+## Evidence on the tested commit `2c5d0ce`
+- Test results: [`evidence/test-log-2c5d0ce.txt`](evidence/test-log-2c5d0ce.txt), an extract of [`../sprints/10/final/`](../sprints/10/final/). The full `npm run check` exited 0: Playwright 119/119 and Vitest 313/313.
+- Screenshots (Chromium 153, headless, synthetic tone; the viewport is in each file name): [`import-limit-1280x720.png`](evidence/import-limit-1280x720.png)
+- Records: [`results.json`](results.json) · [`jira-update.md`](jira-update.md) · [`manual-qa.md`](manual-qa.md) (**NOT_RUN**)

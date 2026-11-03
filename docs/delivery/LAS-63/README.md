@@ -2,7 +2,7 @@
 
 Jira: [LAS-63](https://genstek69.atlassian.net/browse/LAS-63) · Sprint 10 package · Mode: IMPLEMENT (enhancement; the original "only EQ animates" defect reading is **withdrawn** per Gennady's correction — live meters already work while playing)
 
-Branch `delivery/LAS-40-sprint-10` · implementation commits `569eb45`, phone fix `f9d5ccb` · tested application commit `TESTED_COMMIT`
+Branch `delivery/LAS-40-sprint-10` · implementation commits `569eb45`, phone fix `f9d5ccb` · tested application commit `2c5d0ce`
 
 Developer status: **READY_FOR_QA** (proposed) · Gennady manual QA: **NOT_RUN**
 
@@ -47,3 +47,8 @@ Before/after video: not recorded (no screen recorder in this container); screens
 - Card graphics are small (46 px) in the provisional layout; LAS-65/44 propose larger card graphs.
 - The EQ card shows the left/linked curve only; independent right-channel curves are in the editor.
 - Manual QA: [`manual-qa.md`](manual-qa.md) — **NOT_RUN**.
+
+## Evidence on the tested commit `2c5d0ce`
+- Test results: [`evidence/test-log-2c5d0ce.txt`](evidence/test-log-2c5d0ce.txt), an extract of [`../sprints/10/final/`](../sprints/10/final/). The full `npm run check` exited 0: Playwright 119/119 and Vitest 313/313.
+- Screenshots (Chromium 153, headless, synthetic tone; the viewport is in each file name): [`stopped-cards-on-bypassed-edited-1440x900.png`](evidence/stopped-cards-on-bypassed-edited-1440x900.png), [`stopped-dynamics-editor-and-cards-1440x900.png`](evidence/stopped-dynamics-editor-and-cards-1440x900.png)
+- Records: [`results.json`](results.json) · [`jira-update.md`](jira-update.md) · [`manual-qa.md`](manual-qa.md) (**NOT_RUN**)
