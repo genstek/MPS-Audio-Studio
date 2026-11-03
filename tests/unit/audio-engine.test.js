@@ -1,5 +1,6 @@
 import { afterEach, expect, test, vi } from 'vitest';
 import { createAudioEngine } from '../../src/audio-engine.js';
+import { MAX_AUDIO_FILE_BYTES, audioFileSizeProblem } from '../../src/file-limits.js';
 
 function setup() {
   const sources = [];
@@ -34,9 +35,16 @@ function setup() {
   const onEnded = vi.fn();
   // A stand-in for a stem's own chain node (LAS-35).
   const createStemChain = vi.fn(async (_context, params, channels) => ({ node: { connect: vi.fn(), disconnect: vi.fn() }, setParams: vi.fn(async () => []), latency: 83, params, channels }));
-  const engine = createAudioEngine(onEnded, { createOutput, createStemChain });
+  // A stand-in for the monitor bus with Master Level (LAS-68).
+  const monitors = [];
+  const createMonitor = vi.fn((_context, db) => {
+    const monitor = { input: 'monitor input', spectrum: 'monitor spectrum', db, setLevel: vi.fn(next => { monitor.db = next; }), levels: vi.fn(() => ({ left: { peak: 0.5 }, right: { peak: 0.25 } })), dispose: vi.fn() };
+    monitors.push(monitor);
+    return monitor;
+  });
+  const engine = createAudioEngine(onEnded, { createOutput, createStemChain, createMonitor });
   const file = { name: 'tone.wav', size: 44, arrayBuffer: async () => new TextEncoder().encode('RIFF0000WAVE').buffer };
-  return { engine, context, sources, onEnded, file, stages, createOutput, createStemChain };
+  return { engine, context, sources, onEnded, file, stages, createOutput, createStemChain, createMonitor, monitors };
 }
 
 afterEach(() => vi.unstubAllGlobals());
@@ -88,7 +96,7 @@ test('natural end disconnects the source and permits playback from the start', a
 test('unsupported names, oversized files and invalid headers are rejected', async () => {
   const { engine, file, context } = setup();
   await expect(engine.load({ ...file, name: 'song.mp3' })).rejects.toThrow('Choose a WAV');
-  await expect(engine.load({ ...file, size: 101 * 1024 * 1024 })).rejects.toThrow('100 MiB');
+  await expect(engine.load({ ...file, size: 251 * 1024 * 1024 })).rejects.toThrow('at most 250 MiB');
   await expect(engine.load({ ...file, arrayBuffer: async () => new ArrayBuffer(12) })).rejects.toThrow('not a valid WAV');
   expect(context.decodeAudioData).not.toHaveBeenCalled();
   engine.dispose();
@@ -140,11 +148,36 @@ test('replacing a playing track stops and disconnects its source before the next
   engine.dispose();
 });
 
-test('100 MiB is the largest accepted file size', async () => {
-  const { engine, file } = setup();
-  const limit = 100 * 1024 * 1024;
-  await expect(engine.load({ ...file, size: limit })).resolves.toMatchObject({ duration: 10 });
-  await expect(engine.load({ ...file, size: limit + 1 })).rejects.toThrow('100 MiB');
+// LAS-71: 250 MiB = 262,144,000 bytes is the largest accepted file; one byte more is refused.
+test('250 MiB (262,144,000 bytes) is the largest accepted file size, for tracks and stems', async () => {
+  const { engine, file, context } = setup();
+  expect(MAX_AUDIO_FILE_BYTES).toBe(262_144_000);
+  await expect(engine.load({ ...file, size: MAX_AUDIO_FILE_BYTES - 1 })).resolves.toMatchObject({ duration: 10 });
+  await expect(engine.load({ ...file, size: MAX_AUDIO_FILE_BYTES })).resolves.toMatchObject({ duration: 10 });
+  const decodes = context.decodeAudioData.mock.calls.length;
+  await expect(engine.load({ ...file, size: MAX_AUDIO_FILE_BYTES + 1 })).rejects.toThrow('WAV files can be at most 250 MiB (262,144,000 bytes)');
+  expect(context.decodeAudioData.mock.calls.length, 'an oversized file is never read or decoded').toBe(decodes);
+  stubNodes();
+  await engine.openStems();
+  await expect(engine.addStem({ ...file, size: MAX_AUDIO_FILE_BYTES + 1 })).rejects.toThrow('at most 250 MiB');
+  engine.dispose();
+});
+
+test('LAS-71: the size message names the file size and the limit in MiB', () => {
+  expect(audioFileSizeProblem(MAX_AUDIO_FILE_BYTES)).toBeNull();
+  expect(audioFileSizeProblem(300 * 1048576)).toBe('This file is 300.0 MiB. WAV files can be at most 250 MiB (262,144,000 bytes); choose a smaller file.');
+});
+
+test('LAS-71: a read or memory failure during replacement keeps the previous track and explains what to do', async () => {
+  const { engine, file, context, sources } = setup();
+  await engine.load(file);
+  await expect(engine.load({ ...file, name: 'big.wav', arrayBuffer: async () => { throw new DOMException('read failed', 'NotReadableError'); } }))
+    .rejects.toThrow('not enough memory for it; close other tabs or choose a smaller file. Nothing was changed.');
+  context.decodeAudioData.mockRejectedValueOnce(new RangeError('Array buffer allocation failed'));
+  await expect(engine.load({ ...file, name: 'huge.wav' })).rejects.toThrow('There was not enough memory to decode this WAV');
+  await engine.play();
+  expect(sources).toHaveLength(1);
+  expect(sources[0].buffer.duration).toBe(10);
   engine.dispose();
 });
 
@@ -481,7 +514,7 @@ test('LAS-34: stems get their own stereo stage, follow the chain settings and th
   await engine.load(file);
   await engine.play();
   await engine.openStems();
-  expect(createOutput).toHaveBeenLastCalledWith(context, 2, expect.any(Object));
+  expect(createOutput).toHaveBeenLastCalledWith(context, 2, expect.any(Object), 'monitor input');
   const stemStage = stages.at(-1);
   stemStage.analyser = { fftSize: 32, getFloatTimeDomainData: () => {} };
   const wav = makeWav({ seconds: 2, channels: 1, sampleRate: 48000 });
@@ -540,4 +573,80 @@ test('LAS-35: each stem gets its own chain, bypassed and sized to its channels; 
   await engine.stemSession().setChain(id, settings, 'from limiter.json');
   expect(chain.setParams).toHaveBeenCalledWith(settings);
   expect(engine.stemSession().stems()[0]).toMatchObject({ chainLabel: 'from limiter.json', params: settings });
+});
+
+// LAS-68: Master Level is a monitor volume after the A/B paths, shared by the single track and the stems.
+test('LAS-68: one monitor bus is made with the context; every output stage plays into it', async () => {
+  const { engine, context, createOutput, createMonitor, monitors } = setup();
+  expect(engine.outputLevels()).toBeNull();
+  engine.setMasterLevel(-6);
+  await engine.load(file());
+  expect(createMonitor).toHaveBeenCalledOnce();
+  expect(createMonitor).toHaveBeenCalledWith(context, -6);
+  expect(createOutput).toHaveBeenLastCalledWith(context, 1, expect.any(Object), 'monitor input');
+  stubNodes();
+  await engine.openStems();
+  expect(createOutput).toHaveBeenLastCalledWith(context, 2, expect.any(Object), 'monitor input');
+  expect(createMonitor).toHaveBeenCalledOnce();
+  expect(engine.outputLevels()).toEqual({ left: { peak: 0.5 }, right: { peak: 0.25 } });
+  expect(engine.outputAnalyser()).toBe('monitor spectrum');
+  engine.dispose();
+  expect(monitors[0].dispose).toHaveBeenCalledOnce();
+
+  function file() { return { name: 'tone.wav', size: 44, arrayBuffer: async () => new TextEncoder().encode('RIFF0000WAVE').buffer }; }
+});
+
+test('LAS-68: the level is clamped to mute…0 dB, kept through transport, unload and replacement, and never sent with the chain settings', async () => {
+  const { engine, file, monitors, stages } = setup();
+  await engine.load(file);
+  expect(engine.setMasterLevel(-12.5)).toBe(-12.5);
+  expect(monitors[0].setLevel).toHaveBeenLastCalledWith(-12.5);
+  expect(engine.setMasterLevel(6)).toBe(0); // no positive gain without a headroom decision
+  expect(engine.setMasterLevel(-61)).toBe(-Infinity); // below −60 dB is mute
+  expect(engine.setMasterLevel(-Infinity)).toBe(-Infinity);
+  engine.setMasterLevel(-9);
+  await engine.play();
+  engine.pause();
+  await engine.play();
+  engine.stop();
+  engine.unload();
+  await engine.load({ ...file, name: 'next.wav' });
+  expect(engine.masterLevel()).toBe(-9);
+  expect(monitors).toHaveLength(1);
+  expect(monitors[0].setLevel).toHaveBeenLastCalledWith(-9);
+  for (const stage of stages) for (const [params] of stage.setParams.mock.calls) expect(JSON.stringify(params)).not.toMatch(/master/i);
+  engine.dispose();
+});
+
+// LAS-67: seeking (FF/RWD and the timeline) moves the one source; it never adds a second one.
+test('LAS-67: seek while playing restarts the single source at the new place; while paused it cues the next Play', async () => {
+  const { engine, context, sources, file } = setup();
+  expect(engine.seek(3)).toBe(0); // nothing loaded
+  await engine.load(file); // 10 s
+  await engine.play();
+  context.currentTime = 2;
+  expect(engine.seek(engine.position() + 5)).toBe(7);
+  expect(sources[0].stop).toHaveBeenCalledOnce();
+  expect(sources[0].onended).toBeNull();
+  expect(sources[1].start).toHaveBeenCalledWith(0, 7);
+  expect(engine.position()).toBe(7);
+  expect(engine.seek(-4)).toBe(0); // clamped at the start
+  expect(sources[2].start).toHaveBeenCalledWith(0, 0);
+  engine.pause();
+  expect(engine.seek(9.5)).toBe(9.5);
+  expect(sources).toHaveLength(3); // paused: nothing started
+  expect(engine.position()).toBe(9.5);
+  await engine.play();
+  expect(sources[3].start).toHaveBeenCalledWith(0, 9.5);
+  engine.dispose();
+});
+
+test('LAS-67: seeking to the end clamps; Play from the end starts again at 0; an invalid time seeks to 0', async () => {
+  const { engine, sources, file } = setup();
+  await engine.load(file);
+  expect(engine.seek(99)).toBe(10);
+  await engine.play();
+  expect(sources[0].start).toHaveBeenCalledWith(0, 0);
+  expect(engine.seek(Number.NaN)).toBe(0);
+  engine.dispose();
 });

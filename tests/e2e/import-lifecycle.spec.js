@@ -15,7 +15,7 @@ test('LAS-8: reimport, failed replacement and retry leave one audio source', asy
   await expect(status).toHaveText('Ready');
   // The picker is cleared after each import, so choosing the same file again is a new change.
   await expect(upload).toHaveValue('');
-  await page.getByRole('button', { name: 'Play' }).click();
+  await page.getByRole('button', { name: 'Play', exact: true }).click();
   await expect(status).toHaveText('Playing');
   expect(await audioSources(page)).toEqual({ started: 1, playing: 1, connected: 1 });
 
@@ -23,7 +23,7 @@ test('LAS-8: reimport, failed replacement and retry leave one audio source', asy
   await upload.setInputFiles(tone);
   await expect(status).toHaveText('Ready');
   expect(await audioSources(page)).toEqual({ started: 1, playing: 0, connected: 0 });
-  await page.getByRole('button', { name: 'Play' }).click();
+  await page.getByRole('button', { name: 'Play', exact: true }).click();
   await expect(status).toHaveText('Playing');
   expect(await audioSources(page)).toEqual({ started: 2, playing: 1, connected: 1 });
 

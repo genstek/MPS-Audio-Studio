@@ -2,7 +2,7 @@ import { resolveForSampleRate, validateChain } from './chain-params.js';
 import { designBand, IDENTITY } from './eq-design.js';
 import { HALF, TAPS, interpolationBranches } from './true-peak.js';
 
-// The mastering chain (LAS-27): EQ → compressor → limiter, processed sample by sample with state
+// The mastering chain (LAS-27): EQ → compressor → space (LAS-64) → limiter, processed sample by sample with state
 // carried between blocks, so any block size gives the same output. The same code runs in the
 // AudioWorklet for preview (chain.worklet.js) and in renderChain() for offline export.
 //
@@ -79,6 +79,67 @@ function biquad(c, s, x) {
   return y;
 }
 
+// ---------- Space (LAS-64): stereo reverb ----------
+// A feedback delay network: the input (mono sum) passes a pre-delay and four series all-pass
+// diffusers, then circulates through eight delay lines mixed by an orthogonal (Householder) matrix.
+// Each line has a decay gain for the chosen RT60 and a one-pole low-pass (damping) in its feedback
+// path, so high frequencies die away faster while low frequencies decay over the set time. Left and
+// right are taken from the lines with two orthogonal sign patterns (decorrelated stereo); a mono
+// chain uses the left pattern. No modulation and no random numbers: renders are deterministic.
+export const SPACE_LINES_MS = [31.7, 37.3, 41.9, 47.3, 53.1, 59.3, 67.1, 73.7];
+const DIFFUSERS_MS = [4.77, 3.59, 12.73, 9.31];
+const DIFFUSION = 0.6;
+const MAX_PRE_DELAY_SECONDS = 0.2;
+export const DAMPING_MAX = 0.7; // one-pole coefficient at 100 % damping
+const LINES = SPACE_LINES_MS.length;
+const LINE_NORM = 1 / Math.sqrt(LINES);
+const INJECT = [1, 1, 1, 1, -1, -1, -1, -1].map(v => v * LINE_NORM);
+const OUT_LEFT = [1, -1, 1, -1, 1, -1, 1, -1].map(v => v * LINE_NORM);
+const OUT_RIGHT = [1, 1, -1, -1, 1, 1, -1, -1].map(v => v * LINE_NORM);
+// Early sound: the diffused input itself reaches the output right after the pre-delay (left after
+// the second diffuser, right after the fourth), before the first line echoes return (≥ 31.7 ms).
+const EARLY = 0.3;
+
+// Seconds of reverb after the input ends that an export keeps when the tail is included: the
+// pre-delay plus the decay time (the low-frequency tail is 60 dB down by then).
+export function spaceTailSeconds(params) {
+  return params.space?.enabled ? params.space.preDelay / 1000 + params.space.decay : 0;
+}
+
+function createSpace(sampleRate) {
+  const lengths = SPACE_LINES_MS.map(ms => Math.max(2, Math.round((ms / 1000) * sampleRate)));
+  const preLength = Math.ceil(MAX_PRE_DELAY_SECONDS * sampleRate) + 2;
+  return {
+    lengths,
+    lines: lengths.map(length => new Float64Array(length)),
+    at: new Int32Array(LINES),
+    lowpass: new Float64Array(LINES),
+    gains: new Float64Array(LINES),
+    out: new Float64Array(LINES),
+    diffusers: DIFFUSERS_MS.map(ms => ({ buffer: new Float64Array(Math.max(1, Math.round((ms / 1000) * sampleRate))), at: 0 })),
+    pre: new Float64Array(preLength),
+    preAt: 0,
+    // Smoothed values and their targets.
+    wet: 0, damping: 0, decay: 1, delay: 0,
+    target: { wet: 0, damping: 0, decay: 1, delay: 0 },
+    gainsFor: -1, // the decay the line gains were last computed for
+  };
+}
+
+function clearSpace(sp) {
+  for (const line of sp.lines) line.fill(0);
+  sp.at.fill(0);
+  sp.lowpass.fill(0);
+  for (const d of sp.diffusers) { d.buffer.fill(0); d.at = 0; }
+  sp.pre.fill(0);
+  sp.preAt = 0;
+}
+
+function updateSpaceGains(sp, sampleRate) {
+  for (let i = 0; i < LINES; i++) sp.gains[i] = 10 ** ((-3 * sp.lengths[i]) / (sp.decay * sampleRate));
+  sp.gainsFor = sp.decay;
+}
+
 // ---------- the chain ----------
 export function createChain(initialParams, sampleRate, channelCount) {
   if (channelCount !== 1 && channelCount !== 2) throw new Error('The chain processes mono or stereo audio.');
@@ -113,9 +174,12 @@ export function createChain(initialParams, sampleRate, channelCount) {
     envelope: 1, count: 0,
     ceiling: 1, inputGain: 1, releaseCoefficient: 0, gainReductionDb: 0,
   };
+  // Space (reverb) state, sized for this sample rate.
+  const sp = createSpace(sampleRate);
   // Processor mix: 0 = bypassed, 1 = processing; ramps linearly toward its target.
-  const mix = { eq: 0, compressor: 0, limiter: 0 };
-  const mixTarget = { eq: 0, compressor: 0, limiter: 0 };
+  const mix = { eq: 0, compressor: 0, space: 0, limiter: 0 };
+  const mixTarget = { eq: 0, compressor: 0, space: 0, limiter: 0 };
+
   const meters = { compressorGainReductionDb: 0, limiterGainReductionDb: 0, nonFiniteInputs: 0, resets: 0 };
   let clock = 0; // samples processed so far: EQ ramp steps fall on the same samples for any block size
 
@@ -128,13 +192,15 @@ export function createChain(initialParams, sampleRate, channelCount) {
       if (immediate || !eqBands[c]) eqBands[c] = bands.map(band => bandState(band, sampleRate));
       else bands.forEach((band, i) => updateBand(eqBands[c][i], band, sampleRate, rampSamples));
     }
-    const { compressor, limiter } = params;
+    const { compressor, limiter, space } = params;
+    sp.target = { wet: space.mix / 100, damping: (space.damping / 100) * DAMPING_MAX, decay: space.decay, delay: (space.preDelay / 1000) * sampleRate };
     comp.attack = Math.exp(-1 / ((compressor.attack / 1000) * sampleRate));
     comp.release = Math.exp(-1 / ((compressor.release / 1000) * sampleRate));
     comp.rms = Math.exp(-1 / (RMS_SECONDS * sampleRate));
     comp.target = { threshold: compressor.threshold, ratio: compressor.ratio, knee: compressor.knee, makeup: compressor.makeup };
     lim.releaseCoefficient = Math.exp(-1 / ((limiter.release / 1000) * sampleRate));
     lim.target = { ceiling: dbToGain(limiter.ceiling), inputGain: dbToGain(limiter.inputGain) };
+    if (immediate) Object.assign(sp, { wet: sp.target.wet, damping: sp.target.damping, decay: sp.target.decay, delay: sp.target.delay });
     if (immediate || !comp.levelsSet) {
       Object.assign(comp, comp.target);
       comp.levelsSet = true;
@@ -143,7 +209,12 @@ export function createChain(initialParams, sampleRate, channelCount) {
     }
     // An EQ switched back on after full bypass starts from silence, not from stale filter states.
     if (!immediate && params.eq.enabled && mix.eq === 0) eqBands = eqBands.map((_, c) => eqBandsFor(c).map(band => bandState(band, sampleRate)));
-    for (const name of ['eq', 'compressor', 'limiter']) {
+    // Space switched on after full bypass starts from silence, at its new settings.
+    if (!immediate && params.space.enabled && mix.space === 0) {
+      clearSpace(sp);
+      Object.assign(sp, { wet: sp.target.wet, damping: sp.target.damping, decay: sp.target.decay, delay: sp.target.delay });
+    }
+    for (const name of ['eq', 'compressor', 'space', 'limiter']) {
       mixTarget[name] = params[name].enabled ? 1 : 0;
       if (immediate) mix[name] = mixTarget[name];
     }
@@ -155,13 +226,18 @@ export function createChain(initialParams, sampleRate, channelCount) {
     if (mix[name] !== mixTarget[name]) mix[name] = mixTarget[name] > mix[name] ? Math.min(1, mix[name] + 1 / rampSamples) : Math.max(0, mix[name] - 1 / rampSamples);
   };
 
-  function resetState() {
-    meters.resets++;
+  function clearAll() {
     eqBands = eqBands.map((_, c) => eqBandsFor(c).map(band => bandState(band, sampleRate)));
+    clearSpace(sp);
     comp.gainDb = 0;
     comp.envelope = 0;
     for (const list of [lim.history, lim.wet, lim.dry]) list.forEach(buffer => buffer.fill(0));
     lim.box.fill(1); lim.boxSum = lookahead; lim.envelope = 1; lim.minHead = 0; lim.minTail = 0;
+  }
+
+  function resetState() {
+    meters.resets++;
+    clearAll();
   }
 
   // Processes `frames` samples from inputs[c] into outputs[c] (Float32Array or Float64Array).
@@ -233,6 +309,60 @@ export function createChain(initialParams, sampleRate, channelCount) {
         }
       }
 
+      // ---- space (reverb; skipped entirely while fully bypassed, so bypass is exact) ----
+      moveMix('space');
+      if (mix.space > 0 || mixTarget.space > 0) {
+        sp.wet = follow(sp.wet, sp.target.wet);
+        sp.damping = follow(sp.damping, sp.target.damping);
+        sp.decay = follow(sp.decay, sp.target.decay);
+        sp.delay = follow(sp.delay, sp.target.delay);
+        if (sp.decay !== sp.gainsFor && clock % COEFFICIENT_INTERVAL === 0) updateSpaceGains(sp, sampleRate);
+        else if (sp.gainsFor < 0) updateSpaceGains(sp, sampleRate);
+        // Pre-delay with linear interpolation between samples.
+        const preLength = sp.pre.length;
+        sp.pre[sp.preAt] = channelCount === 2 ? 0.5 * (l + r) : l;
+        const back = sp.preAt - sp.delay;
+        const whole = Math.floor(back);
+        const frac = back - whole;
+        const a = sp.pre[(whole + preLength) % preLength], b = sp.pre[(whole + 1 + preLength) % preLength];
+        let x = a + (b - a) * frac;
+        sp.preAt = (sp.preAt + 1) % preLength;
+        // Series all-pass diffusers.
+        let earlyLeft = 0;
+        for (let d = 0; d < sp.diffusers.length; d++) {
+          const diffuser = sp.diffusers[d];
+          const delayed = diffuser.buffer[diffuser.at];
+          const w = x + DIFFUSION * delayed;
+          x = delayed - DIFFUSION * w;
+          diffuser.buffer[diffuser.at] = w;
+          diffuser.at = (diffuser.at + 1) % diffuser.buffer.length;
+          if (d === 1) earlyLeft = x;
+        }
+        // Delay lines: read, damp, decay, mix (Householder), write back with the new input.
+        let sum = 0, wetL = EARLY * earlyLeft, wetR = EARLY * x;
+        const damping = sp.damping;
+        for (let i = 0; i < LINES; i++) {
+          const out = sp.lines[i][sp.at[i]];
+          wetL += OUT_LEFT[i] * out;
+          wetR += OUT_RIGHT[i] * out;
+          const damped = (1 - damping) * out + damping * sp.lowpass[i];
+          sp.lowpass[i] = damped;
+          const f = damped * sp.gains[i];
+          sp.out[i] = f;
+          sum += f;
+        }
+        const householder = (2 / LINES) * sum;
+        for (let i = 0; i < LINES; i++) {
+          sp.lines[i][sp.at[i]] = sp.out[i] - householder + INJECT[i] * x;
+          sp.at[i] = (sp.at[i] + 1) % sp.lengths[i];
+        }
+        const wet = sp.wet;
+        const sl = l * (1 - wet) + wetL * wet;
+        const sr = channelCount === 2 ? r * (1 - wet) + wetR * wet : 0;
+        l = mix.space === 1 ? sl : l + (sl - l) * mix.space;
+        r = channelCount === 2 ? (mix.space === 1 ? sr : r + (sr - r) * mix.space) : r;
+      }
+
       // ---- limiter (true-peak look-ahead; its delay applies even when bypassed) ----
       moveMix('limiter');
       lim.ceiling = follow(lim.ceiling, lim.target.ceiling);
@@ -295,6 +425,10 @@ export function createChain(initialParams, sampleRate, channelCount) {
     meters.limiterGainReductionDb = limiterPeak;
     // Guard: a state that is no longer finite (it should never happen) resets the chain.
     let healthy = Number.isFinite(comp.gainDb) && Number.isFinite(lim.envelope) && Number.isFinite(lim.boxSum);
+    for (let i = 0; i < LINES; i++) {
+      if (!Number.isFinite(sp.lowpass[i])) healthy = false;
+      if (Math.abs(sp.lowpass[i]) < TINY) sp.lowpass[i] = 0;
+    }
     for (const bands of eqBands) for (const band of bands) {
       if (!Number.isFinite(band.z1) || !Number.isFinite(band.z2)) healthy = false;
       if (Math.abs(band.z1) < TINY) band.z1 = 0;
@@ -312,6 +446,9 @@ export function createChain(initialParams, sampleRate, channelCount) {
     channelCount,
     process,
     setParams: next => applyParams(next, false),
+    // Clears all filter, reverb and delay states at once (unload / replacement, LAS-64): the source
+    // has already stopped, so no stale reverb tail or limiter delay is heard afterwards.
+    reset() { clearAll(); },
     get params() { return params; },
     get warnings() { return warnings; },
     get meters() { return { ...meters }; },
@@ -320,16 +457,19 @@ export function createChain(initialParams, sampleRate, channelCount) {
 
 // Offline render (export): the whole input through a chain created with fixed settings, in blocks.
 // The chain's latency is compensated, so output sample n lines up with input sample n.
-// onProgress(fraction) is called about every 64 blocks.
-export function renderChain(params, inputs, sampleRate, { blockSize = 128, onProgress } = {}) {
+// tailFrames (LAS-64) appends that many samples after the input (silence in, the reverb tail out);
+// with 0 the output is exactly as long as the input. onProgress(fraction) is called about every
+// 64 blocks.
+export function renderChain(params, inputs, sampleRate, { blockSize = 128, onProgress, tailFrames = 0 } = {}) {
   const channelCount = inputs.length;
   const chain = createChain(params, sampleRate, channelCount);
   const frames = inputs[0].length;
-  const outputs = inputs.map(() => new Float32Array(frames));
+  const length = frames + tailFrames;
+  const outputs = inputs.map(() => new Float32Array(length));
   const inBlock = inputs.map(() => new Float32Array(blockSize));
   const outBlock = inputs.map(() => new Float32Array(blockSize));
   let maxCompressor = 0, maxLimiter = 0;
-  const total = frames + chain.latency;
+  const total = length + chain.latency;
   for (let start = 0; start < total; start += blockSize) {
     const count = Math.min(blockSize, total - start);
     for (let c = 0; c < channelCount; c++) {
@@ -342,7 +482,7 @@ export function renderChain(params, inputs, sampleRate, { blockSize = 128, onPro
     maxLimiter = Math.max(maxLimiter, chain.meters.limiterGainReductionDb);
     for (let i = 0; i < count; i++) {
       const target = start + i - chain.latency;
-      if (target >= 0 && target < frames) for (let c = 0; c < channelCount; c++) outputs[c][target] = outBlock[c][i];
+      if (target >= 0 && target < length) for (let c = 0; c < channelCount; c++) outputs[c][target] = outBlock[c][i];
     }
   }
   return {

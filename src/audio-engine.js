@@ -4,12 +4,35 @@ import { createOutputStage } from './output-stage.js';
 import { createStemSession } from './stem-session.js';
 import { createChainNode } from './dsp/chain-node.js';
 import { bypassChain } from './dsp/stem-render.js';
+import { audioFileSizeProblem } from './file-limits.js';
+import { clampMasterDb, createMonitorBus } from './monitor-bus.js';
+
+// Reading or decoding a large file can fail for lack of memory (LAS-71). Both failures leave the
+// current session unchanged, so the messages say what to try instead of reporting a dead end.
+async function readFile(file) {
+  try {
+    return await file.arrayBuffer();
+  } catch {
+    throw new Error('The file could not be read. It may have been moved, or there was not enough memory for it; close other tabs or choose a smaller file. Nothing was changed.');
+  }
+}
+
+function decodeFailure(failure) {
+  const memory = failure?.name === 'RangeError' || /memory|allocat/i.test(failure?.message ?? '');
+  return new Error(memory
+    ? 'There was not enough memory to decode this WAV. Close other tabs or choose a shorter file. Nothing was changed.'
+    : 'Unable to decode this WAV. Try another WAV file.');
+}
 
 // One engine owns the audio context, the current source and the output stage (mastering chain
 // and original/processed switch, LAS-28), outside React state. createOutput can be replaced in
 // unit tests.
-export function createAudioEngine(onEnded, { createOutput = createOutputStage, createStemChain = createChainNode } = {}) {
+export function createAudioEngine(onEnded, { createOutput = createOutputStage, createStemChain = createChainNode, createMonitor = createMonitorBus } = {}) {
   let context;
+  // Monitor bus with Master Level (LAS-68), created together with the audio context so it exists
+  // before any output stage; every stage plays into it. masterDb is kept for a context made later.
+  let monitor = null;
+  let masterDb = 0;
   let buffer;
   let source;
   // The output stage is built for the track's channel count and reused for every play.
@@ -37,6 +60,12 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
   let stemOutput = null;
   let stemSession = null;
   const NO_MATCH = { processedDb: 0, originalDb: 0 };
+
+  function ensureContext() {
+    if (context) return;
+    context = new AudioContext();
+    monitor = createMonitor(context, masterDb);
+  }
 
   function superseded() {
     const error = new Error('A newer import replaced this one.');
@@ -74,6 +103,21 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
     stopSource();
   }
 
+  // Starts the single source at `offset` on the running context (play and seek, LAS-9/LAS-67).
+  function startSource() {
+    source = context.createBufferSource();
+    source.buffer = buffer;
+    for (const input of output.inputs) source.connect(input);
+    source.onended = () => {
+      source.disconnect();
+      source = null;
+      offset = 0;
+      onEnded();
+    };
+    startedAt = context.currentTime;
+    source.start(0, offset);
+  }
+
   // Seconds into the track, read from the audio clock while playing (LAS-9).
   function position() {
     if (!buffer) return 0;
@@ -85,8 +129,9 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
     async load(file) {
       const load = ++latestLoad;
       if (!/\.wav$/i.test(file.name)) throw new Error('Choose a WAV file.');
-      if (file.size > 100 * 1024 * 1024) throw new Error('Choose a WAV smaller than 100 MiB.');
-      const bytes = await file.arrayBuffer();
+      const tooLarge = audioFileSizeProblem(file.size);
+      if (tooLarge) throw new Error(tooLarge);
+      const bytes = await readFile(file);
       if (load !== latestLoad) throw superseded();
       // Compare raw bytes: the four size bytes between the tags are a number, not text, and
       // decoding them as UTF-8 could merge them into fewer characters and shift 'WAVE'.
@@ -95,13 +140,13 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
       if (tag(0, 4) !== 'RIFF' || tag(8, 12) !== 'WAVE') {
         throw new Error('This file is not a valid WAV. Choose another file.');
       }
-      context ??= new AudioContext();
+      ensureContext();
       let decoded;
       try {
         decoded = await context.decodeAudioData(bytes);
-      } catch {
+      } catch (failure) {
         if (load !== latestLoad) throw superseded();
-        throw new Error('Unable to decode this WAV. Try another WAV file.');
+        throw decodeFailure(failure);
       }
       if (load !== latestLoad) throw superseded();
       // The chain is mono or stereo; files with more channels play as a stereo downmix.
@@ -109,7 +154,7 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
       let stage = output;
       if (!stage || stage.channelCount !== channels) {
         try {
-          stage = await createOutput(context, channels, chainParams);
+          stage = await createOutput(context, channels, chainParams, monitor.input);
         } catch {
           if (load !== latestLoad) throw superseded();
           throw new Error('Audio processing could not start. Reload the page and try again.');
@@ -121,6 +166,7 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
       }
       // Keep the previous track intact until replacement decoding succeeds.
       disconnect();
+      output?.reset?.(); // the old track's reverb tail is not carried into the new one (LAS-64)
       buffer = decoded;
       offset = 0;
       if (stage !== output) {
@@ -147,18 +193,27 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
       }
       if (pendingStart !== start) return false;
       pendingStart = null;
-      source = context.createBufferSource();
-      source.buffer = buffer;
-      for (const input of output.inputs) source.connect(input);
-      source.onended = () => {
-        source.disconnect();
-        source = null;
-        offset = 0;
-        onEnded();
-      };
-      startedAt = context.currentTime;
-      source.start(0, offset);
+      // Play at the very end (after FF or a seek to the end) starts again from the beginning.
+      if (offset >= buffer.duration) offset = 0;
+      startSource();
       return true;
+    },
+    // Moves the playhead (LAS-67). While playing, the source restarts at the new place at once
+    // (one source, same output paths); while paused or stopped the place is kept for the next Play.
+    // The target is clamped to 0…duration; reaching the end while playing ends playback like the
+    // natural end of the track. Returns the position used.
+    seek(seconds) {
+      if (!buffer) return 0;
+      const target = Math.min(buffer.duration, Math.max(0, Number.isFinite(seconds) ? seconds : 0));
+      endComparison();
+      if (source) {
+        stopSource();
+        offset = target;
+        startSource();
+      } else {
+        offset = target;
+      }
+      return target;
     },
     pause() {
       if (source) offset = position();
@@ -173,6 +228,7 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
     unload() {
       latestLoad++; // an import still running cannot bring the removed audio back
       disconnect();
+      output?.reset?.(); // no stale reverb tail after removal (LAS-64)
       buffer = null;
       offset = 0;
       // Nothing is left to play, so the audio device may idle until the next Play resumes it.
@@ -187,6 +243,8 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
       stemOutput = null;
       output?.dispose();
       output = null;
+      monitor?.dispose();
+      monitor = null;
       meterListeners.clear();
       if (context && context.state !== 'closed') void context.close();
     },
@@ -255,10 +313,10 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
     comparing: () => Boolean(comparison),
     // Opens (or returns) the stem session. onEnded runs when the last stem finishes.
     async openStems(onEnded = () => {}) {
-      context ??= new AudioContext();
+      ensureContext();
       if (!stemOutput) {
         try {
-          stemOutput = await createOutput(context, 2, chainParams);
+          stemOutput = await createOutput(context, 2, chainParams, monitor.input);
         } catch {
           throw new Error('Audio processing could not start. Reload the page and try again.');
         }
@@ -270,21 +328,27 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
       return stemSession;
     },
     stemSession: () => stemSession,
+    // Removes every stem (new or opened project, LAS-60/69); the stem output stage is kept.
+    clearStems() {
+      stemSession?.dispose();
+      stemSession = null;
+    },
     // Decodes a stem WAV at the playback rate and adds it; the file's own rate and channel count are
     // read from its header so the alignment policy can be explained.
     async addStem(file) {
       if (!stemSession) throw new Error('Open the stem session first.');
       if (!/\.wav$/i.test(file.name)) throw new Error('Choose a WAV file.');
-      if (file.size > 100 * 1024 * 1024) throw new Error('Choose a WAV smaller than 100 MiB.');
-      const bytes = await file.arrayBuffer();
+      const tooLarge = audioFileSizeProblem(file.size);
+      if (tooLarge) throw new Error(tooLarge);
+      const bytes = await readFile(file);
       const header = readWavHeader(bytes.slice(0, 65536), file.size);
       const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', bytes));
       const sha256 = Array.from(digest, byte => byte.toString(16).padStart(2, '0')).join('');
       let decoded;
       try {
         decoded = await context.decodeAudioData(bytes);
-      } catch {
-        throw new Error('Unable to decode this WAV.');
+      } catch (failure) {
+        throw decodeFailure(failure);
       }
       // Each stem gets its own chain (LAS-35), sized to its channels so mono stems keep the mono pan
       // law; it starts bypassed.
@@ -319,6 +383,20 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
       meterListeners.add(listener);
       return () => meterListeners.delete(listener);
     },
+    // Master Level (LAS-68): a monitor volume in dB (−Infinity mutes), applied after the A/B paths
+    // of the single track and the stems alike. It is not part of the chain settings and never
+    // reaches an export. Kept for the next audio context.
+    setMasterLevel(db) {
+      masterDb = clampMasterDb(db);
+      monitor?.setLevel(masterDb);
+      return masterDb;
+    },
+    masterLevel: () => masterDb,
+    // What reaches the speakers, after Master Level: per-channel peak/RMS and a spectrum analyser
+    // (LAS-67 player meters). null before any audio context exists.
+    outputLevels: () => monitor?.levels() ?? null,
+    outputAnalyser: () => monitor?.spectrum ?? null,
+    // The output stage's analyser (after A/B, before Master Level): the EQ editor's spectrum.
     analyser: () => output?.analyser ?? null,
     latency: () => output?.latency ?? 0,
     sampleRate: () => context?.sampleRate ?? null,

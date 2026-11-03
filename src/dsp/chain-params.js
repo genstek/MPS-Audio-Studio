@@ -1,8 +1,12 @@
-// Versioned parameter schema of the mastering chain (LAS-27): EQ → compressor → limiter.
-// Every value has declared bounds; parseChain() refuses anything outside them instead of guessing.
+// Versioned parameter schema of the mastering chain (LAS-27): EQ → compressor → limiter, and since
+// version 2 (LAS-64) EQ → compressor → space (reverb) → limiter. The reverb sits before the limiter
+// so its tail is held under the same true-peak ceiling. Every value has declared bounds;
+// parseChain() refuses anything outside them instead of guessing. Version 1 settings (files,
+// presets, stem sessions) are upgraded with Space switched off, so they sound exactly as before.
 export const CHAIN_SCHEMA = 'mps-chain';
-export const CHAIN_VERSION = 1;
-export const CHAIN_ORDER = ['eq', 'compressor', 'limiter'];
+export const CHAIN_VERSION = 2;
+export const CHAIN_ORDER = ['eq', 'compressor', 'space', 'limiter'];
+const CHAIN_ORDER_V1 = ['eq', 'compressor', 'limiter'];
 export const BANDS_PER_CHANNEL = 24;
 export const BAND_TYPES = ['bell', 'low-shelf', 'high-shelf', 'high-pass', 'low-pass'];
 
@@ -19,10 +23,31 @@ export const BOUNDS = {
   ceiling: [-6, -0.1], // dBTP
   inputGain: [0, 24], // dB
   limiterRelease: [10, 1000], // ms
+  mix: [0, 100], // % wet (Space)
+  preDelay: [0, 200], // ms
+  decay: [0.2, 10], // s, time for the reverb to fall by 60 dB (RT60) at low frequencies
+  damping: [0, 100], // %, how much faster high frequencies die away
 };
 
-// Earlier schema versions would be upgraded here, one step at a time: { [fromVersion]: params => params }.
-const MIGRATIONS = {};
+// Space presets (LAS-64): starting points of the same algorithm, not models of real rooms or
+// plates. "Plate" is a bright, dense setting; no mechanical plate is simulated.
+export const SPACE_PRESETS = {
+  Room: { mix: 18, preDelay: 10, decay: 0.8, damping: 50 },
+  Hall: { mix: 22, preDelay: 30, decay: 2.6, damping: 35 },
+  Plate: { mix: 20, preDelay: 5, decay: 1.6, damping: 15 },
+};
+export const defaultSpace = () => ({ enabled: false, mix: 20, preDelay: 20, decay: 1.8, damping: 40 });
+
+// Earlier schema versions are upgraded here, one step at a time: { [fromVersion]: params => params }.
+const MIGRATIONS = {
+  // v1 → v2 (LAS-64): Space is added, switched off, in its place before the limiter.
+  1: params => {
+    if (!Array.isArray(params.order) || params.order.join() !== CHAIN_ORDER_V1.join()) {
+      throw new ChainParamsError(`The processing order must be ${CHAIN_ORDER_V1.join(' → ')}.`);
+    }
+    return { ...params, version: 2, order: [...CHAIN_ORDER], space: defaultSpace() };
+  },
+};
 
 export class ChainParamsError extends Error {}
 
@@ -44,6 +69,7 @@ export function defaultChain() {
     order: [...CHAIN_ORDER],
     eq: { enabled: true, mode: 'link', left: defaultBands(), right: defaultBands() },
     compressor: { enabled: false, threshold: -18, ratio: 2, attack: 10, release: 150, knee: 6, makeup: 0, detector: 'peak' },
+    space: defaultSpace(),
     limiter: { enabled: true, ceiling: -1, inputGain: 0, release: 100 },
   };
 }
@@ -101,6 +127,7 @@ export function validateChain(input) {
   const eq = object(params.eq, 'EQ');
   const compressor = object(params.compressor, 'Compressor');
   const limiter = object(params.limiter, 'Limiter');
+  const space = object(params.space, 'Space');
   return {
     schema: CHAIN_SCHEMA,
     version: CHAIN_VERSION,
@@ -120,6 +147,13 @@ export function validateChain(input) {
       knee: number(compressor.knee, BOUNDS.knee, 'Compressor knee'),
       makeup: number(compressor.makeup, BOUNDS.makeup, 'Compressor makeup'),
       detector: oneOf(compressor.detector, ['peak', 'rms'], 'Compressor detector'),
+    },
+    space: {
+      enabled: boolean(space.enabled, 'Space enabled'),
+      mix: number(space.mix, BOUNDS.mix, 'Space mix'),
+      preDelay: number(space.preDelay, BOUNDS.preDelay, 'Space pre-delay'),
+      decay: number(space.decay, BOUNDS.decay, 'Space decay'),
+      damping: number(space.damping, BOUNDS.damping, 'Space damping'),
     },
     limiter: {
       enabled: boolean(limiter.enabled, 'Limiter enabled'),

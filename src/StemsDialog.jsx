@@ -4,6 +4,8 @@ import { parseChain } from './dsp/chain-params.js';
 import { bypassChain } from './dsp/stem-render.js';
 import { parsePresetFile } from './presets.js';
 import { startRender } from './render-client.js';
+import { MAX_AUDIO_FILE_LABEL } from './file-limits.js';
+import { MasterLevel } from './MasterLevel.jsx';
 import { matchStems, parseStemSession, serializeStemSession } from './stem-session-file.js';
 
 const download = (blob, name) => {
@@ -40,7 +42,7 @@ function Meter({ label, level }) {
 // session has its own transport with seek; the single-track transport stops while it plays.
 // LAS-35: each strip has its own chain (bypass, a copy of the master settings, or a settings file),
 // the session's settings can be saved and recalled, and the stem master is rendered offline.
-export function StemsDialog({ engine, chain, listening, onListen, onStemsPlay }) {
+export function StemsDialog({ engine, chain, listening, onListen, onStemsPlay, onStemsChange = () => {}, masterLevel }) {
   const dialog = useRef(null);
   const [stems, setStems] = useState([]);
   const [state, setState] = useState({ playing: false, position: 0, duration: 0, rate: null });
@@ -56,6 +58,7 @@ export function StemsDialog({ engine, chain, listening, onListen, onStemsPlay })
     const session = engine.current.stemSession();
     if (!session) return;
     setStems(session.stems());
+    onStemsChange(session.stems());
     setState({ playing: session.playing(), position: session.position(), duration: session.duration(), rate: engine.current.sampleRate() });
   };
 
@@ -73,6 +76,7 @@ export function StemsDialog({ engine, chain, listening, onListen, onStemsPlay })
 
   async function open() {
     setError('');
+    setStems([]);
     dialog.current.showModal();
     try {
       await engine.current.openStems(() => refresh());
@@ -210,19 +214,21 @@ export function StemsDialog({ engine, chain, listening, onListen, onStemsPlay })
         {message && <p className="fine-print" aria-live="polite">{message}</p>}
         {error && <p className="account-error" role="alert">{error}</p>}
         <label className="file-picker small">Add stem WAVs<input type="file" accept=".wav,audio/wav" multiple aria-label="Add stem WAVs" onChange={add} /></label>
+        <p className="fine-print">Each stem WAV up to {MAX_AUDIO_FILE_LABEL}. Every stem is decoded into memory, so several long stems need much more memory than one file.</p>
         {notes.length > 0 && <ul className="comparison-conditions" aria-label="Alignment notes">{notes.map(note => <li key={note}>{note}</li>)}</ul>}
         {stems.length > 0 && (
           <>
             <section className="stems-transport" aria-label="Stem transport">
-              <button className="primary" onClick={play} disabled={state.playing}>▶ Play</button>
-              <button onClick={() => act('pause')} disabled={!state.playing}>Ⅱ Pause</button>
-              <button onClick={() => act('stop')}>■ Stop</button>
+              <button className="primary" onClick={play} disabled={state.playing}><span aria-hidden="true">▶</span> Play</button>
+              <button onClick={() => act('pause')} disabled={!state.playing}><span aria-hidden="true">Ⅱ</span> Pause</button>
+              <button onClick={() => act('stop')}><span aria-hidden="true">■</span> Stop</button>
               <label className="stems-seek">Position
                 <input type="range" min="0" max={state.duration} step="0.01" value={state.position} aria-valuetext={`${clock(state.position)} of ${clock(state.duration)}`} onChange={e => act('seek', Number(e.target.value))} />
               </label>
               <span role="timer" aria-label="Stem position">{clock(state.position)} / {clock(state.duration)}</span>
               <ListenSwitch value={listening} onChange={onListen} />
-              <span className="stems-master"><span className="fine-print" aria-hidden="true">Master</span><Meter label="Master level" level={levels.master} /></span>
+              <span className="stems-master"><span className="fine-print" aria-hidden="true">Master</span><Meter label="Master output level" level={levels.master} /></span>
+              {masterLevel && <MasterLevel value={masterLevel.value} onChange={masterLevel.onChange} compact />}
             </section>
             <ul className="stem-strips">
               {stems.map(stem => {

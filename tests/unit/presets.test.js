@@ -9,6 +9,11 @@ function customChain() {
   chain = editBand(chain, 'right', 12, { enabled: true, type: 'bell', frequency: 1800, gain: 2, q: 1.5 });
   return validateChain({ ...chain, compressor: { ...chain.compressor, enabled: true, ratio: 3 }, limiter: { ...chain.limiter, inputGain: 2 } });
 }
+// A settings file as LAS-28 wrote it (schema v1: no Space, three processors).
+function legacyV1(chain) {
+  const { space, ...rest } = JSON.parse(serializeChain(chain)); // eslint-disable-line no-unused-vars
+  return { ...rest, version: 1, order: ['eq', 'compressor', 'limiter'] };
+}
 const preset = { name: 'Night drive', chain: customChain(), origin: 'proposal', analysisVersion: 'mps-analysis-1', proposalVersion: 'mps-proposal-1', strength: 80 };
 
 describe('preset files', () => {
@@ -20,13 +25,21 @@ describe('preset files', () => {
     expect(migratedFrom).toBeNull();
     expect(loaded).toEqual(preset);
     expect(loaded.chain.eq.mode).toBe('independent');
-    expect(loaded.chain.order).toEqual(['eq', 'compressor', 'limiter']);
+    expect(loaded.chain.order).toEqual(['eq', 'compressor', 'space', 'limiter']);
   });
 
-  test('an LAS-28 settings file (mps-chain v1) is migrated into a preset', () => {
-    const { preset: migrated, migratedFrom } = parsePresetFile(serializeChain(customChain()), 'club-master.json');
+  test('an LAS-28 settings file (mps-chain v1) is migrated into a preset, with Space off (LAS-64)', () => {
+    const { preset: migrated, migratedFrom } = parsePresetFile(JSON.stringify(legacyV1(customChain())), 'club-master.json');
     expect(migratedFrom).toBe('mps-chain v1 settings file');
     expect(migrated).toEqual({ name: 'club-master', chain: customChain(), origin: 'import', analysisVersion: null, proposalVersion: null, strength: null });
+    expect(migrated.chain.space.enabled).toBe(false);
+  });
+
+  test('a current settings file (mps-chain v2, with Space) becomes a preset unchanged', () => {
+    const chain = { ...customChain(), space: { enabled: true, mix: 30, preDelay: 25, decay: 2.2, damping: 50 } };
+    const { preset: migrated, migratedFrom } = parsePresetFile(serializeChain(chain), 'hall.json');
+    expect(migratedFrom).toBe('mps-chain v2 settings file');
+    expect(migrated.chain).toEqual(chain);
   });
 
   test('newer, unknown, broken and invalid files are refused with a reason', () => {

@@ -1,0 +1,53 @@
+/* LAS-44 design tokens — PROPOSAL, not approved. Shared by the LAS-44 and LAS-65 review pages.
+   Values extend the studio's current palette (src/styles.css) so an approved theme can be applied
+   to the working controls without changing their behaviour. Contrast ratios are listed in
+   docs/design/LAS-44/design-system.md. */
+:root {
+  /* Surfaces: graphite console faceplate family */
+  --surface-0: #0c1013;   /* screen / display glass */
+  --surface-1: #111519;   /* page */
+  --surface-2: #1c2329;   /* panel */
+  --surface-3: #252e35;   /* raised module / card */
+  --faceplate: linear-gradient(180deg, #2e363d 0%, #232a30 55%, #1e2429 100%);
+  --line: #39434c;
+  --line-strong: #52616c;
+
+  /* Text */
+  --ink: #ecedf0;          /* 15.7:1 on surface-1 */
+  --ink-2: #c5ced6;        /* 11.5:1 */
+  --ink-3: #a7b2bc;        /* 8.5:1 */
+  --ink-on-accent: #14191d;
+
+  /* Accents: one per module family (cap stripe, LED, curve) */
+  --accent: #d7af6c;       /* brass — primary actions, EQ */
+  --dyn: #6fc3b2;          /* teal — Dynamics */
+  --lim: #e07b62;          /* coral — Limiter */
+  --space: #a58bd8;        /* violet — Space */
+  --focus: #80d1e0;        /* focus ring, keyboard */
+  --ok: #4f9d69;           /* meter green */
+  --warn: #d7af6c;         /* meter amber (−6 to −1 dB) */
+  --clip: #e5534b;         /* clip / over */
+  --led-off: #3a2f2a;
+
+  /* Type */
+  --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-num: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --text-xs: 10px;  /* labels on hardware, uppercase tracking 1.5px */
+  --text-sm: 12px;  /* secondary text, units */
+  --text-md: 13px;  /* body, controls */
+  --text-lg: 16px;  /* panel titles */
+  --text-xl: 24px;  /* app title */
+
+  /* Spacing (4 px grid) and shape */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px;
+  --radius-sm: 4px; --radius: 6px; --radius-lg: 10px;
+  --shadow-module: 0 1px 0 #ffffff12 inset, 0 3px 8px #0006;
+  --shadow-window: 0 12px 40px #000a;
+  --focus-ring: 0 0 0 3px var(--focus);
+
+  /* Motion */
+  --t-fast: 120ms;   /* hover, press */
+  --t-param: 180ms;  /* parameter-driven shape transitions (LAS-63) */
+  --ease: cubic-bezier(.2, .7, .2, 1);
+}
+@media (prefers-reduced-motion: reduce) { :root { --t-fast: 0ms; --t-param: 0ms; } }

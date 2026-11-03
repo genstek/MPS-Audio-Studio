@@ -76,6 +76,6 @@ test('LAS-21: without the account server the studio still plays and says account
   await expect(ui.dialog).toBeHidden();
   await page.getByLabel('Import WAV').setInputFiles({ name: 'tone.wav', mimeType: 'audio/wav', buffer: makeWav() });
   await expect(page.getByRole('region', { name: 'Transport', exact: true }).getByRole('status')).toHaveText('Ready');
-  await page.getByRole('button', { name: 'Play' }).click();
+  await page.getByRole('button', { name: 'Play', exact: true }).click();
   await expect(page.getByRole('region', { name: 'Transport', exact: true }).getByRole('status')).toHaveText('Playing');
 });

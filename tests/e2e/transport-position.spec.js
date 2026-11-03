@@ -22,11 +22,11 @@ test('LAS-9: elapsed time follows the engine through pause, resume, stop and nat
   await expect(status).toHaveText('Ready');
   await expect(timer).toHaveText('00:00.0 / 00:02.0');
 
-  await transport.getByRole('button', { name: 'Play' }).click();
+  await transport.getByRole('button', { name: 'Play', exact: true }).click();
   await expect(status).toHaveText('Playing');
   await expect.poll(() => elapsed(timer), { message: 'time advances while playing' }).toBeGreaterThanOrEqual(0.5);
 
-  await transport.getByRole('button', { name: 'Pause' }).click();
+  await transport.getByRole('button', { name: 'Pause', exact: true }).click();
   await expect(status).toHaveText('Paused');
   const pausedAt = await elapsed(timer);
   // Waiting is the point here: the counter must not move while paused.
@@ -34,23 +34,23 @@ test('LAS-9: elapsed time follows the engine through pause, resume, stop and nat
   expect(await elapsed(timer), 'time is frozen while paused').toBe(pausedAt);
 
   // Play resumes where Pause stopped: the new source starts at the paused offset.
-  await transport.getByRole('button', { name: 'Play' }).click();
+  await transport.getByRole('button', { name: 'Play', exact: true }).click();
   await expect(status).toHaveText('Playing');
   const resumedFrom = (await startOffsets(page)).at(-1);
   expect(Math.abs(resumedFrom - pausedAt), `resumed from ${resumedFrom}s, display said ${pausedAt}s`).toBeLessThanOrEqual(0.051);
   await expect.poll(() => elapsed(timer), { message: 'time continues after resume' }).toBeGreaterThan(pausedAt);
 
   // Stop resets to zero and the next Play starts from the beginning.
-  await transport.getByRole('button', { name: 'Stop' }).click();
+  await transport.getByRole('button', { name: 'Stop', exact: true }).click();
   await expect(status).toHaveText('Stopped');
   await expect(timer).toHaveText('00:00.0 / 00:02.0');
-  await transport.getByRole('button', { name: 'Play' }).click();
+  await transport.getByRole('button', { name: 'Play', exact: true }).click();
   await expect(status).toHaveText('Playing');
   expect((await startOffsets(page)).at(-1), 'restart offset after Stop').toBe(0);
 
   // Natural end returns to Stopped at zero, with Play available again.
   await expect(status).toHaveText('Stopped', { timeout: 5000 });
   await expect(timer).toHaveText('00:00.0 / 00:02.0');
-  await expect(transport.getByRole('button', { name: 'Play' })).toBeEnabled();
+  await expect(transport.getByRole('button', { name: 'Play', exact: true })).toBeEnabled();
   expect(await startOffsets(page)).toHaveLength(3);
 });

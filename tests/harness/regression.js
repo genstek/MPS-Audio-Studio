@@ -39,7 +39,8 @@ export function runRegression({ rates = FIXTURE_RATES, fixtures = Object.keys(FI
           bypass: preset === 'bypass',
           ceiling: params.limiter.enabled ? params.limiter.ceiling : null,
           broadband: BROADBAND.has(name),
-          silentRight: name === 'left-only',
+          // A stereo reverb spreads a one-sided source into both channels by design (LAS-64).
+          silentRight: name === 'left-only' && preset !== 'space',
         });
         result.findings.push(...findings.map(text => `${key}: ${text}`));
         result.renders[key] = metrics(channels, rate);

@@ -1,4 +1,4 @@
-import { renderChain } from './chain.js';
+import { renderChain, spaceTailSeconds } from './chain.js';
 import { renderSegment } from './segment-render.js';
 import { analyze } from './analysis.js';
 import { proposeChain } from '../proposal.js';
@@ -20,7 +20,7 @@ import { ChainParamsError } from './chain-params.js';
 const db = value => (value > 0 ? 20 * Math.log10(value) : null);
 const peakOf = channel => channel.reduce((max, value) => Math.max(max, Math.abs(value)), 0);
 
-self.onmessage = async ({ data: { mode, file, params, bitDepth = 24, segment, reference, stems } }) => {
+self.onmessage = async ({ data: { mode, file, params, bitDepth = 24, segment, reference, stems, includeTail = false } }) => {
   try {
     if (mode === 'stems') {
       await renderStems(stems, params, bitDepth); // awaited, so its errors reach the catch below
@@ -57,7 +57,10 @@ self.onmessage = async ({ data: { mode, file, params, bitDepth = 24, segment, re
       self.postMessage({ type: 'done', report: { original, processed, meters: section.meters, preRollSeconds: section.preRoll, warnings: section.warnings } });
       return;
     }
+    // LAS-64: with Space on, an export may keep the reverb tail after the source ends.
+    const tailFrames = mode === 'export' && includeTail ? Math.ceil(spaceTailSeconds(params) * source.sampleRate) : 0;
     const rendered = renderChain(params, source.samples, source.sampleRate, {
+      tailFrames,
       onProgress: fraction => self.postMessage({ type: 'progress', stage: 'Rendering…', fraction: 0.05 + 0.85 * fraction }),
     });
     if (mode === 'match') {
@@ -76,8 +79,10 @@ self.onmessage = async ({ data: { mode, file, params, bitDepth = 24, segment, re
       channels: source.channels,
       bitDepth,
       dither: bitDepth === 16 ? 'TPDF ±1 LSB' : 'none (24-bit)',
-      frames: source.frames,
-      duration: source.frames / source.sampleRate,
+      frames: source.frames + tailFrames,
+      duration: (source.frames + tailFrames) / source.sampleRate,
+      sourceFrames: source.frames,
+      tailFrames,
       latencyCompensatedSamples: rendered.latency,
       clippedSamples,
       samplePeakDbfs: db(Math.max(...rendered.channels.map(peakOf))),

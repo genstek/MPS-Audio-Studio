@@ -35,7 +35,7 @@ describe('presets', () => {
     const owner = await signedInUser(server, 'ada@example.test');
     const created = await savePreset(owner);
     expect(created.status).toBe(201);
-    expect(created.data).toMatchObject({ name: 'Warm master', origin: 'manual', chainVersion: 1, analysisVersion: null, proposalVersion: null });
+    expect(created.data).toMatchObject({ name: 'Warm master', origin: 'manual', chainVersion: 2, analysisVersion: null, proposalVersion: null });
     const read = await owner.request(`/api/presets/${created.data.id}`);
     expect(read.data).toMatchObject({ schema: 'mps-preset', version: 1 });
     expect(read.data.chain).toEqual(customChain()); // all 24 bands per channel, mode, order, compressor, limiter
@@ -57,7 +57,7 @@ describe('presets', () => {
   test('invalid, newer-version and oversized presets are refused and nothing is stored', async () => {
     const owner = await signedInUser(server, 'ada@example.test');
     const tooMany = { ...customChain(), eq: { ...customChain().eq, left: [...customChain().eq.left, customChain().eq.left[0]] } };
-    for (const chain of [tooMany, { ...customChain(), version: 2 }, { ...customChain(), order: ['limiter', 'eq', 'compressor'] }, null]) {
+    for (const chain of [tooMany, { ...customChain(), version: 3 }, { ...customChain(), order: ['limiter', 'eq', 'compressor'] }, null]) {
       const refused = await savePreset(owner, { chain });
       expect(refused.status).toBe(422);
       expect(refused.data.error).toBe('invalid_preset');

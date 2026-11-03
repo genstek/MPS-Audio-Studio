@@ -36,7 +36,7 @@ export function accountDialog(page) {
   const dialog = page.getByRole('dialog');
   return {
     dialog,
-    open: () => page.getByRole('button', { name: 'Account' }).click(),
+    open: () => page.getByRole('button', { name: 'Account', exact: true }).click(),
     email: dialog.getByLabel('Email'),
     password: dialog.getByLabel('Password'),
     status: dialog.getByRole('status'),

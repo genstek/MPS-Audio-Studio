@@ -1,0 +1,47 @@
+{
+  "issue": "LAS-71",
+  "machine": {
+    "cpus": 4,
+    "cpu": "Intel(R) Xeon(R) Processor @ 2.80GHz",
+    "memoryGiB": 15.7,
+    "platform": "linux x64",
+    "node": "v22.23.4"
+  },
+  "browser": "153.0.8010.12",
+  "appUrl": "http://127.0.0.1:5180",
+  "note": "Headless browser, no audio device output. Times include the default loudness matching render running in parallel with the export.",
+  "results": [
+    {
+      "label": "above the old 100 MiB limit",
+      "bytes": 126000044,
+      "mib": 120.16,
+      "importSeconds": 1.471,
+      "decoded": "714.3 seconds · 2 channel(s) · 44,100 Hz decoded",
+      "playStartSeconds": 0.09,
+      "longestFrameGapMs": 17,
+      "positionWhilePlaying": "00:03.0 / 11:54.3",
+      "loudnessMatchSeconds": 46.256,
+      "exportSeconds": 53.381,
+      "exportLength": "Length714.286 s (31,500,000 samples per channel)",
+      "errors": [],
+      "outcome": "PASS",
+      "peakBrowserRssMiB": 3829
+    },
+    {
+      "label": "exactly the 250 MiB limit",
+      "bytes": 262144000,
+      "mib": 250,
+      "importSeconds": 2.78,
+      "decoded": "1486.1 seconds · 2 channel(s) · 44,100 Hz decoded",
+      "playStartSeconds": 0.091,
+      "longestFrameGapMs": 17,
+      "positionWhilePlaying": "00:03.0 / 24:46.1",
+      "loudnessMatchSeconds": 111.972,
+      "exportSeconds": 123.117,
+      "exportLength": "Length1486.077 s (65,535,989 samples per channel)",
+      "errors": [],
+      "outcome": "PASS",
+      "peakBrowserRssMiB": 6810
+    }
+  ]
+}

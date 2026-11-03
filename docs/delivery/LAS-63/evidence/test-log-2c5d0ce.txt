@@ -1,0 +1,12 @@
+LAS-63 — test results on 2c5d0ce (extract; full logs in docs/delivery/sprints/10/final/)
+
+Playwright (npm run check):
+  ✓   83 [chromium] › tests/e2e/previews.spec.js:33:1 › LAS-63: without playback, cards show on/bypassed and edited state, and the configured shape follows edits, undo and presets (4.6s)
+  ✓   84 [chromium] › tests/e2e/previews.spec.js:86:1 › LAS-63: with reduced motion the shape changes at once, without intermediate frames (2.6s)
+  ✓   86 [chromium] › tests/e2e/previews.spec.js:97:1 › LAS-63: gain-reduction meters are idle while stopped or paused and follow the real signal while playing (4.6s)
+  ✓   87 [chromium] › tests/e2e/previews.spec.js:117:1 › LAS-63: with every card edited, a 360 px phone still has no sideways scroll (2.5s)
+
+Vitest (verbose run of the same commit):
+ ✓ tests/unit/previews.test.js > LAS-63 previews match the processors > compressor curve (threshold, ratio, soft knee, makeup) equals the chain at steady levels 1098ms
+ ✓ tests/unit/previews.test.js > LAS-63 previews match the processors > limiter curve (input gain, ceiling) equals the chain at steady levels 797ms
+ ✓ tests/unit/previews.test.js > LAS-63 previews match the processors > "edited" marks exactly the modules that differ from the defaults 1ms

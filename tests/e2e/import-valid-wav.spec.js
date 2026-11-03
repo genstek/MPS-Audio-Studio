@@ -37,14 +37,14 @@ test('TC-002 (LAS-57): a valid WAV file is imported successfully', async ({ page
   await expect(tracks.getByText('Import WAV', { exact: true })).toHaveCount(0);
 
   const transport = page.getByRole('region', { name: 'Transport', exact: true });
-  await expect(transport.getByRole('button', { name: 'Play' })).toBeEnabled(); // expected 8
-  await expect(transport.getByRole('button', { name: 'Stop' })).toBeEnabled();
-  await expect(transport.getByRole('button', { name: 'Pause' })).toBeDisabled(); // expected 9
+  await expect(transport.getByRole('button', { name: 'Play', exact: true })).toBeEnabled(); // expected 8
+  await expect(transport.getByRole('button', { name: 'Stop', exact: true })).toBeEnabled();
+  await expect(transport.getByRole('button', { name: 'Pause', exact: true })).toBeDisabled(); // expected 9
 
   // Expected 9 (second half): Pause becomes available once playback starts.
-  await transport.getByRole('button', { name: 'Play' }).click();
+  await transport.getByRole('button', { name: 'Play', exact: true }).click();
   await expect(status).toHaveText('Playing');
-  await expect(transport.getByRole('button', { name: 'Pause' })).toBeEnabled();
-  await transport.getByRole('button', { name: 'Stop' }).click();
+  await expect(transport.getByRole('button', { name: 'Pause', exact: true })).toBeEnabled();
+  await transport.getByRole('button', { name: 'Stop', exact: true }).click();
   await expect(status).toHaveText('Stopped');
 });

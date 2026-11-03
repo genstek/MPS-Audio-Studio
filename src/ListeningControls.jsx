@@ -1,11 +1,12 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
 import { startRender } from './render-client.js';
+import { HelpTip } from './HelpTip.jsx';
 
 // Original/Processed switch (LAS-28). The same source keeps playing; only the audible path changes,
 // so the position is kept.
-export function ListenSwitch({ value, onChange, disabled }) {
+export function ListenSwitch({ value, onChange, disabled, help = null }) {
   const group = useId();
-  return (
+  const control = (
     <fieldset className="segmented listen-switch" disabled={disabled}>
       <legend>Listen to</legend>
       {[['processed', 'Processed'], ['original', 'Original']].map(([option, label]) => (
@@ -13,6 +14,7 @@ export function ListenSwitch({ value, onChange, disabled }) {
       ))}
     </fieldset>
   );
+  return help ? <span className="listen-with-help">{control}<HelpTip id={help} className="inline" /></span> : control;
 }
 
 // Loudness matching for a fair comparison: the integrated loudness (BS.1770) of the original and of
@@ -67,7 +69,7 @@ export function LoudnessMatch({ engine, file, params }) {
   }
   return (
     <div className="loudness-match">
-      <label className="toggle"><input type="checkbox" checked={enabled} onChange={e => setEnabled(e.target.checked)} />Match loudness</label>
+      <span className="toggle-with-help"><label className="toggle"><input type="checkbox" checked={enabled} onChange={e => setEnabled(e.target.checked)} />Match loudness</label><HelpTip id="master.match" className="inline" /></span>
       <p className="fine-print" aria-live="polite">{text}</p>
     </div>
   );

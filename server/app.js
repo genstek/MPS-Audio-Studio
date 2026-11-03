@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { openDatabase } from './db.js';
 import { HttpError, parseCookies, readJson, send } from './http.js';
 import { LIMITS, createLimiter } from './limits.js';
-import { libraryRoutes } from './library.js';
+import { DEFAULT_MAX_UPLOAD_BYTES, libraryRoutes } from './library.js';
 import { privacyRoutes } from './privacy.js';
 import { referenceRoutes } from './references.js';
 import { presetRoutes } from './presets.js';
@@ -263,7 +263,7 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
   // answer). Bodies beyond the upload limit are not read; that answer closes the connection.
   async function discardBody(request) {
     if (request.complete || request.destroyed) return true;
-    const limit = config.maxUploadBytes ?? 100 * 1024 * 1024;
+    const limit = config.maxUploadBytes ?? DEFAULT_MAX_UPLOAD_BYTES;
     let size = Number(request.headers['content-length'] ?? 0);
     if (size > limit) return false;
     size = 0;

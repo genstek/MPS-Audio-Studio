@@ -84,7 +84,7 @@ test('LAS-33: save a customised chain as a preset, reload, apply it exactly, ren
   await ui.dialog.getByLabel('Preset name').fill('Night drive');
   await ui.dialog.getByRole('button', { name: 'Save current settings as preset' }).click();
   await expect(ui.status).toHaveText('Saved the preset “Night drive”.');
-  await expect(ui.item('Night drive')).toContainText('saved settings · chain v1');
+  await expect(ui.item('Night drive')).toContainText('saved settings · chain v2'); // schema v2 since LAS-64 (Space)
   for (const [width, height] of [[360, 780], [1280, 720]]) {
     await page.setViewportSize({ width, height });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), `${width}px: no horizontal page scroll`).toBe(true);
@@ -135,10 +135,13 @@ test('LAS-33: imported files are migrated or refused with a reason, without touc
   const ui = settings(page);
   await ui.open();
   const messages = await paramsMessageCount(page);
-  await ui.dialog.getByLabel('Import preset file').setInputFiles({ name: 'club-master.json', mimeType: 'application/json', buffer: Buffer.from(serializeChain(customChain())) });
+  // An LAS-28 settings file in the version 1 schema (before Space, LAS-64).
+  const { space: _space, ...current } = JSON.parse(serializeChain(customChain())); // eslint-disable-line no-unused-vars
+  const legacy = { ...current, version: 1, order: ['eq', 'compressor', 'limiter'] };
+  await ui.dialog.getByLabel('Import preset file').setInputFiles({ name: 'club-master.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(legacy)) });
   await expect(ui.status).toHaveText('Imported “club-master” (migrated from an mps-chain v1 settings file). Apply it when you want it.');
   await expect(ui.item('club-master')).toContainText('imported file');
-  const newer = { ...JSON.parse(serializePreset({ name: 'Future', chain: customChain() })), version: 2 };
+  const newer = { ...JSON.parse(serializePreset({ name: 'Future', chain: customChain() })), version: 2 }; // mps-preset v2 is newer
   await ui.dialog.getByLabel('Import preset file').setInputFiles({ name: 'future.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(newer)) });
   await expect(ui.alert).toHaveText('future.json: This preset was saved by a newer studio (mps-preset v2); update the studio to open it. Nothing was changed.');
   const broken = JSON.parse(serializePreset({ name: 'Broken', chain: customChain() }));
@@ -161,7 +164,7 @@ test('LAS-33: preferences stay apart from reference targets, either can be reset
   await page.goto('/');
   await signIn(page, request, 'prefs');
   await importTrack(page, wav(loop.map(c => c.map(v => v * 0.5))), 'my-mix.wav');
-  await page.getByRole('button', { name: 'Compare with a reference' }).click();
+  await page.getByRole('button', { name: 'Compare with a reference', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Compare with a reference' });
   await dialog.getByLabel('WAV on this device').check();
   await dialog.getByLabel('Choose reference WAV').setInputFiles({ name: 'reference.wav', mimeType: 'audio/wav', buffer: wav(renderChain(PRESETS.master, loop, RATE).channels) });

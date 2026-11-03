@@ -1,0 +1,7 @@
+commit 2c5d0ceda20e5cb2ffe527386420f1e35f675f3c
+
+> mps-audio-studio@0.1.0 dsp:regression
+> node scripts/dsp-regression.js
+
+120 renders in 30.0 s; findings 0; golden differences 0. Report: <tmp report folder>
+DSP_EXIT=0

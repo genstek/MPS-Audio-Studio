@@ -1,19 +1,35 @@
 {
   "issue": "LAS-45",
+  "sprint": "LAS Sprint 10 - Pro Mixer (ID 36)",
+  "package": "docs/claude-code/2026-11-02/SPRINT-10.md @ d005b9d",
   "applicationCommit": null,
+  "implementationCommits": [],
   "deliveryStatus": "BLOCKED",
   "manualQa": "NOT_RUN",
   "checks": [
     {
-      "name": "Implementation of the approved shell and components",
+      "name": "Implementation of the approved shell",
       "status": "NOT_RUN",
       "command": null,
       "exitCode": null,
       "evidence": []
     }
   ],
-  "artifacts": ["README.md", "acceptance.md", "manual-qa.md", "jira-update.md"],
-  "blockers": ["LAS-44 approved design system and screens (waiting for the LAS-42 direction and the LAS-43 walkthrough)"],
-  "jiraSync": "SYNC_PENDING",
-  "branch": "delivery/LAS-40-all-sprints"
+  "environment": "Ubuntu 24.04.5 (Linux 6.18, x86_64) · Node 22.23.4 · Chromium 153.0.8010.12 headless via PLAYWRIGHT_EXECUTABLE_PATH · Playwright 1.64.1 · Vitest 5.0.5 · Vite 8.3.4 · default viewport 1280×720 (DPR 1, zoom 100 %) unless a test sets one · synthetic WAV fixtures only",
+  "artifacts": [
+    "README.md",
+    "acceptance.md",
+    "manual-qa.md",
+    "results.json",
+    "jira-update.md"
+  ],
+  "limitations": [],
+  "blockers": [
+    "LAS-44 selection by Gennady"
+  ],
+  "jiraSync": "POSTED",
+  "jiraStatus": "To Do (unchanged)",
+  "jiraCommentId": "10201",
+  "branch": "delivery/LAS-40-sprint-10",
+  "pullRequest": "https://github.com/genstek/MPS-Audio-Studio/pull/45"
 }

@@ -43,6 +43,11 @@ export function useChainSettings(engine) {
 
   // Replaces all settings as one undo step (loading a file or a snapshot).
   const replace = params => update(() => params);
+  // A new or opened project (LAS-60/69): these settings, with an empty undo history.
+  const load = params => {
+    last.current = { key: null, time: 0 };
+    setState({ params, past: [], future: [] });
+  };
 
   function undo() {
     last.current = { key: null, time: 0 };
@@ -54,5 +59,5 @@ export function useChainSettings(engine) {
     setState(({ params, past, future }) => (future.length ? { params: future[0], past: [...past, params], future: future.slice(1) } : { params, past, future }));
   }
 
-  return { params: state.params, update, replace, undo, redo, canUndo: state.past.length > 0, canRedo: state.future.length > 0, warnings, problem, previewing: preview !== null, setPreview };
+  return { params: state.params, update, replace, load, undo, redo, canUndo: state.past.length > 0, canRedo: state.future.length > 0, warnings, problem, previewing: preview !== null, setPreview };
 }

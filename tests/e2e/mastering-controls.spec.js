@@ -16,7 +16,7 @@ function studio(page) {
   return {
     status: transport.getByRole('status'),
     timer: transport.getByRole('timer', { name: 'Playback position' }),
-    play: transport.getByRole('button', { name: 'Play' }),
+    play: transport.getByRole('button', { name: 'Play', exact: true }),
     upload: page.getByLabel('Import WAV'),
     master,
     mixer,
@@ -36,7 +36,7 @@ async function typeValue(field, value) {
 }
 
 async function exportAndSave(page, ui, testInfo, name) {
-  await ui.master.getByRole('button', { name: 'Export WAV' }).click();
+  await ui.master.getByRole('button', { name: 'Export WAV', exact: true }).click();
   await ui.exportDialog.getByRole('button', { name: /^Export( again)?$/ }).click();
   await expect(ui.exportDialog.getByRole('status')).toHaveText('Export ready.', { timeout: 60_000 });
   const download = page.waitForEvent('download');
@@ -67,10 +67,10 @@ test('LAS-28: an EQ edit reaches the preview chain and the exported WAV; undo an
   await expect(ui.mixer.getByText('1 band · Link')).toBeVisible();
 
   // The editor carries its own Undo/Redo (it covers part of the mixer).
-  await ui.eq.getByRole('button', { name: 'Undo' }).click();
+  await ui.eq.getByRole('button', { name: 'Undo', exact: true }).click();
   await expect(ui.eq.getByRole('spinbutton', { name: 'Gain (dB)' })).toHaveValue('0.0');
   await expect.poll(async () => (await lastChainParams(page)).eq.left[10].gain).toBe(0);
-  await ui.eq.getByRole('button', { name: 'Redo' }).click();
+  await ui.eq.getByRole('button', { name: 'Redo', exact: true }).click();
   await expect.poll(async () => (await lastChainParams(page)).eq.left[10].gain).toBe(6);
   await page.keyboard.press('Escape');
   await expect(ui.eq).toBeHidden();
@@ -120,7 +120,7 @@ test('LAS-28: Original/Processed keeps the position and the single source; loudn
   await expect.poll(() => pathGains(page)).toEqual({ processed: 0.501, original: 0 });
   expect(await audioSources(page), 'one source kept playing through every switch').toMatchObject({ started: 1, playing: 1 });
 
-  await ui.master.getByLabel('Match loudness').uncheck();
+  await ui.master.getByLabel('Match loudness', { exact: true }).uncheck();
   await expect(matchText).toHaveText('Off: both versions play at their own level.');
   await expect.poll(() => pathGains(page)).toEqual({ processed: 1, original: 0 });
   testInfo.annotations.push({ type: 'A/B', description: `switched at ${beforeSwitch.toFixed(1)} s without restarting` });
@@ -131,7 +131,7 @@ test('LAS-28: export can be cancelled; 16-bit dithered mono export keeps format 
   const ui = studio(page);
   await ui.upload.setInputFiles({ name: 'long-mono.wav', mimeType: 'audio/wav', buffer: makeWav({ seconds: 90, channels: 1, sampleRate: 48000, dbfs: -6 }) });
   await expect(ui.status).toHaveText('Ready');
-  await ui.master.getByRole('button', { name: 'Export WAV' }).click();
+  await ui.master.getByRole('button', { name: 'Export WAV', exact: true }).click();
   await ui.exportDialog.getByRole('button', { name: 'Export', exact: true }).click();
   await expect(ui.exportDialog.getByRole('progressbar', { name: 'Export progress' })).toBeVisible();
   await ui.exportDialog.getByRole('button', { name: 'Cancel export' }).click();
@@ -179,7 +179,7 @@ test('LAS-28: EQ points follow the pointer and the keyboard; a whole drag is one
   const dragged = (await lastChainParams(page)).eq.left[0];
   expect(dragged.frequency).toBeLessThan(beforeDrag.frequency);
   expect(dragged.gain).toBeLessThan(beforeDrag.gain);
-  await ui.eq.getByRole('button', { name: 'Undo' }).click();
+  await ui.eq.getByRole('button', { name: 'Undo', exact: true }).click();
   await expect.poll(async () => (await lastChainParams(page)).eq.left[0]).toEqual(beforeDrag);
   // Delete switches the band off.
   await ui.eq.getByRole('button', { name: /^Band 1: Bell/ }).focus();
@@ -198,7 +198,7 @@ test('LAS-28: settings files and snapshots round-trip; an invalid file changes n
   const ui = studio(page);
   await ui.mixer.getByRole('button', { name: 'Edit dynamics' }).click();
   const dynamics = page.getByRole('dialog', { name: 'Dynamics' });
-  await dynamics.getByLabel('Compressor on').check();
+  await dynamics.getByLabel('Compressor on', { exact: true }).check();
   await typeValue(dynamics.getByRole('spinbutton', { name: 'Threshold (dB)' }), -24);
   await dynamics.getByRole('button', { name: 'Close Dynamics' }).click();
   await expect(ui.mixer.getByText('-24 dB · 2:1')).toBeVisible();
@@ -209,7 +209,7 @@ test('LAS-28: settings files and snapshots round-trip; an invalid file changes n
   const download = page.waitForEvent('download');
   await settings.getByRole('link', { name: 'Download settings (.json)' }).click();
   const saved = JSON.parse(readFileSync(await (await download).path(), 'utf8'));
-  expect(saved).toMatchObject({ schema: 'mps-chain', version: 1, compressor: { enabled: true, threshold: -24 } });
+  expect(saved).toMatchObject({ schema: 'mps-chain', version: 2, compressor: { enabled: true, threshold: -24 }, space: { enabled: false } });
 
   const invalid = { ...saved, compressor: { ...saved.compressor, ratio: 99 } };
   await settings.getByLabel('Load settings file').setInputFiles({ name: 'bad.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(invalid)) });

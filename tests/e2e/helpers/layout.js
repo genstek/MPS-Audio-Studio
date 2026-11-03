@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 
-// The mixer strips and their buttons (working modules since LAS-28; Space is still a placeholder).
-export const STRIP_BUTTONS = { EQ: 'Edit EQ', Dynamics: 'Edit dynamics', Limiter: 'Edit limiter', Space: 'Space processing unavailable' };
+// The mixer strips and their buttons (working modules since LAS-28; Space since LAS-64).
+export const STRIP_BUTTONS = { EQ: 'Edit EQ', Dynamics: 'Edit dynamics', Limiter: 'Edit limiter', Space: 'Edit space' };
 
 // The controls that must stay usable at every size (LAS-48; the LAS-51 essentials).
 export function essentials(page) {
@@ -10,12 +10,13 @@ export function essentials(page) {
   const master = page.getByRole('region', { name: 'Master', exact: true });
   const strips = page.getByRole('group', { name: 'Processing modules' });
   return [
-    ...['Play', 'Pause', 'Stop'].map(name => [name, transport.getByRole('button', { name })]),
+    ...['Play', 'Pause', 'Stop', 'Rewind 5 seconds', 'Fast forward 5 seconds'].map(name => [name, transport.getByRole('button', { name, exact: true })]),
     ['status', transport.getByRole('status')],
+    ['timeline', tracks.getByRole('slider', { name: 'Timeline' })], // LAS-67
     ['playback position', transport.getByRole('timer', { name: 'Playback position' })],
     ['Import/Replace WAV', tracks.getByRole('button', { name: 'Import WAV', exact: true })],
     ['Master level', master.getByRole('slider', { name: 'Master level' })],
-    ['Export WAV', master.getByRole('button', { name: 'Export WAV' })],
+    ['Export WAV', master.getByRole('button', { name: 'Export WAV', exact: true })],
     ...Object.entries(STRIP_BUTTONS).map(([name, button]) => [`${name} button`, strips.getByRole('button', { name: button })]),
     ['footer', page.locator('footer')],
   ];

@@ -121,6 +121,15 @@ button.danger { border-color: #c17474; background: #4d2428; }
 .master-level label { display: block; color: #aebac4; font-size: 12px; }
 .master-level input { display: block; width: 100%; margin: clamp(2px, .6dvh, 8px) 0; }
 .master > button { margin: var(--space) 12px; padding-inline: 10px; font-size: 12px; }
+/* LAS-68 Master Level: value and reset beside the label, a dB scale under the fader. */
+.master-fader-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 12px; color: #aebac4; }
+.master-level .master-fader-row label { display: inline; }
+.master-value { font-variant-numeric: tabular-nums; color: #ecedf0; margin-left: auto; }
+.master-reset { padding: 0 6px; font-size: 10px; line-height: 1.5; }
+.master-scale { position: relative; height: 10px; margin: -2px 0 2px; font-size: 8px; line-height: 10px; color: #8a96a0; font-variant-numeric: tabular-nums; }
+.master-scale span { position: absolute; top: 0; white-space: nowrap; }
+.master-fader.compact { display: inline-grid; gap: 2px; min-width: 180px; }
+.master-fader.compact .master-note { display: none; }
 .mixer { display: grid; grid-template-rows: auto minmax(min-content, 1fr); min-height: 0; }
 /* Strips are a size container: full console strips by default; the caption is dropped when they
    are shorter, and in the compact row the knob sits beside the button. Nothing essential hides. */
@@ -158,6 +167,9 @@ button.danger { border-color: #c17474; background: #4d2428; }
 footer { letter-spacing: .3px; font-size: 10px; line-height: 1.6; }
 .connection { color: #adc6bd; white-space: nowrap; }
 @media (max-width: 760px) {
+  /* LAS-69/70: project status, help icons and Help wrap instead of widening the page. */
+  .masthead-tools { flex-wrap: wrap; justify-content: flex-end; row-gap: 6px; }
+  .project-status { max-width: 14ch; }
   main { height: auto; min-height: 100dvh; grid-template-rows: auto; padding: 20px 16px; }
   .masthead, .transport { flex-wrap: wrap; }
   .workspace { grid-template-columns: 1fr; }
@@ -196,6 +208,15 @@ footer { letter-spacing: .3px; font-size: 10px; line-height: 1.6; }
 .select-field select, .param-number input { background: #11161a; color: #ecedf0; border: 1px solid #52616c; border-radius: 4px; padding: 3px 6px; font: inherit; }
 .editor-dialog { position: fixed; inset: auto 16px 16px auto; margin: 0; z-index: 10; width: min(680px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow: auto; background: #1c2329; color: #ecedf0; border: 1px solid #52616c; border-radius: 10px; padding: 16px 18px; box-shadow: 0 12px 40px #000a; }
 .editor-dialog > * + * { margin-top: 10px; }
+/* LAS-61/62: movable, concurrent editor windows. The title bar is the drag handle; the front
+   window has a brighter frame. */
+.editor-titlebar { position: sticky; top: -16px; z-index: 1; cursor: move; touch-action: none; user-select: none; gap: 8px; margin: -16px -18px 8px; padding: 8px 18px 8px 10px; background: #252e35; border-bottom: 1px solid #39434c; border-radius: 10px 10px 0 0; }
+.editor-titlebar h2 { flex: 1; min-width: 0; }
+.editor-dialog.is-active { border-color: #80d1e0; }
+.editor-dialog.is-active .editor-titlebar { background: #2f3a43; }
+.window-grip { padding: 2px 6px; font-size: 12px; letter-spacing: -2px; cursor: grab; background: transparent; border-color: transparent; color: #a7b2bc; }
+.window-grip:hover, .window-grip:focus-visible { border-color: #52616c; }
+.strip button.is-open { border-color: #80d1e0; }
 .editor-heading-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
 .editor-heading-tools .segmented legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 .module-editor, .eq-editor { display: grid; gap: 10px; }
@@ -312,3 +333,144 @@ dialog .file-picker { grid-area: auto; }
 .stems-output select { padding: 6px 8px; border-radius: 5px; border: 1px solid #52616c; background: #11161a; color: #ecedf0; font: inherit; }
 .stems-render td { white-space: nowrap; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* LAS-63/64 configured-state previews: computed from the settings, shown even when stopped. */
+.space-thumbnail { width: 100%; height: 100%; }
+.space-graph { background: #11161a; border: 1px solid #39434c; border-radius: 6px; }
+.space-graph .space-thumbnail { display: block; height: auto; aspect-ratio: 480 / 160; }
+.space-graph text { fill: #a7b2bc; font-size: 11px; }
+.preview-axis { fill: #222b31; stroke: #39434c; stroke-width: 1; }
+.preview-line { fill: none; stroke: #a58bd8; stroke-width: 2; vector-effect: non-scaling-stroke; }
+.preview-line.dashed { stroke-dasharray: 4 3; opacity: .75; }
+.preview-fill { fill: #a58bd833; }
+.preview-mix { fill: #a58bd8; }
+.is-bypassed .preview-line, .is-bypassed .preview-mix { stroke: #6b7780; fill: #6b7780; }
+.is-bypassed .preview-line { fill: none; }
+.is-bypassed .preview-fill { fill: #6b778022; }
+/* LAS-63: card state without playback. The graph keeps its shape when bypassed (grey); the LED
+   says on/bypassed; "edited" marks settings that differ from the defaults. */
+.strip-title { flex-wrap: wrap; row-gap: 2px; min-width: 0; }
+.strip-title h3 { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.strip-led { width: 8px; height: 8px; border-radius: 50%; background: #3a2f2a; margin-left: auto; flex-shrink: 0; }
+.strip-led.on { background: #6fd08c; box-shadow: 0 0 6px #6fd08c; }
+.strip-edited { font-size: 9px; letter-spacing: .5px; color: #14191d; background: #d7af6c; border-radius: 6px; padding: 0 4px; line-height: 13px; }
+.strip.is-bypassed .strip-visual { opacity: .75; }
+.strip-visual { position: relative; }
+.strip-visual > .dynamics-thumbnail, .strip-visual > .limiter-thumbnail { width: 100%; height: 100%; }
+.strip-visual > .gr-meter.compact { position: absolute; right: 2px; top: 10%; width: 5px; height: 80%; }
+.strip:hover .strip-visual { border-color: #52616c; }
+.strip:focus-within { background: linear-gradient(110deg, #80d1e010, transparent); }
+.eq-thumbnail.is-bypassed path { stroke: #6b7780; }
+.dynamics-thumbnail, .limiter-thumbnail { display: block; }
+.preview-plot { fill: transparent; }
+.preview-grid line { stroke: #2c353d; stroke-width: 1; }
+.preview-grid text, .preview-label, .preview-axis-label { fill: #a7b2bc; font-size: 10px; }
+.preview-unity { stroke: #3a454e; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
+.preview-marker { stroke: #6fc3b255; vector-effect: non-scaling-stroke; }
+.dynamics-thumbnail .preview-line { stroke: #6fc3b2; }
+.limiter-thumbnail .preview-line { stroke: #e07b62; }
+.limiter-thumbnail .preview-marker { stroke: #e07b6288; }
+.transfer-graph { max-width: 340px; background: #11161a; border: 1px solid #39434c; border-radius: 6px; }
+.transfer-graph svg { display: block; width: 100%; height: auto; aspect-ratio: 320 / 220; }
+@media (prefers-reduced-motion: reduce) { .strip, .strip-visual { transition: none; } }
+
+/* LAS-67 player (behaviour; the look follows the LAS-44 selection). */
+.seek-button { padding-inline: 10px; letter-spacing: -3px; }
+.player-footer { gap: 12px; align-items: center; }
+.timeline { position: relative; flex: 1 1 auto; min-width: 0; display: grid; }
+.timeline input { width: 100%; margin: 0; }
+.timeline-ruler { position: relative; height: 10px; font-size: 8px; line-height: 10px; letter-spacing: 0; color: #8a96a0; font-variant-numeric: tabular-nums; }
+.timeline-ruler span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; }
+.timeline-ruler span:first-child { transform: none; }
+.timeline-ruler span:last-child { transform: translateX(-100%); }
+.bar-meters { display: grid; grid-template-columns: auto auto; gap: 1px 6px; align-items: center; flex-shrink: 0; letter-spacing: 0; }
+.bar-meter { display: flex; align-items: center; gap: 4px; font-size: 9px; color: #a7b2bc; }
+.bar-track { position: relative; width: clamp(48px, 8vw, 110px); height: 6px; border-radius: 2px; background: #0c1013; box-shadow: 0 0 0 1px #2c353d; overflow: hidden; }
+.bar-rms { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, #4f9d69 0 75%, #d7af6c 75% 92%, #e5534b 92%); }
+.bar-hold { position: absolute; top: 0; bottom: 0; width: 2px; background: #ecedf0; }
+.bar-value { min-width: 2.6em; text-align: right; font-variant-numeric: tabular-nums; }
+.clip-led { grid-column: 2; grid-row: 1 / span 2; padding: 2px 6px; font-size: 9px; letter-spacing: .5px; color: #a7b2bc; background: #2a1d1d; border-color: #4d2428; }
+.clip-led.on { color: #fff; background: #e5534b; border-color: #e5534b; box-shadow: 0 0 8px #e5534b88; }
+.bar-meters { grid-template-columns: auto auto; }
+.bar-meters .bar-meter { grid-column: 1; }
+/* Needles and spectrum sit beside the track details when the Tracks area is wide enough. */
+.track-space:has(.player-display) { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--space); }
+.track-space:has(.player-display) .track-content { grid-column: 1; grid-row: 1; }
+.player-display { grid-column: 2; grid-row: 1; align-self: center; display: flex; align-items: center; gap: 8px; height: 100%; max-height: 130px; }
+.needle-meter { margin: 0; display: grid; justify-items: center; height: 100%; }
+.needle-meter svg { height: calc(100% - 14px); max-height: 92px; aspect-ratio: 120 / 78; background: radial-gradient(ellipse at 50% 120%, #f4e7c6, #dccb9d 70%, #b8a678); border: 2px solid #1b1f22; border-radius: 6px; }
+.needle-tick line { stroke: #2d2414; stroke-width: 1.2; }
+.needle-tick text { font-size: 7px; fill: #2d2414; text-anchor: middle; }
+.needle-tick.hot line, .needle-tick.hot text { stroke: #b3261e; fill: #b3261e; }
+.needle { stroke: #111; stroke-width: 1.5; }
+.needle-pivot { fill: #111; }
+.needle-meter figcaption, .output-spectrum figcaption { font-size: 9px; color: #a7b2bc; letter-spacing: .5px; }
+.output-spectrum { margin: 0; display: grid; gap: 1px; width: clamp(160px, 22vw, 280px); height: 100%; grid-template-rows: minmax(0, 1fr) auto auto; }
+.spectrum-plot { position: relative; min-height: 40px; background: #0c1013; border: 1px solid #2c353d; border-radius: 4px; }
+.spectrum-plot canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.spectrum-db, .spectrum-hz { position: relative; font-size: 8px; color: #8a96a0; font-variant-numeric: tabular-nums; }
+.spectrum-db { position: absolute; inset: 2px auto 2px 2px; }
+.spectrum-db span { position: absolute; left: 0; transform: translateY(-50%); }
+.spectrum-db span:first-child { transform: none; }
+.spectrum-hz { height: 10px; }
+.spectrum-hz span { position: absolute; transform: translateX(-50%); }
+@container track (width < 44rem) { .player-display { display: none; } }
+@container track (height < 6rem) { .player-display { display: none; } }
+@media (max-width: 760px) {
+  .track-space:has(.player-display) { grid-template-columns: minmax(0, 1fr); row-gap: 8px; }
+  /* Phones: the two needles side by side, the spectrum on its own row below them. */
+  .player-display { grid-column: 1; grid-row: 2; justify-self: stretch; height: auto; max-height: none; flex-wrap: wrap; justify-content: center; }
+  .needle-meter { height: auto; }
+  .needle-meter svg { height: 78px; }
+  .output-spectrum { order: 3; width: 100%; height: 120px; }
+  .player-footer { flex-wrap: wrap; }
+  .timeline { flex-basis: 100%; }
+}
+
+/* LAS-60/69 project area: New and the Project menu where "SESSION 001" was; status in the header. */
+.project-area { min-width: 0; }
+.project-toolbar { display: flex; align-items: center; gap: 4px; margin-bottom: clamp(1px, .2dvh, 5px); }
+.project-button { padding: 0 6px; font-size: 10px; letter-spacing: .5px; line-height: 1.25; white-space: nowrap; }
+.project-menu-wrap { position: relative; display: flex; }
+.project-menu { position: absolute; z-index: 60; top: calc(100% + 4px); left: 0; min-width: 15rem; margin: 0; padding: 4px; list-style: none; background: #1c2329; border: 1px solid #52616c; border-radius: 8px; box-shadow: 0 12px 30px #000a; }
+.project-menu button { display: flex; justify-content: space-between; gap: 12px; width: 100%; padding: 6px 10px; font-size: 13px; text-align: left; border: 0; background: transparent; }
+.project-menu button:hover, .project-menu button:focus-visible { background: #303a43; outline-offset: -2px; }
+.project-menu kbd { font: 11px ui-monospace, monospace; color: #a7b2bc; }
+.project-name { max-width: clamp(7.5rem, 18vw, 18rem); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.project-status { max-width: 22ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.project-status.is-dirty { color: #f0d79a; }
+.project-status.is-error { color: #f2a19a; }
+.dialog-actions { justify-content: flex-end; margin-top: 8px; }
+.dialog-actions button { padding: 6px 14px; font-size: 13px; }
+.module-presets { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding-bottom: 8px; border-bottom: 1px solid #2c353d; }
+.module-presets .file-picker.small { padding: 3px 10px; font-size: 11px; }
+.module-presets p { flex-basis: 100%; margin: 0; }
+
+/* LAS-70 contextual help: an ⓘ next to each control (overlay badge in compact places, inline next to
+   labels), a focusable popover and the in-app Help view. */
+.with-help { position: relative; display: inline-flex; }
+button.help-tip { display: inline-grid; place-items: center; width: 14px !important; height: 14px; min-width: 0; padding: 0 !important; border-radius: 50%; border: 1px solid #6c7c88; background: #1c2329; color: #c5ced6; font: italic 700 9px/1 Georgia, 'Times New Roman', serif !important; letter-spacing: 0; cursor: help; flex-shrink: 0; opacity: .8; }
+button.help-tip:hover, button.help-tip[aria-expanded='true'] { opacity: 1; border-color: #80d1e0; color: #80d1e0; background: #1c2329; }
+.with-help > button.help-tip { position: absolute; top: -6px; right: -6px; z-index: 2; }
+button.help-tip.inline { position: static; margin-left: 4px; vertical-align: middle; }
+.help-popover { position: fixed; z-index: 1000; width: min(280px, calc(100vw - 16px)); padding: 10px 12px; border-radius: 8px; background: #26303a; border: 1px solid #80d1e0; box-shadow: 0 10px 28px #000c; font-size: 12px; line-height: 1.4; color: #ecedf0; text-align: left; letter-spacing: 0; text-transform: none; font-weight: 400; }
+.help-popover strong { display: block; font-size: 13px; margin-bottom: 4px; }
+.help-popover p { margin: 0 0 6px; }
+.help-popover a { color: #80d1e0; }
+.help-view { width: min(760px, calc(100vw - 32px)); }
+.help-view h3 { margin: 14px 0 6px; font-size: 15px; color: #f0d79a; }
+.help-article { padding: 6px 8px; border-radius: 6px; }
+.help-article:focus { outline: 2px solid #80d1e0; }
+.help-article h4 { margin: 0 0 2px; font-size: 13px; }
+.help-article p { margin: 0; font-size: 13px; color: #c5ced6; }
+.param-label { display: inline-flex; align-items: center; min-width: 0; }
+.track-content > .picker-wrap { grid-area: picker; align-self: center; }
+.picker-wrap > .file-picker { grid-area: auto; }
+.strip > .strip-edit { grid-area: button; }
+.master > .export-wrap { display: flex; margin: var(--space) 12px; flex-shrink: 0; }
+.master > .export-wrap > button { flex: 1; padding-inline: 10px; font-size: 12px; }
+.listen-with-help, .toggle-with-help { display: inline-flex; align-items: center; justify-content: center; }
+.display-help { height: 100%; }
+.clip-wrap { grid-column: 2; grid-row: 1 / span 2; }
+.meters-help { grid-column: 3; grid-row: 1 / span 2; }
+.bar-meters { grid-template-columns: auto auto auto; }

@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { api, uploadFile } from './account-api.js';
 import { startAnalysis } from './analysis-client.js';
 import { readWavHeader } from './dsp/wav-decode.js';
+import { audioFileSizeProblem } from './file-limits.js';
 import { compareProfiles, keyMeasures, MIN_SEGMENT_SECONDS, tonalBalance, toProfile } from './reference-profiles.js';
 
 const UNAVAILABLE = 'Accounts are unavailable right now. Measuring still works on this device.';
@@ -60,6 +61,8 @@ export function ReferencesDialog() {
     if (!chosen) return;
     setMeasured(null);
     try {
+      const tooLarge = audioFileSizeProblem(chosen.size);
+      if (tooLarge) throw new Error(tooLarge);
       const info = readWavHeader(await chosen.slice(0, 65536).arrayBuffer(), chosen.size);
       setFile(chosen);
       setHeader(info);
