@@ -18,6 +18,10 @@ export const VERIFY_TOKEN_MS = 24 * HOUR;
 export const RESET_TOKEN_MS = 30 * MINUTE;
 const OUTBOX_KEEP_MS = 24 * HOUR;
 const AUDIT_KEEP_MS = 90 * 24 * HOUR;
+// After answering a request whose body is too large to read first, how long and how much of
+// the rest is still read and discarded so a client that is still sending gets the answer.
+const LINGER_MS = 5000;
+const LINGER_BYTES = 16 * 1024 * 1024;
 const COOKIE = 'mps_session';
 
 function loadSecret(dataDir) {
@@ -260,18 +264,37 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
 
   // An error answer to a request whose body was not read yet: read and discard the body first, so
   // the connection is not cut while a client or proxy is still sending (they would lose the
-  // answer). Bodies beyond the upload limit are not read; that answer closes the connection.
+  // answer). Bodies beyond the upload limit are not read before answering; see linger().
   async function discardBody(request) {
     if (request.complete || request.destroyed) return true;
     const limit = config.maxUploadBytes ?? DEFAULT_MAX_UPLOAD_BYTES;
     let size = Number(request.headers['content-length'] ?? 0);
     if (size > limit) return false;
     size = 0;
-    for await (const chunk of request) {
+    for await (const chunk of request.iterator({ destroyOnReturn: false })) {
       size += chunk.length;
       if (size > limit) return false;
     }
     return true;
+  }
+
+  // After answering a request with an unread over-limit body (the answer goes out at once, before
+  // any of the body is needed): keep reading and discarding what the client is still sending, so
+  // it can finish and read the answer, then close if the body does not end within LINGER_MS or
+  // LINGER_BYTES. Closing at once resets the connection while the client is still sending, and it
+  // loses the answer (seen on macOS, whose smaller socket buffers leave even 2 MB in flight).
+  function linger(request) {
+    const socket = request.socket;
+    if (!socket || socket.destroyed) return;
+    let read = 0;
+    const done = () => { clearTimeout(timer); socket.off('close', done); };
+    const cut = () => { done(); socket.destroy(); };
+    const timer = setTimeout(cut, LINGER_MS);
+    timer.unref();
+    socket.once('close', done);
+    request.on('data', chunk => { read += chunk.length; if (read > LINGER_BYTES) cut(); });
+    request.once('end', done);
+    request.resume();
   }
 
   async function handle(request, response) {
@@ -302,7 +325,8 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
         const drained = await discardBody(request).catch(() => false);
         send(response, status,
           known ? { error: error.code, message: error.message } : { error: 'server_error', message: 'Something went wrong. Try again.' },
-          { ...(known ? error.headers : {}), ...(drained ? {} : { Connection: 'close' }) });
+          known ? error.headers : undefined);
+        if (!drained) linger(request);
       }
     } finally {
       // Method, path without query string, status and time only: no bodies, cookies or tokens.

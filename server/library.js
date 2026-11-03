@@ -124,7 +124,9 @@ export function libraryRoutes({ route, db, now, config, secret, requireUser, aud
     const hash = createHash('sha256');
     let size = 0;
     try {
-      await pipeline(request, async function* limit(source) {
+      // Stops at the limit without destroying the request, so the error answer can still drain
+      // the rest of the body and reach the client (a destroyed request resets the connection).
+      await pipeline(request.iterator({ destroyOnReturn: false }), async function* limit(source) {
         for await (const chunk of source) {
           size += chunk.length;
           if (size > maxUpload) throw new HttpError(413, 'too_large', tooLarge);

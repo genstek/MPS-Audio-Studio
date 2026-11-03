@@ -30,7 +30,8 @@ export async function readJson(request, limit = 64 * 1024) {
   if (!/^application\/json\b/.test(request.headers['content-type'] ?? '')) throw new HttpError(415, 'json_required');
   const chunks = [];
   let size = 0;
-  for await (const chunk of request) {
+  // Stops at the limit without destroying the request, so the 413 can still reach the client.
+  for await (const chunk of request.iterator({ destroyOnReturn: false })) {
     size += chunk.length;
     if (size > limit) throw new HttpError(413, 'body_too_large');
     chunks.push(chunk);
