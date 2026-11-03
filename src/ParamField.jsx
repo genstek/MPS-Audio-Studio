@@ -21,7 +21,7 @@ export function ParamField({ label, unit, min, max, step, value, onChange, disab
   }
   return (
     <div className="param-field">
-      <span className="param-label"><label htmlFor={id}>{label}</label>{help && <HelpTip id={help} className="inline" />}</span>
+      <span className="param-label"><label htmlFor={id}>{label}</label></span>
       {log ? (
         <input id={id} type="range" min={0} max={LOG_STEPS} step={1} disabled={disabled} aria-valuetext={`${shown} ${unit}`.trim()}
           value={Math.round((Math.log(value / min) / Math.log(max / min)) * LOG_STEPS)}
@@ -36,6 +36,8 @@ export function ParamField({ label, unit, min, max, step, value, onChange, disab
           onKeyDown={event => { if (event.key === 'Enter') commit(); if (event.key === 'Escape') setDraft(null); }} />
         <span className="param-unit">{unit}</span>
       </span>
+      {/* Help belongs to the whole field (label, slider and number box), so F1 works on either control. */}
+      {help && <HelpTip id={help} />}
     </div>
   );
 }

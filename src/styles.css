@@ -449,10 +449,7 @@ dialog .file-picker { grid-area: auto; }
 /* LAS-70 contextual help: an ⓘ next to each control (overlay badge in compact places, inline next to
    labels), a focusable popover and the in-app Help view. */
 .with-help { position: relative; display: inline-flex; }
-button.help-tip { display: inline-grid; place-items: center; width: 14px !important; height: 14px; min-width: 0; padding: 0 !important; border-radius: 50%; border: 1px solid #6c7c88; background: #1c2329; color: #c5ced6; font: italic 700 9px/1 Georgia, 'Times New Roman', serif !important; letter-spacing: 0; cursor: help; flex-shrink: 0; opacity: .8; }
-button.help-tip:hover, button.help-tip[aria-expanded='true'] { opacity: 1; border-color: #80d1e0; color: #80d1e0; background: #1c2329; }
-.with-help > button.help-tip { position: absolute; top: -6px; right: -6px; z-index: 2; }
-button.help-tip.inline { position: static; margin-left: 4px; vertical-align: middle; }
+/* LAS-74: no help icon; the wrapper around a control (also when it is disabled) owns the hover. */
 .help-popover { position: fixed; z-index: 1000; width: min(280px, calc(100vw - 16px)); padding: 10px 12px; border-radius: 8px; background: #26303a; border: 1px solid #80d1e0; box-shadow: 0 10px 28px #000c; font-size: 12px; line-height: 1.4; color: #ecedf0; text-align: left; letter-spacing: 0; text-transform: none; font-weight: 400; }
 .help-popover strong { display: block; font-size: 13px; margin-bottom: 4px; }
 .help-popover p { margin: 0 0 6px; }
@@ -472,5 +469,4 @@ button.help-tip.inline { position: static; margin-left: 4px; vertical-align: mid
 .listen-with-help, .toggle-with-help { display: inline-flex; align-items: center; justify-content: center; }
 .display-help { height: 100%; }
 .clip-wrap { grid-column: 2; grid-row: 1 / span 2; }
-.meters-help { grid-column: 3; grid-row: 1 / span 2; }
 .bar-meters { grid-template-columns: auto auto auto; }
