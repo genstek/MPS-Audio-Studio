@@ -70,9 +70,9 @@
     "LAS-59 (macOS ECONNRESET on the streamed oversize test) not reproduced: no macOS here; the Linux assertion passes unchanged."
   ],
   "blockers": [],
-  "jiraSync": "SYNC_PENDING",
-  "jiraStatus": null,
-  "jiraCommentId": null,
+  "jiraSync": "POSTED",
+  "jiraStatus": "QA Ready",
+  "jiraCommentId": "10189",
   "branch": "delivery/LAS-40-sprint-10",
   "pullRequest": "https://github.com/genstek/MPS-Audio-Studio/pull/45"
 }

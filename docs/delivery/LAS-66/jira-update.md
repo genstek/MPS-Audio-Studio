@@ -1,4 +1,4 @@
-**SYNC_PENDING — not yet posted to Jira.** Desired status: In Progress.
+**POSTED to Jira** on 2026-11-03 as comment 10202; status In Progress.
 
 ## Sprint 10 delivery update — LAS-66
 

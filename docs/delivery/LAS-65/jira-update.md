@@ -1,4 +1,4 @@
-**SYNC_PENDING — not yet posted to Jira.** Desired status: In Review.
+**POSTED to Jira** on 2026-11-03 as comment 10199; status In Review.
 
 ## Sprint 10 delivery update — LAS-65
 
@@ -6,7 +6,7 @@ Research with 11 cited official sources and two concrete proposals (A "Console m
 
 - Branch / PR: `delivery/LAS-40-sprint-10` → https://github.com/genstek/MPS-Audio-Studio/pull/45 (base `delivery/LAS-40-all-sprints`; not main)
 - Implementation commit(s): `849ba64`
-- Tested application commit: `2c5d0ceda20e5cb2ffe527386420f1e35f675f3c`
+- Tested application commit: not applicable (no LAS-65 application code); the branch's application was regression-tested at `2c5d0ceda20e5cb2ffe527386420f1e35f675f3c`
 - Environment: Ubuntu 24.04.5 (Linux 6.18, x86_64) · Node 22.23.4 · Chromium 153.0.8010.12 headless via PLAYWRIGHT_EXECUTABLE_PATH · Playwright 1.64.1 · Vitest 5.0.5 · Vite 8.3.4 · default viewport 1280×720 (DPR 1, zoom 100 %) unless a test sets one · synthetic WAV fixtures only
 - Checks:
   - PASS: Proposals rendered without page errors (Chromium 153, 1440 px)

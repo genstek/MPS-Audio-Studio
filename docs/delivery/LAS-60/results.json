@@ -48,9 +48,9 @@
     "Visual styling is provisional until LAS-44/45."
   ],
   "blockers": [],
-  "jiraSync": "SYNC_PENDING",
-  "jiraStatus": null,
-  "jiraCommentId": null,
+  "jiraSync": "POSTED",
+  "jiraStatus": "QA Ready",
+  "jiraCommentId": "10196",
   "branch": "delivery/LAS-40-sprint-10",
   "pullRequest": "https://github.com/genstek/MPS-Audio-Studio/pull/45"
 }

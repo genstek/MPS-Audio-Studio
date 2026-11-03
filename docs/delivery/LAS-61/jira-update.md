@@ -1,4 +1,4 @@
-**SYNC_PENDING — not yet posted to Jira.** Desired status: QA Ready.
+**POSTED to Jira** on 2026-11-03 as comment 10191; status QA Ready.
 
 ## Sprint 10 delivery update — LAS-61
 

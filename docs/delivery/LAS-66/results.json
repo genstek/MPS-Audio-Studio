@@ -75,9 +75,9 @@
     "Gennady's design selection (LAS-65/44)",
     "Gennady's manual and listening runs"
   ],
-  "jiraSync": "SYNC_PENDING",
-  "jiraStatus": null,
-  "jiraCommentId": null,
+  "jiraSync": "POSTED",
+  "jiraStatus": "In Progress",
+  "jiraCommentId": "10202",
   "branch": "delivery/LAS-40-sprint-10",
   "pullRequest": "https://github.com/genstek/MPS-Audio-Studio/pull/45"
 }
