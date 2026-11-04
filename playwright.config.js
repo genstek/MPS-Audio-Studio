@@ -3,7 +3,10 @@ import { defineConfig, devices } from '@playwright/test';
 // Installed Google Chrome by default. Set PLAYWRIGHT_EXECUTABLE_PATH to run another
 // Chromium build instead (for example on Linux machines without Chrome).
 const executablePath = process.env.PLAYWRIGHT_EXECUTABLE_PATH;
-const browser = executablePath ? { launchOptions: { executablePath } } : { channel: 'chrome' };
+// On CI (GitHub Actions sets CI=true) use Playwright's bundled Chromium instead.
+const browser = executablePath
+  ? { launchOptions: { executablePath } }
+  : process.env.CI ? {} : { channel: 'chrome' };
 
 // Tests use their own account server on 8788 with a fresh data folder (ADR-003); the app you
 // open by hand uses 8787. The app on 5173 forwards /api to the test server.
@@ -12,6 +15,7 @@ export const TEST_API_URL = 'http://127.0.0.1:8788';
 export default defineConfig({
   testDir: './tests/e2e',
   reporter: [['list'], ['html', { open: 'never' }]],
+  retries: process.env.CI ? 1 : 0,
   // Refuses to test a server on port 5173 that serves a different checkout or another API.
   globalSetup: './tests/e2e/global-setup.js',
   use: {
