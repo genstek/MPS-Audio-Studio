@@ -34,7 +34,7 @@ function defaultPosition(name) {
 // and an editor, plus undo/redo and saved settings. Space is the LAS-64 reverb.
 // windows / setWindows: name → { open, position, z, focusRequest }, held by the app so a project can
 // save and restore the layout (LAS-69); the highest z is the front (active) window.
-export function MixerPanel({ chain, engine, track, sampleRate, listening, onListen, tools, windows, setWindows }) {
+export function MixerPanel({ chain, engine, track, sampleRate, listening, onListen, tools, windows, setWindows, designPreview = false }) {
   const top = useRef(0);
   top.current = Math.max(top.current, ...Object.values(windows).map(w => w.z ?? 0)); // eslint-disable-line react-hooks/refs -- keeps new z values above restored ones
   const { params, update, undo, redo, canUndo, canRedo, replace, warnings, problem } = chain;
@@ -133,15 +133,15 @@ export function MixerPanel({ chain, engine, track, sampleRate, listening, onList
       </div>
       <EditorDialog title="EQ" {...windowProps('eq')} headerExtra={editorTools}>
         <ModulePresets module="eq" params={params} update={update} />
-        <EqEditor params={params} update={update} sampleRate={sampleRate} engine={engine} />
+        <EqEditor params={params} update={update} sampleRate={sampleRate} engine={engine} designPreview={designPreview} />
       </EditorDialog>
       <EditorDialog title="Dynamics" {...windowProps('dynamics')} headerExtra={editorTools}>
         <ModulePresets module="compressor" params={params} update={update} />
-        <CompressorEditor params={params} update={update} engine={engine} active={active} />
+        <CompressorEditor params={params} update={update} engine={engine} active={active} hardware={designPreview} />
       </EditorDialog>
       <EditorDialog title="Limiter" {...windowProps('limiter')} headerExtra={editorTools}>
         <ModulePresets module="limiter" params={params} update={update} />
-        <LimiterEditor params={params} update={update} engine={engine} active={active} latency={track ? engine.current?.latency() : 0} sampleRate={sampleRate} />
+        <LimiterEditor params={params} update={update} engine={engine} active={active} latency={track ? engine.current?.latency() : 0} sampleRate={sampleRate} hardware={designPreview} />
       </EditorDialog>
       <EditorDialog title="Space" {...windowProps('space')} headerExtra={editorTools}>
         <ModulePresets module="space" params={params} update={update} />

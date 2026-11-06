@@ -1,5 +1,8 @@
 # LAS-75 — graphic EQ + retained parametric EQ + presets (PROPOSAL, nothing implemented)
 
+> Update, 6 November 2026: a draft functional preview is now available in [LAS-75/76 preview](../LAS-75-76/PREVIEW.md). The text below is the earlier proposal; the new document records implemented behavior, remaining scope and validation limits. No final design selection is implied.
+
+
 Status: proposal for Gennady's review. No code changed for LAS-75. Design/listening acceptance: **Not Run / pending**.
 Terminology: "band" = one EQ filter section (up to 24 per channel). "Channel" = Left/Right. They are never mixed up in UI text.
 

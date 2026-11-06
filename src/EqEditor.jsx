@@ -5,6 +5,7 @@ import { biquadResponseDb } from './dsp/biquad.js';
 import { ParamField } from './ParamField.jsx';
 import { useEased } from './ProcessorPreviews.jsx';
 import { HelpTip } from './HelpTip.jsx';
+import { GraphicEqEditor } from './GraphicEqEditor.jsx';
 
 // The 24-band EQ editor (LAS-28). The curve is the real transfer function of the enabled bands at
 // the playback sample rate; the spectrum behind it is measured from what is being heard.
@@ -113,7 +114,9 @@ function Spectrum({ engine, sampleRate, scale }) {
   return <canvas ref={canvas} className="eq-spectrum" aria-hidden="true" />;
 }
 
-export function EqEditor({ params, update, sampleRate, engine }) {
+export function EqEditor({ params, update, sampleRate, engine, designPreview = false }) {
+  const [view, setView] = useState('parametric');
+  const graphic = designPreview && view === 'graphic';
   const linked = params.eq.mode === 'link';
   const [side, setSide] = useState('left');
   const channel = linked ? 'left' : side;
@@ -182,6 +185,11 @@ export function EqEditor({ params, update, sampleRate, engine }) {
   const gridFrequencies = [50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000].filter(f => f <= scale.fMax);
   return (
     <div className="eq-editor">
+      {designPreview && <div className="eq-view-switch" role="group" aria-label="EQ editor view">
+        <button type="button" aria-pressed={graphic} onClick={() => setView('graphic')}>Graphic</button>
+        <button type="button" aria-pressed={!graphic} onClick={() => setView('parametric')}>Parametric</button>
+        <span className="fine-print">Same EQ · two editing views</span>
+      </div>}
       <div className="eq-toolbar">
         <fieldset className="segmented">
           <legend>Edit <HelpTip id="eq.channels" className="inline" /></legend>
@@ -195,7 +203,7 @@ export function EqEditor({ params, update, sampleRate, engine }) {
       <div className="eq-plot">
         <Spectrum engine={engine} sampleRate={sampleRate} scale={scale} />
         <svg ref={svg} viewBox={`0 0 ${VIEW.width} ${VIEW.height}`} role="group" aria-label={`EQ response, ${linked ? 'both channels (Link)' : `${channel} channel`}`}
-          onPointerMove={pointerMove} onPointerUp={() => { drag.current = null; }} onPointerCancel={() => { drag.current = null; }} onDoubleClick={addBand}>
+          onPointerMove={graphic ? undefined : pointerMove} onPointerUp={() => { drag.current = null; }} onPointerCancel={() => { drag.current = null; }} onDoubleClick={graphic ? undefined : addBand}>
           <rect className="eq-hit" x={VIEW.left} y={VIEW.top} width={PLOT_W} height={PLOT_H} />
           {gridFrequencies.map(f => (
             <g key={f} className="eq-grid"><line x1={scale.x(f)} x2={scale.x(f)} y1={VIEW.top} y2={VIEW.top + PLOT_H} /><text x={scale.x(f)} y={VIEW.height - 6}>{f >= 1000 ? `${f / 1000}k` : f}</text></g>
@@ -205,7 +213,7 @@ export function EqEditor({ params, update, sampleRate, engine }) {
           ))}
           {otherPath && <path className="eq-curve other" d={otherPath} />}
           <path className="eq-curve" d={path} />
-          {bands.map((b, index) => b.enabled && (
+          {!graphic && bands.map((b, index) => b.enabled && (
             <circle key={index} className={index === selected ? 'eq-point selected' : 'eq-point'} tabIndex={0} role="button"
               cx={scale.x(b.frequency)} cy={scale.y(hasGain(b.type) ? b.gain : response(b.frequency))} r={index === selected ? 8 : 6}
               aria-label={`Band ${index + 1}: ${TYPE_LABELS[b.type]}, ${frequencyLabel(b.frequency)}${hasGain(b.type) ? `, ${gainLabel(b.gain)}` : ''}, Q ${b.q}`}
@@ -213,6 +221,7 @@ export function EqEditor({ params, update, sampleRate, engine }) {
           ))}
         </svg>
       </div>
+      {graphic ? <GraphicEqEditor params={params} channel={channel} update={update} sampleRate={sampleRate} /> : <>
       <p className="fine-print">Drag a point, or focus it and use the arrow keys (Shift for bigger steps, Page Up/Down for Q, Delete to switch off). Double-click to add a band. The shaded area is the live spectrum of what you hear.</p>
       <div className="band-picker" role="group" aria-label="Bands">
         {params.eq[channel].map((b, index) => (
@@ -239,6 +248,7 @@ export function EqEditor({ params, update, sampleRate, engine }) {
         {band.frequency > scale.fMax && <p className="fine-print">Above {frequencyLabel(scale.fMax)} for this sample rate: it runs at {frequencyLabel(scale.fMax)}.</p>}
       </section>
       <p className="fine-print">{BANDS_PER_CHANNEL} bands per channel. In Link mode an edit applies to both channels.</p>
+      </>}
     </div>
   );
 }

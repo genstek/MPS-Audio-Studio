@@ -25,7 +25,7 @@ function setField(module, name, value) {
   return params => ({ ...params, [module]: { ...params[module], [name]: value } });
 }
 
-export function CompressorEditor({ params, update, engine, active }) {
+export function CompressorEditor({ params, update, engine, active, hardware = false }) {
   const settings = params.compressor;
   return (
     <div className="module-editor">
@@ -40,16 +40,18 @@ export function CompressorEditor({ params, update, engine, active }) {
         <GainReductionMeter engine={engine} which="compressor" label="Compressor gain reduction" active={active} />
       </div>
       <div className="transfer-graph" aria-label="Compressor transfer curve (configured)" role="img"><DynamicsThumbnail compressor={settings} large /></div>
+      <div className={hardware ? 'hardware-controls' : 'module-fields'}>
       {COMPRESSOR_FIELDS.map(([name, label, unit, step, help]) => (
-        <ParamField key={name} label={label} unit={unit} min={BOUNDS[name][0]} max={BOUNDS[name][1]} step={step} value={settings[name]} help={help}
+        <ParamField key={name} label={label} unit={unit} min={BOUNDS[name][0]} max={BOUNDS[name][1]} step={step} value={settings[name]} help={help} hardware={hardware}
           onChange={value => update(setField('compressor', name, value), `compressor-${name}`)} />
       ))}
+      </div>
       <p className="fine-print">Feed-forward, stereo-linked (follows the louder channel). Attack and release are the times to reach 63 % of a level change.</p>
     </div>
   );
 }
 
-export function LimiterEditor({ params, update, engine, active, latency, sampleRate }) {
+export function LimiterEditor({ params, update, engine, active, latency, sampleRate, hardware = false }) {
   const settings = params.limiter;
   return (
     <div className="module-editor">
@@ -58,10 +60,12 @@ export function LimiterEditor({ params, update, engine, active, latency, sampleR
         <GainReductionMeter engine={engine} which="limiter" label="Limiter gain reduction" active={active} />
       </div>
       <div className="transfer-graph" aria-label="Limiter ceiling curve (configured)" role="img"><LimiterThumbnail limiter={settings} large /></div>
+      <div className={hardware ? 'hardware-controls limiter-controls' : 'module-fields'}>
       {LIMITER_FIELDS.map(([name, label, unit, step, bounds, help]) => (
-        <ParamField key={name} label={label} unit={unit} min={bounds[0]} max={bounds[1]} step={step} value={settings[name]} help={help}
+        <ParamField key={name} label={label} unit={unit} min={bounds[0]} max={bounds[1]} step={step} value={settings[name]} help={help} hardware={hardware}
           onChange={value => update(setField('limiter', name, value), `limiter-${name}`)} />
       ))}
+      </div>
       <p className="fine-print">True-peak limiter (4× oversampled detection, 1.5 ms look-ahead). Latency{latency ? ` ${latency} samples (${((latency / sampleRate) * 1000).toFixed(1)} ms)` : ''}; the original is delayed by the same amount so the comparison lines up.</p>
     </div>
   );

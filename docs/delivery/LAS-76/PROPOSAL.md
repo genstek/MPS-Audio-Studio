@@ -1,5 +1,8 @@
 # LAS-76 — hardware-style EQ / Dynamics / Limiter panels (PROPOSAL, nothing implemented)
 
+> Update, 6 November 2026: a draft functional preview is now available in [LAS-75/76 preview](../LAS-75-76/PREVIEW.md). The text below is the earlier proposal; the new document records implemented behavior, remaining scope and validation limits. No final design selection is implied.
+
+
 Status: **draft for Gennady's review. No visual selection has been made and no reskin is implemented.** Design acceptance: **Not Run / pending**. Coordinates with LAS-65 (research/proposals), LAS-44 (tokens) and LAS-45 (shell); no new processing engine.
 
 ## What is not done yet
