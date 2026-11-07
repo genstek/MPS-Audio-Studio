@@ -9,6 +9,7 @@ import { truePeak } from './true-peak.js';
 import { encodeWav } from './wav-encode.js';
 import { decodeWav, WavDecodeError } from './wav-decode.js';
 import { ChainParamsError } from './chain-params.js';
+import { resample, checkConversion, ResampleError, SUPPORTED_RATES } from './resample.js';
 
 // Offline rendering off the main thread (LAS-28), from the file's own samples at its own rate:
 //   mode 'export': render with the chain, encode PCM WAV, report format and measured levels;
@@ -20,7 +21,7 @@ import { ChainParamsError } from './chain-params.js';
 const db = value => (value > 0 ? 20 * Math.log10(value) : null);
 const peakOf = channel => channel.reduce((max, value) => Math.max(max, Math.abs(value)), 0);
 
-self.onmessage = async ({ data: { mode, file, params, bitDepth = 24, segment, reference, stems, includeTail = false } }) => {
+self.onmessage = async ({ data: { mode, file, params, bitDepth = 24, segment, reference, stems, includeTail = false, targetSampleRate = null, resampleOnly = false } }) => {
   try {
     if (mode === 'stems') {
       await renderStems(stems, params, bitDepth); // awaited, so its errors reach the catch below
@@ -57,12 +58,32 @@ self.onmessage = async ({ data: { mode, file, params, bitDepth = 24, segment, re
       self.postMessage({ type: 'done', report: { original, processed, meters: section.meters, preRollSeconds: section.preRoll, warnings: section.warnings } });
       return;
     }
+    // LAS-127: optional sample-rate conversion (export only). The source is band-limit resampled
+    // first, then the chain runs at the destination rate (same chain code as the preview).
+    const outRate = mode === 'export' && targetSampleRate ? targetSampleRate : source.sampleRate;
+    const converting = outRate !== source.sampleRate;
+    if (converting && !SUPPORTED_RATES.includes(outRate)) throw new ResampleError(`${outRate} Hz is not an available export rate.`);
     // LAS-64: with Space on, an export may keep the reverb tail after the source ends.
-    const tailFrames = mode === 'export' && includeTail ? Math.ceil(spaceTailSeconds(params) * source.sampleRate) : 0;
-    const rendered = renderChain(params, source.samples, source.sampleRate, {
-      tailFrames,
-      onProgress: fraction => self.postMessage({ type: 'progress', stage: 'Rendering…', fraction: 0.05 + 0.85 * fraction }),
-    });
+    const tailFrames = mode === 'export' && includeTail && !resampleOnly ? Math.ceil(spaceTailSeconds(params) * outRate) : 0;
+    let input = source.samples;
+    if (mode === 'export') {
+      checkConversion({ frames: source.frames, channels: source.channels, inRate: source.sampleRate, outRate, bitDepth, extraFrames: tailFrames });
+      if (converting) {
+        input = resample(source.samples, source.sampleRate, outRate, {
+          onProgress: fraction => self.postMessage({ type: 'progress', stage: `Converting ${source.sampleRate.toLocaleString('en-US')} Hz → ${outRate.toLocaleString('en-US')} Hz…`, fraction: 0.02 + 0.3 * fraction }),
+        });
+      }
+    }
+    const outFrames = input[0].length;
+    const rendered = mode === 'export' && resampleOnly
+      ? { channels: input, latency: 0, warnings: [] }
+      : renderChain(params, input, outRate, {
+        tailFrames,
+        onProgress: fraction => self.postMessage({ type: 'progress', stage: 'Rendering…', fraction: converting ? 0.33 + 0.57 * fraction : 0.05 + 0.85 * fraction }),
+      });
+    const conversionWarnings = [];
+    if (outRate > source.sampleRate) conversionWarnings.push(`Upsampled from ${source.sampleRate.toLocaleString('en-US')} Hz to ${outRate.toLocaleString('en-US')} Hz: this does not add detail; the source has no content above ${(source.sampleRate / 2).toLocaleString('en-US')} Hz.`);
+    if (outRate < source.sampleRate) conversionWarnings.push(`Downsampled to ${outRate.toLocaleString('en-US')} Hz: content above about ${Math.round(outRate * 0.45).toLocaleString('en-US')} Hz is removed by the anti-aliasing filter.`);
     if (mode === 'match') {
       self.postMessage({ type: 'progress', stage: 'Measuring loudness…', fraction: 0.92 });
       const original = measureLoudness(source.samples, source.sampleRate);
@@ -71,29 +92,33 @@ self.onmessage = async ({ data: { mode, file, params, bitDepth = 24, segment, re
       return;
     }
     self.postMessage({ type: 'progress', stage: 'Writing the WAV file…', fraction: 0.92 });
-    const { bytes, clippedSamples } = encodeWav(rendered.channels, source.sampleRate, { bitDepth });
-    const loudness = measureLoudness(rendered.channels, source.sampleRate);
+    const { bytes, clippedSamples } = encodeWav(rendered.channels, outRate, { bitDepth });
+    const loudness = measureLoudness(rendered.channels, outRate);
     const report = {
-      name: file.name.replace(/\.wav$/i, '') + '-master.wav',
-      sampleRate: source.sampleRate,
+      name: file.name.replace(/\.wav$/i, '') + (resampleOnly ? `-${outRate / 1000}k` : '-master') + '.wav',
+      sampleRate: outRate,
+      sourceSampleRate: source.sampleRate,
+      resampled: converting,
+      resampleOnly,
       channels: source.channels,
       bitDepth,
       dither: bitDepth === 16 ? 'TPDF ±1 LSB' : 'none (24-bit)',
-      frames: source.frames + tailFrames,
-      duration: (source.frames + tailFrames) / source.sampleRate,
+      frames: outFrames + tailFrames,
+      duration: (outFrames + tailFrames) / outRate,
       sourceFrames: source.frames,
+      convertedSourceFrames: outFrames,
       tailFrames,
       latencyCompensatedSamples: rendered.latency,
       clippedSamples,
       samplePeakDbfs: db(Math.max(...rendered.channels.map(peakOf))),
       truePeakDbtp: db(Math.max(...rendered.channels.map(channel => truePeak(channel)))),
       integratedLufs: loudness.integratedLufs,
-      warnings: rendered.warnings,
+      warnings: [...conversionWarnings, ...rendered.warnings],
       bytes: bytes.byteLength,
     };
     self.postMessage({ type: 'done', report, bytes }, [bytes]);
   } catch (error) {
-    const known = error instanceof WavDecodeError || error instanceof ChainParamsError || error instanceof ComparisonError || error instanceof StemRenderError;
+    const known = error instanceof WavDecodeError || error instanceof ChainParamsError || error instanceof ComparisonError || error instanceof StemRenderError || error instanceof ResampleError;
     self.postMessage({ type: 'error', message: known ? error.message : 'Rendering failed unexpectedly. Try again.' });
   }
 };
