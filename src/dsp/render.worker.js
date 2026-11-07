@@ -70,6 +70,7 @@ self.onmessage = async ({ data: { mode, file, params, bitDepth = 24, segment, re
       checkConversion({ frames: source.frames, channels: source.channels, inRate: source.sampleRate, outRate, bitDepth, extraFrames: tailFrames });
       if (converting) {
         input = resample(source.samples, source.sampleRate, outRate, {
+          bitDepth,
           onProgress: fraction => self.postMessage({ type: 'progress', stage: `Converting ${source.sampleRate.toLocaleString('en-US')} Hz → ${outRate.toLocaleString('en-US')} Hz…`, fraction: 0.02 + 0.3 * fraction }),
         });
       }

@@ -67,9 +67,10 @@ function kernelFor(phase, up, scale, half) {
 }
 
 // channels: Float32Array[] at inRate → Float32Array[] at outRate. onProgress(fraction 0…1).
-export function resample(channels, inRate, outRate, { onProgress = () => {} } = {}) {
+// bitDepth is the encoded depth (16 or 24) used for the output-size limit, matching the worker's check.
+export function resample(channels, inRate, outRate, { onProgress = () => {}, bitDepth = 24 } = {}) {
   const frames = channels[0].length;
-  const outFrames = checkConversion({ frames, channels: channels.length, inRate, outRate });
+  const outFrames = checkConversion({ frames, channels: channels.length, inRate, outRate, bitDepth });
   if (inRate === outRate) return channels.map(channel => Float32Array.from(channel));
   const divisor = gcd(inRate, outRate);
   const up = outRate / divisor, down = inRate / divisor;

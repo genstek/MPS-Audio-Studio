@@ -99,6 +99,38 @@ describe('LAS-127 sample-rate conversion', () => {
   });
 });
 
+describe('LAS-127 bug #65: output-size limit uses the encoded bit depth', () => {
+  // Only the arithmetic in checkConversion is exercised: no large buffers are allocated.
+  test('16-bit passes where 24-bit is refused', () => {
+    const frames = Math.floor((MAX_OUTPUT_BYTES * 0.9) / 2); // mono: ≈ 0.9 GiB at 16-bit, ≈ 1.35 GiB at 24-bit
+    const args = { frames, channels: 1, inRate: 96000, outRate: 96000 };
+    expect(checkConversion({ ...args, bitDepth: 16 })).toBe(frames);
+    expect(() => checkConversion({ ...args, bitDepth: 24 })).toThrow(/export limit/);
+  });
+  test('boundary: exactly the limit passes, one frame more is refused, at both depths', () => {
+    for (const [bitDepth, bytesPerFrame] of [[16, 2], [24, 3]]) {
+      const limit = Math.floor(MAX_OUTPUT_BYTES / bytesPerFrame);
+      const args = { channels: 1, inRate: 48000, outRate: 48000, bitDepth };
+      expect(checkConversion({ ...args, frames: limit })).toBe(limit);
+      expect(() => checkConversion({ ...args, frames: limit + 1 })).toThrow(ResampleError);
+    }
+  });
+  test('the reverb tail counts toward the limit', () => {
+    const limit = Math.floor(MAX_OUTPUT_BYTES / 4); // stereo 16-bit
+    const args = { channels: 2, inRate: 48000, outRate: 48000, bitDepth: 16 };
+    expect(() => checkConversion({ ...args, frames: limit - 10, extraFrames: 10 })).not.toThrow();
+    expect(() => checkConversion({ ...args, frames: limit - 10, extraFrames: 11 })).toThrow(ResampleError);
+  });
+  test('resample() forwards bitDepth: a stub source sized between the 16-bit and 24-bit limits is refused only at 24-bit', () => {
+    // 8 kHz mono, 30 MiB of PCM8 → 96 kHz: 720 MiB at 16-bit (allowed), 1080 MiB at 24-bit (refused).
+    const stub = { length: 30 * 1024 * 1024 };
+    // Only the refusing case runs resample(): it throws before allocating. The accepting case is
+    // covered by checkConversion above (running it would allocate gigabytes).
+    expect(() => resample([stub], 8000, 96000, { bitDepth: 24 })).toThrow(/export limit/);
+    expect(checkConversion({ frames: stub.length, channels: 1, inRate: 8000, outRate: 96000, bitDepth: 16 })).toBe(stub.length * 12);
+  });
+});
+
 describe('LAS-127 96 kHz / 24-bit WAV output', () => {
   test('an upsampled 44.1 kHz source encodes to a real 96 kHz / 24-bit PCM file that an independent parse reads back', () => {
     const out = resample([tone(997, 44100, 0.5, -3), tone(1500, 44100, 0.5, -9)], 44100, 96000);
