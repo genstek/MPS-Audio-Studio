@@ -62,6 +62,7 @@ In a second terminal run `npm run server`. It starts the account server on port 
 
 - [Processor design preview — LAS-75/76](docs/delivery/LAS-75-76/PREVIEW.md): two opt-in panel layouts and a working graphic EQ proposal.
 
+- [Audio engineering knowledge base: mastered-track lessons, imaging, sample rate / SRC](docs/audio-engineering/README.md)
 - [ADR-002: web first](docs/ADR-002-web-first.md)
 - [QA acceptance gates](docs/QA_ACCEPTANCE.md)
 - [Sprint 0 test results (TC-001)](docs/SPRINT-0.md)
