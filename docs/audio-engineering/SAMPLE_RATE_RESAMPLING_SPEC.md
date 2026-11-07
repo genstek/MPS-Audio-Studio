@@ -16,9 +16,9 @@ Scope: audio import, device playback, stem sessions, processing, offline WAV exp
 
 **SRC-02 Project audio rate:** Make the rate used by the DSP graph explicit in project metadata; avoid silently altering the rate on reopen. For web audio, report the actual AudioContext rate and account for browser-imposed sample-rate behavior instead of assuming every device can run at a requested rate.
 
-**SRC-03 User export choice:** Offer 44.1, 48 and 96 kHz PCM WAV (24-bit, and 16-bit with appropriate final dither) only once high-quality SRC and independent validation exist. Default to source/project rate. Make duration, estimated size, conversion status and 'upsampling cannot restore source detail' clear.
+**SRC-03 User export choice:** Offer 44.1, 48, 88.2 and 96 kHz PCM WAV (24-bit, and 16-bit with appropriate final dither) only once high-quality SRC and independent validation exist. Default to source/project rate. Make duration, estimated size, conversion status and 'upsampling cannot restore source detail' clear.
 
-**SRC-04 Converter:** Use a deterministic band-limited quality resampler for offline output, e.g. polyphase windowed-sinc or a license-reviewed and technically appropriate library. Support rational factors including 44.1↔48 and 48↔96, multi-channel phase-aligned conversion. Do not treat duplicating samples or linear interpolation as a mastering-quality replacement.
+**SRC-04 Converter:** Use a deterministic band-limited quality resampler for offline output, e.g. polyphase windowed-sinc or a license-reviewed and technically appropriate library. Support rational factors including 44.1↔48, 44.1↔88.2 and 48↔96, multi-channel phase-aligned conversion. Do not treat duplicating samples or linear interpolation as a mastering-quality replacement.
 
 **SRC-05 DSP order:** Use consistent live/offline parameter snapshots. Perform SRC at a documented, singular boundary; do not unknowingly resample a decoded stream multiple times. For nonlinear processors, provide internal oversampling with proper up/down filters and latency compensation, separate from export-rate selection.
 
@@ -31,7 +31,7 @@ Scope: audio import, device playback, stem sessions, processing, offline WAV exp
 **SRC-09 Export verification:** Analyze the final WAV header/PCM independently of the application pipeline; log algorithm settings, frame counts, channel count, sample peak, true peak, loudness and conversion ratio.
 
 ## QA acceptance scenarios
-1. Import synthetic mono and stereo files at 44.1/48/96 kHz with PCM 16/24-bit; assert header metadata, duration and channels.
+1. Import synthetic mono and stereo files at 44.1/48/88.2/96 kHz with PCM 16/24-bit; assert header metadata, duration and channels.
 2. Export 48→96 kHz and 96→48 kHz. Assert exact target sample-rate header, expected frame count (within documented rounding), equal musical duration, no speed/pitch change, and no NaN/Inf.
 3. Export 44.1↔48 kHz with a deterministic tone/sweep/multitone, check amplitude/frequency response, stopband attenuation and alias levels against fixed, *documented* thresholds after selecting the converter.
 4. Roundtrip 48→96→48, compare time-aligned audio with latency compensation and publish error metrics; set tolerances consistent with filter design and near-Nyquist limitations.
