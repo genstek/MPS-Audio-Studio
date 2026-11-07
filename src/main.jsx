@@ -29,9 +29,14 @@ function storedMasterDb() {
     return 0;
   }
 }
+import { ProcessorDesignPreview } from './ProcessorDesignPreview.jsx';
 import './styles.css';
+import './processor-design.css';
+
+const designPreview = new URLSearchParams(window.location.search).get('design') === 'processors';
 
 function App() {
+  const [processorSkin, setProcessorSkin] = useState('rack');
   const [track, setTrack] = useState(null);
   const [status, setStatus] = useState('No audio loaded');
   const [error, setError] = useState('');
@@ -192,7 +197,7 @@ function App() {
 
   const playable = Boolean(track || stemCount) && !busy;
   return (
-    <main>
+    <main data-processor-skin={designPreview ? processorSkin : undefined}>
       <header className="masthead">
         <div className="brand"><span className="brand-mark" aria-hidden="true">MPS</span><div><p className="eyebrow">LOCAL AUDIO WORKSPACE</p><h1>MPS Audio Studio</h1></div></div>
         <div className="masthead-tools">
@@ -201,6 +206,7 @@ function App() {
           {project.missingCount > 0 && <button type="button" className="heading-button" onClick={project.openRelink}>{project.missingCount} audio file{project.missingCount > 1 ? 's' : ''} missing — Relink…</button>}
           <WithHelp id="dialogs.references"><ReferencesDialog /></WithHelp><WithHelp id="dialogs.account"><AccountDialog currentFile={currentFile} /></WithHelp><HelpButton />
         </div>
+        {designPreview && <ProcessorDesignPreview skin={processorSkin} onChange={setProcessorSkin} />}
       </header>
 
       <section className="transport panel" aria-label="Transport">
@@ -254,7 +260,7 @@ function App() {
         </section>
       </div>
 
-      <MixerPanel windows={windows} setWindows={setWindows} chain={chain} engine={engine} track={track} sampleRate={track ? track.sampleRate : 48000} listening={listening} onListen={listen} tools={<WithHelp id="mixer.stems"><StemsDialog engine={engine} chain={chain} listening={listening} onListen={listen} onStemsPlay={monitorStarted} onStemsChange={setStems} masterLevel={{ value: masterDb, onChange: changeMaster }} /></WithHelp>} />
+      <MixerPanel designPreview={designPreview} windows={windows} setWindows={setWindows} chain={chain} engine={engine} track={track} sampleRate={track ? track.sampleRate : 48000} listening={listening} onListen={listen} tools={<WithHelp id="mixer.stems"><StemsDialog engine={engine} chain={chain} listening={listening} onListen={listen} onStemsPlay={monitorStarted} onStemsChange={setStems} masterLevel={{ value: masterDb, onChange: changeMaster }} /></WithHelp>} />
       <HelpView />
       <NewProjectDialog open={project.newOpen} onCreate={project.create} onCancel={project.cancelNew} />
       <UnsavedDialog prompt={project.prompt} onChoose={project.answer} />

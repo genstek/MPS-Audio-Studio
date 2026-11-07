@@ -8,10 +8,11 @@ const decimals = step => (String(step).split('.')[1] ?? '').length;
 // `log` makes the slider logarithmic (frequency, Q); the number box always shows the real value.
 const LOG_STEPS = 1000;
 
-export function ParamField({ label, unit, min, max, step, value, onChange, disabled = false, log = false, help = null }) {
+export function ParamField({ label, unit, min, max, step, value, onChange, disabled = false, log = false, help = null, hardware = false }) {
   const id = useId();
   const [draft, setDraft] = useState(null);
   const shown = value.toFixed(decimals(step));
+  const fraction = log ? Math.log(value / min) / Math.log(max / min) : (value - min) / (max - min);
   function commit() {
     if (draft === null) return;
     const number = Number(draft);
@@ -20,8 +21,9 @@ export function ParamField({ label, unit, min, max, step, value, onChange, disab
     onChange(Math.min(max, Math.max(min, number)));
   }
   return (
-    <div className="param-field">
+    <div className={`param-field${hardware ? ' hardware-param' : ''}`} style={hardware ? { '--knob-angle': `${-135 + 270 * fraction}deg` } : undefined}>
       <span className="param-label"><label htmlFor={id}>{label}</label></span>
+      {hardware && <span className="hardware-dial" aria-hidden="true"><span className="hardware-dial-cap"><span /></span></span>}
       {log ? (
         <input id={id} type="range" min={0} max={LOG_STEPS} step={1} disabled={disabled} aria-valuetext={`${shown} ${unit}`.trim()}
           value={Math.round((Math.log(value / min) / Math.log(max / min)) * LOG_STEPS)}
