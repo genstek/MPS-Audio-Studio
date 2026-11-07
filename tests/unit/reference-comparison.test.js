@@ -93,7 +93,9 @@ describe('mix versus reference', () => {
     const both = compareToReference(reference, reportOf(tilt(PROGRAMME, false)), reportOf(tilt(PROGRAMME, true)));
     expect(both.interpretations[0].text).toMatch(/^The mix has less relative energy above 4 kHz/);
     expect(both.interpretations[1].text).toMatch(/^The processed mix has more relative energy above 4 kHz \(\+\d+\.\d dB on average\)/);
-  });
+    // Five full analyses of the programme: ~1.2 s alone; 5 s default is too tight under contention (LAS-125).
+    // Local budget only; assertions unchanged.
+  }, 30_000);
 
   test('sections of different length: compared, but flagged and interpretations marked uncertain', () => {
     const result = compareToReference(reportOf(PROGRAMME, 44100, { start: 0, end: 12 }), reportOf(tilt(PROGRAMME, true), 44100, { start: 0, end: 6 }));

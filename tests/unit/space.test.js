@@ -81,7 +81,9 @@ describe('LAS-64 Space processing', () => {
         expect(Math.abs(measured / decay - 1), `decay ${decay} s at ${rate} Hz measured ${measured.toFixed(3)} s`).toBeLessThan(0.1);
       }
     }
-  });
+    // Nine renders up to 8.5 s at up to 96 kHz: ~1.7-1.9 s alone; the 5 s default is too tight under
+    // contention (LAS-126). All three rates are kept; local budget only, tolerance unchanged.
+  }, 30_000);
 
   test('damping shortens the high-frequency tail but not the low-frequency decay', () => {
     const rate = 48000;
@@ -133,7 +135,9 @@ describe('LAS-64 Space processing', () => {
     // The tail decays: 10 s of silence after the noise brings it 60 dB down.
     const tail = renderChain(only({ enabled: true, mix: 100, preDelay: 0, decay: 10, damping: 0 }), [x.subarray(0, rate)], rate, { tailFrames: rate * 11 }).channels[0];
     expect(20 * Math.log10(rms(tail.subarray(rate * 11, rate * 12)) / rms(tail.subarray(rate, rate * 2)))).toBeLessThan(-55);
-  });
+    // 20 s stereo noise plus a 12 s tail render: ~2.1 s alone; the 5 s default is too tight under
+    // contention (LAS-126). Local budget only; stability assertions unchanged.
+  }, 30_000);
 
   test('parameter changes while running are smooth: no step larger than the signal itself makes', () => {
     const rate = 48000;

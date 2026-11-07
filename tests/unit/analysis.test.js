@@ -145,7 +145,9 @@ describe('LAS-26 report', () => {
     expect(left).toEqual(copies[0]);
     expect(right).toEqual(copies[1]);
     expect(first.version).toBe('mps-analysis-1');
-  });
+    // Two full analyses of 5 s stereo: ~1.3 s alone, so the 5 s default leaves too little headroom under
+    // parallel-worker CPU contention (LAS-124). Local budget only; assertions unchanged.
+  }, 30_000);
 
   test('more than two channels are refused clearly', () => {
     expect(() => analyze([new Float64Array(10), new Float64Array(10), new Float64Array(10)], 48000)).toThrow('mono and stereo');
