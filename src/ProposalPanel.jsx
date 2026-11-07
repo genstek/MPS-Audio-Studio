@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { OWNERS } from './ai/preview-coordinator.js';
 import { api } from './account-api.js';
 import { startRender } from './render-client.js';
 import { evaluate } from './proposal.js';
@@ -69,9 +70,23 @@ export function ProposalPanel({ file, result, chain, jobs, onCheckedGains }) {
   const [rating, setRating] = useState('');
   const [presetName, setPresetName] = useState(`Proposal for ${result.reference.label}`.slice(0, 100));
 
+  // Reference previews use the single-owner coordinator; closing the panel releases them.
+  const previews = useRef(chain.previews);
+  useEffect(() => { const coordinator = previews.current; return () => { coordinator.release(OWNERS.reference); }; }, []);
+  const mine = () => chain.previews.holder === OWNERS.reference;
+  const playPreview = params => {
+    try {
+      chain.previews.play(OWNERS.reference, params);
+      return true;
+    } catch (failure) {
+      setError(failure.message);
+      return false;
+    }
+  };
+
   const paramsAt = (s = strength, prefs = preferences, parts = use) => composeChain(proposal.params, prefs, { strength: s, useReference: parts.reference, usePreferences: parts.preferences });
   // Keeps a running preview in step with every change of strength, preferences or parts.
-  const replay = (s, prefs, parts) => { if (chain.previewing) chain.setPreview(paramsAt(s, prefs, parts)); };
+  const replay = (s, prefs, parts) => { if (mine()) playPreview(paramsAt(s, prefs, parts)); };
   const run = job => { jobs.current.push(job); return job.result; };
 
   async function propose() {
@@ -142,8 +157,10 @@ export function ProposalPanel({ file, result, chain, jobs, onCheckedGains }) {
   }
 
   function togglePreview() {
-    chain.setPreview(chain.previewing ? null : paramsAt());
-    setMessage(chain.previewing ? 'Preview off: your own settings play again.' : `Previewing the proposal at ${strength} %. Use the monitor's Processed mix to hear it against the reference.`);
+    const was = mine();
+    if (was) chain.previews.release(OWNERS.reference);
+    else if (!playPreview(paramsAt())) return;
+    setMessage(was ? 'Preview off: your own settings play again.' : `Previewing the proposal at ${strength} %. Use the monitor's Processed mix to hear it against the reference.`);
   }
 
   async function checkStrength() {
@@ -154,7 +171,7 @@ export function ProposalPanel({ file, result, chain, jobs, onCheckedGains }) {
       const { report } = await run(startRender(file, { mode: 'compare', params: paramsAt(at), segment: result.sections.mix }));
       setCheck({ strength: at, label: `${at} %${use.reference ? '' : ', without reference targets'}${use.preferences && (preferences.lowShelfDb || preferences.highShelfDb) ? ', with your preferences' : ''}`, evaluation: evaluate(result.reference.report, report.original, { report: report.processed, meters: report.meters }) });
       // While the preview plays this strength, the monitor matches its measured loudness.
-      if (chain.previewing) onCheckedGains(matchLevels({ processedDb: report.processed.loudness.integratedLufs, originalDb: report.original.loudness.integratedLufs, referenceDb: result.reference.report.loudness.integratedLufs }));
+      if (mine()) onCheckedGains(matchLevels({ processedDb: report.processed.loudness.integratedLufs, originalDb: report.original.loudness.integratedLufs, referenceDb: result.reference.report.loudness.integratedLufs }));
       setBusy('');
     } catch (failure) {
       setBusy('');
@@ -164,13 +181,13 @@ export function ProposalPanel({ file, result, chain, jobs, onCheckedGains }) {
 
   async function apply() {
     chain.replace(paramsAt());
-    chain.setPreview(null);
+    chain.previews.release(OWNERS.reference);
     setApplied(true);
     setMessage(`Applied at ${strength} %. Undo in the mixer restores your previous settings; every module stays editable.${await rememberDecision('accepted')}`);
   }
 
   async function reject() {
-    chain.setPreview(null);
+    chain.previews.release(OWNERS.reference);
     const note = await rememberDecision('rejected');
     setProposal(null);
     setCheck(null);
@@ -203,7 +220,7 @@ export function ProposalPanel({ file, result, chain, jobs, onCheckedGains }) {
                 <output>{strength} %</output>
               </label>
               <div className="proposal-buttons">
-                <button type="button" aria-pressed={chain.previewing} onClick={togglePreview}>Preview proposal</button>
+                <button type="button" aria-pressed={chain.previewOwner === OWNERS.reference} onClick={togglePreview}>Preview proposal</button>
                 <button type="button" onClick={checkStrength} disabled={Boolean(busy)}>Check at this strength</button>
                 <button type="button" className="primary" onClick={apply}>Apply proposal</button>
                 <button type="button" onClick={reject}>Reject proposal</button>
