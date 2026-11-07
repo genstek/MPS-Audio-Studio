@@ -90,7 +90,7 @@ const entries = [
   // Presets
   ['presets.section', 'Section presets', 'Save or load this module\'s settings only; loading is one undo step.', 'A section preset (.mps-module.json) contains one module. Loading it changes only that module; a preset for another module, a whole-chain file or a project is refused. Projects and whole-chain settings are saved elsewhere.'],
   // Export
-  ['export.format', 'Export format', '24-bit PCM, or 16-bit PCM with TPDF dither.', 'The export keeps the source sample rate and channels.'],
+  ['export.format', 'Export format', '24-bit PCM, or 16-bit PCM with TPDF dither, at the source rate or 44.1 / 48 / 88.2 / 96 kHz.', 'Keep original is the default. A chosen rate is a real band-limited conversion (pitch and length unchanged); upsampling adds no detail. Channels are kept.'],
   ['export.tail', 'Reverb tail', 'With Space on: include the reverb after the source ends, or cut it.', 'Including adds pre-delay + decay seconds; cutting keeps the source length exactly.'],
   // Dialogs (dialog-level help; parameters inside are listed in the coverage inventory)
   ['dialogs.references', 'References', 'Measure and keep reference profiles (signed in) to compare against.', 'Reference profiles store measurements of a reference section, not the audio.'],
