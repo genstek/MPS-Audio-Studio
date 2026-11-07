@@ -72,3 +72,46 @@ test('LAS-127: cancelling a conversion stops cleanly, offers no stale file, and 
   const info = header(await exportAndSave(page, dialog, testInfo, 'after-cancel.wav'));
   expect(info.sampleRate).toBe(44100);
 });
+
+// Bug #66: a hard-clipped square wave overshoots after band-limited conversion, so the export
+// reports clipped samples. Convert only never runs the limiter, so the advice must not name it.
+function squareWav({ seconds = 1, sampleRate = 44100 } = {}) {
+  const frames = Math.round(sampleRate * seconds);
+  const bytes = Buffer.alloc(44 + frames * 2);
+  bytes.write('RIFF', 0); bytes.writeUInt32LE(bytes.length - 8, 4); bytes.write('WAVEfmt ', 8);
+  bytes.writeUInt32LE(16, 16); bytes.writeUInt16LE(1, 20); bytes.writeUInt16LE(1, 22);
+  bytes.writeUInt32LE(sampleRate, 24); bytes.writeUInt32LE(sampleRate * 2, 28); bytes.writeUInt16LE(2, 32);
+  bytes.writeUInt16LE(16, 34); bytes.write('data', 36); bytes.writeUInt32LE(frames * 2, 40);
+  for (let i = 0; i < frames; i++) bytes.writeInt16LE(Math.floor(i / 50) % 2 ? -32767 : 32767, 44 + i * 2);
+  return bytes;
+}
+
+test('LAS-127 #66: Convert only clipping advice does not recommend the inactive limiter', async ({ page }, testInfo) => {
+  const dialog = await openExport(page, 'hot.wav', squareWav());
+  await dialog.getByRole('radio', { name: '96 kHz', exact: true }).check();
+  await dialog.getByRole('radio', { name: 'Convert only (no processing)' }).check();
+  await exportAndSave(page, dialog, testInfo, 'hot-convert.wav');
+  const row = dialog.getByRole('row', { name: /Clipped samples/ });
+  await expect(row).not.toContainText('None');
+  await expect(row).toContainText('Convert only does not run the limiter');
+  await expect(row).not.toContainText('turn on the limiter');
+});
+
+test('LAS-127 #66: with the chain on, the clipping advice still names the limiter', async ({ page }, testInfo) => {
+  // The shipped chain has the limiter on, which prevents clipping; switch it off so the chain clips.
+  await page.goto('/');
+  await page.getByLabel('Import WAV').setInputFiles({ name: 'hot.wav', mimeType: 'audio/wav', buffer: squareWav() });
+  await expect(page.getByRole('region', { name: 'Transport', exact: true }).getByRole('status')).toHaveText('Ready');
+  await page.getByRole('region', { name: 'Mixer', exact: true }).getByRole('button', { name: 'Edit limiter' }).focus();
+  await page.keyboard.press('Enter');
+  const limiter = page.getByRole('dialog', { name: 'Limiter', exact: true });
+  await limiter.getByRole('checkbox', { name: 'Limiter on' }).uncheck();
+  await page.keyboard.press('Escape');
+  await page.getByRole('region', { name: 'Master', exact: true }).getByRole('button', { name: 'Export WAV', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Export processed WAV' });
+  await dialog.getByRole('radio', { name: '96 kHz', exact: true }).check();
+  await exportAndSave(page, dialog, testInfo, 'hot-chain.wav');
+  const row = dialog.getByRole('row', { name: /Clipped samples/ });
+  await expect(row).toContainText('turn on the limiter or lower the gain');
+  await expect(row).not.toContainText('Convert only');
+});

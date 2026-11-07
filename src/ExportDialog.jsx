@@ -110,7 +110,7 @@ export function ExportDialog({ file, params }) {
                 ['Integrated loudness', level(report.integratedLufs, 'LUFS')],
                 ['True peak (4× oversampled)', level(report.truePeakDbtp, 'dBTP')],
                 ['Sample peak', level(report.samplePeakDbfs, 'dBFS')],
-                ['Clipped samples', report.clippedSamples ? `${report.clippedSamples} (turn on the limiter or lower the gain)` : 'None'],
+                ['Clipped samples', report.clippedSamples ? `${report.clippedSamples} (${report.resampleOnly ? 'Convert only does not run the limiter; lower the source level, or export with the mastering chain and its limiter on' : 'turn on the limiter or lower the gain'})` : 'None'],
                 ['Latency compensated', `${report.latencyCompensatedSamples} samples`],
               ].map(([name, value]) => <tr key={name}><th scope="row">{name}</th><td>{value}</td></tr>)}
             </tbody>
