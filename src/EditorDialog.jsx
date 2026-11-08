@@ -24,7 +24,7 @@ export function clampPosition({ x, y }, { width, height }, viewport = { width: w
   return { x: Math.round(Math.min(maxX, Math.max(WINDOW_MARGIN, x))), y: Math.round(Math.min(maxY, Math.max(WINDOW_MARGIN, y))) };
 }
 
-export function EditorDialog({ title, open, onClose, children, headerExtra = null, position = null, z = 0, active = false, focusRequest = 0, onMove = () => {}, onFront = () => {}, onResetPosition = () => {} }) {
+export function EditorDialog({ title, open, onClose, children, headerExtra = null, toolbar = null, position = null, z = 0, active = false, focusRequest = 0, onMove = () => {}, onFront = () => {}, onResetPosition = () => {} }) {
   const dialog = useRef(null);
   const opener = useRef(null);
   const drag = useRef(null);
@@ -117,6 +117,7 @@ export function EditorDialog({ title, open, onClose, children, headerExtra = nul
           <button className="dialog-close" onClick={onClose} aria-label={`Close ${title}`}>×</button>
         </div>
       </div>
+      {open && toolbar}
       {open && children}
     </dialog>
   );

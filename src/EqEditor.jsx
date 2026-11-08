@@ -114,9 +114,9 @@ function Spectrum({ engine, sampleRate, scale }) {
   return <canvas ref={canvas} className="eq-spectrum" aria-hidden="true" />;
 }
 
-export function EqEditor({ params, update, sampleRate, engine, designPreview = false }) {
+export function EqEditor({ params, update, sampleRate, engine }) {
   const [view, setView] = useState('parametric');
-  const graphic = designPreview && view === 'graphic';
+  const graphic = view === 'graphic';
   const linked = params.eq.mode === 'link';
   const [side, setSide] = useState('left');
   const channel = linked ? 'left' : side;
@@ -185,7 +185,7 @@ export function EqEditor({ params, update, sampleRate, engine, designPreview = f
   const gridFrequencies = [50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000].filter(f => f <= scale.fMax);
   return (
     <div className="eq-editor">
-      {designPreview && <div className="eq-view-switch" role="group" aria-label="EQ editor view">
+      {<div className="eq-view-switch" role="group" aria-label="EQ editor view">
         <button type="button" aria-pressed={graphic} onClick={() => setView('graphic')}>Graphic</button>
         <button type="button" aria-pressed={!graphic} onClick={() => setView('parametric')}>Parametric</button>
         <span className="fine-print">Same EQ · two editing views</span>

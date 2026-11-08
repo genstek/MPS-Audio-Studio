@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { EditorDialog } from './EditorDialog.jsx';
+import { ProcessorDesignPreview } from './ProcessorDesignPreview.jsx';
 import { EqEditor, EqThumbnail } from './EqEditor.jsx';
 import { CompressorEditor, LimiterEditor, SpaceEditor, spacePresetName } from './ModuleEditors.jsx';
 import { DynamicsThumbnail, LimiterThumbnail, SpaceThumbnail } from './ProcessorPreviews.jsx';
@@ -34,7 +35,7 @@ function defaultPosition(name) {
 // and an editor, plus undo/redo and saved settings. Space is the LAS-64 reverb.
 // windows / setWindows: name → { open, position, z, focusRequest }, held by the app so a project can
 // save and restore the layout (LAS-69); the highest z is the front (active) window.
-export function MixerPanel({ chain, engine, track, sampleRate, listening, onListen, tools, windows, setWindows, designPreview = false }) {
+export function MixerPanel({ chain, engine, track, sampleRate, listening, onListen, tools, windows, setWindows, skin = 'rack', onSkin = () => {} }) {
   const top = useRef(0);
   top.current = Math.max(top.current, ...Object.values(windows).map(w => w.z ?? 0)); // eslint-disable-line react-hooks/refs -- keeps new z values above restored ones
   const { params, update, undo, redo, canUndo, canRedo, replace, warnings, problem } = chain;
@@ -95,6 +96,7 @@ export function MixerPanel({ chain, engine, track, sampleRate, listening, onList
       <HelpTip id="mixer.undo" />
     </span>
   );
+  const layoutChooser = <ProcessorDesignPreview skin={skin} onChange={onSkin} />;
   const editorTools = <>{history}<ListenSwitch value={listening} onChange={onListen} disabled={!active} /></>;
   const changed = changedModules(params);
   const strips = [
@@ -131,19 +133,19 @@ export function MixerPanel({ chain, engine, track, sampleRate, listening, onList
           </section>
         ))}
       </div>
-      <EditorDialog title="EQ" {...windowProps('eq')} headerExtra={editorTools}>
+      <EditorDialog title="EQ" {...windowProps('eq')} headerExtra={editorTools} toolbar={layoutChooser}>
         <ModulePresets module="eq" params={params} update={update} />
-        <EqEditor params={params} update={update} sampleRate={sampleRate} engine={engine} designPreview={designPreview} />
+        <EqEditor params={params} update={update} sampleRate={sampleRate} engine={engine} />
       </EditorDialog>
-      <EditorDialog title="Dynamics" {...windowProps('dynamics')} headerExtra={editorTools}>
+      <EditorDialog title="Dynamics" {...windowProps('dynamics')} headerExtra={editorTools} toolbar={layoutChooser}>
         <ModulePresets module="compressor" params={params} update={update} />
-        <CompressorEditor params={params} update={update} engine={engine} active={active} hardware={designPreview} />
+        <CompressorEditor params={params} update={update} engine={engine} active={active} hardware />
       </EditorDialog>
-      <EditorDialog title="Limiter" {...windowProps('limiter')} headerExtra={editorTools}>
+      <EditorDialog title="Limiter" {...windowProps('limiter')} headerExtra={editorTools} toolbar={layoutChooser}>
         <ModulePresets module="limiter" params={params} update={update} />
-        <LimiterEditor params={params} update={update} engine={engine} active={active} latency={track ? engine.current?.latency() : 0} sampleRate={sampleRate} hardware={designPreview} />
+        <LimiterEditor params={params} update={update} engine={engine} active={active} latency={track ? engine.current?.latency() : 0} sampleRate={sampleRate} hardware />
       </EditorDialog>
-      <EditorDialog title="Space" {...windowProps('space')} headerExtra={editorTools}>
+      <EditorDialog title="Space" {...windowProps('space')} headerExtra={editorTools} toolbar={layoutChooser}>
         <ModulePresets module="space" params={params} update={update} />
         <SpaceEditor params={params} update={update} />
       </EditorDialog>
