@@ -1,12 +1,58 @@
-import React, { useId, useState } from 'react';
-import { GRAPHIC_FREQUENCIES, isGraphicBank, prepareGraphicBank, editGraphicGain, flattenGraphicBank } from './graphic-eq.js';
+import React, { useRef, useState } from 'react';
+import { GRAPHIC_FREQUENCIES, GRAPHIC_GAIN_LIMIT, isGraphicBank, prepareGraphicBank, editGraphicGain, flattenGraphicBank } from './graphic-eq.js';
 import { HelpTip } from './HelpTip.jsx';
 
 const frequencyLabel = frequency => frequency >= 1000 ? `${frequency / 1000}k` : String(frequency);
 const gainLabel = gain => `${gain > 0 ? '+' : ''}${gain.toFixed(1)}`;
 
+const STEP = 0.5;
+const THUMB = 12;
+const snap = gain => Math.max(-GRAPHIC_GAIN_LIMIT, Math.min(GRAPHIC_GAIN_LIMIT, Math.round(gain / STEP) * STEP));
+
+// Vertical gain slider built on a focusable role="slider" element rather than a native
+// <input type="range"> with writing-mode, which WKWebView on macOS Ventura renders and hit-tests
+// inconsistently (value jumps to an end stop while the thumb stays at 0 dB). Pointer position maps
+// linearly to gain, and the thumb is positioned from the same value that is displayed.
+function GraphicFader({ name, value, onChange }) {
+  const ref = useRef(null);
+  const fromPointer = event => {
+    const box = ref.current.getBoundingClientRect();
+    const span = box.height - THUMB;
+    if (span <= 0) return value;
+    const fraction = Math.max(0, Math.min(1, (event.clientY - box.top - THUMB / 2) / span));
+    return snap(GRAPHIC_GAIN_LIMIT - fraction * 2 * GRAPHIC_GAIN_LIMIT);
+  };
+  const set = gain => { if (gain !== value) onChange(gain); };
+  const onPointerDown = event => {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    event.preventDefault();
+    ref.current.focus();
+    ref.current.setPointerCapture?.(event.pointerId);
+    set(fromPointer(event));
+  };
+  const onPointerMove = event => { if (ref.current.hasPointerCapture?.(event.pointerId)) set(fromPointer(event)); };
+  const onKeyDown = event => {
+    const steps = { ArrowUp: STEP, ArrowRight: STEP, ArrowDown: -STEP, ArrowLeft: -STEP, PageUp: 3, PageDown: -3 };
+    let next;
+    if (event.key in steps) next = snap(value + steps[event.key]);
+    else if (event.key === 'Home') next = -GRAPHIC_GAIN_LIMIT;
+    else if (event.key === 'End') next = GRAPHIC_GAIN_LIMIT;
+    else return;
+    event.preventDefault();
+    set(next);
+  };
+  return (
+    <div ref={ref} className="graphic-fader" role="slider" tabIndex={0} aria-label={name} aria-orientation="vertical"
+      aria-valuemin={-GRAPHIC_GAIN_LIMIT} aria-valuemax={GRAPHIC_GAIN_LIMIT} aria-valuenow={value} aria-valuetext={`${gainLabel(value)} dB`}
+      style={{ '--fader-fraction': (GRAPHIC_GAIN_LIMIT - value) / (2 * GRAPHIC_GAIN_LIMIT) }}
+      onPointerDown={onPointerDown} onPointerMove={onPointerMove} onKeyDown={onKeyDown} onDoubleClick={() => set(0)}>
+      <span className="graphic-fader-track" aria-hidden="true" />
+      <span className="graphic-fader-thumb" aria-hidden="true" />
+    </div>
+  );
+}
+
 export function GraphicEqEditor({ params, channel, update, sampleRate }) {
-  const id = useId();
   const [resetPending, setResetPending] = useState(false);
   const bands = params.eq[channel];
   const extra = bands.slice(10).filter(band => band.enabled).length;
@@ -28,11 +74,10 @@ export function GraphicEqEditor({ params, channel, update, sampleRate }) {
         <div className="graphic-faders">
           {GRAPHIC_FREQUENCIES.map((frequency, i) => (
             <div className="graphic-band" key={frequency}>
-              <label htmlFor={`${id}-${i}`}>{frequencyLabel(frequency)}<span className="sr-only"> Hz gain</span></label>
-              <input id={`${id}-${i}`} type="range" min={-12} max={12} step={0.5} value={bands[i].gain}
-                aria-label={`${frequency} Hz gain`} aria-orientation="vertical" aria-valuetext={`${gainLabel(bands[i].gain)} dB`}
-                onChange={event => update(p => editGraphicGain(p, channel, i, Number(event.target.value)), `graphic-${channel}-${i}`)} />
-              <output htmlFor={`${id}-${i}`}>{gainLabel(bands[i].gain)}</output>
+              <span className="graphic-band-label" aria-hidden="true">{frequencyLabel(frequency)}</span>
+              <GraphicFader name={`${frequency} Hz gain`} value={bands[i].gain}
+                onChange={gain => update(p => editGraphicGain(p, channel, i, gain), `graphic-${channel}-${i}`)} />
+              <output>{gainLabel(bands[i].gain)}</output>
               <HelpTip id="eq.gain" />
             </div>
           ))}
