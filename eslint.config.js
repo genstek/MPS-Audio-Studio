@@ -8,7 +8,7 @@ export default [
   {
     files: ['**/*.{js,jsx,mjs}'],
     languageOptions: {
-      globals: { ...globals.browser, ...globals.node },
+      globals: { ...globals.browser, ...globals.node, __MPS_BUILD__: 'readonly' },
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
     plugins: { 'react-hooks': reactHooks },

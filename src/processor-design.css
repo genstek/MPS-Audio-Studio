@@ -89,3 +89,9 @@
   .graphic-scale { visibility: hidden; }
   .eq-view-switch > span { margin-left: 0; width: 100%; }
 }
+
+.ui-mode-switch { display: flex; align-items: center; }
+.ui-mode-switch select { font-size: 10px; line-height: 1; height: 16px; padding: 0 4px; margin: 0; max-width: 150px; }
+.ui-mode-switch select[data-mode="processors"] { outline: 2px solid #e5b76c; }
+/* The footer note truncates rather than wrapping, so the mode select never adds a line (LAS-51). */
+footer > span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

@@ -33,10 +33,16 @@ import { ProcessorDesignPreview } from './ProcessorDesignPreview.jsx';
 import './styles.css';
 import './processor-design.css';
 
-const designPreview = new URLSearchParams(window.location.search).get('design') === 'processors';
+import { UiModeSwitch } from './UiModeSwitch.jsx';
+import { UI_MODE_KEY, UI_SKIN_KEY, initialSkin, initialUiMode, storeUi } from './ui-mode.js';
 
 function App() {
-  const [processorSkin, setProcessorSkin] = useState('rack');
+  // Presentation-only preference (LAS-58/75/76); ?design=processors still opens the preview on the web.
+  const [uiMode, setUiMode] = useState(initialUiMode);
+  const [processorSkin, setProcessorSkin] = useState(initialSkin);
+  const designPreview = uiMode === 'processors';
+  const changeUiMode = mode => { setUiMode(mode); storeUi(UI_MODE_KEY, mode); };
+  const changeSkin = skin => { setProcessorSkin(skin); storeUi(UI_SKIN_KEY, skin); };
   const [track, setTrack] = useState(null);
   const [status, setStatus] = useState('No audio loaded');
   const [error, setError] = useState('');
@@ -206,7 +212,7 @@ function App() {
           {project.missingCount > 0 && <button type="button" className="heading-button" onClick={project.openRelink}>{project.missingCount} audio file{project.missingCount > 1 ? 's' : ''} missing — Relink…</button>}
           <WithHelp id="dialogs.references"><ReferencesDialog /></WithHelp><WithHelp id="dialogs.account"><AccountDialog currentFile={currentFile} /></WithHelp><HelpButton />
         </div>
-        {designPreview && <ProcessorDesignPreview skin={processorSkin} onChange={setProcessorSkin} />}
+        {designPreview && <ProcessorDesignPreview skin={processorSkin} onChange={changeSkin} />}
       </header>
 
       <section className="transport panel" aria-label="Transport">
@@ -265,7 +271,7 @@ function App() {
       <NewProjectDialog open={project.newOpen} onCreate={project.create} onCancel={project.cancelNew} />
       <UnsavedDialog prompt={project.prompt} onChoose={project.answer} />
       <RelinkDialog missing={project.missing} open={project.relink.open} busy={project.relink.busy} problem={project.relink.problem} onRelink={project.relinkFile} onClose={project.closeRelink} />
-      <footer><span className="connection">LOCAL / WEB AUDIO</span><span>EQ, dynamics, limiter and WAV export run on this device · reference matching and multitrack are planned.</span></footer>
+      <footer><span className="connection">LOCAL / WEB AUDIO</span><UiModeSwitch mode={uiMode} onChange={changeUiMode} /><span>EQ, dynamics, limiter and WAV export run on this device · reference matching and multitrack are planned.</span></footer>
     </main>
   );
 }

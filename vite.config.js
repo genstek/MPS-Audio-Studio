@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { execSync } from 'node:child_process';
 
 // The account server (ADR-003). Tests point this at their own server with MPS_API_URL.
 const apiTarget = process.env.MPS_API_URL ?? 'http://127.0.0.1:8787';
@@ -21,4 +22,9 @@ function checkoutIdentity() {
 
 const proxy = { '/api': { target: apiTarget } };
 
-export default defineConfig({ plugins: [react(), checkoutIdentity()], server: { proxy }, preview: { proxy } });
+// Build provenance (LAS-58): short git SHA shown in the UI so an old native bundle is recognisable.
+function gitSha() {
+  try { return execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim(); } catch { return 'unknown'; }
+}
+
+export default defineConfig({ define: { __MPS_BUILD__: JSON.stringify(gitSha()) }, plugins: [react(), checkoutIdentity()], server: { proxy }, preview: { proxy } });
