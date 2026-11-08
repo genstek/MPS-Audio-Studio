@@ -6,7 +6,7 @@ import { installChainProbe, lastChainParams } from './helpers/chain-probe.js';
 
 async function openPreview(page) {
   await installChainProbe(page);
-  await page.goto('/?design=processors');
+  await page.goto('/');
   await page.getByLabel('Import WAV', { exact: true }).setInputFiles({
     name: 'graphic-1k.wav', mimeType: 'audio/wav',
     buffer: makeWav({ seconds: 2, sampleRate: 48000, channels: 2, frequency: 1000, dbfs: -24 }),
@@ -29,7 +29,7 @@ test('LAS-75/76: graphic gains reach the engine and WAV export; view and skin ch
   await expect.poll(async () => (await lastChainParams(page))?.eq.left[5].gain).toBe(6);
   expect((await lastChainParams(page)).eq.right[5].gain).toBe(6);
   const edited = await lastChainParams(page);
-  await page.getByRole('button', { name: 'B · Warm console' }).click();
+  await eq.getByRole('button', { name: 'B · Warm console' }).click();
   await eq.getByRole('button', { name: 'Parametric', exact: true }).click();
   expect(await lastChainParams(page)).toEqual(edited);
   await eq.getByRole('button', { name: 'Graphic', exact: true }).click();
@@ -65,6 +65,13 @@ test('LAS-75/76: graphic gains reach the engine and WAV export; view and skin ch
   }
 });
 
+test('LAS-58: Graphic EQ and layout chooser are reachable with no query flag; parametric editing remains', async ({ page }) => {
+  const eq = await openPreview(page);
+  await expect(eq.getByRole('group', { name: 'Processor layout' })).toBeVisible();
+  await expect(eq.getByRole('button', { name: 'Graphic', exact: true })).toBeVisible();
+  await expect(eq.getByLabel('Band 1 on', { exact: true })).toBeVisible();
+});
+
 test('LAS-75: incompatible curves are not changed by viewing; explicit setup can be undone', async ({ page }) => {
   const eq = await openPreview(page);
   await eq.getByLabel('Band 1 on', { exact: true }).check();
@@ -89,10 +96,10 @@ test('LAS-76: both layouts fit narrow screens and retain working Dynamics and Li
   for (const skin of ['A · Graphite rack', 'B · Warm console']) {
     for (const viewport of [{ width: 1440, height: 900 }, { width: 360, height: 780 }]) {
       await page.setViewportSize(viewport);
-      await page.getByRole('button', { name: skin }).click();
       for (const [open, title] of [['Edit EQ', 'EQ'], ['Edit dynamics', 'Dynamics'], ['Edit limiter', 'Limiter']]) {
         await page.getByRole('button', { name: open, exact: true }).click();
         const panel = page.getByRole('dialog', { name: title, exact: true });
+        await panel.getByRole('button', { name: skin }).click();
         if (title === 'EQ') {
           await panel.getByRole('button', { name: 'Graphic', exact: true }).click();
           const setup = panel.getByRole('button', { name: 'Set up 10 graphic bands' });
