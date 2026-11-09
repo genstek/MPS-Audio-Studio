@@ -25,7 +25,7 @@ test('LAS-75/76: graphic gains reach the engine and WAV export; view and skin ch
   const fader = eq.getByRole('slider', { name: '1000 Hz gain', exact: true });
   await fader.focus();
   for (let i = 0; i < 12; i++) await fader.press('ArrowUp');
-  await expect(fader).toHaveValue('6');
+  await expect(fader).toHaveAttribute('aria-valuenow', '6');
   await expect.poll(async () => (await lastChainParams(page))?.eq.left[5].gain).toBe(6);
   expect((await lastChainParams(page)).eq.right[5].gain).toBe(6);
   const edited = await lastChainParams(page);
@@ -33,16 +33,16 @@ test('LAS-75/76: graphic gains reach the engine and WAV export; view and skin ch
   await eq.getByRole('button', { name: 'Parametric', exact: true }).click();
   expect(await lastChainParams(page)).toEqual(edited);
   await eq.getByRole('button', { name: 'Graphic', exact: true }).click();
-  await expect(fader).toHaveValue('6');
+  await expect(fader).toHaveAttribute('aria-valuenow', '6');
 
   const presetEvent = page.waitForEvent('download');
   await eq.getByRole('button', { name: 'Save EQ preset', exact: true }).click();
   const preset = await (await presetEvent).path();
   await eq.getByRole('button', { name: 'Reset graphic gains…' }).click();
   await eq.getByRole('button', { name: 'Flatten bands', exact: true }).click();
-  await expect(fader).toHaveValue('0');
+  await expect(fader).toHaveAttribute('aria-valuenow', '0');
   await eq.getByLabel('Load EQ preset', { exact: true }).setInputFiles(preset);
-  await expect(fader).toHaveValue('6');
+  await expect(fader).toHaveAttribute('aria-valuenow', '6');
   await expect.poll(() => lastChainParams(page)).toEqual(edited);
   await eq.getByRole('button', { name: 'Close EQ', exact: true }).click();
 
@@ -62,6 +62,49 @@ test('LAS-75/76: graphic gains reach the engine and WAV export; view and skin ch
   for (let channel = 0; channel < 2; channel++) {
     const gain = 20 * Math.log10(rms(output.samples[channel]) / rms(input.samples[channel]));
     expect(gain).toBeCloseTo(6, 1);
+  }
+});
+
+test('LAS-160: dragging a graphic fader maps pointer to gain, and thumb, value and chain agree', async ({ page }) => {
+  const eq = await openPreview(page);
+  await eq.getByRole('button', { name: 'Graphic', exact: true }).click();
+  await eq.getByRole('button', { name: 'Set up 10 graphic bands' }).click();
+  for (const skin of ['A · Graphite rack', 'B · Warm console']) {
+    await eq.getByRole('button', { name: skin }).click();
+    const fader = eq.getByRole('slider', { name: '1000 Hz gain', exact: true });
+    const thumb = fader.locator('.graphic-fader-thumb');
+    await fader.scrollIntoViewIfNeeded();
+    await fader.focus();
+    const span = 156 - 12;
+    for (const gain of [12, 6, 0, -6, -12, 3.5]) {
+      const box = await fader.boundingBox();
+      const y = box.y + 6 + span * (12 - gain) / 24;
+      await page.mouse.move(box.x + 12, box.y + 20);
+      await page.mouse.down();
+      await page.mouse.move(box.x + 12, y, { steps: 4 });
+      await page.mouse.up();
+      await expect(fader).toHaveAttribute('aria-valuenow', String(gain));
+      await expect(eq.locator('.graphic-band output').nth(5)).toHaveText(`${gain > 0 ? '+' : ''}${gain.toFixed(1)}`);
+      // The thumb's physical position must match the value (the WKWebView bug left it at 0 dB).
+      const thumbBox = await thumb.boundingBox();
+      expect(thumbBox.y + 6 - (box.y + 6 + span * (12 - gain) / 24)).toBeCloseTo(0, 0);
+      await expect.poll(async () => (await lastChainParams(page))?.eq.left[5].gain).toBe(gain);
+    }
+    // Dragging past the ends clamps; keyboard and Home/End work.
+    const end = await fader.boundingBox();
+    await page.mouse.move(end.x + 12, end.y + 80);
+    await page.mouse.down();
+    await page.mouse.move(end.x + 12, end.y + end.height + 200, { steps: 4 });
+    await page.mouse.up();
+    await expect(fader).toHaveAttribute('aria-valuenow', '-12');
+    await fader.press('Home');
+    await expect(fader).toHaveAttribute('aria-valuenow', '-12');
+    await fader.press('End');
+    await expect(fader).toHaveAttribute('aria-valuenow', '12');
+    await fader.press('PageDown');
+    await expect(fader).toHaveAttribute('aria-valuenow', '9');
+    await fader.dblclick();
+    await expect(fader).toHaveAttribute('aria-valuenow', '0');
   }
 });
 
