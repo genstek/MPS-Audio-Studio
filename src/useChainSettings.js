@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { defaultChain } from './dsp/chain-params.js';
+import { createPreviewCoordinator } from './ai/preview-coordinator.js';
 
 const COALESCE_MS = 600;
 
@@ -13,6 +14,9 @@ export function useChainSettings(engine) {
   const [problem, setProblem] = useState('');
   const [preview, setPreview] = useState(null);
   const last = useRef({ key: null, time: 0 });
+  // setPreview is stable, so the coordinator is created once per hook instance (no ref read in render).
+  const [coordinator] = useState(() => createPreviewCoordinator(setPreview));
+  const previewOwner = useSyncExternalStore(coordinator.subscribe, () => coordinator.holder);
   const live = preview ?? state.params;
 
   useEffect(() => {
@@ -46,6 +50,7 @@ export function useChainSettings(engine) {
   // A new or opened project (LAS-60/69): these settings, with an empty undo history.
   const load = params => {
     last.current = { key: null, time: 0 };
+    coordinator.reset(); // a preview made for the previous project must not outlive it
     setState({ params, past: [], future: [] });
   };
 
@@ -59,5 +64,9 @@ export function useChainSettings(engine) {
     setState(({ params, past, future }) => (future.length ? { params: future[0], past: [...past, params], future: future.slice(1) } : { params, past, future }));
   }
 
-  return { params: state.params, update, replace, load, undo, redo, canUndo: state.past.length > 0, canRedo: state.future.length > 0, warnings, problem, previewing: preview !== null, setPreview };
+  // Legacy unowned setter: null ends any preview and frees its owner, so cleanup always restores
+  // the committed audio. Owned previews (MPS-AI-01) go through `previews`; neither changes params.
+  const setPreviewLegacy = value => (value === null ? coordinator.reset() : setPreview(value));
+
+  return { params: state.params, update, replace, load, undo, redo, canUndo: state.past.length > 0, canRedo: state.future.length > 0, warnings, problem, previewing: preview !== null, setPreview: setPreviewLegacy, previews: coordinator, previewOwner };
 }

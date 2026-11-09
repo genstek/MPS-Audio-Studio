@@ -49,7 +49,7 @@ function octaveGainDb(designs, centre, sampleRate) {
 }
 
 // The combined curve's largest boost, on a log grid up to the run-time frequency limit.
-function largestBoostDb(designs, sampleRate) {
+export function largestBoostDb(designs, sampleRate) {
   const top = Math.min(20000, 0.45 * sampleRate);
   let largest = -Infinity;
   for (let i = 0; i <= 200; i++) {
