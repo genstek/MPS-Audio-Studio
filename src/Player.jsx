@@ -7,7 +7,7 @@ import { HelpTip, WithHelp } from './HelpTip.jsx';
 //
 // Measurement tap: the monitor bus (LAS-68), i.e. what is sent to the speakers after the
 // Original/Processed switch, loudness matching and Master Level. Mono tracks reach both sides.
-// - Needles: RMS of the last 2048 samples, smoothed with a 65 ms time constant (99 % of a step in
+// - Needles: RMS of the last ~45 ms (2048 samples at 44.1/48 kHz, 4096 at 96 kHz; LAS-167), smoothed with a 65 ms time constant (99 % of a step in
 //   about 300 ms, VU-like ballistics), on a dBFS scale. They are not calibrated VU meters.
 // - Bars: sample peak (held 1.5 s, then falling 20 dB/s) and RMS, in dBFS.
 // - Clip: lights when a sample at or beyond 0 dBFS reached the speakers; stays lit until reset.
