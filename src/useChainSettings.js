@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { defaultChain } from './dsp/chain-params.js';
 import { createPreviewCoordinator } from './ai/preview-coordinator.js';
+import { diagnostics, eqSummary, fingerprint } from './diagnostics.js';
 
 const COALESCE_MS = 600;
 
@@ -21,11 +22,14 @@ export function useChainSettings(engine) {
 
   useEffect(() => {
     let current = true;
+    diagnostics.record('settings.live', { fingerprint: fingerprint(live), ...eqSummary(live), previewing: preview !== null, owner: previewOwner ?? null });
     engine.current?.setChain(live).then(
       next => current && (setWarnings(next), setProblem('')),
       failure => current && setProblem(failure.message),
     );
     return () => { current = false; };
+    // preview and previewOwner only label the diagnostics event; the chain depends on `live` alone.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [engine, live]);
 
   function update(change, key = null) {
@@ -41,6 +45,7 @@ export function useChainSettings(engine) {
         return previous;
       }
       if (next === previous.params) return previous;
+      diagnostics.record('settings.edit', { key: typeof key === 'string' ? key.replace(/[^A-Za-z0-9_.:-]/g, '').slice(0, 40) : null, merged: merge, fingerprint: fingerprint(next), ...eqSummary(next) });
       return { params: next, past: merge ? previous.past : [...previous.past, previous.params].slice(-100), future: [] };
     });
   }

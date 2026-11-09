@@ -1,5 +1,12 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { execSync } from 'node:child_process';
+
+// Build SHA for diagnostics exports (LAS-166): GITHUB_SHA in CI, else git, else 'unknown'.
+function buildSha() {
+  if (process.env.GITHUB_SHA) return process.env.GITHUB_SHA.slice(0, 12);
+  try { return execSync('git rev-parse --short=12 HEAD', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim(); } catch { return 'unknown'; }
+}
 
 // The account server (ADR-003). Tests point this at their own server with MPS_API_URL.
 const apiTarget = process.env.MPS_API_URL ?? 'http://127.0.0.1:8787';
@@ -21,4 +28,4 @@ function checkoutIdentity() {
 
 const proxy = { '/api': { target: apiTarget } };
 
-export default defineConfig({ plugins: [react(), checkoutIdentity()], server: { proxy }, preview: { proxy } });
+export default defineConfig({ define: { __BUILD_SHA__: JSON.stringify(buildSha()) }, plugins: [react(), checkoutIdentity()], server: { proxy }, preview: { proxy } });

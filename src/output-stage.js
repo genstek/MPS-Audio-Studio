@@ -1,4 +1,5 @@
 import { createChainNode } from './dsp/chain-node.js';
+import { diagnostics } from './diagnostics.js';
 
 // Playback output (LAS-28): every source feeds two paths that always run, so switching between
 // them keeps the playback position.
@@ -10,6 +11,12 @@ import { createChainNode } from './dsp/chain-node.js';
 // time; switching ramps the gains over RAMP_SECONDS. Loudness matching turns the louder path
 // down while comparing (never up, so nothing clips).
 export const RAMP_SECONDS = 0.02;
+// LAS-166: a Match Loudness result arrives whenever a full-file measurement finishes (it can take
+// 30–60 s on a long track, long after the last EQ edit). Moving the level on the 20 ms A/B ramp
+// is heard as a click followed by a sudden level change that sounds like the EQ was lost, so a
+// match-gain update glides over this longer time instead. Switching Original/Processed keeps
+// the short ramp.
+export const MATCH_RAMP_SECONDS = 0.6;
 
 // destination: where the stage's output goes; the engine passes its monitor bus (LAS-68).
 export async function createOutputStage(context, channelCount, params, destination = context.destination) {
@@ -26,12 +33,13 @@ export async function createOutputStage(context, channelCount, params, destinati
   reference.connect(analyser);
   analyser.connect(destination);
 
-  const rampTo = (param, value) => {
+  const rampTo = (param, value, seconds = RAMP_SECONDS) => {
     const now = context.currentTime;
     param.cancelScheduledValues(now);
     param.setValueAtTime(param.value, now);
-    param.linearRampToValueAtTime(value, now + RAMP_SECONDS);
+    param.linearRampToValueAtTime(value, now + seconds);
   };
+  diagnostics.record('output.created', { channels: channelCount });
 
   return {
     channelCount,
@@ -41,16 +49,25 @@ export async function createOutputStage(context, channelCount, params, destinati
     analyser,
     setParams: next => chain.setParams(next),
     // Clears the chain's tail (reverb, limiter delay) after a track is removed or replaced (LAS-64).
-    reset: () => chain.reset(),
+    reset: cause => chain.reset(cause),
     onMeters: listener => chain.onMeters(listener),
     // listening: 'processed' | 'original' | 'reference'; match: { processedDb, originalDb,
     // referenceDb } gains in dB (≤ 0).
-    setListening(listening, match) {
-      rampTo(processed.gain, listening === 'processed' ? 10 ** (match.processedDb / 20) : 0);
-      rampTo(original.gain, listening === 'original' ? 10 ** (match.originalDb / 20) : 0);
-      rampTo(reference.gain, listening === 'reference' ? 10 ** ((match.referenceDb ?? 0) / 20) : 0);
+    // seconds: ramp time; the default is the short A/B switch ramp, a match-gain update passes
+    // MATCH_RAMP_SECONDS.
+    setListening(listening, match, seconds = RAMP_SECONDS) {
+      const targets = {
+        processed: listening === 'processed' ? 10 ** (match.processedDb / 20) : 0,
+        original: listening === 'original' ? 10 ** (match.originalDb / 20) : 0,
+        reference: listening === 'reference' ? 10 ** ((match.referenceDb ?? 0) / 20) : 0,
+      };
+      diagnostics.record('output.listening', { listening, processedGain: targets.processed, originalGain: targets.original, referenceGain: targets.reference, rampSeconds: seconds, at: context.currentTime });
+      rampTo(processed.gain, targets.processed, seconds);
+      rampTo(original.gain, targets.original, seconds);
+      rampTo(reference.gain, targets.reference, seconds);
     },
     dispose() {
+      diagnostics.record('output.disposed');
       for (const node of [chain.node, delay, processed, original, reference, analyser]) node.disconnect();
       chain.onMeters(() => {});
     },

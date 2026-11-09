@@ -16,7 +16,7 @@ class ChainProcessor extends AudioWorkletProcessor {
     this.limiterPeak = 0;
     this.port.onmessage = ({ data }) => {
       // LAS-64: clear every state (reverb tail, limiter delay) when the track is removed or replaced.
-      if (data.type === 'reset') { this.chain.reset(); return; }
+      if (data.type === 'reset') { this.chain.reset(); this.port.postMessage({ type: 'reset-done' }); return; }
       if (data.type !== 'params') return;
       try {
         this.chain.setParams(data.params);
@@ -33,12 +33,14 @@ class ChainProcessor extends AudioWorkletProcessor {
     const output = outputs[0];
     const frames = output[0].length;
     this.chain.process(inputs[0], output, frames);
-    const { compressorGainReductionDb, limiterGainReductionDb } = this.chain.meters;
+    const { compressorGainReductionDb, limiterGainReductionDb, resets, nonFiniteInputs } = this.chain.meters;
+    this.resets = resets;
+    this.nonFiniteInputs = nonFiniteInputs;
     this.compressorPeak = Math.max(this.compressorPeak, compressorGainReductionDb);
     this.limiterPeak = Math.max(this.limiterPeak, limiterGainReductionDb);
     this.sinceMeter += frames;
     if (this.sinceMeter >= this.meterEvery) {
-      this.port.postMessage({ type: 'meters', compressorGainReductionDb: this.compressorPeak, limiterGainReductionDb: this.limiterPeak });
+      this.port.postMessage({ type: 'meters', compressorGainReductionDb: this.compressorPeak, limiterGainReductionDb: this.limiterPeak, resets: this.resets, nonFiniteInputs: this.nonFiniteInputs });
       this.sinceMeter = 0;
       this.compressorPeak = 0;
       this.limiterPeak = 0;

@@ -1,6 +1,7 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
 import { startRender } from './render-client.js';
 import { HelpTip } from './HelpTip.jsx';
+import { diagnostics, eqSummary, fingerprint } from './diagnostics.js';
 
 // Original/Processed switch (LAS-28). The same source keeps playing; only the audible path changes,
 // so the position is kept.
@@ -24,19 +25,26 @@ export function LoudnessMatch({ engine, file, params }) {
   const [enabled, setEnabled] = useState(true);
   const [result, setResult] = useState({ status: 'idle' });
   const job = useRef(null);
+  const renders = useRef(0);
 
   useEffect(() => {
     if (!file || !enabled) {
       engine.current?.setLoudnessMatch(null);
       return undefined;
     }
+    let activeId = null;
     const timer = setTimeout(() => {
       setResult(previous => ({ ...previous, status: 'measuring' }));
+      const renderId = ++renders.current;
+      activeId = renderId;
+      const began = performance.now();
+      diagnostics.record('match.render-started', { renderId, fingerprint: fingerprint(params), ...eqSummary(params) });
       const current = startRender(file, { mode: 'match', params });
       job.current = current;
       current.result.then(({ report }) => {
         if (job.current !== current) return;
         const { originalLufs, processedLufs } = report;
+        diagnostics.record('match.render-completed', { renderId, durationMs: performance.now() - began, differenceDb: originalLufs === null || processedLufs === null ? null : processedLufs - originalLufs });
         if (originalLufs === null || processedLufs === null) {
           engine.current?.setLoudnessMatch(null);
           setResult({ status: 'silent' });
@@ -51,6 +59,7 @@ export function LoudnessMatch({ engine, file, params }) {
     }, 800);
     return () => {
       clearTimeout(timer);
+      if (job.current) diagnostics.record('match.render-cancelled', { renderId: activeId });
       job.current?.cancel();
       job.current = null;
     };
@@ -58,7 +67,7 @@ export function LoudnessMatch({ engine, file, params }) {
 
   let text = 'Import a track to compare at matched loudness.';
   if (file && !enabled) text = 'Off: both versions play at their own level.';
-  else if (file && result.status === 'measuring') text = 'Measuring loudness…';
+  else if (file && result.status === 'measuring') text = 'Measuring loudness… Your EQ stays active; when the measurement finishes, the level changes smoothly to keep the comparison fair.';
   else if (file && result.status === 'silent') text = 'Cannot match: the audio is silent.';
   else if (file && result.status === 'error') text = result.message;
   else if (file && result.status === 'ready') {

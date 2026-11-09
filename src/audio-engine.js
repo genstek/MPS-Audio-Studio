@@ -1,6 +1,7 @@
 import { defaultChain } from './dsp/chain-params.js';
 import { readWavHeader } from './dsp/wav-decode.js';
-import { createOutputStage } from './output-stage.js';
+import { createOutputStage, MATCH_RAMP_SECONDS } from './output-stage.js';
+import { diagnostics, eqSummary, fingerprint } from './diagnostics.js';
 import { createStemSession } from './stem-session.js';
 import { createChainNode } from './dsp/chain-node.js';
 import { bypassChain } from './dsp/stem-render.js';
@@ -60,6 +61,10 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
   let stemOutput = null;
   let stemSession = null;
   const NO_MATCH = { processedDb: 0, originalDb: 0 };
+  // Counts every chain settings message so diagnostics can tell which one the worklet applied last (LAS-166).
+  let chainRevision = 0;
+  // Playback timeline for diagnostics only; no side effects.
+  const playbackPosition = () => (buffer && source ? Math.min(offset + context.currentTime - startedAt, buffer.duration) : offset);
 
   function ensureContext() {
     if (context) return;
@@ -166,10 +171,11 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
       }
       // Keep the previous track intact until replacement decoding succeeds.
       disconnect();
-      output?.reset?.(); // the old track's reverb tail is not carried into the new one (LAS-64)
+      output?.reset?.('track-replaced'); // the old track's reverb tail is not carried into the new one (LAS-64)
       buffer = decoded;
       offset = 0;
       if (stage !== output) {
+        diagnostics.record('engine.output-replaced', { channels });
         output?.dispose();
         output = stage;
         output.onMeters(meters => meterListeners.forEach(listener => listener(meters)));
@@ -228,7 +234,7 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
     unload() {
       latestLoad++; // an import still running cannot bring the removed audio back
       disconnect();
-      output?.reset?.(); // no stale reverb tail after removal (LAS-64)
+      output?.reset?.('track-removed'); // no stale reverb tail after removal (LAS-64)
       buffer = null;
       offset = 0;
       // Nothing is left to play, so the audio device may idle until the next Play resumes it.
@@ -252,19 +258,37 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
     // rejects with the reason the settings were refused. Kept for the next output stage.
     async setChain(params) {
       chainParams = params;
+      const revision = ++chainRevision;
+      diagnostics.record('chain.set', { revision, fingerprint: fingerprint(params), ...eqSummary(params), position: playbackPosition() });
       if (stemOutput) await stemOutput.setParams(params);
-      return output ? output.setParams(params) : [];
+      if (!output) return [];
+      try {
+        const warnings = await output.setParams(params);
+        diagnostics.record('chain.applied', { revision, lastAppliedRevision: revision, stale: revision !== chainRevision });
+        return warnings;
+      } catch (failure) {
+        diagnostics.count('refusals');
+        diagnostics.record('chain.refused', { revision });
+        throw failure;
+      }
     },
     // A/B: 'processed' or 'original'. The same source keeps playing; only the audible path changes.
     listen(next) {
+      diagnostics.record('monitor.listen', { listening: next, from: listening, position: playbackPosition() });
       listening = next;
       if (!comparison) output?.setListening(listening, match);
       stemOutput?.setListening(listening, NO_MATCH);
     },
     // Loudness matching gains in dB (each ≤ 0), or null for none.
+    // LAS-166: an update glides over MATCH_RAMP_SECONDS (never the 20 ms A/B ramp) and a change
+    // below 0.05 dB is not applied at all, so a late measurement cannot click or jump the level.
     setLoudnessMatch(next) {
-      match = next ?? { processedDb: 0, originalDb: 0 };
-      if (!comparison) output?.setListening(listening, match); // kept for after a comparison
+      const target = next ?? { processedDb: 0, originalDb: 0 };
+      const small = Math.abs(target.processedDb - match.processedDb) < 0.05 && Math.abs(target.originalDb - match.originalDb) < 0.05;
+      diagnostics.record('match.apply', { processedDb: target.processedDb, originalDb: target.originalDb, skipped: small, listening, position: playbackPosition() });
+      if (small) return;
+      match = target;
+      if (!comparison) output?.setListening(listening, match, MATCH_RAMP_SECONDS); // kept for after a comparison
     },
     // Starts the comparison monitor: referenceBytes (a WAV's ArrayBuffer, decoded here), the mix
     // and reference sections { start, end } in seconds, gains { processedDb, originalDb,
