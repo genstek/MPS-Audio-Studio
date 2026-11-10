@@ -4,3 +4,7 @@ playwright-report/
 test-results/
 .DS_Store
 .data/
+artifacts/
+apple/build/
+apple/test-build/
+apple/ios-build/
