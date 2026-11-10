@@ -132,19 +132,29 @@ export function createApp(config, { now = () => Date.now(), scryptCost = SCRYPT_
     // Hash on every path, so registering an existing address takes as long as a new one and the
     // timing does not reveal which addresses have accounts (found in LAS-25).
     const { hash, salt } = await hashPassword(input.password, scryptCost);
-    const existing = db.prepare('SELECT id, verified_at FROM users WHERE email = ?').get(email);
     const link = appUrl(request);
-    if (existing?.verified_at) {
-      mail(email, 'Someone tried to register with your email', 'An account with this email already exists. If this was you, sign in or reset your password. Otherwise you can ignore this message.');
-    } else {
-      let userId = existing?.id;
-      if (!userId) {
-        userId = randomToken(16);
-        db.prepare('INSERT INTO users (id, email, password_hash, password_salt, created_at) VALUES (?, ?, ?, ?, ?)').run(userId, email, hash, salt, now());
-        audit('register', userId);
+    // One transaction (one commit/fsync) on every path. The new-address path does five writes and
+    // the existing-address path one; committed separately, a slow disk made new addresses take
+    // far longer (LAS-168). The branches are synchronous, so nothing interleaves.
+    db.exec('BEGIN');
+    try {
+      const existing = db.prepare('SELECT id, verified_at FROM users WHERE email = ?').get(email);
+      if (existing?.verified_at) {
+        mail(email, 'Someone tried to register with your email', 'An account with this email already exists. If this was you, sign in or reset your password. Otherwise you can ignore this message.');
+      } else {
+        let userId = existing?.id;
+        if (!userId) {
+          userId = randomToken(16);
+          db.prepare('INSERT INTO users (id, email, password_hash, password_salt, created_at) VALUES (?, ?, ?, ?, ?)').run(userId, email, hash, salt, now());
+          audit('register', userId);
+        }
+        const token = issueToken(userId, 'verify', VERIFY_TOKEN_MS);
+        mail(email, 'Verify your MPS Audio Studio email', `Open this link to verify your email: ${link}/#verify=${token}\nThe link works once and expires in 24 hours.`);
       }
-      const token = issueToken(userId, 'verify', VERIFY_TOKEN_MS);
-      mail(email, 'Verify your MPS Audio Studio email', `Open this link to verify your email: ${link}/#verify=${token}\nThe link works once and expires in 24 hours.`);
+      db.exec('COMMIT');
+    } catch (error) {
+      db.exec('ROLLBACK');
+      throw error;
     }
     // The same answer for new, unverified and existing addresses: no account enumeration.
     return { status: 202, body: { message: 'If this email can be registered, a verification link is on its way.' } };
