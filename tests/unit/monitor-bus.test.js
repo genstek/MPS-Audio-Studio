@@ -1,5 +1,5 @@
 import { afterEach, expect, test, vi } from 'vitest';
-import { MASTER_RAMP_SECONDS, clampMasterDb, createMonitorBus, masterGain } from '../../src/monitor-bus.js';
+import { MASTER_RAMP_SECONDS, clampMasterDb, createMonitorBus, levelWindowFor, masterGain } from '../../src/monitor-bus.js';
 
 // LAS-68: the monitor bus applies Master Level after the A/B paths and measures what reaches the
 // speakers. Web Audio nodes are stood in for; the gain law and the level readings are exact.
@@ -42,6 +42,22 @@ test('routing: master gain → speakers, → splitter → left/right analysers, 
   expect(master.gain.linearRampToValueAtTime).toHaveBeenCalledWith(0, 2 + MASTER_RAMP_SECONDS);
   bus.dispose();
   expect(made.every(node => node.disconnected)).toBe(true);
+});
+
+test('levelWindowFor keeps the RMS window 40–50 ms at every sample rate (LAS-167)', () => {
+  for (const rate of [44100, 48000, 88200, 96000, 192000]) {
+    const ms = (levelWindowFor(rate) / rate) * 1000;
+    expect(ms).toBeGreaterThan(40);
+    expect(ms).toBeLessThan(50);
+  }
+  expect(levelWindowFor(undefined)).toBe(2048);
+});
+
+test('the level analysers are sized from the context sample rate (LAS-167)', () => {
+  const made = stub();
+  createMonitorBus({ currentTime: 0, sampleRate: 96000, destination: {} }, 0);
+  expect(made[2].options.fftSize).toBe(4096);
+  expect(made[3].options.fftSize).toBe(4096);
 });
 
 test('levels: sample peak, RMS and clipping per channel, after the master gain', () => {

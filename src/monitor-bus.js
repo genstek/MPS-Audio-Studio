@@ -11,7 +11,14 @@
 export const MASTER_MIN_DB = -60; // the lowest finite step; below it the fader mutes (−∞ dB)
 export const MASTER_MAX_DB = 0; // unity; positive gain needs a headroom decision first (LAS-68)
 export const MASTER_RAMP_SECONDS = 0.03;
-export const LEVEL_WINDOW = 2048; // samples per level reading (about 46 ms at 44.1 kHz)
+export const LEVEL_WINDOW_SECONDS = 0.05; // target RMS integration time, independent of sample rate (LAS-167)
+export const LEVEL_WINDOW = 2048; // samples at 44.1/48 kHz; see levelWindowFor for other rates
+// Power-of-two analyser size nearest to LEVEL_WINDOW_SECONDS, so the RMS window is 43–46 ms from
+// 44.1 kHz to 192 kHz instead of shrinking to 21 ms at 96 kHz.
+export const levelWindowFor = sampleRate => {
+  const rate = Number.isFinite(sampleRate) && sampleRate > 0 ? sampleRate : 44100;
+  return Math.min(32768, Math.max(256, 2 ** Math.round(Math.log2(rate * LEVEL_WINDOW_SECONDS))));
+};
 
 export const masterGain = db => (db === -Infinity ? 0 : 10 ** (db / 20));
 
@@ -28,15 +35,16 @@ export function createMonitorBus(context, levelDb = 0) {
   // Two channels in speaker order: a mono output stage is copied to both sides.
   const master = new GainNode(context, { gain: masterGain(clampMasterDb(levelDb)), channelCount: 2, channelCountMode: 'explicit', channelInterpretation: 'speakers' });
   const splitter = new ChannelSplitterNode(context, { numberOfOutputs: 2 });
-  const left = new AnalyserNode(context, { fftSize: LEVEL_WINDOW, smoothingTimeConstant: 0 });
-  const right = new AnalyserNode(context, { fftSize: LEVEL_WINDOW, smoothingTimeConstant: 0 });
+  const windowSize = levelWindowFor(context.sampleRate);
+  const left = new AnalyserNode(context, { fftSize: windowSize, smoothingTimeConstant: 0 });
+  const right = new AnalyserNode(context, { fftSize: windowSize, smoothingTimeConstant: 0 });
   const spectrum = new AnalyserNode(context, { fftSize: 4096, smoothingTimeConstant: 0.75, minDecibels: -110, maxDecibels: 0 });
   master.connect(context.destination);
   master.connect(splitter);
   splitter.connect(left, 0);
   splitter.connect(right, 1);
   master.connect(spectrum);
-  const data = new Float32Array(LEVEL_WINDOW);
+  const data = new Float32Array(windowSize);
 
   function read(analyser) {
     analyser.getFloatTimeDomainData(data);
