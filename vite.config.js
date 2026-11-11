@@ -1,5 +1,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { readFileSync } from 'node:fs';
+
+// The build's version, shown in saved analysis reports (LAS-172).
+const appVersion = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')).version;
 
 // The account server (ADR-003). Tests point this at their own server with MPS_API_URL.
 const apiTarget = process.env.MPS_API_URL ?? 'http://127.0.0.1:8787';
@@ -21,4 +25,4 @@ function checkoutIdentity() {
 
 const proxy = { '/api': { target: apiTarget } };
 
-export default defineConfig({ plugins: [react(), checkoutIdentity()], server: { proxy }, preview: { proxy } });
+export default defineConfig({ define: { __APP_VERSION__: JSON.stringify(appVersion) }, plugins: [react(), checkoutIdentity()], server: { proxy }, preview: { proxy } });
