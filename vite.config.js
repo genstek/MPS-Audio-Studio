@@ -1,5 +1,27 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { readFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+
+// LAS-169: metadata is baked into the same web assets that the native apps package.
+const { version } = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
+function sourceCommit() {
+  try {
+    return execFileSync('git', ['rev-parse', 'HEAD'], {
+      encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+  } catch {
+    return process.env.GITHUB_SHA || 'unknown';
+  }
+}
+const buildInfo = {
+  version,
+  commit: sourceCommit(),
+  builtAt: new Date().toISOString(),
+  runNumber: process.env.GITHUB_RUN_NUMBER || null,
+  runAttempt: process.env.GITHUB_RUN_ATTEMPT || null,
+  runId: process.env.GITHUB_RUN_ID || null,
+};
 
 // The account server (ADR-003). Tests point this at their own server with MPS_API_URL.
 const apiTarget = process.env.MPS_API_URL ?? 'http://127.0.0.1:8787';
@@ -21,4 +43,9 @@ function checkoutIdentity() {
 
 const proxy = { '/api': { target: apiTarget } };
 
-export default defineConfig({ plugins: [react(), checkoutIdentity()], server: { proxy }, preview: { proxy } });
+export default defineConfig({
+  plugins: [react(), checkoutIdentity()],
+  define: { 'import.meta.env.VITE_MPS_BUILD_INFO': JSON.stringify(buildInfo) },
+  server: { proxy },
+  preview: { proxy },
+});
