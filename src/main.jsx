@@ -32,6 +32,24 @@ function storedMasterDb() {
 import './styles.css';
 import './processor-design.css';
 
+// LAS-169: immutable identity from the Vite build, including packaged WebAssets.
+const buildInfo = import.meta.env.VITE_MPS_BUILD_INFO ?? {
+  version: 'dev', commit: 'unknown', builtAt: 'unknown',
+  runNumber: null, runAttempt: null, runId: null,
+};
+const buildRevision = buildInfo.commit === 'unknown' ? 'SHA unknown' : buildInfo.commit.slice(0, 8);
+const buildOrdinal = buildInfo.runNumber
+  ? `CI #${buildInfo.runNumber}.${buildInfo.runAttempt || '1'}`
+  : buildInfo.builtAt === 'unknown' ? 'local dev' : `local ${buildInfo.builtAt.slice(5, 19).replace('T', ' ')}Z`;
+const buildLabel = `v${buildInfo.version} · ${buildRevision} · ${buildOrdinal}`;
+const buildDetails = [
+  `Version: ${buildInfo.version}`,
+  `Commit: ${buildInfo.commit}`,
+  `Built (UTC): ${buildInfo.builtAt}`,
+  `CI run: ${buildInfo.runId || 'local'}`,
+  `CI attempt: ${buildInfo.runAttempt || 'n/a'}`,
+].join('\\n');
+
 // LAS-58/75/76: Graphic/Parametric EQ and the processor layouts are part of the normal studio — no URL flag.
 
 function App() {
@@ -198,7 +216,7 @@ function App() {
   return (
     <main data-processor-skin={processorSkin}>
       <header className="masthead">
-        <div className="brand"><span className="brand-mark" aria-hidden="true">MPS</span><div><p className="eyebrow">LOCAL AUDIO WORKSPACE</p><h1>MPS Audio Studio</h1></div></div>
+        <div className="brand"><span className="brand-mark" aria-hidden="true">MPS</span><div><p className="eyebrow">LOCAL AUDIO WORKSPACE</p><div className="brand-title"><h1>MPS Audio Studio</h1><span className="build-identity" data-testid="build-identity" title={buildDetails} aria-label={buildDetails}>{buildLabel}</span></div></div></div>
         <div className="masthead-tools">
           {/* Project save state (LAS-69); a polite live region, not a second role=status. */}
           <span className={`version project-status${project.dirty ? ' is-dirty' : ''}${project.phase === 'error' ? ' is-error' : ''}`} aria-live="polite" title={project.status}>{project.status}</span><HelpTip id="project.status" className="inline" />
