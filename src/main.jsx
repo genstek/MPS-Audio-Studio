@@ -48,7 +48,7 @@ const buildDetails = [
   `Built (UTC): ${buildInfo.builtAt}`,
   `CI run: ${buildInfo.runId || 'local'}`,
   `CI attempt: ${buildInfo.runAttempt || 'n/a'}`,
-].join('\\n');
+].join('\n');
 
 // LAS-58/75/76: Graphic/Parametric EQ and the processor layouts are part of the normal studio — no URL flag.
 
