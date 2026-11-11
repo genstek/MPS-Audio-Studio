@@ -22,8 +22,13 @@ button[aria-pressed='true'] { border-color: #d7af6c; color: #e8c58d; }
 .masthead, .brand, .transport, .panel-heading, .strip-title, footer, .track-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .masthead { min-width: 0; }
 .brand { justify-content: flex-start; }
-.brand-title { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; }
-.build-identity { max-width: 100%; color: #d9ba86; font-size: 11px; letter-spacing: 0; font-variant-numeric: tabular-nums; white-space: normal; overflow-wrap: anywhere; }
+/* LAS-169: keep build identity in the same header row on desktop. A second
+   line increases the min-content height and breaks LAS-51 at 761x450.
+   The complete identity remains available via the label's title/aria-label. */
+.brand > div { min-width: 0; }
+.brand-title { display: flex; align-items: baseline; flex-wrap: nowrap; min-width: 0; gap: 4px 12px; }
+.brand-title h1 { flex: 0 0 auto; white-space: nowrap; }
+.build-identity { flex: 0 1 auto; min-width: 0; max-width: 100%; color: #d9ba86; font-size: 11px; letter-spacing: 0; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .brand-mark { border: 1px solid #d7af6c; color: #e8c58d; padding: clamp(9px, 1.6dvh, 14px) 10px; font-size: 16px; font-weight: 750; letter-spacing: 2px; border-radius: 5px; }
 .eyebrow, .version, .badge, .track-footer, footer { font-size: 10px; letter-spacing: 1.5px; color: #a7b2bc; }
 .eyebrow { margin-bottom: clamp(3px, .8dvh, 7px); }
@@ -174,6 +179,8 @@ footer { letter-spacing: .3px; font-size: 10px; line-height: 1.6; }
   .project-status { max-width: 14ch; }
   main { height: auto; min-height: 100dvh; grid-template-rows: auto; padding: 20px 16px; }
   .masthead, .transport { flex-wrap: wrap; }
+  .brand-title { flex-wrap: wrap; }
+  .build-identity { white-space: normal; overflow: visible; text-overflow: clip; }
   .workspace { grid-template-columns: 1fr; }
   /* The page scrolls here, so Tracks and strips keep their full (default) arrangement. */
   .track-space, .strips { container-type: normal; }
