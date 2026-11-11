@@ -46,6 +46,22 @@ MAC_SIGN_IDENTITY='Developer ID Application: YOUR NAME (TEAM_ID)' \
 
 This creates an architecture-labelled DMG and checksum under `artifacts/apple/`, submits it for notarization and staples the ticket. Network access is needed for notarization. Mount the tested DMG and drag the app to Applications. Never tell users to disable Gatekeeper. Until signing and clean-machine testing succeed, the output is a development build only. Moving the app to Trash uninstalls the app; user exports remain where the user saved them.
 
+## App icon — LAS-171 (BLOCKED on approved source art)
+
+`apple/Resources/Mac` and `apple/Resources/iOS` hold `Assets.xcassets/AppIcon.appiconset`, wired in `project.yml` via `ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon`. **The approved LoVerse MPS artwork (`LoVerse_MPS_AppIcon_Assets.zip`) was not available, so the sets are empty scaffolding and builds still show the default icon.** No substitute artwork was created.
+
+When the owner supplies the ZIP, on a Mac:
+
+```sh
+bash scripts/apple/make-app-icons.sh path/to/mac-1024-rgba.png path/to/ios-1024-opaque.png
+bash scripts/apple/prepare.sh && bash scripts/apple/build-macos.sh
+bash scripts/apple/verify-app-icons.sh <path to built MPSMac.app>
+```
+
+The script checks sizes and alpha (Mac RGBA, iOS opaque), writes 16–512 pt @1x/@2x renditions and the 1024 iOS icon. Inspect the 16/32/64/128 px renditions before committing. Bundle IDs, deployment targets, architectures and signing are unchanged.
+
+Install/update on an Intel Ventura iMac: build or download the new DMG, quit MPS Audio Studio, mount the DMG, drag the app to Applications replacing the old one, relaunch. A rebuilt app is required; the build from `856d91e` will not change by itself. If the Dock/Finder shows a stale icon: `killall Dock; killall Finder`, or if still stale `sudo rm -rf /Library/Caches/com.apple.iconservices.store; killall Dock Finder` and relaunch. The Dock's running dot is the standard macOS indicator; no custom one is implemented.
+
 ## Validation and remaining release work
 
 See [QA checklist](QA.md) and [architecture decision](../docs/ADR-004-apple-packaging.md). GitHub Actions is configured to compile the Mac app and iOS simulator app, run asset-server XCTest checks and upload development artifacts. A configured workflow is not evidence of a successful run. Native build/launch, file import/export, audio listening, physical iOS device testing, lifecycle handling, icons/privacy/submission metadata, distribution provisioning and notarization are **NOT_RUN / pending**.
