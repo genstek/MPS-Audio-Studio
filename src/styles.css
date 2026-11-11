@@ -173,6 +173,19 @@ button.danger { border-color: #c17474; background: #4d2428; }
 .error { margin: 0 16px var(--space); padding: clamp(4px, 1dvh, 14px) 12px; background: #4d2428; border: 1px solid #c17474; border-radius: 5px; font-size: 13px; }
 footer { letter-spacing: .3px; font-size: 10px; line-height: 1.6; }
 .connection { color: #adc6bd; white-space: nowrap; }
+/* LAS-169: compact the desktop masthead near the 761px layout boundary.
+   Keep all header actions and the (abbreviated) build identity visible without
+   adding a row or widening the document. The mobile layout below 761px wraps. */
+@media (min-width: 761px) and (max-width: 1000px) {
+  .masthead { gap: 6px; }
+  .brand { gap: 6px; min-width: 0; }
+  .brand-mark { font-size: 13px; letter-spacing: 1px; padding: 5px 4px; }
+  .brand-title { gap: 2px 4px; }
+  .brand-title h1 { font-size: 18px; }
+  .build-identity { min-width: 40px; font-size: 9px; }
+  .masthead-tools { gap: 4px; }
+  .masthead-tools button { padding: 4px 7px; font-size: 11px; }
+}
 @media (max-width: 760px) {
   /* LAS-69/70: project status, help icons and Help wrap instead of widening the page. */
   .masthead-tools { flex-wrap: wrap; justify-content: flex-end; row-gap: 6px; }
