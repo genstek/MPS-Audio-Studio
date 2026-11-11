@@ -22,6 +22,8 @@ button[aria-pressed='true'] { border-color: #d7af6c; color: #e8c58d; }
 .masthead, .brand, .transport, .panel-heading, .strip-title, footer, .track-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .masthead { min-width: 0; }
 .brand { justify-content: flex-start; }
+.brand-title { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; }
+.build-identity { max-width: 100%; color: #d9ba86; font-size: 11px; letter-spacing: 0; font-variant-numeric: tabular-nums; white-space: normal; overflow-wrap: anywhere; }
 .brand-mark { border: 1px solid #d7af6c; color: #e8c58d; padding: clamp(9px, 1.6dvh, 14px) 10px; font-size: 16px; font-weight: 750; letter-spacing: 2px; border-radius: 5px; }
 .eyebrow, .version, .badge, .track-footer, footer { font-size: 10px; letter-spacing: 1.5px; color: #a7b2bc; }
 .eyebrow { margin-bottom: clamp(3px, .8dvh, 7px); }
