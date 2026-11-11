@@ -39,13 +39,20 @@
 .graphic-heading { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; font-size: 10px; letter-spacing: 1.2px; color: var(--panel-muted); padding-bottom: 14px; }
 .graphic-bank { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 6px; }
 .graphic-scale { height: 156px; margin-top: 24px; display: flex; flex-direction: column; justify-content: space-between; color: var(--panel-muted); font-size: 10px; text-align: right; }
-.graphic-faders { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 3px; background: repeating-linear-gradient(to bottom, transparent 0 38px, #9ba7ac30 38px 39px); background-size: 100% 156px; background-position: 0 24px; background-repeat: no-repeat; }
+.graphic-faders { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 3px; }
 .graphic-band { display: grid; justify-items: center; gap: 8px; min-width: 0; }
 .graphic-band-label { font-size: 10px; font-weight: 650; color: var(--panel-ink); }
 .graphic-fader { position: relative; width: 24px; height: 156px; cursor: ns-resize; touch-action: none; user-select: none; -webkit-user-select: none; }
 .graphic-fader:focus-visible { outline: 3px solid #80d1e0; outline-offset: 2px; }
-.graphic-fader-track { position: absolute; left: 10px; top: 0; bottom: 0; width: 4px; border-radius: 3px; background: #080b0e; box-shadow: 1px 0 #737a7e; }
-.graphic-fader-thumb { position: absolute; left: 0; width: 24px; height: 12px; box-sizing: border-box; top: calc(var(--fader-fraction) * (100% - 12px)); border: 1px solid #171e23; border-radius: 2px; background: linear-gradient(to bottom, #ddddcd, #b9bbad 43%, #383b39 44% 55%, #b9bbad 56%, #e8e5d6); box-shadow: 0 2px 4px #0009; }
+/* LAS-170: appearance only. Geometry (24x156 box, 12px thumb) is unchanged so pointer mapping is identical.
+   Ticks sit at thumb-centre positions: +12, +6, 0, -6, -12 dB. */
+.graphic-fader::before { content: ''; position: absolute; left: 0; right: 0; top: 6px; height: 145px; pointer-events: none; background: repeating-linear-gradient(to bottom, #9ba7ac80 0 1px, transparent 1px 36px); -webkit-mask: linear-gradient(to right, #000 0 5px, transparent 5px 19px, #000 19px); mask: linear-gradient(to right, #000 0 5px, transparent 5px 19px, #000 19px); }
+.graphic-fader::after { content: ''; position: absolute; left: 0; right: 0; top: 78px; height: 1px; pointer-events: none; background: var(--panel-accent, #80d1e0); opacity: .75; -webkit-mask: linear-gradient(to right, #000 0 7px, transparent 7px 17px, #000 17px); mask: linear-gradient(to right, #000 0 7px, transparent 7px 17px, #000 17px); }
+.graphic-fader:hover .graphic-fader-track { background: #05080a; box-shadow: 1px 0 #8a9296; }
+.graphic-fader:hover .graphic-fader-thumb, .graphic-fader:focus-visible .graphic-fader-thumb { filter: brightness(1.08); }
+.graphic-fader-track { position: absolute; left: 10px; top: 0; bottom: 0; width: 4px; border-radius: 3px; background: linear-gradient(to right, #020406, #0b0f12 60%, #11171b); box-shadow: inset 0 1px 3px #000c, 1px 0 #737a7e; }
+.graphic-fader-thumb { position: absolute; left: 3px; width: 18px; height: 12px; box-sizing: border-box; top: calc(var(--fader-fraction) * (100% - 12px)); border: 1px solid #12181c; border-radius: 2px; background: linear-gradient(to bottom, #f0f1ea, #c5c8c0 45%, #8c9189 46% 54%, #c5c8c0 55%, #e4e6df); box-shadow: inset 0 1px 0 #fff6, 0 2px 3px #000a; }
+.graphic-fader-thumb::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; margin-top: -.5px; background: #1b2226; }
 .graphic-band output { font-size: 10px; color: var(--panel-accent); font-variant-numeric: tabular-nums; }
 .graphic-footer { margin-top: 14px; display: grid; gap: 10px; }
 .graphic-footer > button { justify-self: end; }

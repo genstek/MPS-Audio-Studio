@@ -108,6 +108,23 @@ test('LAS-160: dragging a graphic fader maps pointer to gain, and thumb, value a
   }
 });
 
+test('LAS-170: fader restyle keeps geometry, 0 dB reference at thumb centre, and fits 1280x720', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  const eq = await openPreview(page);
+  await eq.getByRole('button', { name: 'Graphic', exact: true }).click();
+  await eq.getByRole('button', { name: 'Set up 10 graphic bands' }).click();
+  const fader = eq.getByRole('slider', { name: '1000 Hz gain', exact: true });
+  await fader.scrollIntoViewIfNeeded();
+  const box = await fader.boundingBox();
+  expect([Math.round(box.width), Math.round(box.height)]).toEqual([24, 156]);
+  // At 0 dB the thumb centre sits on the 0 dB reference line (::after at top: 78px).
+  const thumb = await fader.locator('.graphic-fader-thumb').boundingBox();
+  expect(thumb.y + thumb.height / 2 - (box.y + 78)).toBeCloseTo(0, 0);
+  expect(await eq.locator('.graphic-eq').evaluate(el => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
+  await expect(eq.locator('.graphic-fader meter, .graphic-fader progress')).toHaveCount(0);
+  await expect(fader).toHaveAttribute('aria-orientation', 'vertical');
+});
+
 test('LAS-58: Graphic EQ and layout chooser are reachable with no query flag; parametric editing remains', async ({ page }) => {
   const eq = await openPreview(page);
   await expect(eq.getByRole('group', { name: 'Processor layout' })).toBeVisible();
