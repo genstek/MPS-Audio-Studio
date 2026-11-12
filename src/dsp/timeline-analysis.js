@@ -258,5 +258,10 @@ function findMarkers(result) {
     .sort((a, b) => b.magnitude - a.magnitude)
     .slice(0, THRESHOLDS.maxMarkers)
     .sort((a, b) => a.start - b.start || a.kind.localeCompare(b.kind))
-    .map(({ index: _i, lastIndex: _l, ...m }, n) => ({ id: `m${n + 1}`, ...m, start: round(m.start, 3), end: round(m.end, 3), magnitude: round(m.magnitude) }));
+    .map((marker, n) => {
+      const m = { ...marker };
+      delete m.index;
+      delete m.lastIndex;
+      return { id: `m${n + 1}`, ...m, start: round(m.start, 3), end: round(m.end, 3), magnitude: round(m.magnitude) };
+    });
 }
