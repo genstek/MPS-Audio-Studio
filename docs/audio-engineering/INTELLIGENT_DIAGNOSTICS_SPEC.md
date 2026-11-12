@@ -9,7 +9,7 @@ Status: **proposal**, no claim of implemented functionality. Based on audited ma
 - `src/ai/eq-proposal.js` and `src/ai/proposal-session.js`: master EQ-only validation, stale-result protection, temporary Preview, explicit Apply as one Undo step. Provider names are adapter contracts, not proof of live model connectivity.
 - `src/stem-session.js`: synchronized shared start, per-stem chain, gain, equal-power pan, mute/solo. Does not imply time-resolved automation or multichannel Atmos render.
 - `docs/MASTERING_DSP_EXPANSION.md` lists **planned** dynamic EQ, de-esser, frequency-selective width, timeline; do not present these as shipped.
-- Existing related Jira: LAS-159 per-stem spatial staging; LAS-153/LAS-118 AI measurement/advice; LAS-171 report export; avoid duplicating these features.
+- Existing related Jira: LAS-159 per-stem spatial staging; LAS-153/LAS-118 AI measurement/advice; LAS-172 report export; avoid duplicating these features.
 
 ## 2. Product-level contract
 Import a song or stems → **measure** reliably in time → **explain** observed change with competing hypotheses → **suggest** supported processor adjustment only where appropriate → **Preview + loudness match** → **QC** → **explicit Apply** → **Undo/Redo and save**.
