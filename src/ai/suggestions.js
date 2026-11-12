@@ -27,6 +27,30 @@ export function bandExcess(bands, centreHz) {
   return { levelDb: trio[1].levelDb, neighboursDb, excessDb: trio[1].levelDb - neighboursDb };
 }
 
+// Stopgap against stacking (LAS-120): the measurement is of the ORIGINAL file, not of the processed
+// chain, so after a cut is applied the same excess is still measured. A suggestion is therefore not
+// offered while an enabled cut (bell or shelf, gain < 0) already sits within half an octave of the
+// rule's centre in any EQ channel. Returns that band, or null.
+const NEAR_OCTAVES = 0.5;
+const CUT_TYPES = new Set(['bell', 'low-shelf', 'high-shelf']);
+export function existingCutNear(chain, centreHz) {
+  for (const channel of ['left', 'right']) {
+    const band = (chain?.eq?.[channel] ?? []).find(b => b.enabled && CUT_TYPES.has(b.type) && b.gain < 0
+      && Math.abs(Math.log2(b.frequency / centreHz)) <= NEAR_OCTAVES);
+    if (band) return band;
+  }
+  return null;
+}
+
+// Level-matched A/B for a suggestion (LAS-120). differenceDb = B − A in LUFS. Nothing is ever boosted:
+// the louder side is turned down to the quieter one, so B plays lower when it is louder and A plays
+// lower when B is quieter (the usual case, since every suggestion is a cut). Unknown → no trim.
+export function comparisonTrimDb(side, differenceDb) {
+  if (typeof differenceDb !== 'number' || !Number.isFinite(differenceDb)) return 0;
+  const louder = side === 'B' ? differenceDb : -differenceDb;
+  return louder > 0 ? -louder : 0;
+}
+
 // Linked edits in 'link' mode, otherwise one edit per channel.
 const editsFor = (mode, band) => (mode === 'link'
   ? [{ channel: 'linked', index: null, enabled: true, type: 'bell', ...band }]
@@ -39,6 +63,9 @@ const disabled = (base, id, title, unsupportedReason) => ({ ...base, id, title, 
 export function buildSuggestions(report, { chain, sampleRate, projectId = null, mediaId = null }) {
   const bands = report?.spectrum?.bands ?? [];
   const base = { source: SUGGESTION_SOURCE, algorithm: SUGGESTION_ALGORITHM, limitations: LIMITATION };
+  if (chain?.eq?.enabled === false) {
+    return [disabled(base, 'eq-bypassed', 'Tonal balance', 'The EQ is bypassed, so an EQ suggestion would not be audible. Switch the EQ on, then measure again.')];
+  }
   if (bands.length < 3) {
     return [disabled(base, 'no-spectrum', 'Tonal balance', 'The file is too short or silent to measure octave bands (about 0.2 s of audio is needed).')];
   }
@@ -57,6 +84,13 @@ export function buildSuggestions(report, { chain, sampleRate, projectId = null, 
       ],
       reason, risk: rule.risk, filters: [{ type: 'bell', frequency: band.frequency, gain: band.gain, q: band.q }], proposal: null,
     };
+    const cut = existingCutNear(chain, rule.centreHz);
+    if (cut) {
+      item.supported = false;
+      item.unsupportedReason = `Your EQ already cuts near ${rule.centreHz} Hz (${fmt(cut.gain)} dB at ${cut.frequency} Hz). This measurement is of the original file, not of your processed settings, so another cut is not suggested.`;
+      items.push(item);
+      continue;
+    }
     try {
       item.proposal = createEqProposal(
         { schema: EQ_PROPOSAL_SCHEMA, version: EQ_PROPOSAL_VERSION, scope: 'master', edits: editsFor(chain.eq.mode, band), reason, limitations: LIMITATION },
