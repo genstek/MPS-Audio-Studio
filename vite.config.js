@@ -45,7 +45,11 @@ const proxy = { '/api': { target: apiTarget } };
 
 export default defineConfig({
   plugins: [react(), checkoutIdentity()],
-  define: { 'import.meta.env.VITE_MPS_BUILD_INFO': JSON.stringify(buildInfo) },
+  define: {
+    'import.meta.env.VITE_MPS_BUILD_INFO': JSON.stringify(buildInfo),
+    // LAS-172: the build's version, shown in saved analysis reports.
+    __APP_VERSION__: JSON.stringify(version),
+  },
   server: { proxy },
   preview: { proxy },
 });
