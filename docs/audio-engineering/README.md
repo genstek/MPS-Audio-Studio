@@ -5,6 +5,12 @@ Owner: MPS Audio Studio. First case study approved by listener on 2026-11-07.
 
 This directory captures practical lessons from track/stem mixing, mastering, export and listening sessions. It is meant to inform implementation, manual reviews and DSP regression testing. Never copy a processing chain blindly to another recording.
 
+
+## November 2026 — historical evidence and intelligent diagnostics (design only)
+- [Mastering history audit and version provenance](MASTERING_HISTORY_AUDIT_2026-11-12.md) — accepted/rejected versions and important limitations, without user audio or personal monitoring data.
+- [Intelligent time-indexed analysis and recommendation architecture](INTELLIGENT_DIAGNOSTICS_SPEC.md) — extend existing analyzer and safe Preview/Apply, distinguish intentional staging from actual faults.
+- [QA test matrix](INTELLIGENT_DIAGNOSTICS_QA.md) — synthetic fixtures, phase/vocal-tail/bridge regression, export and device gates (NOT_RUN).
+
 ## Read first
 - [Pobud Eshche V1–V5 case study](POBUD_ESHCHE_V5_CASE_STUDY.md) — verified-by-user listening observations, processing hypotheses and cautions.
 - [Sample rate and resampling](SAMPLE_RATE_RESAMPLING_SPEC.md) — exact product requirements and QA coverage.
