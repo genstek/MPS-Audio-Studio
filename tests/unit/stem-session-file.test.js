@@ -13,7 +13,7 @@ test('a stem session round-trips with every strip setting and chain', () => {
   const text = serializeStemSession(stems, defaultChain());
   const { master, stems: saved } = parseStemSession(text);
   expect(master).toEqual(defaultChain());
-  expect(saved).toEqual(stems.map(({ name, sha256, offset, gainDb, pan, mute, solo, chainLabel, params }) => ({ name, sha256, offset, gainDb, pan, mute, solo, chainLabel, chain: params })));
+  expect(saved).toEqual(stems.map(({ name, sha256, offset, gainDb, pan, mute, solo, chainLabel, params }) => ({ name, sha256, offset, gainDb, pan, mute, solo, chainLabel, chain: params, width: { enabled: false, width: 1, crossoverHz: 150 } }))); // files without a width load as off
   expect(text).not.toMatch(/RIFF|data:audio/); // settings only
 });
 

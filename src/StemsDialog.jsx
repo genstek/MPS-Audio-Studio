@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ListenSwitch } from './ListeningControls.jsx';
 import { parseChain } from './dsp/chain-params.js';
 import { bypassChain } from './dsp/stem-render.js';
+import { stereoWarnings } from './dsp/stem-width.js';
 import { parsePresetFile } from './presets.js';
 import { startRender } from './render-client.js';
 import { MAX_AUDIO_FILE_LABEL } from './file-limits.js';
@@ -167,6 +168,7 @@ export function StemsDialog({ engine, chain, listening, onListen, onStemsPlay, o
       session.setOffset(loadedId, entry.offset);
       session.setGain(loadedId, entry.gainDb);
       session.setPan(loadedId, entry.pan);
+      session.setWidth(loadedId, entry.width);
       session.setMute(loadedId, entry.mute);
       session.setSolo(loadedId, entry.solo);
       await session.setChain(loadedId, entry.chain, entry.chainLabel);
@@ -180,7 +182,7 @@ export function StemsDialog({ engine, chain, listening, onListen, onStemsPlay, o
     renderJob.current?.cancel();
     setError('');
     setRender({ running: true, stage: 'Starting…' });
-    const list = engine.current.stemSession().stems().map(s => ({ file: s.file, name: s.name, offsetSeconds: s.offset, gainDb: s.gainDb, pan: s.pan, mute: s.mute, solo: s.solo, params: s.params }));
+    const list = engine.current.stemSession().stems().map(s => ({ file: s.file, name: s.name, offsetSeconds: s.offset, gainDb: s.gainDb, pan: s.pan, width: s.width, mute: s.mute, solo: s.solo, params: s.params }));
     const job = startRender(null, { mode: 'stems', stems: list, params: chain.params, bitDepth }, ({ stage }) => setRender(r => (r?.running ? { running: true, stage } : r)));
     renderJob.current = job;
     job.result.then(({ report, bytes }) => {
@@ -239,6 +241,13 @@ export function StemsDialog({ engine, chain, listening, onListen, onStemsPlay, o
                     <span className="fine-print">{stem.fileSampleRate.toLocaleString('en-US')} Hz · {stem.fileChannels === 1 ? 'mono' : stem.fileChannels === 2 ? 'stereo' : `${stem.fileChannels} ch`} · {stem.duration.toFixed(2)} s</span>
                     <label>Gain (dB)<input type="range" min="-24" max="12" step="0.5" value={stem.gainDb} aria-valuetext={`${stem.gainDb} dB`} onChange={e => act('setGain', stem.id, Number(e.target.value))} /><span className="fine-print" aria-hidden="true">{stem.gainDb > 0 ? '+' : ''}{String(stem.gainDb).replace('-', '−')} dB</span></label>
                     <label>Pan<input type="range" min="-1" max="1" step="0.05" value={stem.pan} aria-valuetext={stem.pan === 0 ? 'centre' : `${Math.round(Math.abs(stem.pan) * 100)} % ${stem.pan < 0 ? 'left' : 'right'}`} onChange={e => act('setPan', stem.id, Number(e.target.value))} /></label>
+                    <span className="stem-width" role="group" aria-label={`Stereo width of ${stem.name}`}>
+                      <button type="button" aria-pressed={stem.width.enabled} disabled={!stem.widthApplies} onClick={() => act('setWidth', stem.id, { enabled: !stem.width.enabled })} aria-label={`Width on for ${stem.name}`}>Width {stem.width.enabled ? 'on' : 'off'}</button>
+                      <label>Width (%)<input type="range" min="0" max="200" step="5" value={Math.round(stem.width.width * 100)} disabled={!stem.widthApplies || !stem.width.enabled} aria-valuetext={`${Math.round(stem.width.width * 100)} %${stem.width.width === 1 ? ' (unchanged)' : stem.width.width === 0 ? ' (mono)' : ''}`} onChange={e => act('setWidth', stem.id, { width: Number(e.target.value) / 100 })} /></label>
+                      <label>Mono below (Hz)<input type="number" min="60" max="400" step="10" value={stem.width.crossoverHz} disabled={!stem.widthApplies || !stem.width.enabled} onChange={e => { const hz = Number(e.target.value); if (hz >= 60 && hz <= 400) act('setWidth', stem.id, { crossoverHz: hz }); }} /></label>
+                      <button type="button" disabled={!stem.widthApplies} onClick={() => act('setWidth', stem.id, { enabled: false, width: 1, crossoverHz: 150 })} aria-label={`Reset width of ${stem.name}`}>Reset width</button>
+                      {!stem.widthApplies && <span className="fine-print">Mono stem: no side signal, so width has no effect.</span>}
+                    </span>
                     <label>Offset (ms)<input type="number" min="0" max="600000" step="1" value={Math.round(stem.offset * 1000 * 1000) / 1000} onChange={e => act('setOffset', stem.id, Math.max(0, Number(e.target.value) / 1000))} /></label>
                     <span className="stem-toggles">
                       <button type="button" aria-pressed={stem.mute} onClick={() => act('setMute', stem.id, !stem.mute)}>Mute</button>
@@ -271,6 +280,11 @@ export function StemsDialog({ engine, chain, listening, onListen, onStemsPlay, o
                 {render?.running && <button type="button" onClick={() => { renderJob.current?.cancel(); setRender(null); }}>Cancel render</button>}
               </div>
               <p className="fine-print" aria-live="polite">{render?.running ? render.stage : render?.report ? `Rendered ${render.report.files.length} files${render.report.silent.length ? `; muted or not soloed, so not rendered: ${render.report.silent.join(', ')}` : ''}.` : 'Renders from the files themselves at their own sample rate: every audible stem through its chain, gain, pan and offset, summed through the master chain. Samples beyond full scale are clipped and counted, never normalised.'}</p>
+              {render?.report && (() => {
+                // Warnings quote values measured on the rendered stem files (not estimates).
+                const warnings = render.report.files.flatMap(f => (f.stereo ? stereoWarnings(f.name, f.stereo, f.stereo.low, f.stereo.crossoverHz) : []));
+                return warnings.length ? <ul className="fine-print" aria-label="Stereo measurements to check">{warnings.map(w => <li key={w}>{w}</li>)}</ul> : null;
+              })()}
               {render?.report && (
                 <div className="table-scroll" role="region" aria-label="Rendered files" tabIndex={0}>
                 <table className="analysis-table stems-render">

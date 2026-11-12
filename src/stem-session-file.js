@@ -1,4 +1,5 @@
 import { ChainParamsError, validateChain } from './dsp/chain-params.js';
+import { StemWidthError, validateStemWidth } from './dsp/stem-width.js';
 
 // Stem session files (LAS-35): the settings of a stem session for recall, versioned JSON
 // (schema mps-stem-session v1). Stems are identified by the SHA-256 of their files, so settings are
@@ -15,7 +16,7 @@ export function serializeStemSession(stems, master) {
     schema: STEM_SESSION_SCHEMA,
     version: STEM_SESSION_VERSION,
     master: validateChain(master),
-    stems: stems.map(s => ({ name: s.name, sha256: s.sha256, offset: s.offset, gainDb: s.gainDb, pan: s.pan, mute: s.mute, solo: s.solo, chainLabel: s.chainLabel, chain: validateChain(s.params) })),
+    stems: stems.map(s => ({ name: s.name, sha256: s.sha256, offset: s.offset, gainDb: s.gainDb, pan: s.pan, mute: s.mute, solo: s.solo, chainLabel: s.chainLabel, chain: validateChain(s.params), width: validateStemWidth(s.width) })),
   }, null, 2)}\n`;
 }
 
@@ -31,10 +32,11 @@ export function parseStemSession(text) {
       if (typeof s.sha256 !== 'string' || !/^[0-9a-f]{64}$/.test(s.sha256)) throw new StemSessionFileError(`Stem ${i + 1} has no valid checksum.`);
       for (const key of STRIP_FIELDS) if (typeof s[key] !== 'number' || !Number.isFinite(s[key])) throw new StemSessionFileError(`Stem ${i + 1}: ${key} must be a number.`);
       if (s.offset < 0 || s.offset > 600 || s.gainDb < -24 || s.gainDb > 12 || s.pan < -1 || s.pan > 1) throw new StemSessionFileError(`Stem ${i + 1} has an offset, gain or pan outside the supported range.`);
-      return { name: String(s.name ?? `Stem ${i + 1}`), sha256: s.sha256, offset: s.offset, gainDb: s.gainDb, pan: s.pan, mute: Boolean(s.mute), solo: Boolean(s.solo), chainLabel: String(s.chainLabel ?? 'from session file'), chain: validateChain(s.chain) };
+      return { name: String(s.name ?? `Stem ${i + 1}`), sha256: s.sha256, offset: s.offset, gainDb: s.gainDb, pan: s.pan, mute: Boolean(s.mute), solo: Boolean(s.solo), chainLabel: String(s.chainLabel ?? 'from session file'), chain: validateChain(s.chain), width: validateStemWidth(s.width) };
     });
     return { master, stems };
   } catch (failure) {
+    if (failure instanceof StemWidthError) throw new StemSessionFileError(`The session's stem width settings are invalid: ${failure.message}`);
     if (failure instanceof ChainParamsError) throw new StemSessionFileError(`The session's settings are invalid: ${failure.message}`);
     throw failure;
   }

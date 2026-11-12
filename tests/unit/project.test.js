@@ -12,7 +12,7 @@ function sample() {
     media: {
       policy: 'manifest',
       track: { name: 'mix.wav', size: 1234, sha256: SHA, duration: 12.5, sampleRate: 48000, channels: 2 },
-      stems: [{ name: 'bass.wav', size: 99, sha256: 'b'.repeat(64), duration: 3, sampleRate: 44100, channels: 1, offset: 0.25, gainDb: -3, pan: -0.5, mute: false, solo: true, chainLabel: 'copy of master settings', chain }],
+      stems: [{ name: 'bass.wav', size: 99, sha256: 'b'.repeat(64), duration: 3, sampleRate: 44100, channels: 1, offset: 0.25, gainDb: -3, pan: -0.5, mute: false, solo: true, chainLabel: 'copy of master settings', chain, width: { enabled: true, width: 1.4, crossoverHz: 180 } }],
     },
     chain,
     player: { listening: 'original' },

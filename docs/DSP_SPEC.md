@@ -12,6 +12,8 @@ Threshold -60..0 dBFS, ratio 1:1..20:1, attack 0.1..200 ms, release 10..2000 ms,
 ## Stereo width
 M=(L+R)/2, S=(L-R)/2. Width adjusts S with bounded gain; low frequencies remain near mono by configurable crossover. Check phase/correlation and mono fold-down. Width must not silently change perceived loudness; offer compensation.
 
+Per-stem implementation (LAS-128, first slice): see `docs/audio-engineering/PER_STEM_STEREO_WIDTH.md` and `src/dsp/stem-width.js`. Opt-in per stem, after the stem's chain and gain and before its pan; not a master widener.
+
 ## Reverb
 Safe wet/dry routing with no unintended feedback; predelay, decay, mix; normalize impulse response if convolution used. Defer heavy IR loading to worker; latency accounted for.
 

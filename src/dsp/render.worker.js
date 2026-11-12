@@ -136,14 +136,14 @@ async function renderStems(list, master, bitDepth) {
   }
   const mix = renderStemMix({ stems: decoded, master, onProgress: (stage, fraction) => self.postMessage({ type: 'progress', stage, fraction: 0.05 + 0.8 * fraction }) });
   self.postMessage({ type: 'progress', stage: 'Writing the WAV files…', fraction: 0.9 });
-  const describe = (name, channels) => {
+  const describe = (name, channels, stereo = null) => {
     const { bytes, clippedSamples } = encodeWav(channels, mix.sampleRate, { bitDepth });
     return {
-      name, bytes, clippedSamples, frames: mix.frames, duration: mix.frames / mix.sampleRate, sampleRate: mix.sampleRate, channels: channels.length, bitDepth,
+      name, bytes, stereo, clippedSamples, frames: mix.frames, duration: mix.frames / mix.sampleRate, sampleRate: mix.sampleRate, channels: channels.length, bitDepth,
       samplePeakDbfs: db(Math.max(...channels.map(peakOf))), truePeakDbtp: db(Math.max(...channels.map(channel => truePeak(channel)))),
       integratedLufs: measureLoudness(channels, mix.sampleRate).integratedLufs,
     };
   };
-  const files = [describe('stem-master.wav', mix.combined), ...mix.strips.map(strip => describe(`${strip.name.replace(/\.wav$/i, '')}-stem.wav`, strip.channels))];
+  const files = [describe('stem-master.wav', mix.combined), ...mix.strips.map(strip => describe(`${strip.name.replace(/\.wav$/i, '')}-stem.wav`, strip.channels, strip.stereo))];
   self.postMessage({ type: 'done', report: { files: files.map(({ bytes, ...rest }) => ({ ...rest, bytes: bytes.byteLength })), silent: mix.silent, latencyCompensatedSamples: mix.latency }, bytes: files.map(f => f.bytes) }, files.map(f => f.bytes));
 }

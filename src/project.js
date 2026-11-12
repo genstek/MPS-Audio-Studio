@@ -1,4 +1,5 @@
 import { ChainParamsError, validateChain } from './dsp/chain-params.js';
+import { StemWidthError, validateStemWidth } from './dsp/stem-width.js';
 
 // Project files (LAS-60 / LAS-69): versioned JSON, schema mps-project v1.
 //
@@ -40,7 +41,7 @@ function stem(entry, i) {
   const base = media(entry, `Stem ${i + 1}`);
   for (const key of ['offset', 'gainDb', 'pan']) if (!isNumber(entry[key])) throw new ProjectFileError(`Stem ${i + 1}: ${key} must be a number.`);
   if (entry.offset < 0 || entry.offset > 600 || entry.gainDb < -24 || entry.gainDb > 12 || entry.pan < -1 || entry.pan > 1) throw new ProjectFileError(`Stem ${i + 1} has an offset, gain or pan outside the supported range.`);
-  return { ...base, offset: entry.offset, gainDb: entry.gainDb, pan: entry.pan, mute: Boolean(entry.mute), solo: Boolean(entry.solo), chainLabel: String(entry.chainLabel ?? 'from project'), chain: validateChain(entry.chain) };
+  return { ...base, offset: entry.offset, gainDb: entry.gainDb, pan: entry.pan, mute: Boolean(entry.mute), solo: Boolean(entry.solo), chainLabel: String(entry.chainLabel ?? 'from project'), chain: validateChain(entry.chain), width: validateStemWidth(entry.width) };
 }
 
 function windows(layout) {
@@ -79,6 +80,7 @@ export function validateProject(input) {
       layout: { windows: windows(input.layout?.windows) },
     };
   } catch (failure) {
+    if (failure instanceof StemWidthError) throw new ProjectFileError(`The project's stem width settings are invalid: ${failure.message}`);
     if (failure instanceof ChainParamsError) throw new ProjectFileError(`The project's settings are invalid: ${failure.message}`);
     throw failure;
   }
@@ -119,7 +121,7 @@ export function projectKey({ project, track, stems, chain, listening, windowLayo
   return JSON.stringify({
     id: project?.id ?? null, name: project?.name ?? null,
     track: track ? [track.name, track.size, track.identity ?? null] : null,
-    stems: (stems ?? []).map(s => [s.name, s.sha256, s.offset, s.gainDb, s.pan, s.mute, s.solo, s.chainLabel, s.params]),
+    stems: (stems ?? []).map(s => [s.name, s.sha256, s.offset, s.gainDb, s.pan, s.mute, s.solo, s.chainLabel, s.params, s.width ?? null]),
     chain, listening,
     windows: Object.fromEntries(Object.entries(windowLayout ?? {}).map(([k, w]) => [k, [Boolean(w.open), w.position?.x ?? null, w.position?.y ?? null]])),
   });
