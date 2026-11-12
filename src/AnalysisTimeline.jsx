@@ -5,6 +5,9 @@ import React, { useState } from 'react';
 // existing transport; "Play from here" auditions through the same transport.
 const clock = seconds => `${Math.floor(seconds / 60)}:${(seconds % 60).toFixed(1).padStart(4, '0')}`;
 const W = 520, H = 70;
+// A window with audio in one channel only has no finite balance; it is drawn at the chart's edge
+// (the chart clamps values to its range) instead of leaving a gap.
+const balanceOf = stereo => stereo.balanceDb ?? (stereo.oneSided === 'left' ? Infinity : stereo.oneSided === 'right' ? -Infinity : null);
 
 function Chart({ title, unit, series, duration, min, max, ticks, markers, selected, onPick }) {
   const x = t => (duration > 0 ? (t / duration) * W : 0);
@@ -51,7 +54,7 @@ export function AnalysisTimeline({ timeline, renderRate, onSeek, onAudition }) {
       {timeline.notes.map(note => <p key={note} className="analysis-note">{note}</p>)}
       {timeline.points.length > 0 && <Chart title="Short-term loudness (3 s)" unit="LUFS" series={timeline.points.map(p => [p.time, p.shortTermLufs])} duration={input.duration} min={-60} max={0} ticks={[-60, -40, -20, 0]} markers={markers} selected={selectedId} onPick={onSeek} />}
       {stereo.length > 0 && <Chart title="L/R correlation (2 s windows)" unit="−1…+1" series={stereo.map(w => [centre(w), w.stereo.correlation])} duration={input.duration} min={-1} max={1} ticks={[-1, 0, 1]} markers={markers} selected={selectedId} onPick={onSeek} />}
-      {stereo.length > 0 && <Chart title="Channel balance, left − right (2 s windows)" unit="dB" series={stereo.map(w => [centre(w), w.stereo.balanceDb])} duration={input.duration} min={-12} max={12} ticks={[-12, 0, 12]} markers={markers} selected={selectedId} onPick={onSeek} />}
+      {stereo.length > 0 && <Chart title="Channel balance, left − right (2 s windows)" unit="dB" series={stereo.map(w => [centre(w), balanceOf(w.stereo)])} duration={input.duration} min={-12} max={12} ticks={[-12, 0, 12]} markers={markers} selected={selectedId} onPick={onSeek} />}
       {timeline.spectral.length > 0 && <Chart title="Air band 4–8 kHz, shape relative to total (2 s windows)" unit="dB" series={timeline.spectral.map(w => [centre(w), w.bands?.air?.relativeDb ?? null])} duration={input.duration} min={-60} max={0} ticks={[-60, -30, 0]} markers={markers} selected={selectedId} onPick={onSeek} />}
       <h4>Markers ({markers.length})</h4>
       {markers.length === 0
