@@ -5,6 +5,7 @@ import { AccountDialog } from './AccountDialog.jsx';
 import { AnalysisDialog } from './AnalysisDialog.jsx';
 import { MixerPanel } from './MixerPanel.jsx';
 import { ExportDialog } from './ExportDialog.jsx';
+import { ConvertDialog } from './ConvertDialog.jsx';
 import { SuggestionsPanel } from './SuggestionsPanel.jsx';
 import { ListenSwitch, LoudnessMatch } from './ListeningControls.jsx';
 import { useChainSettings } from './useChainSettings.js';
