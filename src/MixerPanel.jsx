@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { EditorDialog } from './EditorDialog.jsx';
 import { ProcessorDesignPreview } from './ProcessorDesignPreview.jsx';
 import { EqEditor, EqThumbnail } from './EqEditor.jsx';
@@ -35,7 +35,8 @@ function defaultPosition(name) {
 // and an editor, plus undo/redo and saved settings. Space is the LAS-64 reverb.
 // windows / setWindows: name → { open, position, z, focusRequest }, held by the app so a project can
 // save and restore the layout (LAS-69); the highest z is the front (active) window.
-export function MixerPanel({ chain, engine, track, sampleRate, listening, onListen, tools, windows, setWindows, skin = 'rack', onSkin = () => {} }) {
+export function MixerPanel({ chain, engine, track, sampleRate, listening, onListen, tools, windows, setWindows, skin = 'rack', onSkin = () => {}, layout = 'classic' }) {
+  const [selected, setSelected] = useState('eq');
   const top = useRef(0);
   top.current = Math.max(top.current, ...Object.values(windows).map(w => w.z ?? 0)); // eslint-disable-line react-hooks/refs -- keeps new z values above restored ones
   const { params, update, undo, redo, canUndo, canRedo, replace, warnings, problem } = chain;
@@ -105,8 +106,10 @@ export function MixerPanel({ chain, engine, track, sampleRate, listening, onList
     { name: 'Limiter', module: 'limiter', visual: <><LimiterThumbnail limiter={params.limiter} /><GainReductionMeter engine={engine} which="limiter" label="Limiter gain reduction" active={active} compact /></>, caption: params.limiter.enabled ? `Ceiling ${params.limiter.ceiling.toFixed(1)} dBTP` : 'Off', edit: 'Edit limiter', editor: 'limiter' },
     { name: 'Space', module: 'space', visual: <SpaceThumbnail space={params.space} />, caption: params.space.enabled ? `${spacePresetName(params.space) === 'custom' ? 'Custom' : spacePresetName(params.space)} · ${params.space.mix} % · ${params.space.decay} s` : 'Off', edit: 'Edit space', editor: 'space' },
   ];
+  const selectedStrip = strips.find(strip => strip.editor === selected) ?? strips[0];
   return (
-    <section className="mixer panel" aria-labelledby="mixer-title">
+    <>
+    <section id="mixer-region" tabIndex={-1} className="mixer panel" aria-labelledby="mixer-title">
       <div className="panel-heading">
         <h2 id="mixer-title">Mixer</h2>
         <div className="heading-tools">
@@ -127,6 +130,7 @@ export function MixerPanel({ chain, engine, track, sampleRate, listening, onList
               {changed[strip.module] && <span className="strip-edited" title="Changed from the default settings">edited</span>}
             </div>
             <div className="strip-visual">{strip.visual}</div>
+            {layout !== 'classic' && <button type="button" className="strip-select" aria-pressed={selectedStrip.editor === strip.editor} onClick={() => setSelected(strip.editor)} aria-label={`Inspect ${strip.name}`}>{selectedStrip.editor === strip.editor ? 'Inspecting' : 'Inspect'}</button>}
             <p>{strip.caption}</p>
             {/* Visible "Edit" (the strip title names the module); the accessible name says which. */}
             <WithHelp id={`mixer.${strip.editor}`} className="strip-edit"><button className={windows[strip.editor]?.open ? 'is-open' : undefined} onClick={() => openEditor(strip.editor)} aria-label={strip.edit}>Edit</button></WithHelp>
@@ -150,5 +154,16 @@ export function MixerPanel({ chain, engine, track, sampleRate, listening, onList
         <SpaceEditor params={params} update={update} />
       </EditorDialog>
     </section>
+    {layout !== 'classic' && (
+      <aside id="inspector-region" tabIndex={-1} className="inspector panel" aria-label="Selected processor inspector" data-testid="inspector">
+        <h2 className="dock-title">Inspector · {selectedStrip.name}</h2>
+        <p className="inspector-caption">{selectedStrip.caption}</p>
+        <label className="toggle"><input type="checkbox" checked={params[selectedStrip.module].enabled}
+          onChange={event => update(p => ({ ...p, [selectedStrip.module]: { ...p[selectedStrip.module], enabled: event.target.checked } }))} />{selectedStrip.name} on</label>
+        <button type="button" onClick={() => openEditor(selectedStrip.editor)} aria-label={`Open ${selectedStrip.name} editor`}>Open editor</button>
+        <p className="fine-print">Same settings and undo history as the strip and the editor window.</p>
+      </aside>
+    )}
+    </>
   );
 }

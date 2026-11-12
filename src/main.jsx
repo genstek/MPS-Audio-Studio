@@ -19,6 +19,9 @@ import { BarMeters, PlaybackClock, PlayerDisplay, SeekButton, Timeline, createMe
 import { NewProjectDialog, ProjectArea, RelinkDialog, UnsavedDialog } from './ProjectBar.jsx';
 import { useProject } from './useProject.js';
 import { HelpButton, HelpTip, HelpView, WithHelp } from './HelpTip.jsx';
+import { LayoutSwitcher } from './LayoutSwitcher.jsx';
+import { LayoutDock } from './LayoutDock.jsx';
+import { readLayout, writeLayout } from './studio-layout.js';
 
 // Master Level is a listening preference of this browser (LAS-68), kept across reloads when the
 // browser allows storage; it is not part of a project, a preset or an export.
@@ -33,6 +36,7 @@ function storedMasterDb() {
 }
 import './styles.css';
 import './processor-design.css';
+import './layouts.css';
 
 // LAS-169: immutable identity from the Vite build, including packaged WebAssets.
 const buildInfo = import.meta.env.VITE_MPS_BUILD_INFO ?? {
@@ -56,6 +60,12 @@ const buildDetails = [
 
 function App() {
   const [processorSkin, setProcessorSkin] = useState('rack');
+  // Studio Layout (LAS-45): presentation only. It never touches the engine, the project or its
+  // dirty state; every layout renders the same components over the same state.
+  const [layout, setLayout] = useState(readLayout);
+  function changeLayout(next) { setLayout(next); writeLayout(next); }
+  // Headline values of the finished offline analysis, shown by layouts A–D (same report object).
+  const [analysis, setAnalysis] = useState(null);
   const [track, setTrack] = useState(null);
   const [status, setStatus] = useState('No audio loaded');
   const [error, setError] = useState('');
@@ -216,10 +226,11 @@ function App() {
 
   const playable = Boolean(track || stemCount) && !busy;
   return (
-    <main data-processor-skin={processorSkin}>
+    <main data-processor-skin={processorSkin} data-layout={layout}>
       <header className="masthead">
         <div className="brand"><span className="brand-mark" aria-hidden="true">MPS</span><div><p className="eyebrow">LOCAL AUDIO WORKSPACE</p><div className="brand-title"><h1>MPS Audio Studio</h1><span className="build-identity" data-testid="build-identity" title={buildDetails} aria-label={buildDetails}>{buildLabel}</span></div></div></div>
         <div className="masthead-tools">
+          <LayoutSwitcher value={layout} onChange={changeLayout} />
           {/* Project save state (LAS-69); a polite live region, not a second role=status. */}
           <span className={`version project-status${project.dirty ? ' is-dirty' : ''}${project.phase === 'error' ? ' is-error' : ''}`} aria-live="polite" title={project.status}>{project.status}</span><HelpTip id="project.status" className="inline" />
           {project.missingCount > 0 && <button type="button" className="heading-button" onClick={project.openRelink}>{project.missingCount} audio file{project.missingCount > 1 ? 's' : ''} missing — Relink…</button>}
@@ -227,7 +238,7 @@ function App() {
         </div>
       </header>
 
-      <section className="transport panel" aria-label="Transport">
+      <section id="transport-region" tabIndex={-1} className="transport panel" aria-label="Transport">
         <ProjectArea name={project.project.name} onNew={project.requestNew} onOpen={project.open} onSave={project.save} onSaveAs={project.saveAs} disabled={Boolean(busy)} />
         <div className="transport-buttons">
           <WithHelp id="transport.rewind"><SeekButton direction={-1} onSkip={skip} disabled={!track || Boolean(busy)} /></WithHelp>
@@ -242,10 +253,12 @@ function App() {
         </div>
       </section>
 
+      {layout !== 'classic' && <LayoutDock layout={layout} listening={listening} masterDb={masterDb} track={track} stemCount={stemCount} stems={stems} analysis={analysis} file={currentFile} engine={engine} meters={meters} />}
+
       <div className="workspace">
-        <section className="tracks panel" aria-labelledby="tracks-title">
-          <div className="panel-heading"><h2 id="tracks-title">Tracks</h2><div className="heading-tools">{track && <><WithHelp id="tracks.analyze"><AnalysisDialog file={currentFile} renderRate={track.sampleRate} onSeek={seek} onAudition={t => { seek(t); if (status !== 'Playing') play(); }} /></WithHelp><WithHelp id="tracks.compare"><CompareDialog engine={engine} file={currentFile} track={track} chain={chain} onMonitorStart={monitorStarted} /></WithHelp><WithHelp id="tracks.convert"><ConvertDialog file={currentFile} /></WithHelp><WithHelp id="tracks.remove"><button className="remove-track" onClick={removeTrack}>Remove track</button></WithHelp></>}<span className="badge">{track ? '01 TRACK' : '00 TRACKS'}</span></div></div>
-          <div className="track-space">{track && <PlayerDisplay engine={engine} store={meters} />}<div className="track-content">
+        <section id="tracks-region" tabIndex={-1} className="tracks panel" aria-labelledby="tracks-title">
+          <div className="panel-heading"><h2 id="tracks-title">Tracks</h2><div className="heading-tools">{track && <><WithHelp id="tracks.analyze"><AnalysisDialog file={currentFile} onReport={setAnalysis} renderRate={track.sampleRate} onSeek={seek} onAudition={t => { seek(t); if (status !== 'Playing') play(); }} /></WithHelp><WithHelp id="tracks.compare"><CompareDialog engine={engine} file={currentFile} track={track} chain={chain} onMonitorStart={monitorStarted} /></WithHelp><WithHelp id="tracks.convert"><ConvertDialog file={currentFile} /></WithHelp><WithHelp id="tracks.remove"><button className="remove-track" onClick={removeTrack}>Remove track</button></WithHelp></>}<span className="badge">{track ? '01 TRACK' : '00 TRACKS'}</span></div></div>
+          <div className="track-space">{track && (layout === 'classic' || layout === 'a' || layout === 'd') && <PlayerDisplay engine={engine} store={meters} />}<div className="track-content">
             <span className="audio-icon" aria-hidden="true"><span>♫</span></span>
             <h3 title={track ? track.name : undefined}>{track ? track.name : 'Your session starts here'}</h3>
             <p className="track-info">{track ? `${track.duration.toFixed(1)} seconds · ${track.channels} channel(s) · ${track.sampleRate.toLocaleString()} Hz decoded` : 'Import a WAV file to start listening.'}</p>
@@ -263,23 +276,25 @@ function App() {
           </div>
         </section>
 
-        <section className="master panel" aria-labelledby="master-title">
+        <section id="master-region" tabIndex={-1} className="master panel" aria-labelledby="master-title">
           <div className="panel-heading"><h2 id="master-title">Master</h2><span className="badge">STEREO</span></div>
           <div className="master-body" role="region" aria-label="Master details" tabIndex={0}>
             <p className="eyebrow">OUTPUT STAGE</p>
             <ListenSwitch value={listening} onChange={listen} disabled={!track} help="master.listen" />
             <SuggestionsPanel engine={engine} file={currentFile} chain={chain} projectId={project.project.id} sampleRate={track ? track.sampleRate : 48000} />
             <LoudnessMatch engine={engine} file={currentFile} params={chain.params} />
+            {/* Stable mount point for the AI Co-Producer chat (#107) in every layout; empty until it mounts. */}
+            <div data-slot="ai-coproducer" className="ai-slot" />
           </div>
           <div className="master-level">
-            <MasterLevel value={masterDb} onChange={changeMaster} disabled={!playable}
+            <MasterLevel value={masterDb} onChange={changeMaster} disabled={!playable} vertical={layout === 'b' || layout === 'd'}
               reason={busy ? 'Available when the audio has loaded.' : 'Import a WAV or add stems to use the master level.'} />
           </div>
           <ExportDialog file={currentFile} params={chain.params} />
         </section>
       </div>
 
-      <MixerPanel skin={processorSkin} onSkin={setProcessorSkin} windows={windows} setWindows={setWindows} chain={chain} engine={engine} track={track} sampleRate={track ? track.sampleRate : 48000} listening={listening} onListen={listen} tools={<WithHelp id="mixer.stems"><StemsDialog engine={engine} chain={chain} listening={listening} onListen={listen} onStemsPlay={monitorStarted} onStemsChange={setStems} masterLevel={{ value: masterDb, onChange: changeMaster }} /></WithHelp>} />
+      <MixerPanel layout={layout} skin={processorSkin} onSkin={setProcessorSkin} windows={windows} setWindows={setWindows} chain={chain} engine={engine} track={track} sampleRate={track ? track.sampleRate : 48000} listening={listening} onListen={listen} tools={<WithHelp id="mixer.stems"><StemsDialog engine={engine} chain={chain} listening={listening} onListen={listen} onStemsPlay={monitorStarted} onStemsChange={setStems} masterLevel={{ value: masterDb, onChange: changeMaster }} /></WithHelp>} />
       <HelpView />
       <NewProjectDialog open={project.newOpen} onCreate={project.create} onCancel={project.cancelNew} />
       <UnsavedDialog prompt={project.prompt} onChoose={project.answer} />

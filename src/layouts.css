@@ -1,0 +1,116 @@
+/* LAS-45: Studio Layouts. One DOM tree and one state; layouts differ in composition and hierarchy.
+   Classic has no layout rules here. Desktop layouts apply from 761px; below that every layout
+   stacks. Strip banks scroll inside their panel instead of squeezing controls. */
+.layout-switcher { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: #a7b2bc; }
+.layout-switcher select { font: inherit; font-size: 12px; max-width: 15rem; padding: 3px 6px; background: #11161a; color: #ecedf0; border: 1px solid #52616c; border-radius: 5px; }
+@media (max-width: 1280px) { .layout-switcher > span { display: none; } .layout-switcher select { max-width: 9.5rem; font-size: 11px; } }
+
+.dock-title { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #a7b2bc; margin: 0 0 6px; }
+.layout-dock { padding: 10px 12px; display: grid; gap: 14px; align-content: start; font-size: 12px; min-width: 0; }
+.dock-section { min-width: 0; }
+.dock-facts { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; margin: 0; }
+.dock-facts dt { color: #a7b2bc; }
+.dock-facts dd { margin: 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.dock-facts dd[title] { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dock-na { color: #a7b2bc; font-style: italic; margin: 0 0 4px; }
+.dock-nav { display: grid; gap: 6px; }
+.dock-nav button { text-align: left; }
+.layout-dock .fine-print { margin: 6px 0 0; }
+.dock-realtime .output-spectrum { height: 9rem; width: 100%; }
+.dock-realtime .player-display { grid-column: auto; grid-row: auto; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 10rem auto; gap: 8px; height: auto; max-height: none; width: 100%; }
+.dock-realtime .player-display > * { min-width: 0; }
+.dock-realtime .player-display .display-help { display: contents; }
+.dock-realtime .player-display .output-spectrum { grid-column: 1 / -1; grid-row: 1; width: 100%; height: 100%; }
+.dock-realtime .player-display .needle-meter:first-child, .dock-realtime .player-display > :first-child .needle-meter { grid-column: 1; grid-row: 2; }
+.dock-realtime .player-display .needle-meter { grid-row: 2; }
+.dock-realtime .player-display .needle-meter svg { width: 100%; max-width: 14rem; height: auto; max-height: none; }
+.stem-list { list-style: none; margin: 0 0 6px; padding: 0; display: grid; gap: 4px; }
+.stem-strip { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 8px; padding: 4px 6px; border: 1px solid #39434c; border-radius: 4px; background: #151b20; }
+.stem-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stem-gain { font-variant-numeric: tabular-nums; }
+.stem-flags { grid-column: 1 / -1; font-size: 10px; color: #a7b2bc; }
+.inspector { padding: 10px 12px; display: grid; gap: 10px; align-content: start; font-size: 12px; min-width: 0; }
+.inspector-caption { margin: 0; color: #ecedf0; }
+.ai-slot:empty { display: none; }
+.strip .strip-select { grid-area: auto; font-size: 10px; padding: 2px 10px; }
+.strip .strip-select[aria-pressed='true'] { border-color: var(--accent, #80d1e0); color: var(--accent, #80d1e0); }
+.vfader { display: flex; justify-content: center; gap: 6px; height: 12rem; margin: 6px 0; }
+.vfader-scale, .vfader-track { position: relative; height: 100%; width: 2.2rem; }
+.vfader-scale span { position: absolute; right: 0; font-size: 9px; color: #8a96a0; font-variant-numeric: tabular-nums; line-height: 0; }
+.vfader-track input { position: absolute; left: 50%; top: 50%; width: 12rem; margin: 0; transform: translate(-50%, -50%) rotate(-90deg); }
+
+@media (min-width: 761px) {
+  main:not([data-layout='classic']) { height: auto; min-height: 100dvh; max-width: 1920px; grid-template-rows: none; grid-auto-rows: auto; }
+  main:not([data-layout='classic']) > .workspace { display: contents; }
+  main:not([data-layout='classic']) .strips { container-type: normal; overflow-x: auto; }
+  main:not([data-layout='classic']) .track-space { container-type: normal; min-height: 8rem; }
+  main:not([data-layout='classic']) > footer { grid-area: foot; }
+  main:not([data-layout='classic']) > .masthead { grid-area: head; }
+  main:not([data-layout='classic']) > .transport { grid-area: xport; }
+  main:not([data-layout='classic']) .tracks { grid-area: tracks; min-height: 14rem; }
+  main:not([data-layout='classic']) .master { grid-area: master; min-height: 18rem; }
+  main:not([data-layout='classic']) .master-body { contain: none; }
+  main:not([data-layout='classic']) .mixer { grid-area: mixer; }
+  main:not([data-layout='classic']) .inspector { grid-area: inspector; }
+  main:not([data-layout='classic']) .layout-dock { grid-area: dock; }
+
+  /* A · Console Focus: charcoal/cyan. Left monitor drawer, big spectrum stage over a horizontal
+     strip bank, right column = master over the selected-processor inspector. */
+  main[data-layout='a'] { --accent: #4fd0e6; grid-template-columns: 13rem minmax(0, 1fr) 18rem; grid-template-areas: "head head head" "xport xport xport" "dock tracks master" "dock mixer inspector" "foot foot foot"; background: #0f1417; }
+  main[data-layout='a'] .tracks { min-height: 22rem; border-color: #2c6b78; }
+  main[data-layout='a'] .track-space { min-height: 14rem; }
+  main[data-layout='a'] .player-display { height: 13rem; max-height: none; }
+  main[data-layout='a'] .strips { grid-template-columns: repeat(4, minmax(9rem, 1fr)); }
+  main[data-layout='a'] .panel-heading h2, main[data-layout='a'] .strip-number, main[data-layout='a'] .dock-title { color: var(--accent); }
+
+  /* B · Analog Strip Wall: amber. The strip wall leads: tall strips, big knob windows, vertical
+     master fader with dB scale; stems and instruments sit in a wide bottom dock. */
+  main[data-layout='b'] { --accent: #f0a73c; grid-template-columns: minmax(0, 1fr) 15rem; grid-template-areas: "head head" "xport xport" "mixer master" "dock master" "tracks tracks" "foot foot"; background: #17120d; }
+  main[data-layout='b'] .inspector { display: none; }
+  main[data-layout='b'] .strips { grid-template-columns: repeat(4, minmax(11rem, 1fr)); }
+  main[data-layout='b'] .strip { min-height: 26rem; align-content: space-between; background: linear-gradient(180deg, #2f251a, #1b1510); border-right: 3px groove #5a4630; }
+  main[data-layout='b'] .strip-visual { width: 7rem; aspect-ratio: 3 / 4; border-radius: 50% / 8%; border-color: #8a6a3f; background: #120e0a; }
+  main[data-layout='b'] .strip-title h3 { text-transform: uppercase; letter-spacing: 2px; font-size: 12px; }
+  main[data-layout='b'] .panel { background: #211a13; border-color: #5a4630; border-radius: 3px; }
+  main[data-layout='b'] .panel-heading h2, main[data-layout='b'] .strip-number, main[data-layout='b'] .dock-title { color: var(--accent); }
+  main[data-layout='b'] .layout-dock { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr); }
+  @media (max-width: 1100px) { main[data-layout='b'] .layout-dock, main[data-layout='c'] .layout-dock { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  main[data-layout='b'] .master { border-width: 2px; }
+
+  /* C · Mastering Hybrid: measurement first. Wide analysis stage (spectrum, needles, offline
+     values) on top, track/timeline row, mixer bank below with the inspector, master at right. */
+  main[data-layout='c'] { --accent: #b48cff; grid-template-columns: minmax(0, 1fr) 18rem; grid-template-areas: "head head" "xport xport" "dock master" "tracks master" "mixer inspector" "foot foot"; background: #121019; }
+  main[data-layout='c'] .layout-dock { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr); align-items: start; border-color: #5a4a86; }
+  main[data-layout='c'] .tracks { min-height: 16rem; }
+  main[data-layout='c'] .strips { grid-template-columns: repeat(4, minmax(8rem, 1fr)); }
+  main[data-layout='c'] .panel-heading h2, main[data-layout='c'] .dock-title { color: var(--accent); }
+
+  /* D · Digital Console Suite: left navigation + stems, centre workspace with inspector between
+     tracks and a wide strip bank, right master/output rack with a vertical fader. */
+  main[data-layout='d'] { --accent: #6fe0a8; grid-template-columns: 12rem minmax(0, 1fr) 16rem; grid-template-areas: "head head head" "xport xport xport" "dock tracks master" "dock inspector master" "dock mixer master" "foot foot foot"; background: #0e1512; }
+  main[data-layout='d'] .strips { grid-template-columns: repeat(4, minmax(12rem, 1fr)); }
+  main[data-layout='d'] .strip { background: #131c18; }
+  main[data-layout='d'] .panel-heading h2, main[data-layout='d'] .dock-title { color: var(--accent); }
+  main[data-layout='d'] .master { border-color: #2f6a4f; }
+  main[data-layout='d'] .inspector { grid-template-columns: auto auto auto auto; align-items: center; justify-content: start; gap: 8px 16px; }
+  main[data-layout='d'] .inspector .dock-title { margin: 0; }
+  main[data-layout='d'] .inspector .fine-print { grid-column: 1 / -1; margin: 0; }
+}
+/* 761–1000px: too narrow for side columns, so every layout becomes one column in its own order. */
+@media (min-width: 761px) and (max-width: 1000px) {
+  main[data-layout='a'], main[data-layout='b'], main[data-layout='c'], main[data-layout='d'] { grid-template-columns: minmax(0, 1fr); }
+  main[data-layout='a'] { grid-template-areas: "head" "xport" "dock" "tracks" "master" "mixer" "inspector" "foot"; }
+  main[data-layout='b'] { grid-template-areas: "head" "xport" "mixer" "master" "dock" "tracks" "foot"; }
+  main[data-layout='c'] { grid-template-areas: "head" "xport" "dock" "tracks" "master" "mixer" "inspector" "foot"; }
+  main[data-layout='d'] { grid-template-areas: "head" "xport" "dock" "tracks" "inspector" "mixer" "master" "foot"; }
+  main[data-layout='a'] .layout-dock, main[data-layout='d'] .layout-dock { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  main[data-layout='c'] .layout-dock { grid-template-columns: minmax(0, 1fr); }
+  main[data-layout='d'] .dock-nav { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-column: 1 / -1; }
+  main[data-layout='a'] .dock-nav { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-column: 1 / -1; }
+  main[data-layout='d'] .inspector { grid-template-columns: auto auto auto; }
+}
+@media (max-width: 760px) {
+  .layout-switcher span { display: none; }
+  .vfader { height: 9rem; }
+  .vfader-track input { width: 9rem; }
+}

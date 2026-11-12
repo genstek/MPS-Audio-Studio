@@ -43,7 +43,7 @@ function Report({ report }) {
 }
 
 // Analysis of the imported file (LAS-26). The work runs in a Web Worker; the file is only read.
-export function AnalysisDialog({ file, renderRate = null, onSeek = () => {}, onAudition = () => {} }) {
+export function AnalysisDialog({ file, renderRate = null, onSeek = () => {}, onAudition = () => {}, onReport = null }) {
   const dialog = useRef(null);
   const job = useRef(null);
   // Every state names the file it belongs to; a report of another file is never shown.
@@ -61,6 +61,10 @@ export function AnalysisDialog({ file, renderRate = null, onSeek = () => {}, onA
 
   // A new or removed track ends any analysis of the old one.
   useEffect(() => () => cancel(), [file]);
+
+  // LAS-45: the studio layouts show the finished report's headline values; the same report object.
+  const finished = state.phase === 'done' ? state.report : null;
+  useEffect(() => { onReport?.(finished ? { file, report: finished } : null); }, [finished, file, onReport]);
 
   function run() {
     cancel();
