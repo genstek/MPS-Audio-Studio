@@ -65,7 +65,7 @@ function Report({ report }) {
       ) : <p className="fine-print">Spectrum needs at least 8,192 samples.</p>}
       <p className="analysis-meta">
         {report.version} · {input.sampleRate.toLocaleString('en-US')} Hz · {input.channels === 1 ? 'mono' : 'stereo'} · {input.bitsPerSample}-bit {input.encoding === 'float' ? 'float' : 'PCM'} · whole file {clock(input.segment.start)}–{clock(input.segment.end)}
-        <br />Source SHA-256 <code>{input.sha256}</code>
+        <br />Source SHA-256 <code data-testid="source-sha256">{input.sha256}</code>
       </p>
     </div>
   );
