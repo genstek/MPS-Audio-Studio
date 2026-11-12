@@ -49,7 +49,7 @@ Status: **test design only**, NOT_RUN. Code/CI/manual sound verification must be
 ## Traceability and open defects
 - Existing main analyzer: `src/dsp/analysis.js`, worker and `tests/unit/analysis.test.js`.
 - Existing proposal transaction: `src/ai/proposal-session.js`, `tests/unit/ai-eq-proposal.test.js`.
-- LAS-159: per-stem stereo stage/M/S. LAS-153: measurement-based AI EQ advice. LAS-171: analysis report saving. Coordinate rather than duplicate.
+- LAS-159: per-stem stereo stage/M/S. LAS-153: measurement-based AI EQ advice. LAS-172: analysis report saving. Coordinate rather than duplicate.
 - LAS-166: EQ unexpectedly sounds flat after 30–60 s / click; LAS-160 slider state mismatch. A new feature must not obscure these investigations.
 - Never upload or commit private Mayak/Pobud audio, personal hearing data, raw source stems, or user local paths as test fixtures.
 
