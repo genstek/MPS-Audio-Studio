@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { defaultChain, setEqMode } from '../../src/dsp/chain-params.js';
-import { buildSuggestions, bandExcess, SUGGESTION_SOURCE } from '../../src/ai/suggestions.js';
+import { buildSuggestions, bandExcess, comparisonTrimDb, existingCutNear, SUGGESTION_SOURCE } from '../../src/ai/suggestions.js';
 import { mergeEqProposal } from '../../src/ai/eq-proposal.js';
 import { OWNERS, createPreviewCoordinator } from '../../src/ai/preview-coordinator.js';
 import { createProposalSession } from '../../src/ai/proposal-session.js';
@@ -62,5 +62,47 @@ describe('deterministic EQ suggestions (LAS-120)', () => {
     chain = { ...chain, limiter: { ...chain.limiter, ceiling: -2 } };
     expect(fresh.stale).toBe(true);
     expect(() => fresh.preview(true)).toThrow(/Ask for a new suggestion/);
+  });
+
+  test('with the EQ bypassed nothing is suggested, because a cut would not be audible', () => {
+    const chain = { ...defaultChain(), eq: { ...defaultChain().eq, enabled: false } };
+    const items = buildSuggestions(report({ 250: -14 }), { chain, sampleRate: 48000 });
+    expect(items).toHaveLength(1);
+    expect(items[0]).toMatchObject({ id: 'eq-bypassed', supported: false, proposal: null });
+    expect(items[0].unsupportedReason).toMatch(/EQ is bypassed/);
+  });
+
+  test('an applied cut is not suggested again from the same measurement, so cuts cannot stack', () => {
+    const measured = report({ 250: -14 });
+    const [first] = buildSuggestions(measured, { chain: defaultChain(), sampleRate: 48000 });
+    const after = mergeEqProposal(defaultChain(), first.proposal);
+    const [again] = buildSuggestions(measured, { chain: after, sampleRate: 48000 });
+    expect(again).toMatchObject({ id: 'low-mid-buildup', supported: false, proposal: null });
+    expect(again.unsupportedReason).toMatch(/already cuts near 250 Hz \(−3\.0 dB at 250 Hz\)/);
+    expect(after.eq.left.filter(b => b.enabled && b.gain < 0)).toHaveLength(1);
+  });
+
+  test('only an enabled cut within half an octave blocks a suggestion', () => {
+    const withBand = (band, channel = 'left') => {
+      const chain = setEqMode(defaultChain(), 'independent');
+      chain.eq[channel][0] = { enabled: true, type: 'bell', q: 1, ...band };
+      return chain;
+    };
+    expect(existingCutNear(withBand({ frequency: 300, gain: -2 }), 250)).toMatchObject({ frequency: 300 });
+    expect(existingCutNear(withBand({ frequency: 300, gain: -2 }, 'right'), 250)).toMatchObject({ frequency: 300 });
+    expect(existingCutNear(withBand({ frequency: 1000, gain: -2 }), 250)).toBeNull(); // two octaves away
+    expect(existingCutNear(withBand({ frequency: 250, gain: 2 }), 250)).toBeNull(); // a boost is not a cut
+    expect(existingCutNear(withBand({ frequency: 250, gain: -2, enabled: false }), 250)).toBeNull();
+    expect(existingCutNear(withBand({ frequency: 250, gain: -2, type: 'high-pass' }), 250)).toBeNull();
+  });
+
+  test('A/B trim turns the louder side down and never boosts', () => {
+    expect(comparisonTrimDb('B', 2)).toBe(-2); // B louder: B plays lower
+    expect(comparisonTrimDb('A', 2)).toBe(0);
+    expect(comparisonTrimDb('A', -1.5)).toBe(-1.5); // B quieter (a cut): A plays lower
+    expect(comparisonTrimDb('B', -1.5)).toBe(0);
+    expect(comparisonTrimDb('A', 0)).toBe(0);
+    expect(comparisonTrimDb('B', null)).toBe(0); // not measured yet or silent
+    expect(comparisonTrimDb('A', Number.NaN)).toBe(0);
   });
 });
