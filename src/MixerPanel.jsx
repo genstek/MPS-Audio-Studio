@@ -106,7 +106,7 @@ export function MixerPanel({ chain, engine, track, sampleRate, listening, onList
     { name: 'Space', module: 'space', visual: <SpaceThumbnail space={params.space} />, caption: params.space.enabled ? `${spacePresetName(params.space) === 'custom' ? 'Custom' : spacePresetName(params.space)} · ${params.space.mix} % · ${params.space.decay} s` : 'Off', edit: 'Edit space', editor: 'space' },
   ];
   return (
-    <section className="mixer panel" aria-labelledby="mixer-title">
+    <section id="mixer-region" tabIndex={-1} className="mixer panel" aria-labelledby="mixer-title">
       <div className="panel-heading">
         <h2 id="mixer-title">Mixer</h2>
         <div className="heading-tools">

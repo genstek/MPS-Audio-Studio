@@ -1,0 +1,65 @@
+/* LAS-45: Studio Layouts. One DOM tree and one state; layouts differ only in composition.
+   Classic has no rules here. Desktop layouts apply from 761px; below that every layout stacks. */
+.layout-switcher { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: #a7b2bc; }
+.layout-switcher select { font: inherit; font-size: 12px; max-width: 15rem; padding: 3px 6px; background: #11161a; color: #ecedf0; border: 1px solid #52616c; border-radius: 5px; }
+/* The select keeps its accessible name; the visible caption and width give way on narrower screens
+   so the masthead never gains a row or widens the page (LAS-51). */
+@media (max-width: 1280px) { .layout-switcher > span { display: none; } .layout-switcher select { max-width: 9.5rem; font-size: 11px; } }
+.dock-title { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #a7b2bc; margin-bottom: 6px; }
+.layout-dock { padding: 10px 12px; display: grid; gap: 14px; align-content: start; font-size: 12px; min-width: 0; }
+.dock-facts { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; margin: 0; }
+.dock-facts dt { color: #a7b2bc; }
+.dock-facts dd { margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dock-unavailable { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
+.dock-unavailable li { display: flex; justify-content: space-between; gap: 8px; opacity: .8; }
+.dock-na { color: #a7b2bc; font-style: italic; }
+.dock-nav { display: grid; gap: 6px; }
+.dock-nav button { text-align: left; }
+.layout-dock .fine-print { margin-top: 6px; }
+
+@media (min-width: 761px) {
+  main:not([data-layout='classic']) { height: auto; min-height: 100dvh; max-width: 1920px; grid-template-rows: none; grid-auto-rows: auto; }
+  main:not([data-layout='classic']) > .workspace { display: contents; }
+  main:not([data-layout='classic']) .strips { container-type: normal; overflow-x: auto; }
+  main:not([data-layout='classic']) .track-space { container-type: normal; min-height: 8rem; }
+  main:not([data-layout='classic']) > footer { grid-area: foot; }
+  main:not([data-layout='classic']) > .masthead { grid-area: head; }
+  main:not([data-layout='classic']) > .transport { grid-area: xport; }
+  main:not([data-layout='classic']) .tracks { grid-area: tracks; min-height: 14rem; }
+  main:not([data-layout='classic']) .master { grid-area: master; min-height: 18rem; }
+  main:not([data-layout='classic']) .master-body { contain: none; }
+  main:not([data-layout='classic']) .mixer { grid-area: mixer; }
+  main:not([data-layout='classic']) .layout-dock { grid-area: dock; }
+
+  /* A · Console Focus: charcoal/cyan; left monitor drawer, wide centre, right inspector. */
+  main[data-layout='a'] { --accent: #4fd0e6; grid-template-columns: 13rem minmax(0, 1fr) 17rem; grid-template-areas: "head head head" "xport xport xport" "dock tracks master" "dock mixer master" "foot foot foot"; background: #0f1417; }
+  main[data-layout='a'] .tracks { min-height: 20rem; border-color: #2c6b78; }
+  main[data-layout='a'] .strips { grid-template-columns: repeat(4, minmax(9rem, 1fr)); }
+  main[data-layout='a'] .panel-heading h2, main[data-layout='a'] .strip-number { color: var(--accent); }
+
+  /* B · Analog Strip Wall: amber; the strip wall leads, tall strips, instruments in a bottom dock. */
+  main[data-layout='b'] { --accent: #f0a73c; grid-template-columns: minmax(0, 1fr) 16rem; grid-template-areas: "head head" "xport xport" "mixer master" "tracks tracks" "dock dock" "foot foot"; background: #17120d; }
+  main[data-layout='b'] .strips { grid-template-columns: repeat(4, minmax(11rem, 1fr)); }
+  main[data-layout='b'] .strip { min-height: 24rem; background: linear-gradient(180deg, #2a2118, #1b1510); border-right-color: #5a4630; }
+  main[data-layout='b'] .strip-visual, main[data-layout='b'] .knob { width: 5.5rem; }
+  main[data-layout='b'] .panel { background: #211a13; border-color: #5a4630; }
+  main[data-layout='b'] .panel-heading h2, main[data-layout='b'] .strip-number { color: var(--accent); }
+  main[data-layout='b'] .layout-dock { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  /* C · Mastering Hybrid: wide upper stage (tracks) over instruments, mixer bank below, master at right. */
+  main[data-layout='c'] { --accent: #b48cff; grid-template-columns: minmax(0, 1fr) 17rem; grid-template-areas: "head head" "xport xport" "tracks master" "dock master" "mixer mixer" "foot foot"; background: #121019; }
+  main[data-layout='c'] .tracks { min-height: 24rem; border-color: #5a4a86; }
+  main[data-layout='c'] .layout-dock { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  main[data-layout='c'] .strips { grid-template-columns: repeat(4, minmax(8rem, 1fr)); }
+  main[data-layout='c'] .panel-heading h2 { color: var(--accent); }
+
+  /* D · Digital Console Suite: left navigation, workspace in the middle, master rack at right. */
+  main[data-layout='d'] { --accent: #6fe0a8; grid-template-columns: 11rem minmax(0, 1fr) 15rem; grid-template-areas: "head head head" "dock xport xport" "dock tracks master" "dock mixer master" "foot foot foot"; background: #0e1512; }
+  main[data-layout='d'] .strips { grid-template-columns: repeat(2, minmax(14rem, 1fr)); }
+  main[data-layout='d'] .panel-heading h2 { color: var(--accent); }
+  main[data-layout='d'] .master { border-color: #2f6a4f; }
+}
+@media (max-width: 760px) {
+  .layout-dock { order: 5; }
+  .layout-switcher span { display: none; }
+}
