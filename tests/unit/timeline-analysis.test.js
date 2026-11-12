@@ -143,6 +143,16 @@ describe('LAS-173 timeline analysis: stereo and markers', () => {
       expect(marks[0].evidence).toEqual({ balanceDb: null, oneSided: side });
       expect(marks[0].hypothesis).toMatch(/not auto-centred/);
     }
+    // Ping-pong with spaced (non-overlapping) windows: left only, then right only, in adjacent windows.
+    // The two sides stay separate markers, each describing only its own span.
+    const pingPong = [new Float64Array(8 * rate), new Float64Array(8 * rate)];
+    const half = 4 * rate;
+    for (let n = 0; n < half; n++) { pingPong[0][n] = audio[n % audio.length]; pingPong[1][half + n] = audio[n % audio.length]; }
+    const pp = analyzeTimeline(pingPong, rate, { hopSeconds: 2 });
+    const sides = pp.markers.filter(m => m.kind === 'balance-offset');
+    expect(sides.map(m => [m.side, m.start, m.end])).toEqual([['left', 0, 4], ['right', 4, 8]]);
+    expect(sides[0].title).toBe('Only the left channel has audio');
+    expect(sides[1].title).toBe('Only the right channel has audio');
     // Both channels silent: no balance, not one-sided, no marker.
     const quiet = analyzeTimeline([silent, silent], rate);
     for (const w of quiet.spectral) expect(w.stereo).toMatchObject({ balanceDb: null, oneSided: null });
