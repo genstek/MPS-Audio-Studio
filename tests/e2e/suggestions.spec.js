@@ -175,3 +175,55 @@ test('LAS-120: a new project id (Save As) makes suggestions out of date and ends
   await expect(card).toContainText('EQ · measured', { timeout: 30_000 });
   await expect(card.getByRole('button', { name: 'Preview (B)' })).toBeEnabled();
 });
+
+test('LAS-120: when Compare with a reference resets the preview, a running B ends and an A comparison stays', async ({ page }) => {
+  test.setTimeout(90_000);
+  await installChainProbe(page);
+  await page.goto('/');
+  const transport = page.getByRole('region', { name: 'Transport', exact: true });
+  const master = page.getByRole('region', { name: 'Master details', exact: true });
+  await page.getByLabel('Import WAV').setInputFiles({ name: 'tones.wav', mimeType: 'audio/wav', buffer: WAV });
+  await expect(transport.getByRole('status')).toHaveText('Ready');
+  await master.getByRole('button', { name: 'Open suggestions' }).click();
+  const panel = page.getByRole('region', { name: 'Suggestions', exact: true });
+  await panel.getByRole('button', { name: 'Measure and suggest' }).click();
+  const card = panel.getByRole('article', { name: /^Low-mid build-up \(250 Hz\)/ });
+  await expect(card).toContainText('EQ · measured', { timeout: 30_000 });
+  const level = card.getByText(/^Level match: /);
+  const openAndCloseCompare = async () => {
+    await page.getByRole('button', { name: 'Compare with a reference', exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: 'Compare with a reference' });
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole('button', { name: 'Close comparison' }).click(); // closing resets the preview slot
+    await expect(dialog).toBeHidden();
+  };
+
+  // A: the committed settings keep playing through the reset, so the comparison and its trim stay.
+  await card.getByRole('button', { name: 'Preview (B)' }).click();
+  await expect(level).toHaveText(/quieter, so A plays/, { timeout: 30_000 });
+  await card.getByRole('button', { name: 'Current (A)' }).click();
+  await expect(card.getByRole('button', { name: 'Current (A)' })).toHaveAttribute('aria-pressed', 'true');
+  let trimmed;
+  await expect.poll(async () => {
+    const now = (await pathGains(page)).processed;
+    const steady = now === trimmed;
+    trimmed = now;
+    return steady;
+  }, { intervals: [250] }).toBe(true);
+  await openAndCloseCompare();
+  await expect(card.getByRole('button', { name: 'Current (A)' })).toHaveAttribute('aria-pressed', 'true');
+  expect((await pathGains(page)).processed).toBeCloseTo(trimmed, 3);
+
+  // B: the reset stops the suggestion, so the comparison ends and says why; nothing is trimmed.
+  await card.getByRole('button', { name: 'Preview (B)' }).click();
+  await expect(card.getByRole('button', { name: 'Preview (B)' })).toHaveAttribute('aria-pressed', 'true');
+  await expect.poll(async () => cutsAt250(await lastChainParams(page))).toEqual([-3]);
+  await openAndCloseCompare();
+  await expect(panel.getByRole('status')).toHaveText('The comparison ended because another preview started or stopped it. Your settings are unchanged.');
+  await expect(card.getByRole('button', { name: 'Preview (B)' })).toHaveAttribute('aria-pressed', 'false');
+  await expect(card.getByRole('button', { name: 'Current (A)' })).toBeDisabled();
+  await expect(level).toHaveCount(0);
+  await expect.poll(async () => cutsAt250(await lastChainParams(page))).toEqual([]);
+  // The suggestion itself is still usable.
+  await expect(card.getByRole('button', { name: 'Preview (B)' })).toBeEnabled();
+});
