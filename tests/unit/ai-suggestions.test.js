@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { defaultChain, setEqMode } from '../../src/dsp/chain-params.js';
-import { buildSuggestions, bandExcess, comparisonTrimDb, existingCutNear, SUGGESTION_SOURCE } from '../../src/ai/suggestions.js';
+import { buildSuggestions, bandExcess, comparisonInterrupted, comparisonTrimDb, existingCutNear, SUGGESTION_SOURCE } from '../../src/ai/suggestions.js';
 import { mergeEqProposal } from '../../src/ai/eq-proposal.js';
 import { OWNERS, createPreviewCoordinator } from '../../src/ai/preview-coordinator.js';
 import { createProposalSession } from '../../src/ai/proposal-session.js';
@@ -104,5 +104,16 @@ describe('deterministic EQ suggestions (LAS-120)', () => {
     expect(comparisonTrimDb('A', 0)).toBe(0);
     expect(comparisonTrimDb('B', null)).toBe(0); // not measured yet or silent
     expect(comparisonTrimDb('A', Number.NaN)).toBe(0);
+  });
+
+  test('an A/B is interrupted when its side stops playing', () => {
+    // A plays the committed settings: the slot must stay free (or briefly still ours while switching).
+    expect(comparisonInterrupted('A', null, OWNERS.ai)).toBe(false);
+    expect(comparisonInterrupted('A', OWNERS.ai, OWNERS.ai)).toBe(false);
+    expect(comparisonInterrupted('A', OWNERS.reference, OWNERS.ai)).toBe(true); // a reference proposal preview took the slot
+    // B plays the suggestion: the slot must be ours.
+    expect(comparisonInterrupted('B', OWNERS.ai, OWNERS.ai)).toBe(false);
+    expect(comparisonInterrupted('B', null, OWNERS.ai)).toBe(true); // reset by Compare with a reference
+    expect(comparisonInterrupted('B', OWNERS.reference, OWNERS.ai)).toBe(true);
   });
 });
