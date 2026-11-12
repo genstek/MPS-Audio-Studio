@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { startAnalysis } from './analysis-client.js';
+import { AnalysisTimeline } from './AnalysisTimeline.jsx';
 
 // Number formatting: one decimal for levels, a sign for values that can be either side of zero.
 const fixed = (value, digits = 1) => {
@@ -71,7 +72,7 @@ function Report({ report }) {
 }
 
 // Analysis of the imported file (LAS-26). The work runs in a Web Worker; the file is only read.
-export function AnalysisDialog({ file }) {
+export function AnalysisDialog({ file, renderRate = null, onSeek = () => {}, onAudition = () => {} }) {
   const dialog = useRef(null);
   const job = useRef(null);
   // Every state names the file it belongs to; a report of another file is never shown.
@@ -89,7 +90,7 @@ export function AnalysisDialog({ file }) {
   function run() {
     cancel();
     setState({ phase: 'running', stage: 'Starting analysis…', file });
-    const current = startAnalysis(file, stage => job.current === current && setState({ phase: 'running', stage, file }));
+    const current = startAnalysis(file, stage => job.current === current && setState({ phase: 'running', stage, file }), undefined, { timeline: { hopSeconds: 1 } });
     job.current = current;
     current.result.then(
       report => job.current === current && setState({ phase: 'done', report, file }),
@@ -122,6 +123,7 @@ export function AnalysisDialog({ file }) {
         {file && <p className="analysis-file" title={file.name}>{file.name}</p>}
         <p className="account-status" role="status">{status}</p>
         {state.phase === 'error' && <p className="account-error" role="alert">{state.message}</p>}
+        {state.phase === 'done' && state.report.timeline && <AnalysisTimeline timeline={state.report.timeline} renderRate={renderRate} onSeek={onSeek} onAudition={onAudition} />}
         {state.phase === 'done' && <Report report={state.report} />}
         <div className="library-actions">
           {running

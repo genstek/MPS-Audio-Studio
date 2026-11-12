@@ -242,7 +242,7 @@ function App() {
 
       <div className="workspace">
         <section className="tracks panel" aria-labelledby="tracks-title">
-          <div className="panel-heading"><h2 id="tracks-title">Tracks</h2><div className="heading-tools">{track && <><WithHelp id="tracks.analyze"><AnalysisDialog file={currentFile} /></WithHelp><WithHelp id="tracks.compare"><CompareDialog engine={engine} file={currentFile} track={track} chain={chain} onMonitorStart={monitorStarted} /></WithHelp><WithHelp id="tracks.remove"><button className="remove-track" onClick={removeTrack}>Remove track</button></WithHelp></>}<span className="badge">{track ? '01 TRACK' : '00 TRACKS'}</span></div></div>
+          <div className="panel-heading"><h2 id="tracks-title">Tracks</h2><div className="heading-tools">{track && <><WithHelp id="tracks.analyze"><AnalysisDialog file={currentFile} renderRate={engine.current.sampleRate()} onSeek={seek} onAudition={t => { seek(t); if (status !== 'Playing') play(); }} /></WithHelp><WithHelp id="tracks.compare"><CompareDialog engine={engine} file={currentFile} track={track} chain={chain} onMonitorStart={monitorStarted} /></WithHelp><WithHelp id="tracks.remove"><button className="remove-track" onClick={removeTrack}>Remove track</button></WithHelp></>}<span className="badge">{track ? '01 TRACK' : '00 TRACKS'}</span></div></div>
           <div className="track-space">{track && <PlayerDisplay engine={engine} store={meters} />}<div className="track-content">
             <span className="audio-icon" aria-hidden="true"><span>♫</span></span>
             <h3 title={track ? track.name : undefined}>{track ? track.name : 'Your session starts here'}</h3>
