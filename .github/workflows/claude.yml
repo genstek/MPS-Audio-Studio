@@ -55,7 +55,7 @@ jobs:
             --proto '=https' --proto-redir '=https' \
             'https://github.com/user-attachments/files/34732719/LoVerse_MPS_AppIcon_Assets.zip' \
             --output "$ZIP"
-          printf '%s  %s\\n' \
+          printf '%s  %s\n' \
             '035948273c31ba7a03805e470efcee6733c25e56f6074cb8f33bf77068abb393' "$ZIP" \
             | shasum -a 256 --check
 
