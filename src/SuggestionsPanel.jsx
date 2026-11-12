@@ -3,7 +3,6 @@ import { OWNERS } from './ai/preview-coordinator.js';
 import { createProposalSession } from './ai/proposal-session.js';
 import { chainRevision } from './ai/eq-proposal.js';
 import { buildSuggestions, comparisonInterrupted, comparisonTrimDb } from './ai/suggestions.js';
-import { startAnalysis } from './analysis-client.js';
 import { startRender } from './render-client.js';
 
 // Opaque media identity (never the file name or bytes) so a suggestion goes stale when the track is replaced.
@@ -43,6 +42,7 @@ function SuggestionsBody({ engine, file, chain, projectId, sampleRate }) {
   const [items, setItems] = useState([]);
   const [sessions, setSessions] = useState({}); // id → proposal session
   const [rejected, setRejected] = useState({});
+  const [measured, setMeasured] = useState(null); // { revision, projectId, sampleRate } the measurement was made for
   const [applied, setApplied] = useState(null); // { id, revision } of the chain that Apply produced
   // The A/B of one suggestion: which side is audible, and B − A in LUFS once both are measured.
   const [compare, setCompare] = useState(null); // null | { id, side: 'A' | 'B', level: 'measuring' | 'ready' | 'silent', differenceDb }
@@ -121,15 +121,26 @@ function SuggestionsBody({ engine, file, chain, projectId, sampleRate }) {
     setSessions({});
     setRejected({});
     setApplied(null);
+    setMeasured(null);
     setError('');
     setMessage('');
     setPhase('measuring');
-    const current = startAnalysis(file, () => {});
+    // LAS-174: the file is rendered through the committed chain (same DSP as playback and export) and
+    // both versions are analysed, so the suggestions know what the user actually hears.
+    const measuredParams = chainRef.current.params;
+    const revision = chainRevision(measuredParams);
+    const current = startRender(file, { mode: 'suggest', params: measuredParams });
     analysisJob.current = current;
     try {
-      const report = await current.result;
+      const { report } = await current.result;
       if (analysisJob.current !== current) return;
-      const built = buildSuggestions(report, { chain: chainRef.current.params, sampleRate, projectId: projectRef.current, mediaId });
+      if (chainRevision(chainRef.current.params) !== revision) {
+        setMessage('Your settings changed while measuring, so the result was discarded. Choose Measure and suggest again.');
+        setPhase('idle');
+        return;
+      }
+      setMeasured({ revision, projectId: projectRef.current, sampleRate: report.sampleRate });
+      const built = buildSuggestions(report, { chain: chainRef.current.params, sampleRate: report.sampleRate ?? sampleRate, projectId: projectRef.current, mediaId });
       const next = {};
       for (const item of built) {
         if (!item.proposal) continue;
@@ -227,10 +238,12 @@ function SuggestionsBody({ engine, file, chain, projectId, sampleRate }) {
   }
 
   const revision = applied ? chainRevision(chain.params) : null;
+  const measurementOld = phase === 'ready' && measured !== null && (chainRevision(chain.params) !== measured.revision || (projectId ?? null) !== measured.projectId);
   return (
     <>
-      <p className="fine-print">Computed from deterministic measurements of this file. No AI model listened to your audio. Nothing changes until you press Apply; the file on your device is never modified. Press Escape to close.</p>
-      <p className="fine-print" role="status" aria-live="polite">{phase === 'measuring' ? 'Measuring this file…' : message}</p>
+      <p className="fine-print">Computed locally from deterministic measurements of this file as rendered with your current settings. No AI model listened to your audio. Nothing changes until you press Apply; the file on your device is never modified. Press Escape to close.</p>
+      <p className="fine-print" role="status" aria-live="polite">{phase === 'measuring' ? 'Measuring this file with your current settings…' : message}</p>
+      {measurementOld && <p className="fine-print">The measurements below were made for earlier settings or another project. Choose Measure again for current results.</p>}
       {error && <p className="account-error" role="alert">{error}</p>}
       {phase !== 'ready' && (
         <div className="proposal-buttons">
@@ -248,10 +261,13 @@ function SuggestionsBody({ engine, file, chain, projectId, sampleRate }) {
         const comparing = compare?.id === item.id;
         const titleId = `suggestion-${item.id}`;
         let status = 'unavailable';
-        if (isApplied) status = 'applied';
+        if (item.kind === 'observation') status = 'observation';
+        else if (item.kind === 'none') status = 'no change suggested';
+        else if (isApplied) status = 'applied';
         else if (isRejected) status = 'rejected';
         else if (isStale) status = 'out of date';
         else if (item.supported) status = 'EQ · measured';
+        const provenance = item.provenance;
         return (
           <article key={item.id} className="proposal-module" aria-labelledby={titleId}>
             <h4 id={titleId}>{item.title} <span className="proposal-status">{status}</span></h4>
@@ -263,7 +279,15 @@ function SuggestionsBody({ engine, file, chain, projectId, sampleRate }) {
                 <div><dt>Proposed EQ filters</dt>{item.filters.map(f => <dd key={f.frequency}>Bell {f.frequency} Hz, {signed(f.gain)} dB, Q {f.q}</dd>)}</div>
                 <div><dt>Limits</dt><dd>{item.limitations}</dd></div>
               </dl>
+            ) : item.kind === 'observation' || item.kind === 'none' ? (
+              <dl>
+                {item.message && <div><dt>Result</dt><dd>{item.message}</dd></div>}
+                <div><dt>{item.kind === 'none' ? 'Assessed' : 'Measured evidence'}</dt>{item.evidence.map(text => <dd key={text}>{text}</dd>)}</div>
+                <div><dt>Note</dt><dd>{item.reason}</dd></div>
+                <div><dt>Limits</dt><dd>{item.limitations}</dd></div>
+              </dl>
             ) : <p className="fine-print">{item.unsupportedReason}</p>}
+            {provenance && item.kind !== 'unavailable' && <p className="fine-print">Measured on the {provenance.measuredOn} audio at {Number(provenance.sampleRate).toLocaleString('en-US')} Hz · settings revision {provenance.chainRevision}.</p>}
             {isStale && <p className="fine-print">Your settings or project changed after this suggestion was made. Choose Measure again.</p>}
             {item.supported && (
               <div className="proposal-buttons" role="group" aria-label={`${item.title} actions`}>
