@@ -22,7 +22,7 @@ const signed = v => `${v > 0 ? '+' : ''}${v.toFixed(1).replace('-', '−')}`;
 // and on open/closed, so closing or replacing the file unmounts it and its cleanup ends any preview,
 // pending analysis and A/B trim. The A/B trim is the engine's own preview trim, separate from Match
 // loudness, so the two never overwrite each other.
-export function SuggestionsPanel({ engine, file, chain, sampleRate }) {
+export function SuggestionsPanel({ engine, file, chain, projectId, sampleRate }) {
   const [open, setOpen] = useState(false);
   const shown = open && Boolean(file);
   return (
@@ -31,14 +31,14 @@ export function SuggestionsPanel({ engine, file, chain, sampleRate }) {
       <button type="button" aria-expanded={shown} aria-controls="suggestions-body" onClick={() => setOpen(o => !o)} disabled={!file}>{shown ? 'Close suggestions' : 'Open suggestions'}</button>
       {shown && (
         <div id="suggestions-body" onKeyDown={e => { if (e.key === 'Escape') setOpen(false); }}>
-          <SuggestionsBody key={mediaIdOf(file)} engine={engine} file={file} chain={chain} sampleRate={sampleRate} />
+          <SuggestionsBody key={mediaIdOf(file)} engine={engine} file={file} chain={chain} projectId={projectId ?? null} sampleRate={sampleRate} />
         </div>
       )}
     </section>
   );
 }
 
-function SuggestionsBody({ engine, file, chain, sampleRate }) {
+function SuggestionsBody({ engine, file, chain, projectId, sampleRate }) {
   const [phase, setPhase] = useState('idle'); // idle | measuring | ready
   const [items, setItems] = useState([]);
   const [sessions, setSessions] = useState({}); // id → proposal session
@@ -53,7 +53,8 @@ function SuggestionsBody({ engine, file, chain, sampleRate }) {
   const chainRef = useRef(chain);
   const engineRef = useRef(engine);
   const compareRef = useRef(compare);
-  useEffect(() => { chainRef.current = chain; compareRef.current = compare; });
+  const projectRef = useRef(projectId); // the open project's id: a New, Open or Save As makes suggestions stale
+  useEffect(() => { chainRef.current = chain; compareRef.current = compare; projectRef.current = projectId; });
   const mediaId = mediaIdOf(file);
 
   const setTrim = db => engineRef.current.current?.setPreviewTrim(db);
@@ -87,8 +88,9 @@ function SuggestionsBody({ engine, file, chain, sampleRate }) {
   const trimDb = live && compare.level === 'ready' ? comparisonTrimDb(compare.side, compare.differenceDb) : 0;
   useEffect(() => { engineRef.current.current?.setPreviewTrim(trimDb); }, [trimDb]);
 
-  // A stale chain (any manual edit, undo, redo, replace) ends the A/B of a stale suggestion. Checked
-  // in an effect, never while rendering, because a stale session releases the preview slot.
+  // A stale chain (any manual edit, undo, redo, replace) or another project id ends the A/B of a stale
+  // suggestion. Checked in an effect, never while rendering, because a stale session releases the
+  // preview slot.
   const [staleIds, setStaleIds] = useState([]);
   useEffect(() => {
     const ids = Object.entries(sessions).filter(([, session]) => session.stale).map(([id]) => id);
@@ -99,7 +101,7 @@ function SuggestionsBody({ engine, file, chain, sampleRate }) {
       levelJob.current = null;
       setCompare(null);
     }
-  }, [chain.params, sessions]);
+  }, [chain.params, sessions, projectId]);
 
   async function measure() {
     endCompare();
@@ -116,13 +118,13 @@ function SuggestionsBody({ engine, file, chain, sampleRate }) {
     try {
       const report = await current.result;
       if (analysisJob.current !== current) return;
-      const built = buildSuggestions(report, { chain: chainRef.current.params, sampleRate, mediaId });
+      const built = buildSuggestions(report, { chain: chainRef.current.params, sampleRate, projectId: projectRef.current, mediaId });
       const next = {};
       for (const item of built) {
         if (!item.proposal) continue;
         next[item.id] = createProposalSession(item.proposal, {
           getChain: () => chainRef.current.params,
-          getContext: () => ({ projectId: null, mediaId, sampleRate }),
+          getContext: () => ({ projectId: projectRef.current, mediaId, sampleRate }),
           coordinator: chainRef.current.previews,
           commit: params => chainRef.current.replace(params),
           owner: OWNERS.ai,
@@ -251,7 +253,7 @@ function SuggestionsBody({ engine, file, chain, sampleRate }) {
                 <div><dt>Limits</dt><dd>{item.limitations}</dd></div>
               </dl>
             ) : <p className="fine-print">{item.unsupportedReason}</p>}
-            {isStale && <p className="fine-print">The settings changed after this suggestion was made. Choose Measure again.</p>}
+            {isStale && <p className="fine-print">Your settings or project changed after this suggestion was made. Choose Measure again.</p>}
             {item.supported && (
               <div className="proposal-buttons" role="group" aria-label={`${item.title} actions`}>
                 <button type="button" aria-pressed={comparing && live && compare.side === 'B'} onClick={() => preview(item)} disabled={!usable}>Preview (B)</button>

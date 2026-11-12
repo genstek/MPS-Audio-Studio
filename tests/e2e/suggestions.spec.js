@@ -140,3 +140,38 @@ test('LAS-120: level-matched Preview (B) / Current (A), Reject, Apply, Undo, Red
   await expect.poll(() => lastChainParams(page)).toEqual(before);
   await expect.poll(async () => Math.abs(await processedDb(base))).toBeLessThan(0.01);
 });
+
+test('LAS-120: a new project id (Save As) makes suggestions out of date and ends the comparison', async ({ page }) => {
+  test.setTimeout(90_000);
+  // Without the File System Access API, Save As downloads a copy under a new project id.
+  await page.addInitScript(() => { delete window.showSaveFilePicker; delete window.showOpenFilePicker; });
+  await installChainProbe(page);
+  await page.goto('/');
+  const transport = page.getByRole('region', { name: 'Transport', exact: true });
+  const master = page.getByRole('region', { name: 'Master details', exact: true });
+  await page.getByLabel('Import WAV').setInputFiles({ name: 'tones.wav', mimeType: 'audio/wav', buffer: WAV });
+  await expect(transport.getByRole('status')).toHaveText('Ready');
+  await master.getByRole('button', { name: 'Open suggestions' }).click();
+  const panel = page.getByRole('region', { name: 'Suggestions', exact: true });
+  await panel.getByRole('button', { name: 'Measure and suggest' }).click();
+  const card = panel.getByRole('article', { name: /^Low-mid build-up \(250 Hz\)/ });
+  await expect(card).toContainText('EQ · measured', { timeout: 30_000 });
+  await card.getByRole('button', { name: 'Preview (B)' }).click();
+  await expect.poll(async () => cutsAt250(await lastChainParams(page))).toEqual([-3]);
+
+  const downloading = page.waitForEvent('download');
+  await transport.getByRole('button', { name: 'Project ▾' }).click();
+  await page.getByRole('menuitem', { name: 'Save project as', exact: true }).click();
+  await downloading;
+  await expect(page.locator('.project-status')).toHaveText(/^Saved as a download/);
+  // The suggestion was made for the previous project id: it is out of date and B stops.
+  await expect(card).toContainText('out of date');
+  await expect(card).toContainText('Your settings or project changed after this suggestion was made. Choose Measure again.');
+  await expect(card.getByRole('button', { name: 'Preview (B)' })).toBeDisabled();
+  await expect(card.getByRole('button', { name: 'Current (A)' })).toBeDisabled();
+  await expect.poll(async () => cutsAt250(await lastChainParams(page))).toEqual([]);
+  // Measuring again makes suggestions for the new project.
+  await panel.getByRole('button', { name: 'Measure again' }).click();
+  await expect(card).toContainText('EQ · measured', { timeout: 30_000 });
+  await expect(card.getByRole('button', { name: 'Preview (B)' })).toBeEnabled();
+});
