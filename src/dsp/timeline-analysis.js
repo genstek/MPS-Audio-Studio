@@ -239,13 +239,14 @@ function findMarkers(result) {
     }
     if (s && audible(w) && s.oneSided) {
       const other = s.oneSided === 'left' ? 'right' : 'left';
-      raw.push({ kind: 'balance-offset', index: i, start: w.start, end: w.end, magnitude: ONE_SIDED_MAGNITUDE,
+      raw.push({ kind: 'balance-offset', side: s.oneSided, group: `${s.oneSided}-only`, index: i, start: w.start, end: w.end, magnitude: ONE_SIDED_MAGNITUDE,
         title: `Only the ${s.oneSided} channel has audio`,
         observation: `The ${other} channel is digital silence in ${clock(w.start)}–${clock(w.end)} while the ${s.oneSided} channel has audio.`,
         hypothesis: 'May be a deliberate hard pan, a one-sided instrument or a channel lost in routing or export. It is not assumed to be an error and is not auto-centred.',
         evidence: { balanceDb: null, oneSided: s.oneSided } });
     } else if (s && audible(w) && s.balanceDb !== null && Math.abs(s.balanceDb) >= THRESHOLDS.balanceDb) {
-      raw.push({ kind: 'balance-offset', index: i, start: w.start, end: w.end, magnitude: Math.abs(s.balanceDb),
+      const side = s.balanceDb > 0 ? 'left' : 'right';
+      raw.push({ kind: 'balance-offset', side, group: side, index: i, start: w.start, end: w.end, magnitude: Math.abs(s.balanceDb),
         title: `Channel balance ${s.balanceDb > 0 ? 'left' : 'right'}-heavy (${s.balanceDb > 0 ? '+' : ''}${s.balanceDb.toFixed(1)} dB)`,
         observation: `Left is ${Math.abs(s.balanceDb).toFixed(1)} dB ${s.balanceDb > 0 ? 'louder' : 'quieter'} than right in ${clock(w.start)}–${clock(w.end)}.`,
         hypothesis: 'May be a deliberate pan, a pan sweep or a one-sided instrument. It is not assumed to be an error and is not auto-centred.',
@@ -261,12 +262,15 @@ function findMarkers(result) {
         evidence: { trendLufs: p.trendLufs, trendDeltaLu: p.trendDeltaLu } });
     }
   });
-  // Neighbouring windows of one kind (and band) are one marker spanning their time range.
-  raw.sort((a, b) => a.kind.localeCompare(b.kind) || (a.band ?? '').localeCompare(b.band ?? '') || a.index - b.index);
+  // Neighbouring windows of one kind (and band, or balance side and one-sidedness) are one marker
+  // spanning their time range. Opposite sides never merge: a left-only window next to a right-only
+  // one (a ping-pong pan with spaced windows) stays two markers, each with its own text.
+  const key = m => m.band ?? m.group ?? '';
+  raw.sort((a, b) => a.kind.localeCompare(b.kind) || key(a).localeCompare(key(b)) || a.index - b.index);
   const merged = [];
   for (const m of raw) {
     const last = merged[merged.length - 1];
-    if (last && last.kind === m.kind && last.band === m.band && m.index - last.lastIndex <= 1) {
+    if (last && last.kind === m.kind && key(last) === key(m) && m.index - last.lastIndex <= 1) {
       last.end = Math.max(last.end, m.end);
       if (m.magnitude > last.magnitude) Object.assign(last, { magnitude: m.magnitude, title: m.title, observation: m.observation, evidence: m.evidence });
       last.lastIndex = m.index;
@@ -280,6 +284,7 @@ function findMarkers(result) {
       const m = { ...marker };
       delete m.index;
       delete m.lastIndex;
+      delete m.group;
       return { id: `m${n + 1}`, ...m, start: round(m.start, 3), end: round(m.end, 3), magnitude: round(m.magnitude) };
     });
 }
