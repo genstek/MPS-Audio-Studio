@@ -492,3 +492,9 @@ dialog .file-picker { grid-area: auto; }
 .display-help { height: 100%; }
 .clip-wrap { grid-column: 2; grid-row: 1 / span 2; }
 .bar-meters { grid-template-columns: auto auto auto; }
+
+/* LAS-120: Suggestions sits last in Master details. The details scroller can shrink to ~35px at
+   761x450, so its toggle stays compact (like .heading-button) to remain fully reachable at the end. */
+.suggestions { margin-top: 10px; display: grid; gap: 4px; justify-items: center; }
+.suggestions > h3 { font-size: 12px; font-weight: 650; letter-spacing: 1px; text-transform: uppercase; color: #aebac4; }
+.suggestions > button { padding: 2px 10px; font-size: 11px; line-height: 1.5; white-space: nowrap; }

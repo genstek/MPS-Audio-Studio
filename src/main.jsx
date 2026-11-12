@@ -267,8 +267,8 @@ function App() {
           <div className="master-body" role="region" aria-label="Master details" tabIndex={0}>
             <p className="eyebrow">OUTPUT STAGE</p>
             <ListenSwitch value={listening} onChange={listen} disabled={!track} help="master.listen" />
-            <LoudnessMatch engine={engine} file={currentFile} params={chain.params} />
             <SuggestionsPanel engine={engine} file={currentFile} chain={chain} sampleRate={track ? track.sampleRate : 48000} />
+            <LoudnessMatch engine={engine} file={currentFile} params={chain.params} />
           </div>
           <div className="master-level">
             <MasterLevel value={masterDb} onChange={changeMaster} disabled={!playable}
