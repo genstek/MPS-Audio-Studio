@@ -18,7 +18,9 @@ jobs:
       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
       (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude'))))
-    runs-on: ubuntu-latest
+    # LAS-171 alone needs macOS' sips to prepare verified AppIcon renditions.
+    # All other Claude tasks stay on the normal Ubuntu runner.
+    runs-on: ${{ github.event_name == 'issue_comment' && github.event.issue.number == 82 && 'macos-15' || 'ubuntu-latest' }}
     timeout-minutes: 45
     permissions:
       contents: write
@@ -31,6 +33,43 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0 # Pre-fetch all branches/history before Claude starts
+
+      # Owner-provided, reviewed artwork: scope download to issue #82 and verify the
+      # exact ZIP bytes before extracting anything. Claude's Bash allowedTools stay
+      # unchanged (no wildcard curl, merge, unzip or mkdir permissions).
+      - name: Prepare approved LAS-171 AppIcon sources
+        if: >-
+          github.event_name == 'issue_comment' &&
+          github.event.issue.number == 82 &&
+          contains(github.event.comment.body, '@claude')
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin claude/issue-82-20261111-0437
+          git merge --no-edit origin/claude/issue-82-20261111-0437
+
+          ZIP="$RUNNER_TEMP/LoVerse_MPS_AppIcon_Assets.zip"
+          curl --fail --location --silent --show-error --retry 2 \
+            --proto '=https' --proto-redir '=https' \
+            'https://github.com/user-attachments/files/34732719/LoVerse_MPS_AppIcon_Assets.zip' \
+            --output "$ZIP"
+          printf '%s  %s\n' \
+            '035948273c31ba7a03805e470efcee6733c25e56f6074cb8f33bf77068abb393' "$ZIP" \
+            | shasum -a 256 --check
+
+          mkdir -p apple/IconSource
+          unzip -j "$ZIP" \
+            'LoVerse_MPS_AppIcon_macOS_1024_RGBA.png' \
+            'LoVerse_MPS_AppIcon_iOS_1024_Opaque.png' \
+            -d apple/IconSource
+          bash scripts/apple/make-app-icons.sh \
+            apple/IconSource/LoVerse_MPS_AppIcon_macOS_1024_RGBA.png \
+            apple/IconSource/LoVerse_MPS_AppIcon_iOS_1024_Opaque.png
+          test -s apple/Resources/Mac/Assets.xcassets/AppIcon.appiconset/icon_16x16@1x.png
+          test -s apple/Resources/iOS/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png
+          echo 'LAS-171 approved icon assets prepared and verified before Claude starts.'
 
       - name: Run Claude Code
         id: claude
