@@ -42,6 +42,8 @@ npm run check         # all of the above plus a build
 
 **Export WAV** can write 44.1, 48, 88.2 or 96 kHz (default: Keep original) at 16- or 24-bit, and has a **Hi-Res WAV (96 kHz / 24-bit)** preset. "Convert only" skips the mastering chain. The conversion is a polyphase windowed-sinc (Kaiser β 10, ≈ 100 dB stop-band) filter on the exact rate ratio, run in the render worker before the chain: pitch and duration are unchanged, output length is `round(frames × ratio)`, the pass-band is flat to ≈ 0.9 × the lower Nyquist, and nothing is relabelled, dropped or repeated. Upsampling adds no detail and the dialog says so. Exports over 1 GiB of WAV data are refused. The source file is only read.
 
+**Track → Convert (LAS-127, Phase 2)** is a track-level dialog that reads the file's real format from its header (rate, bit depth, PCM/float, channels, length), shows the predicted target (length, size, working memory) before running, and converts through the same worker in convert-only mode to a separate WAV download. It is non-destructive and does not change the session, so there is no Apply/Undo (nothing is replaced). Mixed-rate stems and more codecs remain follow-ups. QA: `npx playwright test tests/e2e/convert-track.spec.js` (independent RIFF header readback of the saved files).
+
 QA: `tests/unit/resample.test.js` (synthetic fixtures: lengths, pitch, anti-alias, continuity, channel order, 96/24 bytes, clipping) and `tests/e2e/hires-export.spec.js` (real worker, files read back with an independent header parser). These do not validate listening quality. Not in this phase: stem-mixer resampling (stems must still share one rate) and non-WAV codecs.
 
 ## Playwright for beginners
