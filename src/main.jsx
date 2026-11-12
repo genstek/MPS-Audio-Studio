@@ -17,6 +17,8 @@ import { BarMeters, PlaybackClock, PlayerDisplay, SeekButton, Timeline, createMe
 import { NewProjectDialog, ProjectArea, RelinkDialog, UnsavedDialog } from './ProjectBar.jsx';
 import { useProject } from './useProject.js';
 import { HelpButton, HelpTip, HelpView, WithHelp } from './HelpTip.jsx';
+import { ConsoleNav, OutputRack, ViewSwitch } from './StudioConsoleShell.jsx';
+import { readStoredView, storeView } from './ui-view.js';
 
 // Master Level is a listening preference of this browser (LAS-68), kept across reloads when the
 // browser allows storage; it is not part of a project, a preset or an export.
@@ -31,6 +33,7 @@ function storedMasterDb() {
 }
 import './styles.css';
 import './processor-design.css';
+import './studio-console.css';
 
 // LAS-169: immutable identity from the Vite build, including packaged WebAssets.
 const buildInfo = import.meta.env.VITE_MPS_BUILD_INFO ?? {
@@ -54,6 +57,14 @@ const buildDetails = [
 
 function App() {
   const [processorSkin, setProcessorSkin] = useState('rack');
+  // LAS-45: Classic (default) or Console 2.0. View state only: nothing below depends on it, so
+  // switching never touches the engine, the project or the playback position.
+  const [view, setView] = useState(readStoredView);
+  const stemsTrigger = useRef(null);
+  function changeView(next) {
+    setView(next);
+    storeView(next);
+  }
   const [track, setTrack] = useState(null);
   const [status, setStatus] = useState('No audio loaded');
   const [error, setError] = useState('');
@@ -214,13 +225,14 @@ function App() {
 
   const playable = Boolean(track || stemCount) && !busy;
   return (
-    <main data-processor-skin={processorSkin}>
+    <main data-processor-skin={processorSkin} data-view={view} className={view === 'console' ? 'studio-console' : undefined}>
       <header className="masthead">
         <div className="brand"><span className="brand-mark" aria-hidden="true">MPS</span><div><p className="eyebrow">LOCAL AUDIO WORKSPACE</p><div className="brand-title"><h1>MPS Audio Studio</h1><span className="build-identity" data-testid="build-identity" title={buildDetails} aria-label={buildDetails}>{buildLabel}</span></div></div></div>
         <div className="masthead-tools">
           {/* Project save state (LAS-69); a polite live region, not a second role=status. */}
           <span className={`version project-status${project.dirty ? ' is-dirty' : ''}${project.phase === 'error' ? ' is-error' : ''}`} aria-live="polite" title={project.status}>{project.status}</span><HelpTip id="project.status" className="inline" />
           {project.missingCount > 0 && <button type="button" className="heading-button" onClick={project.openRelink}>{project.missingCount} audio file{project.missingCount > 1 ? 's' : ''} missing — Relink…</button>}
+          <ViewSwitch view={view} onChange={changeView} />
           <WithHelp id="dialogs.references"><ReferencesDialog /></WithHelp><WithHelp id="dialogs.account"><AccountDialog currentFile={currentFile} /></WithHelp><HelpButton />
         </div>
       </header>
@@ -240,8 +252,9 @@ function App() {
         </div>
       </section>
 
+      {view === 'console' && <ConsoleNav stemCount={stemCount} onOpenStems={() => stemsTrigger.current?.click()} />}
       <div className="workspace">
-        <section className="tracks panel" aria-labelledby="tracks-title">
+        <section className="tracks panel" id="console-tracks" tabIndex={-1} aria-labelledby="tracks-title">
           <div className="panel-heading"><h2 id="tracks-title">Tracks</h2><div className="heading-tools">{track && <><WithHelp id="tracks.analyze"><AnalysisDialog file={currentFile} /></WithHelp><WithHelp id="tracks.compare"><CompareDialog engine={engine} file={currentFile} track={track} chain={chain} onMonitorStart={monitorStarted} /></WithHelp><WithHelp id="tracks.remove"><button className="remove-track" onClick={removeTrack}>Remove track</button></WithHelp></>}<span className="badge">{track ? '01 TRACK' : '00 TRACKS'}</span></div></div>
           <div className="track-space">{track && <PlayerDisplay engine={engine} store={meters} />}<div className="track-content">
             <span className="audio-icon" aria-hidden="true"><span>♫</span></span>
@@ -261,8 +274,9 @@ function App() {
           </div>
         </section>
 
-        <section className="master panel" aria-labelledby="master-title">
+        <section className="master panel" id="console-master" tabIndex={-1} aria-labelledby="master-title">
           <div className="panel-heading"><h2 id="master-title">Master</h2><span className="badge">STEREO</span></div>
+          {view === 'console' && <OutputRack meters={meters} params={chain.params} track={track} />}
           <div className="master-body" role="region" aria-label="Master details" tabIndex={0}>
             <p className="eyebrow">OUTPUT STAGE</p>
             <ListenSwitch value={listening} onChange={listen} disabled={!track} help="master.listen" />
@@ -276,7 +290,7 @@ function App() {
         </section>
       </div>
 
-      <MixerPanel skin={processorSkin} onSkin={setProcessorSkin} windows={windows} setWindows={setWindows} chain={chain} engine={engine} track={track} sampleRate={track ? track.sampleRate : 48000} listening={listening} onListen={listen} tools={<WithHelp id="mixer.stems"><StemsDialog engine={engine} chain={chain} listening={listening} onListen={listen} onStemsPlay={monitorStarted} onStemsChange={setStems} masterLevel={{ value: masterDb, onChange: changeMaster }} /></WithHelp>} />
+      <MixerPanel skin={processorSkin} onSkin={setProcessorSkin} windows={windows} setWindows={setWindows} chain={chain} engine={engine} track={track} sampleRate={track ? track.sampleRate : 48000} listening={listening} onListen={listen} tools={<WithHelp id="mixer.stems"><StemsDialog triggerRef={stemsTrigger} engine={engine} chain={chain} listening={listening} onListen={listen} onStemsPlay={monitorStarted} onStemsChange={setStems} masterLevel={{ value: masterDb, onChange: changeMaster }} /></WithHelp>} />
       <HelpView />
       <NewProjectDialog open={project.newOpen} onCreate={project.create} onCancel={project.cancelNew} />
       <UnsavedDialog prompt={project.prompt} onChoose={project.answer} />

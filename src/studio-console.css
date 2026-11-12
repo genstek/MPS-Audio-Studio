@@ -1,0 +1,137 @@
+/* LAS-45 Console 2.0 (Phase 1). Every rule is scoped to main.studio-console (plus the two small
+   view-switch / shell classes that only exist in this view) so Classic and the processor skins are
+   untouched. Original design: no vendor marks or image assets; faders, LEDs and ticks are CSS. */
+
+.view-switch { display: inline-flex; border: 1px solid #40505e; border-radius: 6px; overflow: hidden; }
+.view-switch button { border: 0; border-radius: 0; padding: 3px 10px; font-size: 12px; white-space: nowrap; background: #232d36; }
+.view-switch button + button { border-left: 1px solid #40505e; }
+.view-switch button[aria-pressed='true'] { background: #4ab7ed; color: #08141c; font-weight: 650; }
+
+main.studio-console {
+  --c-bg: #0e1319; --c-panel: #1a222a; --c-panel-2: #232d36; --c-border: #40505e;
+  --c-text: #f0f3f5; --c-muted: #b8c4cc; --c-accent: #4ab7ed; --c-amber: #f0b44a; --c-green: #5fd08a;
+  max-width: none; width: 100%; height: auto; min-height: 100dvh; margin: 0; padding: 8px 12px;
+  background: var(--c-bg); color: var(--c-text); gap: 8px;
+  grid-template-columns: 208px minmax(0, 1fr) 300px;
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+  grid-template-areas: "head head head" "xport xport xport" "nav tracks master" "nav mixer master" "foot foot foot";
+  font-variant-numeric: tabular-nums;
+}
+main.studio-console > .masthead { grid-area: head; }
+main.studio-console > .transport { grid-area: xport; }
+main.studio-console > .console-nav { grid-area: nav; }
+main.studio-console > footer { grid-area: foot; }
+main.studio-console > .mixer { grid-area: mixer; }
+main.studio-console > .workspace { display: contents; }
+main.studio-console .workspace > .tracks { grid-area: tracks; }
+main.studio-console .workspace > .master { grid-area: master; }
+main.studio-console > * { min-width: 0; }
+
+main.studio-console .panel { background: linear-gradient(180deg, var(--c-panel-2), var(--c-panel)); border-color: var(--c-border); border-radius: 6px; }
+main.studio-console .panel-heading { border-bottom-color: var(--c-border); background: #151c23; border-radius: 6px 6px 0 0; }
+main.studio-console h2 { font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--c-muted); }
+main.studio-console .eyebrow, main.studio-console .version, main.studio-console .badge, main.studio-console .track-footer, main.studio-console footer { font-size: 11px; color: var(--c-muted); }
+main.studio-console .fine-print, main.studio-console .strip p { font-size: 12px; color: var(--c-muted); }
+main.studio-console .brand-mark { border-color: var(--c-accent); color: var(--c-accent); }
+main.studio-console .build-identity { color: var(--c-text); font-size: 12px; }
+main.studio-console .brand-title h1 { font-size: 22px; }
+main.studio-console :focus-visible { outline: 3px solid var(--c-accent); outline-offset: 2px; }
+main.studio-console button { background: var(--c-panel-2); border-color: var(--c-border); }
+main.studio-console button:not(:disabled):hover { background: #2f3c48; }
+main.studio-console button.primary { background: var(--c-accent); border-color: var(--c-accent); color: #08141c; }
+main.studio-console button[aria-pressed='true'] { border-color: var(--c-accent); color: var(--c-accent); }
+main .view-switch button[aria-pressed='true'], main.studio-console .view-switch button[aria-pressed='true'] { background: #4ab7ed; color: #08141c; border-color: #40505e; }
+main.studio-console .view-switch button:not([aria-pressed='true']) { background: #232d36; color: #f0f3f5; }
+main.studio-console .file-picker { background: var(--c-accent); color: #08141c; }
+main.studio-console .status, main.studio-console .position { color: var(--c-text); }
+main.studio-console .position { font-size: 13px; }
+main.studio-console .transport { background: var(--c-panel); border-color: var(--c-border); }
+
+/* Navigation rail */
+.console-nav { display: grid; align-content: start; gap: 8px; padding: 10px; background: var(--c-panel, #1a222a); border: 1px solid var(--c-border, #40505e); border-radius: 6px; }
+.console-nav ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.console-nav button { width: 100%; text-align: left; font-size: 13px; padding: 8px 10px; }
+.console-nav .nav-item { border-left: 3px solid #4ab7ed; }
+.console-nav .nav-stems { border-color: #4ab7ed; }
+.console-eyebrow { font-size: 11px; letter-spacing: 1.5px; color: #b8c4cc; }
+.console-note { font-size: 12px; line-height: 1.4; color: #b8c4cc; }
+
+/* Processing strips: colour-coded, honest ON/bypass */
+main.studio-console .strips { container-type: normal; overflow: visible; gap: 8px; padding: 8px; background: #0e1319; border-radius: 0 0 6px 6px; }
+main.studio-console .strip { --strip: #4ab7ed; border: 1px solid var(--c-border); border-top: 4px solid var(--strip); border-radius: 4px; background: linear-gradient(180deg, #232d36, #1a222a); padding-block: 10px; grid-template-areas: "title" "knob" "caption" "button"; }
+main.studio-console .strip:nth-child(2) { --strip: #f0b44a; }
+main.studio-console .strip:nth-child(3) { --strip: #5fd0c0; }
+main.studio-console .strip:nth-child(4) { --strip: #a99cf0; }
+main.studio-console .strip-number { color: var(--strip); font-size: 12px; }
+main.studio-console .strip-title h3 { font-size: 14px; letter-spacing: 1px; text-transform: uppercase; }
+main.studio-console .strip p { display: block; }
+main.studio-console .strip-visual { width: 72px; border-color: var(--c-border); background: #0b1015; }
+main.studio-console .eq-thumbnail path { stroke: var(--strip); }
+main.studio-console .strip-led { box-shadow: 0 0 0 1px #0008; }
+main.studio-console .strip-led.on { background: var(--strip); box-shadow: 0 0 6px var(--strip); }
+main.studio-console .strip.is-bypassed { opacity: .72; border-top-color: #5b6a76; }
+main.studio-console .strip.is-bypassed .strip-visual { filter: grayscale(.8); }
+main.studio-console .strip button { font-size: 12px; border-color: var(--strip); }
+main.studio-console .strip button.is-open { background: var(--strip); color: #08141c; }
+main.studio-console .gr-fill { background: var(--c-amber); }
+
+/* Output rack */
+main.studio-console .master { overflow: auto; }
+.output-rack { display: grid; gap: 8px; padding: 10px 12px; border-bottom: 1px solid #40505e; }
+.output-rack .bar-meters { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 8px; align-items: center; }
+.output-rack .bar-meter { font-size: 12px; }
+.output-rack .bar-rms { background: #3d9bbf; }
+.output-rack .bar-hold { background: #f0b44a; }
+.readouts { margin: 0; display: grid; gap: 4px; font-size: 12px; }
+.readouts div { display: flex; justify-content: space-between; gap: 8px; }
+.readouts dt { color: #b8c4cc; }
+.readouts dd { margin: 0; color: #f0f3f5; text-align: right; }
+.readouts dd span { color: #b8c4cc; font-size: 11px; }
+.chain-flow { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+.chain-flow li { display: grid; grid-template-columns: 10px 1fr auto; gap: 8px; align-items: center; font-size: 12px; padding: 3px 6px; background: #151c23; border-radius: 3px; }
+.flow-led { width: 8px; height: 8px; border-radius: 50%; background: #3a4651; }
+.chain-flow li.on .flow-led { background: #5fd08a; box-shadow: 0 0 5px #5fd08a; }
+.flow-state { font-size: 11px; letter-spacing: 1px; color: #b8c4cc; }
+.chain-flow li.on .flow-state { color: #f0f3f5; }
+main.studio-console .master-body { contain: none; min-height: 0; flex: 0 0 auto; max-height: 14rem; }
+
+/* Monitor fader: tick scale behind the track, a tactile cap. A monitor preference, not export gain. */
+main.studio-console .master-level input[type='range'] { appearance: none; height: 28px; background: transparent; margin: 4px 0; }
+main.studio-console .master-level input[type='range']::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: #0b1015; border: 1px solid #40505e; }
+main.studio-console .master-level input[type='range']::-moz-range-track { height: 6px; border-radius: 3px; background: #0b1015; border: 1px solid #40505e; }
+main.studio-console .master-level input[type='range']::-webkit-slider-thumb { appearance: none; width: 16px; height: 26px; margin-top: -11px; border-radius: 3px; border: 1px solid #0b1015; background: linear-gradient(180deg, #8d9ba6, #56636e 48%, #3b4650 52%, #5b6975); box-shadow: 0 2px 3px #0008, inset 0 1px #ffffff40; }
+main.studio-console .master-level input[type='range']::-moz-range-thumb { width: 14px; height: 24px; border-radius: 3px; border: 1px solid #0b1015; background: linear-gradient(180deg, #8d9ba6, #56636e 48%, #3b4650 52%, #5b6975); }
+main.studio-console .master-level input[type='range']:disabled { opacity: .5; }
+main.studio-console .master-scale { font-size: 11px; color: #b8c4cc; height: 14px; }
+main.studio-console .master-level label, main.studio-console .master-fader-row { font-size: 13px; color: #b8c4cc; }
+main.studio-console .master-value { color: #f0f3f5; font-size: 13px; }
+main.studio-console .master-reset { font-size: 11px; }
+
+/* Floating processor editors stay above every panel and below nothing the transport needs. */
+main.studio-console .editor-dialog { z-index: 20; }
+
+/* 761–1199 px: the rail becomes a toolbar row and the output rack stays on the right. */
+@media (max-width: 1199px) {
+  main.studio-console {
+    grid-template-columns: minmax(0, 1fr) 260px; grid-template-rows: auto auto auto auto auto auto;
+    grid-template-areas: "head head" "xport xport" "nav nav" "tracks master" "mixer master" "foot foot";
+  }
+  .console-nav { grid-template-columns: repeat(3, auto) auto 1fr; align-items: center; gap: 8px 12px; padding: 6px 10px; }
+  .console-nav ul { display: contents; }
+  .console-nav li { display: contents; }
+  .console-nav .console-eyebrow { display: none; }
+  .console-nav .console-note { display: none; }
+  .console-nav button { width: auto; }
+  .console-nav .nav-stems { grid-column: 4; }
+  main.studio-console .master-body { max-height: 8rem; }
+  main.studio-console .track-space { min-height: 9rem; }
+}
+
+/* Phone-sized and below: one reachable column; the page scrolls vertically only. */
+@media (max-width: 760px) {
+  main.studio-console { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-template-areas: "head" "xport" "nav" "tracks" "mixer" "master" "foot"; padding: 8px; }
+  .console-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .console-nav .nav-stems { grid-column: 1 / -1; }
+  main.studio-console .masthead-tools { flex-wrap: wrap; }
+}
+@media (prefers-reduced-motion: reduce) { main.studio-console * { transition: none !important; } }

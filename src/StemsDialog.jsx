@@ -42,7 +42,7 @@ function Meter({ label, level }) {
 // session has its own transport with seek; the single-track transport stops while it plays.
 // LAS-35: each strip has its own chain (bypass, a copy of the master settings, or a settings file),
 // the session's settings can be saved and recalled, and the stem master is rendered offline.
-export function StemsDialog({ engine, chain, listening, onListen, onStemsPlay, onStemsChange = () => {}, masterLevel }) {
+export function StemsDialog({ triggerRef, engine, chain, listening, onListen, onStemsPlay, onStemsChange = () => {}, masterLevel }) {
   const dialog = useRef(null);
   const [stems, setStems] = useState([]);
   const [state, setState] = useState({ playing: false, position: 0, duration: 0, rate: null });
@@ -203,7 +203,7 @@ export function StemsDialog({ engine, chain, listening, onListen, onStemsPlay, o
 
   return (
     <>
-      <button className="heading-button" onClick={open}>Stems…</button>
+      <button ref={triggerRef} className="heading-button" onClick={open}>Stems…</button>
       <dialog ref={dialog} className="analysis-dialog stems-dialog" aria-labelledby="stems-title" onClose={close}>
         <div className="account-heading">
           <h2 id="stems-title">Stem session</h2>
