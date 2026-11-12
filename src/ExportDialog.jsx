@@ -9,6 +9,13 @@ const level = (value, unit) => (value === null || value === undefined ? '—' : 
 // Export of the processed audio (LAS-28): the file's own samples at its own sample rate go through
 // the same chain code as the preview, in a worker; latency is compensated so the export has the
 // source's exact length. The source file is only read.
+// Advice follows the processing that actually ran (LAS-130).
+export function clippingAdvice(report) {
+  if (report.resampleOnly) return 'Convert only does not run the limiter; lower the source level, or export with the mastering chain and its limiter on';
+  if (report.limiterEnabled) return 'the limiter is on; lower its input gain or the chain gain';
+  return 'turn on the limiter or lower the gain';
+}
+
 export function ExportDialog({ file, params }) {
   const dialog = useRef(null);
   const job = useRef(null);
@@ -110,7 +117,7 @@ export function ExportDialog({ file, params }) {
                 ['Integrated loudness', level(report.integratedLufs, 'LUFS')],
                 ['True peak (4× oversampled)', level(report.truePeakDbtp, 'dBTP')],
                 ['Sample peak', level(report.samplePeakDbfs, 'dBFS')],
-                ['Clipped samples', report.clippedSamples ? `${report.clippedSamples} (${report.resampleOnly ? 'Convert only does not run the limiter; lower the source level, or export with the mastering chain and its limiter on' : 'turn on the limiter or lower the gain'})` : 'None'],
+                ['Clipped samples', report.clippedSamples ? `${report.clippedSamples} (${clippingAdvice(report)})` : 'None'],
                 ['Latency compensated', `${report.latencyCompensatedSamples} samples`],
               ].map(([name, value]) => <tr key={name}><th scope="row">{name}</th><td>{value}</td></tr>)}
             </tbody>

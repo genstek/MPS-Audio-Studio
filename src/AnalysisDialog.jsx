@@ -2,43 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { startAnalysis } from './analysis-client.js';
 import { AnalysisTimeline } from './AnalysisTimeline.jsx';
 
-// Number formatting: one decimal for levels, a sign for values that can be either side of zero.
-const fixed = (value, digits = 1) => {
-  const text = value.toFixed(digits);
-  return Number(text) === 0 ? text.replace('-', '') : text.replace('-', '−'); // no "−0.0"
-};
-const signed = (value, digits = 1) => `${value > 0 ? '+' : ''}${fixed(value, digits)}`;
-const level = (value, unit, digits = 1) => (value === null ? '—' : `${fixed(value, digits)} ${unit}`);
-const clock = seconds => `${Math.floor(seconds / 60)}:${(seconds % 60).toFixed(1).padStart(4, '0')}`;
-
-function loudnessNote(loudness) {
-  if (loudness.state === 'silent') return 'Silent: no part of the audio is above the −70 LUFS gate.';
-  if (loudness.state === 'too-short') return 'Too short to measure loudness (under 0.4 seconds).';
-  return null;
-}
+/* global __APP_VERSION__ */
+const APP_VERSION = typeof __APP_VERSION__ === 'string' ? __APP_VERSION__ : null;
 
 function Report({ report }) {
-  const { input, loudness, peaks, levels, clipping, stereo, spectrum } = report;
-  const note = loudnessNote(loudness);
-  const rows = [
-    ['Integrated loudness', level(loudness.integratedLufs, 'LUFS')],
-    ['Loudness range', level(loudness.rangeLu, 'LU')],
-    ['Max momentary loudness (400 ms)', level(loudness.momentaryMaxLufs, 'LUFS')],
-    ['Max short-term loudness (3 s)', loudness.state === 'ok' && loudness.shortTermMaxLufs === null ? 'Needs 3 seconds' : level(loudness.shortTermMaxLufs, 'LUFS')],
-    [`True peak (${peaks.oversampling}× oversampled)`, level(peaks.truePeakDbtp, 'dBTP', 2)],
-    ['Sample peak', level(peaks.samplePeakDbfs, 'dBFS', 2)],
-    ['RMS level', level(levels.rmsDbfs, 'dBFS')],
-    ['Crest factor (sample peak − RMS)', level(levels.crestFactorDb, 'dB')],
-    ['Peak to loudness ratio (true peak − integrated)', level(levels.plrDb, 'dB')],
-    ['DC offset', levels.dcOffset.map(offset => `${signed(offset * 100, 3)} %`).join(' / ')],
-    ['Clipping (full-scale runs of 3+ samples)', clipping.clippedRuns ? `${clipping.clippedRuns} runs, ${clipping.clippedSamples} samples at full scale` : clipping.clippedSamples ? `None; ${clipping.clippedSamples} isolated full-scale samples` : 'None detected'],
-  ];
-  const stereoRows = stereo && [
-    ['Correlation (L/R)', stereo.correlation === null ? '—' : signed(stereo.correlation, 2)],
-    ['Side relative to mid', stereo.channelsIdentical ? 'No side signal (left = right)' : level(stereo.sideToMidDb, 'dB')],
-    ['Balance (left − right)', stereo.balanceDb === null ? '—' : `${signed(stereo.balanceDb)} dB`],
-    ['Loudness change in mono', stereo.monoLoudnessChangeDb === null ? (stereo.correlation !== null && stereo.correlation < -0.9 ? 'Cancels to silence' : '—') : `${signed(stereo.monoLoudnessChangeDb)} LU`],
-  ];
+  const { input } = report;
+  const { note, loudnessRows, stereoRows, bands } = displayRows(report);
   const table = (caption, entries) => (
     <table className="analysis-table">
       <caption>{caption}</caption>
@@ -48,17 +17,17 @@ function Report({ report }) {
   return (
     <div className="analysis-report">
       {note && <p className="analysis-note">{note}</p>}
-      {table('Loudness, peaks and dynamics', rows)}
+      {table('Loudness, peaks and dynamics', loudnessRows)}
       {stereoRows ? table('Stereo', stereoRows) : <p className="fine-print">Mono file: stereo measures do not apply.</p>}
-      {spectrum.bands.length ? (
+      {bands.length ? (
         <table className="analysis-table spectrum-table">
           <caption>Spectrum: share of energy per octave band</caption>
           <thead><tr><th scope="col">Band</th><th scope="col">Share</th><th scope="col">Relative to total</th></tr></thead>
-          <tbody>{spectrum.bands.map(band => (
-            <tr key={band.centreHz}>
-              <th scope="row">{band.centreHz >= 1000 ? `${band.centreHz / 1000} kHz` : `${band.centreHz} Hz`}</th>
-              <td><span className="spectrum-bar" aria-hidden="true"><span style={{ width: `${Math.round(band.share * 100)}%` }} /></span>{(band.share * 100).toFixed(1)} %</td>
-              <td>{band.levelDb === null || band.levelDb < -90 ? 'below −90 dB' : level(band.levelDb, 'dB')}</td>
+          <tbody>{bands.map(band => (
+            <tr key={band.key}>
+              <th scope="row">{band.label}</th>
+              <td><span className="spectrum-bar" aria-hidden="true"><span style={{ width: `${Math.round(band.share * 100)}%` }} /></span>{band.shareText}</td>
+              <td>{band.levelText}</td>
             </tr>
           ))}</tbody>
         </table>
@@ -78,6 +47,10 @@ export function AnalysisDialog({ file, renderRate = null, onSeek = () => {}, onA
   // Every state names the file it belongs to; a report of another file is never shown.
   const [saved, setState] = useState({ phase: 'idle', file });
   const state = saved.file === file ? saved : { phase: 'idle', file };
+  // Saving the report (LAS-172) is keyed to the same file and to the run it was started from.
+  const [saving, setSaving] = useState({ phase: 'idle', file });
+  const [choosing, setChoosing] = useState(false);
+  const savePhase = saving.file === file && saving.report === state.report ? saving : { phase: 'idle' };
 
   function cancel() {
     job.current?.cancel();
@@ -89,11 +62,12 @@ export function AnalysisDialog({ file, renderRate = null, onSeek = () => {}, onA
 
   function run() {
     cancel();
+    setChoosing(false);
     setState({ phase: 'running', stage: 'Starting analysis…', file });
     const current = startAnalysis(file, stage => job.current === current && setState({ phase: 'running', stage, file }), undefined, { timeline: { hopSeconds: 1 } });
     job.current = current;
     current.result.then(
-      report => job.current === current && setState({ phase: 'done', report, file }),
+      report => job.current === current && setState({ phase: 'done', report, analyzedAt: new Date(), file }),
       failure => {
         if (failure.name === 'AbortError') setState({ phase: 'cancelled', file });
         else if (job.current === current) setState({ phase: 'error', message: failure.message, file });
@@ -101,6 +75,23 @@ export function AnalysisDialog({ file, renderRate = null, onSeek = () => {}, onA
     ).finally(() => {
       if (job.current === current) job.current = null;
     });
+  }
+
+  // Saves the report already on screen: the same object, never a new run, and only a finished one.
+  async function save(format) {
+    if (state.phase !== 'done' || savePhase.phase === 'saving') return;
+    const { report, analyzedAt } = state;
+    setChoosing(false);
+    setSaving({ phase: 'saving', file, report });
+    try {
+      const fileName = reportFileName(report.input.name, analyzedAt, FORMATS[format].extension);
+      const blob = reportBlob(report, format, { analyzedAt, app: { version: APP_VERSION } });
+      const outcome = await saveReport(blob, fileName, format);
+      if (outcome.status === 'cancelled') setSaving({ phase: 'cancelled', file, report });
+      else setSaving({ phase: 'saved', file, report, message: outcome.status === 'saved' ? `Report saved as ${outcome.fileName}.` : `Report download started: ${outcome.fileName}. Check your downloads folder.` });
+    } catch (error) {
+      setSaving({ phase: 'error', file, report, message: `The report could not be saved${error?.message ? `: ${error.message}` : '.'}` });
+    }
   }
 
   // Closing the dialog does not stop a running analysis: the transport stays usable meanwhile and
@@ -111,7 +102,8 @@ export function AnalysisDialog({ file, renderRate = null, onSeek = () => {}, onA
   }
 
   const running = state.phase === 'running';
-  const status = running ? state.stage : state.phase === 'done' ? 'Analysis complete.' : state.phase === 'cancelled' ? 'Analysis cancelled.' : '';
+  const done = state.phase === 'done';
+  const status = running ? state.stage : done ? 'Analysis complete.' : state.phase === 'cancelled' ? 'Analysis cancelled.' : '';
   return (
     <>
       <button className="analyze-track" onClick={open} disabled={!file}>{running ? 'Analyzing…' : 'Analyze'}</button>
@@ -128,7 +120,18 @@ export function AnalysisDialog({ file, renderRate = null, onSeek = () => {}, onA
         <div className="library-actions">
           {running
             ? <button type="button" onClick={cancel}>Cancel analysis</button>
-            : <button type="button" onClick={run} disabled={!file}>{state.phase === 'done' ? 'Analyze again' : 'Try again'}</button>}
+            : <button type="button" onClick={run} disabled={!file}>{done ? 'Analyze again' : 'Try again'}</button>}
+          {done && (
+            <button type="button" aria-haspopup="true" aria-expanded={choosing} onClick={() => setChoosing(value => !value)} disabled={!file || savePhase.phase === 'saving'}>
+              {savePhase.phase === 'saving' ? 'Saving…' : 'Save report…'}
+            </button>
+          )}
+          {done && choosing && (
+            <span role="group" aria-label="Report format" className="library-actions">
+              <button type="button" onClick={() => save('pdf')}>Save as PDF</button>
+              <button type="button" onClick={() => save('json')}>Save as JSON</button>
+            </span>
+          )}
         </div>
         <p className="fine-print">Measured on this device from the file's own samples; the file is only read, never changed or uploaded.</p>
       </dialog>

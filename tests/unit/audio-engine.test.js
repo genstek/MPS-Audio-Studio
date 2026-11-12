@@ -368,6 +368,27 @@ test('chain settings, listening choice and loudness match reach the stage, also 
   engine.dispose();
 });
 
+test('LAS-120: the suggestion A/B trim adds to loudness matching, never boosts, and neither overwrites the other', async () => {
+  const { engine, file, stages } = setup();
+  await engine.load(file);
+  engine.setLoudnessMatch({ processedDb: -4, originalDb: 0 });
+  engine.setPreviewTrim(-1.5);
+  expect(stages[0].listening.at(-1)).toEqual(['processed', { processedDb: -5.5, originalDb: 0 }]);
+  // Match loudness re-measures while comparing: the trim is kept on top of the new match.
+  engine.setLoudnessMatch({ processedDb: -2, originalDb: 0 });
+  expect(stages[0].listening.at(-1)).toEqual(['processed', { processedDb: -3.5, originalDb: 0 }]);
+  engine.setLoudnessMatch(null);
+  expect(stages[0].listening.at(-1)).toEqual(['processed', { processedDb: -1.5, originalDb: 0 }]);
+  // Ending the comparison leaves the newest match untouched.
+  engine.setLoudnessMatch({ processedDb: -3, originalDb: 0 });
+  engine.setPreviewTrim(0);
+  expect(stages[0].listening.at(-1)).toEqual(['processed', { processedDb: -3, originalDb: 0 }]);
+  engine.setPreviewTrim(2); // a boost is refused
+  engine.setPreviewTrim(Number.NaN);
+  expect(stages[0].listening.at(-1)).toEqual(['processed', { processedDb: -3, originalDb: 0 }]);
+  engine.dispose();
+});
+
 test('meters from the stage reach every listener until it unsubscribes', async () => {
   const { engine, file, stages } = setup();
   const first = vi.fn(), second = vi.fn();

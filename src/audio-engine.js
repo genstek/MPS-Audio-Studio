@@ -40,6 +40,10 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
   let chainParams = defaultChain();
   let listening = 'processed';
   let match = { processedDb: 0, originalDb: 0 };
+  // Suggestion A/B trim (LAS-120): dB ≤ 0 on the processed path, on top of loudness matching. It is
+  // kept apart from `match` so Match loudness and a suggestion comparison never overwrite each other.
+  let previewTrimDb = 0;
+  const audibleMatch = () => (previewTrimDb ? { ...match, processedDb: match.processedDb + previewTrimDb } : match);
   const meterListeners = new Set();
   let offset = 0;
   let startedAt = 0;
@@ -80,7 +84,7 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
       loop.disconnect();
     }
     comparison = null;
-    output?.setListening(listening, match);
+    output?.setListening(listening, audibleMatch());
   }
 
   // Ends the comparison monitor and cancels one that is still starting.
@@ -173,7 +177,7 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
         output?.dispose();
         output = stage;
         output.onMeters(meters => meterListeners.forEach(listener => listener(meters)));
-        output.setListening(listening, match);
+        output.setListening(listening, audibleMatch());
       }
       return { duration: buffer.duration, channels: buffer.numberOfChannels, sampleRate: buffer.sampleRate };
     },
@@ -258,13 +262,19 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
     // A/B: 'processed' or 'original'. The same source keeps playing; only the audible path changes.
     listen(next) {
       listening = next;
-      if (!comparison) output?.setListening(listening, match);
+      if (!comparison) output?.setListening(listening, audibleMatch());
       stemOutput?.setListening(listening, NO_MATCH);
     },
     // Loudness matching gains in dB (each ≤ 0), or null for none.
     setLoudnessMatch(next) {
       match = next ?? { processedDb: 0, originalDb: 0 };
-      if (!comparison) output?.setListening(listening, match); // kept for after a comparison
+      if (!comparison) output?.setListening(listening, audibleMatch()); // kept for after a comparison
+    },
+    // Extra processed-path trim in dB for a suggestion A/B (LAS-120). Values above 0 are refused as 0:
+    // the comparison only ever turns the louder version down. 0 ends it.
+    setPreviewTrim(db) {
+      previewTrimDb = Number.isFinite(db) ? Math.min(0, db) : 0;
+      if (!comparison) output?.setListening(listening, audibleMatch());
     },
     // Starts the comparison monitor: referenceBytes (a WAV's ArrayBuffer, decoded here), the mix
     // and reference sections { start, end } in seconds, gains { processedDb, originalDb,
