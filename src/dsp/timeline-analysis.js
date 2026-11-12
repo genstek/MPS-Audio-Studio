@@ -22,7 +22,8 @@ export const METHODOLOGY = Object.freeze({
   bandsRelativeDb: 'dB: band power relative to the 2 s window total (spectral shape, independent of overall level)',
   correlation: 'Pearson correlation of left and right over the 2 s window (−1…+1)',
   sideToMidDb: 'dB: side energy relative to mid energy over the 2 s window',
-  balanceDb: 'dB: left mean square relative to right over the 2 s window',
+  balanceDb: 'dB: left mean square relative to right over the 2 s window; null when either channel is digital silence',
+  oneSided: "'left' or 'right' when only that channel has audio in the 2 s window (the other is digital silence), else null",
   monoFoldDb: 'dB: mono fold-down (L+R)/2 energy relative to the mean of L and R energy (unweighted); strongly negative = loses level in mono',
 });
 
@@ -32,11 +33,12 @@ const dbOrNull = ratio => (ratio > 0 ? 10 * Math.log10(ratio) : null);
 const round = (v, d = 2) => (v === null ? null : Number(v.toFixed(d)));
 
 // Hop is a whole number of 100 ms blocks, at least `hopSeconds`, and large enough that no more than
-// `maxWindows` points are produced (bounded CPU and memory for long files).
+// `maxWindows` points are produced (bounded CPU and memory for long files). There is no upper cap:
+// a cap would break that bound for long files (a 2 h file needs a 6 s hop for 1,200 points).
 export function chooseHop(duration, { hopSeconds = 1, maxWindows = 1200 } = {}) {
   const wanted = Number.isFinite(hopSeconds) ? hopSeconds : 1;
   const bounded = Math.max(wanted, duration / Math.max(1, maxWindows));
-  return Math.min(30, Math.max(1, Math.ceil(bounded / BASE_SECONDS - 1e-9))) * BASE_SECONDS;
+  return Math.max(1, Math.ceil(bounded / BASE_SECONDS - 1e-9)) * BASE_SECONDS;
 }
 
 // K-weighted energy of each 100 ms block (streaming: no full-length weighted copy is kept).
@@ -108,10 +110,16 @@ function stereoWindow(left, right, first, last) {
     mm += m * m; ss += s * s;
   }
   const mean = (rawL + rawR) / 2;
+  // Audio in one channel only (the other is digital silence) is the most extreme imbalance; it has no
+  // finite dB value, so it is named explicitly instead of being dropped.
+  let oneSided = null;
+  if (rawL > 0 && rawR === 0) oneSided = 'left';
+  else if (rawR > 0 && rawL === 0) oneSided = 'right';
   return {
     correlation: ll > 0 && rr > 0 ? round(lr / Math.sqrt(ll * rr), 3) : null,
     sideToMidDb: round(mm > 0 && ss > 0 ? dbOrNull(ss / mm) : null),
     balanceDb: round(rawL > 0 && rawR > 0 ? dbOrNull(rawL / rawR) : null),
+    oneSided,
     monoFoldDb: round(mm > 0 && mean > 0 ? dbOrNull(mm / mean) : null),
     monoCancels: mean > 0 && mm / mean < 1e-9,
   };
@@ -196,6 +204,9 @@ export function analyzeTimeline(channels, fs, { hopSeconds = 1, maxWindows = 120
 // Thresholds are deliberately plain. A marker is an observation with the numbers behind it and a
 // hypothesis; it never implies a defect or a correction.
 export const THRESHOLDS = Object.freeze({ audibleDbfs: -60, spectralShiftDb: 6, loudnessStepLu: 4, correlationRisk: -0.3, balanceDb: 6, maxMarkers: 40 });
+// Ranking value for a one-sided window, which has no finite balance: above any measured offset, so it
+// survives the marker cap. It is a sort key, not a measurement.
+const ONE_SIDED_MAGNITUDE = 1000;
 const clock = s => `${Math.floor(s / 60)}:${(s % 60).toFixed(1).padStart(4, '0')}`;
 
 function findMarkers(result) {
@@ -226,7 +237,14 @@ function findMarkers(result) {
         hypothesis: 'Possible out-of-phase content (polarity, wide stereo effect or delay between channels). It can be intended; confirm by listening in mono before changing anything.',
         evidence: { correlation: s.correlation, monoFoldDb: s.monoFoldDb, monoCancels: s.monoCancels } });
     }
-    if (s && audible(w) && s.balanceDb !== null && Math.abs(s.balanceDb) >= THRESHOLDS.balanceDb) {
+    if (s && audible(w) && s.oneSided) {
+      const other = s.oneSided === 'left' ? 'right' : 'left';
+      raw.push({ kind: 'balance-offset', index: i, start: w.start, end: w.end, magnitude: ONE_SIDED_MAGNITUDE,
+        title: `Only the ${s.oneSided} channel has audio`,
+        observation: `The ${other} channel is digital silence in ${clock(w.start)}–${clock(w.end)} while the ${s.oneSided} channel has audio.`,
+        hypothesis: 'May be a deliberate hard pan, a one-sided instrument or a channel lost in routing or export. It is not assumed to be an error and is not auto-centred.',
+        evidence: { balanceDb: null, oneSided: s.oneSided } });
+    } else if (s && audible(w) && s.balanceDb !== null && Math.abs(s.balanceDb) >= THRESHOLDS.balanceDb) {
       raw.push({ kind: 'balance-offset', index: i, start: w.start, end: w.end, magnitude: Math.abs(s.balanceDb),
         title: `Channel balance ${s.balanceDb > 0 ? 'left' : 'right'}-heavy (${s.balanceDb > 0 ? '+' : ''}${s.balanceDb.toFixed(1)} dB)`,
         observation: `Left is ${Math.abs(s.balanceDb).toFixed(1)} dB ${s.balanceDb > 0 ? 'louder' : 'quieter'} than right in ${clock(w.start)}–${clock(w.end)}.`,

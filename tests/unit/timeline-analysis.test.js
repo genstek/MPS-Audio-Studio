@@ -80,6 +80,16 @@ describe('LAS-173 timeline analysis: bounds and safety', () => {
     expect(t.spectral.length).toBeLessThanOrEqual(10);
   });
 
+  test('hop keeps the maxWindows bound beyond one hour (no 3 s cap)', () => {
+    expect(chooseHop(7200, { hopSeconds: 1, maxWindows: 1200 })).toBeCloseTo(6, 6); // 2 h → 1,200 points
+    expect(chooseHop(4 * 3600, { hopSeconds: 1, maxWindows: 1200 })).toBeCloseTo(12, 6);
+    // Scaled down: 30 s with at most 5 points needs a 6 s hop, more than the old 3 s cap allowed.
+    const t = analyzeTimeline(both(noise({ seconds: 30 })), 48000, { hopSeconds: 1, maxWindows: 5 });
+    expect(t.hopSeconds).toBeCloseTo(6, 6);
+    expect(t.points.length).toBeLessThanOrEqual(5);
+    expect(t.spectral.length).toBeLessThanOrEqual(5);
+  });
+
   test('cancellation stops the work with an AbortError and reports progress', () => {
     const seen = [];
     expect(() => analyzeTimeline(both(noise({ seconds: 20 })), 48000, { onProgress: f => seen.push(f), shouldCancel: () => seen.length >= 3 })).toThrow('cancelled');
@@ -117,6 +127,26 @@ describe('LAS-173 timeline analysis: stereo and markers', () => {
       expect(m.hypothesis).toMatch(/not auto-centred/);
     }
     expect(t.markers.some(m => m.kind === 'phase-risk')).toBe(false); // correlation stays positive
+  });
+
+  test('audio in one channel only is named one-sided and marked, not dropped as a gap', () => {
+    const audio = noise({ seconds: 6, seed: 3 });
+    const silent = new Float64Array(audio.length);
+    for (const [channels, side, other] of [[[audio, silent], 'left', 'right'], [[silent, audio], 'right', 'left']]) {
+      const t = analyzeTimeline(channels, rate);
+      expect(t.spectral.length).toBeGreaterThan(0);
+      for (const w of t.spectral) expect(w.stereo).toMatchObject({ balanceDb: null, oneSided: side });
+      const marks = t.markers.filter(m => m.kind === 'balance-offset');
+      expect(marks).toHaveLength(1); // neighbouring one-sided windows merge into one marker
+      expect(marks[0].title).toBe(`Only the ${side} channel has audio`);
+      expect(marks[0].observation).toMatch(new RegExp(`The ${other} channel is digital silence`));
+      expect(marks[0].evidence).toEqual({ balanceDb: null, oneSided: side });
+      expect(marks[0].hypothesis).toMatch(/not auto-centred/);
+    }
+    // Both channels silent: no balance, not one-sided, no marker.
+    const quiet = analyzeTimeline([silent, silent], rate);
+    for (const w of quiet.spectral) expect(w.stereo).toMatchObject({ balanceDb: null, oneSided: null });
+    expect(quiet.markers.filter(m => m.kind === 'balance-offset')).toHaveLength(0);
   });
 
   test('sectional spectral gap without phase problem: marked as a shape change, correlation stays +1', () => {
