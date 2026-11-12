@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { startAnalysis } from './analysis-client.js';
+import { displayRows, describeInput } from './analysis-display.js';
+import { FORMATS, reportBlob, reportFileName, saveReport } from './analysis-report.js';
 import { AnalysisTimeline } from './AnalysisTimeline.jsx';
 
 /* global __APP_VERSION__ */
@@ -33,7 +35,7 @@ function Report({ report }) {
         </table>
       ) : <p className="fine-print">Spectrum needs at least 8,192 samples.</p>}
       <p className="analysis-meta">
-        {report.version} · {input.sampleRate.toLocaleString('en-US')} Hz · {input.channels === 1 ? 'mono' : 'stereo'} · {input.bitsPerSample}-bit {input.encoding === 'float' ? 'float' : 'PCM'} · whole file {clock(input.segment.start)}–{clock(input.segment.end)}
+        {describeInput(report)}
         <br />Source SHA-256 <code data-testid="source-sha256">{input.sha256}</code>
       </p>
     </div>
@@ -115,8 +117,11 @@ export function AnalysisDialog({ file, renderRate = null, onSeek = () => {}, onA
         {file && <p className="analysis-file" title={file.name}>{file.name}</p>}
         <p className="account-status" role="status">{status}</p>
         {state.phase === 'error' && <p className="account-error" role="alert">{state.message}</p>}
-        {state.phase === 'done' && state.report.timeline && <AnalysisTimeline timeline={state.report.timeline} renderRate={renderRate} onSeek={onSeek} onAudition={onAudition} />}
-        {state.phase === 'done' && <Report report={state.report} />}
+        {done && state.report.timeline && <AnalysisTimeline timeline={state.report.timeline} renderRate={renderRate} onSeek={onSeek} onAudition={onAudition} />}
+        {done && <Report report={state.report} />}
+        {done && savePhase.phase === 'saved' && <p className="account-status" role="status" data-testid="save-status">{savePhase.message}</p>}
+        {done && savePhase.phase === 'cancelled' && <p className="fine-print" role="status" data-testid="save-status">Save cancelled. No report was written.</p>}
+        {done && savePhase.phase === 'error' && <p className="account-error" role="alert">{savePhase.message}</p>}
         <div className="library-actions">
           {running
             ? <button type="button" onClick={cancel}>Cancel analysis</button>
