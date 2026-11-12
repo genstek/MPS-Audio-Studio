@@ -14,7 +14,10 @@ describe('LAS-173 timeline analysis: loudness windows', () => {
     expect(at(t.points, 20).momentaryLufs).toBeCloseTo(-23, 0);
     expect(at(t.points, 20).shortTermLufs).toBeCloseTo(-23, 0);
     expect(at(t.points, 12).shortTermLufs).toBeLessThan(-23.5); // 3 s window still includes quiet part
-    expect(at(t.points, 20).trendDeltaLu).toBeCloseTo(13, 0);
+    // Trend compares adjacent non-overlapping 5 s windows: 5–10 quiet vs 10–15 loud.
+    expect(at(t.points, 15).trendDeltaLu).toBeCloseTo(13, 0);
+    // At 20 s both compared windows (10–15 and 15–20) are loud, so the delta returns to zero.
+    expect(at(t.points, 20).trendDeltaLu).toBeCloseTo(0, 0);
     expect(t.markers.some(m => m.kind === 'loudness-step')).toBe(true);
   });
 
