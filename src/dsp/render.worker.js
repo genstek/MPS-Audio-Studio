@@ -101,6 +101,7 @@ self.onmessage = async ({ data: { mode, file, params, bitDepth = 24, segment, re
       sourceSampleRate: source.sampleRate,
       resampled: converting,
       resampleOnly,
+      limiterEnabled: !resampleOnly && params?.limiter?.enabled === true,
       channels: source.channels,
       bitDepth,
       dither: bitDepth === 16 ? 'TPDF ±1 LSB' : 'none (24-bit)',
