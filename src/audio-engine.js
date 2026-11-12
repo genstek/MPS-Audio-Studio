@@ -261,6 +261,7 @@ export function createAudioEngine(onEnded, { createOutput = createOutputStage, c
       if (!comparison) output?.setListening(listening, match);
       stemOutput?.setListening(listening, NO_MATCH);
     },
+    getLoudnessMatch() { return { ...match }; },
     // Loudness matching gains in dB (each ≤ 0), or null for none.
     setLoudnessMatch(next) {
       match = next ?? { processedDb: 0, originalDb: 0 };
