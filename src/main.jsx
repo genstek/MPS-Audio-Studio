@@ -6,6 +6,7 @@ import { AnalysisDialog } from './AnalysisDialog.jsx';
 import { MixerPanel } from './MixerPanel.jsx';
 import { ExportDialog } from './ExportDialog.jsx';
 import { ConvertDialog } from './ConvertDialog.jsx';
+import { SuggestionsPanel } from './SuggestionsPanel.jsx';
 import { ListenSwitch, LoudnessMatch } from './ListeningControls.jsx';
 import { useChainSettings } from './useChainSettings.js';
 import { ReferencesDialog } from './ReferencesDialog.jsx';
@@ -267,6 +268,7 @@ function App() {
           <div className="master-body" role="region" aria-label="Master details" tabIndex={0}>
             <p className="eyebrow">OUTPUT STAGE</p>
             <ListenSwitch value={listening} onChange={listen} disabled={!track} help="master.listen" />
+            <SuggestionsPanel engine={engine} file={currentFile} chain={chain} sampleRate={track ? track.sampleRate : 48000} />
             <LoudnessMatch engine={engine} file={currentFile} params={chain.params} />
           </div>
           <div className="master-level">
