@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { OWNERS } from './ai/preview-coordinator.js';
 import { createProposalSession } from './ai/proposal-session.js';
 import { chainRevision } from './ai/eq-proposal.js';
-import { buildSuggestions, comparisonTrimDb } from './ai/suggestions.js';
+import { buildSuggestions, comparisonInterrupted, comparisonTrimDb } from './ai/suggestions.js';
 import { startAnalysis } from './analysis-client.js';
 import { startRender } from './render-client.js';
 
@@ -59,12 +59,13 @@ function SuggestionsBody({ engine, file, chain, projectId, sampleRate }) {
 
   const setTrim = db => engineRef.current.current?.setPreviewTrim(db);
   const cancelLevel = () => { levelJob.current?.cancel(); levelJob.current = null; };
-  // Ends any A/B: stops its level measurement, frees the preview slot and removes the trim.
+  // Ends any A/B: stops its level measurement, removes the trim and frees the preview slot (the
+  // comparison is cleared before the slot, so it is never seen as interrupted on the way out).
   const endCompare = () => {
     cancelLevel();
-    chainRef.current.previews.release(OWNERS.ai);
-    setTrim(0);
     setCompare(null);
+    setTrim(0);
+    chainRef.current.previews.release(OWNERS.ai);
   };
 
   // Cleanup on unmount (close, file replace, project switch): nothing keeps sounding or stays trimmed.
@@ -82,11 +83,21 @@ function SuggestionsBody({ engine, file, chain, projectId, sampleRate }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // The louder side of the A/B is turned down once both levels are known; nothing is boosted.
-  const previewAlive = chain.previewOwner === OWNERS.ai;
-  const live = compare !== null && (compare.side === 'A' || previewAlive);
+  // The louder side of the A/B is turned down once both levels are known; nothing is boosted. If the
+  // side being compared stops playing (another preview takes the slot, or Compare with a reference
+  // resets it), the trim is dropped at once and the comparison ends.
+  const interrupted = compare !== null && comparisonInterrupted(compare.side, chain.previewOwner, OWNERS.ai);
+  const live = compare !== null && !interrupted;
   const trimDb = live && compare.level === 'ready' ? comparisonTrimDb(compare.side, compare.differenceDb) : 0;
   useEffect(() => { engineRef.current.current?.setPreviewTrim(trimDb); }, [trimDb]);
+  useEffect(() => {
+    if (!interrupted) return;
+    levelJob.current?.cancel();
+    levelJob.current = null;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCompare(null);
+    setMessage('The comparison ended because another preview started or stopped it. Your settings are unchanged.');
+  }, [interrupted]);
 
   // A stale chain (any manual edit, undo, redo, replace) or another project id ends the A/B of a stale
   // suggestion. Checked in an effect, never while rendering, because a stale session releases the
@@ -176,8 +187,8 @@ function SuggestionsBody({ engine, file, chain, projectId, sampleRate }) {
   }
 
   function showA() {
-    chain.previews.release(OWNERS.ai); // the committed settings play again
     setCompare(current => (current ? { ...current, side: 'A' } : current));
+    chain.previews.release(OWNERS.ai); // the committed settings play again
     setMessage('Playing your current settings (A). Nothing has been applied.');
   }
 

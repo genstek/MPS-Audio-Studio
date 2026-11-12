@@ -51,6 +51,15 @@ export function comparisonTrimDb(side, differenceDb) {
   return louder > 0 ? -louder : 0;
 }
 
+// A suggestion A/B is only real while its side is what plays (LAS-120). A needs the preview slot left
+// free so the committed settings play; B needs the slot held by the suggestion's own owner. Another
+// owner in the slot (a reference proposal preview) or a reset (Compare with a reference) interrupts it,
+// so the A/B trim never lands on someone else's audio.
+export function comparisonInterrupted(side, holder, owner) {
+  if (side === 'A') return holder !== null && holder !== owner;
+  return holder !== owner;
+}
+
 // Linked edits in 'link' mode, otherwise one edit per channel.
 const editsFor = (mode, band) => (mode === 'link'
   ? [{ channel: 'linked', index: null, enabled: true, type: 'bell', ...band }]
