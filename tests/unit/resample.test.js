@@ -175,3 +175,15 @@ describe('LAS-127 96 kHz / 24-bit WAV output', () => {
     expect(Math.min(...decoded.samples[0])).toBeGreaterThanOrEqual(-1);
   });
 });
+
+describe('LAS-129/130 regression: boundaries at every export rate, no large allocation', () => {
+  for (const rate of [44100, 48000, 88200, 96000]) {
+    test(`${rate} Hz stereo 16-bit: limit frame passes, +1 refused; 24-bit refuses the 16-bit limit`, () => {
+      const limit = Math.floor(MAX_OUTPUT_BYTES / 4);
+      const args = { channels: 2, inRate: rate, outRate: rate };
+      expect(checkConversion({ ...args, frames: limit, bitDepth: 16 })).toBe(limit);
+      expect(() => checkConversion({ ...args, frames: limit + 1, bitDepth: 16 })).toThrow(/export limit/);
+      expect(() => checkConversion({ ...args, frames: limit, bitDepth: 24 })).toThrow(/export limit/);
+    });
+  }
+});
