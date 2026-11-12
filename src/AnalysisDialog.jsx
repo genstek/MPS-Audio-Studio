@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { startAnalysis } from './analysis-client.js';
 import { displayRows, describeInput } from './analysis-display.js';
 import { FORMATS, reportBlob, reportFileName, saveReport } from './analysis-report.js';
+import { AnalysisTimeline } from './AnalysisTimeline.jsx';
 
 /* global __APP_VERSION__ */
 const APP_VERSION = typeof __APP_VERSION__ === 'string' ? __APP_VERSION__ : null;
@@ -35,14 +36,14 @@ function Report({ report }) {
       ) : <p className="fine-print">Spectrum needs at least 8,192 samples.</p>}
       <p className="analysis-meta">
         {describeInput(report)}
-        <br />Source SHA-256 <code>{input.sha256}</code>
+        <br />Source SHA-256 <code data-testid="source-sha256">{input.sha256}</code>
       </p>
     </div>
   );
 }
 
 // Analysis of the imported file (LAS-26). The work runs in a Web Worker; the file is only read.
-export function AnalysisDialog({ file }) {
+export function AnalysisDialog({ file, renderRate = null, onSeek = () => {}, onAudition = () => {} }) {
   const dialog = useRef(null);
   const job = useRef(null);
   // Every state names the file it belongs to; a report of another file is never shown.
@@ -65,7 +66,7 @@ export function AnalysisDialog({ file }) {
     cancel();
     setChoosing(false);
     setState({ phase: 'running', stage: 'Starting analysis…', file });
-    const current = startAnalysis(file, stage => job.current === current && setState({ phase: 'running', stage, file }));
+    const current = startAnalysis(file, stage => job.current === current && setState({ phase: 'running', stage, file }), undefined, { timeline: { hopSeconds: 1 } });
     job.current = current;
     current.result.then(
       report => job.current === current && setState({ phase: 'done', report, analyzedAt: new Date(), file }),
@@ -116,6 +117,7 @@ export function AnalysisDialog({ file }) {
         {file && <p className="analysis-file" title={file.name}>{file.name}</p>}
         <p className="account-status" role="status">{status}</p>
         {state.phase === 'error' && <p className="account-error" role="alert">{state.message}</p>}
+        {done && state.report.timeline && <AnalysisTimeline timeline={state.report.timeline} renderRate={renderRate} onSeek={onSeek} onAudition={onAudition} />}
         {done && <Report report={state.report} />}
         {done && savePhase.phase === 'saved' && <p className="account-status" role="status" data-testid="save-status">{savePhase.message}</p>}
         {done && savePhase.phase === 'cancelled' && <p className="fine-print" role="status" data-testid="save-status">Save cancelled. No report was written.</p>}

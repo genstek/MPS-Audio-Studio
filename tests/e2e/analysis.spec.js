@@ -24,6 +24,9 @@ function studio(page) {
   };
 }
 
+// Any stage of a running analysis; never 'Analysis complete.' or 'Analysis cancelled.'.
+const RUNNING = /^(Reading the file…|Decoding samples…|Measuring loudness, peaks, stereo and spectrum…|Measuring the timeline… \d{1,3} %)$/;
+
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 
 test('LAS-26: a -23 dBFS 1 kHz stereo tone reads -23.0 LUFS with labelled peaks; repeatable, file unchanged', async ({ page }, testInfo) => {
@@ -50,7 +53,7 @@ test('LAS-26: a -23 dBFS 1 kHz stereo tone reads -23.0 LUFS with labelled peaks;
   await expect(ui.row('Peak to loudness ratio')).toHaveText('0.0 dB');
   await expect(ui.dialog.getByRole('row', { name: /^1 kHz/ })).toContainText('100.0 %');
   await expect(ui.dialog.getByText(`mps-analysis-1 · 48,000 Hz · stereo · 16-bit PCM · whole file 0:00.0–0:20.0`)).toBeVisible();
-  await expect(ui.dialog.locator('code')).toHaveText(before); // the hash of the file on disk
+  await expect(ui.dialog.getByTestId('source-sha256')).toHaveText(before); // the hash of the file on disk
 
   // The same file analysed again gives exactly the same report.
   const first = await ui.report.innerText();
@@ -75,13 +78,13 @@ test('LAS-26: a long analysis runs off the main thread, can be cancelled, retrie
 
   await holdAnalysisResults(page);
   await ui.analyze.click();
-  await expect(ui.analysisStatus).toHaveText('Measuring loudness, peaks, stereo and spectrum…');
+  await expect(ui.analysisStatus).toHaveText(RUNNING);
   await ui.dialog.getByRole('button', { name: 'Cancel analysis' }).click();
   await expect(ui.analysisStatus).toHaveText('Analysis cancelled.');
   await expect(ui.report).toHaveCount(0);
 
   await ui.dialog.getByRole('button', { name: 'Try again' }).click();
-  await expect(ui.analysisStatus).toHaveText('Measuring loudness, peaks, stereo and spectrum…');
+  await expect(ui.analysisStatus).toHaveText(RUNNING);
   // Closing the dialog leaves the analysis running; playback works meanwhile.
   await ui.close.click();
   await expect(ui.analyze).toHaveText('Analyzing…');
@@ -89,7 +92,10 @@ test('LAS-26: a long analysis runs off the main thread, can be cancelled, retrie
   await expect(ui.status).toHaveText('Playing');
   await expect.poll(() => heldAnalysisResults(page), { timeout: 60_000 }).toContain('done');
   await ui.analyze.click();
-  await expect(ui.analysisStatus).toHaveText('Measuring loudness, peaks, stereo and spectrum…');
+  // The worker has finished measuring (its final message is queued) but the result is held, so the
+  // last progress stage stays and the report must not appear yet.
+  await expect(ui.analysisStatus).toHaveText('Measuring the timeline… 100 %');
+  await expect(ui.report).toHaveCount(0);
   await releaseAnalysisResults(page);
   await expect(ui.analysisStatus).toHaveText('Analysis complete.');
   await expect(ui.row('Integrated loudness')).toHaveText(/^−\d+\.\d LUFS$/);

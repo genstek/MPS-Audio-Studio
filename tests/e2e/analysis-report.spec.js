@@ -49,7 +49,7 @@ test('LAS-172: PDF and JSON downloads open and agree with the dialog; the source
   const pdf = readFileSync(await pdfDownload.path());
   expect(pdf.subarray(0, 9).toString()).toBe('%PDF-1.4\n');
   expect(pdf.toString('latin1')).toContain(`(${integrated}) Tj`);
-  expect(pdf.toString('latin1')).toContain(`(${await ui.dialog.locator('code').innerText()}) Tj`.slice(0, 20));
+  expect(pdf.toString('latin1')).toContain(`(${await ui.dialog.getByTestId('source-sha256').innerText()}) Tj`.slice(0, 20));
   await expect(ui.saveStatus).toContainText('download started');
 
   await ui.saveReport.click();

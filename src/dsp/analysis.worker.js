@@ -1,10 +1,11 @@
 import { analyze } from './analysis.js';
+import { analyzeTimeline } from './timeline-analysis.js';
 import { decodeWav, WavDecodeError } from './wav-decode.js';
 
 // Runs the whole analysis off the page's main thread (LAS-26): reading, hashing, decoding and
 // measuring. The page cancels by terminating the worker. An optional segment { start, end } in
 // seconds measures part of the file (reference profiles, LAS-30).
-self.onmessage = async ({ data: { file, segment } }) => {
+self.onmessage = async ({ data: { file, segment, timeline } }) => {
   try {
     self.postMessage({ type: 'progress', stage: 'Reading the file…' });
     const bytes = await file.arrayBuffer();
@@ -20,6 +21,17 @@ self.onmessage = async ({ data: { file, segment } }) => {
     self.postMessage({ type: 'progress', stage: 'Measuring loudness, peaks, stereo and spectrum…' });
     const report = analyze(audio.samples, audio.sampleRate, segment ?? {});
     report.input = { ...report.input, name: file.name, bytes: file.size, sha256, encoding: audio.encoding, bitsPerSample: audio.bitsPerSample, fileDuration };
+    if (timeline && !segment) {
+      // Time-indexed series over the whole file (LAS-173). Read-only; progress is reported by percent.
+      let lastPercent = -1;
+      report.timeline = analyzeTimeline(audio.samples, audio.sampleRate, {
+        hopSeconds: timeline.hopSeconds,
+        onProgress: fraction => {
+          const percent = Math.floor(fraction * 100);
+          if (percent !== lastPercent) { lastPercent = percent; self.postMessage({ type: 'progress', stage: `Measuring the timeline… ${percent} %` }); }
+        },
+      });
+    }
     self.postMessage({ type: 'done', report });
   } catch (error) {
     const known = error instanceof WavDecodeError;

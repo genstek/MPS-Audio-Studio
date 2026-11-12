@@ -1,7 +1,8 @@
 // Starts an analysis in a Web Worker (LAS-26). Returns { result, cancel }: result resolves with the
 // report or rejects with an Error whose message can be shown; cancel() stops the work at once.
 // `segment` ({ start, end } in seconds) measures part of the file.
-export function startAnalysis(file, onProgress, segment) {
+// `options.timeline` ({ hopSeconds }) adds the time-indexed series (LAS-173) to a whole-file report.
+export function startAnalysis(file, onProgress, segment, options = {}) {
   const worker = new Worker(new URL('./dsp/analysis.worker.js', import.meta.url), { type: 'module' });
   let settle;
   const result = new Promise((resolve, reject) => {
@@ -19,7 +20,7 @@ export function startAnalysis(file, onProgress, segment) {
     finish();
     settle.reject(new Error('Analysis failed unexpectedly. Try again.'));
   };
-  worker.postMessage({ file, segment });
+  worker.postMessage({ file, segment, timeline: options.timeline });
   return {
     result,
     cancel() {
