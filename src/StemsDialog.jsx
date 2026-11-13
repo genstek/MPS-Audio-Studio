@@ -203,7 +203,7 @@ export function StemsDialog({ engine, chain, listening, onListen, onStemsPlay, o
 
   return (
     <>
-      <button className="heading-button" onClick={open}>Stems…</button>
+      <button className="heading-button" data-stems-open onClick={open}>Stems…</button>
       <dialog ref={dialog} className="analysis-dialog stems-dialog" aria-labelledby="stems-title" onClose={close}>
         <div className="account-heading">
           <h2 id="stems-title">Stem session</h2>

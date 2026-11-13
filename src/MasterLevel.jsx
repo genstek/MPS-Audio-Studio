@@ -15,7 +15,7 @@ export const formatMasterDb = db => (db === -Infinity ? '−∞ dB' : `${db === 
 const position = db => (db === -Infinity ? MUTE_POSITION : db);
 const percent = value => `${((value - MUTE_POSITION) / (MASTER_MAX_DB - MUTE_POSITION)) * 100}%`;
 
-export function MasterLevel({ value, onChange, disabled, reason, compact = false }) {
+export function MasterLevel({ value, onChange, disabled, reason, compact = false, vertical = false }) {
   const id = useId();
   const fromPosition = next => (next <= MUTE_POSITION ? -Infinity : Math.min(MASTER_MAX_DB, Math.round(next / STEP) * STEP));
   function keyDown(event) {
@@ -33,9 +33,24 @@ export function MasterLevel({ value, onChange, disabled, reason, compact = false
         <span className="master-value" aria-hidden="true">{disabled ? '—' : formatMasterDb(value)}</span>
         <button type="button" className="master-reset" onClick={() => onChange(0)} disabled={disabled || value === 0} aria-label="Reset master level to 0 dB">0 dB</button>
       </div>
-      <input id={id} type="range" aria-label="Master level" min={MUTE_POSITION} max={MASTER_MAX_DB} step={STEP} value={position(value)} disabled={disabled}
-        aria-valuetext={text} onChange={event => onChange(fromPosition(Number(event.target.value)))} onKeyDown={keyDown} onDoubleClick={() => onChange(0)} />
-      {!compact && (
+      {(() => {
+        const input = <input id={id} type="range" aria-label="Master level" min={MUTE_POSITION} max={MASTER_MAX_DB} step={STEP} value={position(value)} disabled={disabled}
+          aria-valuetext={text} onChange={event => onChange(fromPosition(Number(event.target.value)))} onKeyDown={keyDown} onDoubleClick={() => onChange(0)} />;
+        // LAS-45: the same range input, turned upright; keyboard, value and meaning are unchanged.
+        if (vertical) {
+          return (
+            <div className="vfader" data-testid="vertical-master-fader">
+              <div className="vfader-scale" aria-hidden="true">
+                {TICKS.map(tick => <span key={tick} style={{ bottom: percent(tick), transform: 'translateY(50%)' }}>{tick === 0 ? '0' : String(tick).replace('-', '−')}</span>)}
+                <span style={{ bottom: 0, transform: 'translateY(50%)' }}>−∞</span>
+              </div>
+              <div className="vfader-track">{input}</div>
+            </div>
+          );
+        }
+        return input;
+      })()}
+      {!compact && !vertical && (
         <div className="master-scale" aria-hidden="true">
           {TICKS.map(tick => <span key={tick} style={{ left: percent(tick), transform: tick === 0 ? 'translateX(-100%)' : 'translateX(-50%)' }}>{tick === 0 ? '0 dB' : String(tick).replace('-', '−')}</span>)}
           <span style={{ left: 0 }}>−∞</span>
