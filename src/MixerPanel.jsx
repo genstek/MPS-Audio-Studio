@@ -10,6 +10,8 @@ import { HelpTip, WithHelp } from './HelpTip.jsx';
 import { GainReductionMeter } from './GainReductionMeter.jsx';
 import { ListenSwitch } from './ListeningControls.jsx';
 import { SettingsDialog } from './SettingsDialog.jsx';
+import { Knob } from './studio-kit.jsx';
+import { BOUNDS } from './dsp/chain-params.js';
 
 function eqCaption(eq) {
   if (!eq.enabled) return 'Bypassed';
@@ -107,6 +109,8 @@ export function MixerPanel({ chain, engine, track, sampleRate, listening, onList
     { name: 'Space', module: 'space', visual: <SpaceThumbnail space={params.space} />, caption: params.space.enabled ? `${spacePresetName(params.space) === 'custom' ? 'Custom' : spacePresetName(params.space)} · ${params.space.mix} % · ${params.space.decay} s` : 'Off', edit: 'Edit space', editor: 'space' },
   ];
   const selectedStrip = strips.find(strip => strip.editor === selected) ?? strips[0];
+  const bands = params.eq.left.filter(b => b.enabled).slice(0, 4);
+  const setCompressor = (key, value) => update(p => ({ ...p, compressor: { ...p.compressor, [key]: value } }), `compressor-${key}`);
   return (
     <>
     <section id="mixer-region" tabIndex={-1} className="mixer panel" aria-labelledby="mixer-title">
@@ -155,12 +159,30 @@ export function MixerPanel({ chain, engine, track, sampleRate, listening, onList
       </EditorDialog>
     </section>
     {layout !== 'classic' && (
-      <aside id="inspector-region" tabIndex={-1} className="inspector panel" aria-label="Selected processor inspector" data-testid="inspector">
+      <aside id="inspector-region" tabIndex={-1} className="part inspector panel" aria-label="Selected processor inspector" data-testid="inspector">
         <h2 className="dock-title">Inspector · {selectedStrip.name}</h2>
         <p className="inspector-caption">{selectedStrip.caption}</p>
         <label className="toggle"><input type="checkbox" checked={params[selectedStrip.module].enabled}
           onChange={event => update(p => ({ ...p, [selectedStrip.module]: { ...p[selectedStrip.module], enabled: event.target.checked } }))} />{selectedStrip.name} on</label>
         <button type="button" onClick={() => openEditor(selectedStrip.editor)} aria-label={`Open ${selectedStrip.name} editor`}>Open editor</button>
+        <div className="inspector-knobs" data-testid="inspector-knobs">
+          <section aria-label="EQ bands (read-only)"><h3 className="dock-title">EQ · enabled bands</h3>
+            <div className="knob-row">{bands.length ? bands.map((b, i) => <Knob key={i} label={`${b.frequency >= 1000 ? `${(b.frequency / 1000).toFixed(1)}k` : Math.round(b.frequency)} Hz`} value={b.gain} min={-18} max={18} size={36} format={v => `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v).toFixed(1)} dB`} />) : <span className="dock-na">No bands enabled</span>}</div>
+            <p className="fine-print">Shown from the real EQ. Edit bands in the EQ editor.</p></section>
+          <section aria-label="Dynamics"><h3 className="dock-title">Dynamics</h3>
+            <div className="knob-row">
+              {[['Threshold', 'threshold', 1, 'dB'], ['Ratio', 'ratio', 0.1, ':1'], ['Attack', 'attack', 1, 'ms'], ['Release', 'release', 5, 'ms'], ['Makeup', 'makeup', 0.5, 'dB']].map(([label, key, step, unit]) => (
+                <Knob key={key} label={label} value={params.compressor[key]} min={BOUNDS[key][0]} max={BOUNDS[key][1]} step={step} unit={unit} digits={step < 1 ? 1 : 0} size={36}
+                  onChange={value => setCompressor(key, value)} />))}
+            </div></section>
+          <section aria-label="Limiter"><h3 className="dock-title">Limiter</h3>
+            <div className="knob-row"><Knob label="Ceiling" value={params.limiter.ceiling} min={BOUNDS.ceiling[0]} max={BOUNDS.ceiling[1]} step={0.1} unit="dBTP" digits={1} size={36}
+              onChange={value => update(p => ({ ...p, limiter: { ...p.limiter, ceiling: value } }), 'limiter-ceiling')} /></div></section>
+          <section aria-label="Processing chain"><h3 className="dock-title">Processing</h3>
+            <ol className="chain-flow">{strips.map(strip => (
+              <li key={strip.module}><button type="button" aria-pressed={params[strip.module].enabled} onClick={() => update(p => ({ ...p, [strip.module]: { ...p[strip.module], enabled: !p[strip.module].enabled } }))}>{strip.name}</button></li>))}</ol>
+            <p className="fine-print">Same switches as the strips and editors (one undo history). De-esser, tape, exciter: planned, not present.</p></section>
+        </div>
         <p className="fine-print">Same settings and undo history as the strip and the editor window.</p>
       </aside>
     )}

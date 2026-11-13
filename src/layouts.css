@@ -39,78 +39,175 @@
 .vfader-scale span { position: absolute; right: 0; font-size: 9px; color: #8a96a0; font-variant-numeric: tabular-nums; line-height: 0; }
 .vfader-track input { position: absolute; left: 50%; top: 50%; width: 12rem; margin: 0; transform: translate(-50%, -50%) rotate(-90deg); }
 
+
+/* ---- shared kit (LAS-45) ---- */
+.kit-knob { display: inline-grid; justify-items: center; gap: 1px; font-size: 9px; color: #a7b2bc; min-width: 0; }
+.kit-knob-dial { display: block; width: var(--knob-size); height: var(--knob-size); border-radius: 50%; }
+.kit-knob-dial svg { width: 100%; height: 100%; display: block; }
+.kit-knob-body { fill: #2a323a; stroke: var(--knob-tone, #6b7a86); stroke-width: 2; }
+.kit-knob-pointer { stroke: var(--accent, #4fd0e6); stroke-width: 2.4; stroke-linecap: round; }
+.kit-knob.is-live .kit-knob-dial { cursor: ns-resize; touch-action: none; }
+.kit-knob.is-live .kit-knob-body { fill: #35414b; }
+.kit-knob-dial:focus-visible { outline: 2px solid var(--accent, #4fd0e6); outline-offset: 2px; }
+.kit-knob-label { white-space: nowrap; }
+.kit-knob-value { color: #ecedf0; font-variant-numeric: tabular-nums; white-space: nowrap; font-size: 9px; }
+.kit-fader { display: flex; gap: 2px; justify-content: center; flex: 1 1 auto; min-height: 9rem; width: 100%; }
+.kit-fader-scale { position: relative; width: 1.6rem; }
+.kit-fader-scale span { position: absolute; right: 0; font-size: 8px; line-height: 0; color: #8a96a0; font-variant-numeric: tabular-nums; }
+.kit-fader-rail { position: relative; width: 4px; background: #05080a; border-radius: 2px; margin: 0 6px; }
+.kit-fader-cap { position: absolute; left: 50%; width: 1.5rem; height: 0.8rem; transform: translate(-50%, -50%); border-radius: 2px; background: linear-gradient(#cfd5da, #7d8790); border: 1px solid #1b2025; }
+.kit-meter { display: inline-block; position: relative; width: 6px; height: 100%; min-height: 3rem; background: #0a0f12; border-radius: 1px; overflow: hidden; }
+.kit-meter-fill { position: absolute; left: 0; right: 0; bottom: 0; background: linear-gradient(to top, #35c46a 0 70%, #e0c13a 70% 88%, #e0523a 88%); }
+.kit-meter-pair { display: inline-flex; gap: 3px; height: 5.5rem; align-items: stretch; }
+.kit-strip { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 4px 2px 6px; border-radius: 3px; background: #1a2229; border: 1px solid #2d3841; border-top: 3px solid var(--strip-tone, #4fd0e6); min-width: 0; }
+.kit-strip-head { max-width: 100%; width: 100%; overflow: hidden; text-align: center; }
+.kit-strip-head .kit-strip-name { display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin: 0; font-size: 10px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kit-strip-num { font-size: 9px; color: #8a96a0; }
+.kit-strip-flags { display: flex; gap: 2px; }
+.kit-strip-flags span { width: 1.1rem; height: 1.1rem; display: grid; place-items: center; font-size: 9px; background: #10161a; border: 1px solid #39434c; border-radius: 2px; color: #7c8791; }
+.kit-strip-flags span.solo { background: #e0a830; color: #111; }
+.kit-strip-flags span.mute { background: #d0504a; color: #111; }
+.kit-strip-readout { font-size: 10px; font-variant-numeric: tabular-nums; background: #0c1114; border: 1px solid #2d3841; padding: 1px 4px; border-radius: 2px; }
+.kit-strip-note { font-size: 9px; color: #a7b2bc; margin: 4px; text-align: center; }
+.kit-strip-knobs { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; }
+.kit-strip-flat { font-size: 9px; color: #8a96a0; }
+.kit-planned-group { display: contents; }
+.kit-planned { display: grid; flex: 0 0 auto; place-items: center; border: 1px dashed #3c4852; border-radius: 3px; background: repeating-linear-gradient(135deg, #12181d 0 6px, #161d23 6px 12px); color: #5d6a75; min-height: 12rem; align-self: stretch; }
+.kit-planned span { writing-mode: vertical-rl; font-size: 9px; letter-spacing: 2px; }
+.kit-curve { margin: 0; display: grid; gap: 2px; min-width: 0; }
+.kit-curve-plot { position: relative; height: 11rem; background: #0b1013; border: 1px solid #27323a; border-radius: 3px; overflow: hidden; }
+.kit-curve figcaption { font-size: 10px; color: #a7b2bc; }
+.kit-eq-spectrum { position: absolute; inset: 0; opacity: .75; }
+.kit-eq-spectrum .output-spectrum { height: 100%; width: 100%; margin: 0; }
+.kit-eq-overlay { position: absolute; inset: 0; pointer-events: none; }
+.kit-eq-overlay .eq-thumbnail { width: 100%; height: 100%; display: block; }
+.kit-eq-overlay .eq-thumbnail path { stroke: var(--accent, #4fd0e6); stroke-width: 2.4; fill: none; }
+.kit-eq-overlay .eq-thumbnail line { stroke: #4a5a66; }
+.kit-comp-curve { position: absolute; inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); }
+.kit-comp-curve path { fill: none; stroke: var(--accent, #4fd0e6); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.kit-comp-curve.is-bypassed path { stroke: #6b7a86; }
+.kit-comp-unity { stroke: #394650; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
+.kit-provenance { margin: 3px 0 0; font-size: 9px; color: #8a96a0; line-height: 1.3; }
+.kit-scope-planned { display: grid; place-items: center; min-height: 6rem; border: 1px dashed #3c4852; border-radius: 50%/8%; color: #5d6a75; font-size: 11px; text-align: center; background: #10161a; }
+.kit-planned-list ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; color: #6e7b86; font-size: 11px; }
+.kit-planned-list li { padding: 2px 6px; border: 1px dashed #2d3841; border-radius: 3px; }
+.kit-planned-tag { font-size: 9px; color: #6e7b86; margin: 3px 0 0; letter-spacing: 1px; }
+.kit-ws-list { list-style: none; margin: 0 0 6px; padding: 0; display: grid; gap: 3px; }
+.kit-ws-list b { float: right; font-variant-numeric: tabular-nums; }
+.kit-loudness { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: stretch; }
+.dock-needles { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.dock-needles .needle-meter svg { width: 100%; height: auto; max-height: 7rem; }
+.master-instruments { padding: 8px 12px; border-bottom: 1px solid #39434c; display: grid; gap: 6px; font-size: 11px; }
+.master-readouts { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: stretch; }
+.inspector-knobs { display: grid; gap: 10px; }
+.inspector-knobs h3 { margin: 0 0 4px; }
+.knob-row { display: flex; flex-wrap: wrap; gap: 8px 10px; }
+.chain-flow { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px; }
+.chain-flow button { padding: 2px 8px; font-size: 11px; }
+.chain-flow button[aria-pressed='true'] { border-color: var(--accent, #4fd0e6); color: var(--accent, #4fd0e6); }
+.bank-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 2px 4px; }
+.bank-head .dock-title { margin: 0; }
+.bank-scroll { display: flex; flex: 1 1 auto; gap: 3px; overflow-x: auto; padding-bottom: 6px; align-items: stretch; }
+.bank-scroll:focus-visible { outline: 2px solid var(--accent, #4fd0e6); }
+.bank-scroll > .kit-strip, .bank-scroll .kit-planned { flex: 0 0 var(--strip-w, 4.4rem); width: var(--strip-w, 4.4rem); }
+.part.bank { display: flex; flex-direction: column; padding: 8px; min-width: 0; background: #151c22; border: 1px solid #2d3841; border-radius: 6px; }
+.part.stage { display: grid; gap: 10px; padding: 8px 10px; background: #141b21; border: 1px solid #2d3841; border-radius: 6px; min-width: 0; align-content: start; }
+.part.rail { padding: 10px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+@media (min-width: 1200px) {
+  .part.bank .bank-scroll { max-height: none; }
+}
+
 @media (min-width: 761px) {
-  main:not([data-layout='classic']) { height: auto; min-height: 100dvh; max-width: 1920px; grid-template-rows: none; grid-auto-rows: auto; }
+  main:not([data-layout='classic']) { height: auto; min-height: 100dvh; max-width: 1920px; grid-template-rows: none; grid-auto-rows: auto; align-content: start; }
   main:not([data-layout='classic']) > .workspace { display: contents; }
   main:not([data-layout='classic']) .strips { container-type: normal; overflow-x: auto; }
-  main:not([data-layout='classic']) .track-space { container-type: normal; min-height: 8rem; }
   main:not([data-layout='classic']) > footer { grid-area: foot; }
   main:not([data-layout='classic']) > .masthead { grid-area: head; }
   main:not([data-layout='classic']) > .transport { grid-area: xport; }
-  main:not([data-layout='classic']) .tracks { grid-area: tracks; min-height: 14rem; }
-  main:not([data-layout='classic']) .master { grid-area: master; min-height: 18rem; }
-  main:not([data-layout='classic']) .master-body { contain: none; }
+  main:not([data-layout='classic']) .tracks { grid-area: tracks; min-height: 0; flex-direction: row; flex-wrap: wrap; align-items: center; }
+  main:not([data-layout='classic']) .tracks > .panel-heading { border-bottom: 0; padding: 6px 12px; }
+  main:not([data-layout='classic']) .tracks .track-space { flex: 1 1 18rem; container-type: normal; min-height: 0; padding: 4px 8px; background: none; contain-intrinsic-block-size: auto; }
+  main:not([data-layout='classic']) .tracks .track-content { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 4px 14px; height: auto; text-align: left; }
+  main:not([data-layout='classic']) .tracks .audio-icon, main:not([data-layout='classic']) .tracks .track-content .fine-print { display: none; }
+  main:not([data-layout='classic']) .tracks .track-content h3 { font-size: 13px; margin: 0; max-width: 18rem; }
+  main:not([data-layout='classic']) .tracks .track-footer { flex: 2 1 22rem; }
+  main:not([data-layout='classic']) .tracks > .error { flex: 1 0 100%; margin: 0 12px 6px; }
+  main:not([data-layout='classic']) .master { grid-area: master; min-height: 0; }
+  main:not([data-layout='classic']) .master-body { contain: none; max-height: 9rem; }
+  main:not([data-layout='classic']) .master-instruments .kit-provenance { display: none; }
   main:not([data-layout='classic']) .mixer { grid-area: mixer; }
   main:not([data-layout='classic']) .inspector { grid-area: inspector; }
-  main:not([data-layout='classic']) .layout-dock { grid-area: dock; }
+  main:not([data-layout='classic']) .part.rail { grid-area: rail; }
+  main:not([data-layout='classic']) .part.stage { grid-area: stage; }
+  main:not([data-layout='classic']) .part.bank { grid-area: bank; }
+  main:not([data-layout='classic']) [data-planned-panel='Routing matrix'] { grid-area: routing; }
+  main:not([data-layout='classic']) .mixer .strips { grid-template-columns: repeat(4, minmax(9rem, 1fr)); }
+  main:not([data-layout='classic']) .mixer .strip-visual { max-height: 5.5rem; }
 
-  /* A · Console Focus: charcoal/cyan. Left monitor drawer, big spectrum stage over a horizontal
-     strip bank, right column = master over the selected-processor inspector. */
-  main[data-layout='a'] { --accent: #4fd0e6; grid-template-columns: 13rem minmax(0, 1fr) 18rem; grid-template-areas: "head head head" "xport xport xport" "dock tracks master" "dock mixer inspector" "foot foot foot"; background: #0f1417; }
-  main[data-layout='a'] .tracks { min-height: 22rem; border-color: #2c6b78; }
-  main[data-layout='a'] .track-space { min-height: 14rem; }
-  main[data-layout='a'] .player-display { height: 13rem; max-height: none; }
-  main[data-layout='a'] .strips { grid-template-columns: repeat(4, minmax(9rem, 1fr)); }
-  main[data-layout='a'] .panel-heading h2, main[data-layout='a'] .strip-number, main[data-layout='a'] .dock-title { color: var(--accent); }
+  /* A · Console Focus — charcoal / cyan. Left Scenes/Monitor rail; EQ view + analyzer over a dense
+     row of narrow channel strips; right master column over the channel inspector. */
+  main[data-layout='a'] { --accent: #4fd0e6; --strip-w: 4.1rem; grid-template-columns: 11.5rem minmax(0, 1fr) 24rem; grid-template-areas: "head head head" "xport xport xport" "tracks tracks tracks" "rail stage master" "rail bank inspector" "mixer mixer mixer" "foot foot foot"; background: #0e1317; }
+  main[data-layout='a'] .stage-a { grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1fr); }
+  main[data-layout='a'] .stage-a .kit-curve-plot { height: 13rem; }
+  main[data-layout='a'] .kit-strip { min-height: 20rem; }
+  main[data-layout='a'] .panel-heading h2, main[data-layout='a'] .dock-title { color: var(--accent); }
 
-  /* B · Analog Strip Wall: amber. The strip wall leads: tall strips, big knob windows, vertical
-     master fader with dB scale; stems and instruments sit in a wide bottom dock. */
-  main[data-layout='b'] { --accent: #f0a73c; grid-template-columns: minmax(0, 1fr) 15rem; grid-template-areas: "head head" "xport xport" "mixer master" "dock master" "tracks tracks" "foot foot"; background: #17120d; }
+  /* B · Analog Strip Wall — amber hardware. Very narrow tall strips (knob rows, long fader), tall
+     master column on the right, analysis dock across the bottom. */
+  main[data-layout='b'] { --accent: #f0a73c; --strip-w: 3.9rem; grid-template-columns: minmax(0, 1fr) 17rem; grid-template-areas: "head head" "xport xport" "tracks tracks" "bank master" "stage stage" "mixer mixer" "foot foot"; background: #16110c; }
   main[data-layout='b'] .inspector { display: none; }
-  main[data-layout='b'] .strips { grid-template-columns: repeat(4, minmax(11rem, 1fr)); }
-  main[data-layout='b'] .strip { min-height: 26rem; align-content: space-between; background: linear-gradient(180deg, #2f251a, #1b1510); border-right: 3px groove #5a4630; }
-  main[data-layout='b'] .strip-visual { width: 7rem; aspect-ratio: 3 / 4; border-radius: 50% / 8%; border-color: #8a6a3f; background: #120e0a; }
-  main[data-layout='b'] .strip-title h3 { text-transform: uppercase; letter-spacing: 2px; font-size: 12px; }
-  main[data-layout='b'] .panel { background: #211a13; border-color: #5a4630; border-radius: 3px; }
-  main[data-layout='b'] .panel-heading h2, main[data-layout='b'] .strip-number, main[data-layout='b'] .dock-title { color: var(--accent); }
-  main[data-layout='b'] .layout-dock { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr); }
-  @media (max-width: 1100px) { main[data-layout='b'] .layout-dock, main[data-layout='c'] .layout-dock { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  main[data-layout='b'] .part.bank, main[data-layout='b'] .part.stage, main[data-layout='b'] .panel { background: #1f1812; border-color: #5a4630; border-radius: 3px; }
+  main[data-layout='b'] .kit-strip { background: linear-gradient(180deg, #33281c, #1c150f); border-color: #54412c; border-top-color: var(--strip-tone); min-height: 28rem; }
+  main[data-layout='b'] .kit-fader-cap { background: linear-gradient(#e9dcc2, #9b8660); }
+  main[data-layout='b'] .kit-knob-body { fill: #3a2c1c; stroke: #c98a2c; }
+  main[data-layout='b'] .kit-knob-pointer { stroke: #f4d7a0; }
+  main[data-layout='b'] .kit-planned { min-height: 28rem; background: repeating-linear-gradient(135deg, #1a140e 0 6px, #1f1812 6px 12px); border-color: #54412c; }
+  main[data-layout='b'] .panel-heading h2, main[data-layout='b'] .dock-title { color: var(--accent); }
+  main[data-layout='b'] .stage-b { grid-template-columns: minmax(8rem, 1fr) minmax(0, 3fr) minmax(0, 1.4fr) minmax(0, 1.6fr) minmax(0, 1.2fr); }
   main[data-layout='b'] .master { border-width: 2px; }
+  main[data-layout='b'] .master-instruments .needle-meter { background: #e8d9ae; border-radius: 4px; color: #2b2113; }
+  main[data-layout='b'] .master-instruments .needle-meter text { fill: #2b2113; }
+  main[data-layout='b'] .master-instruments .needle { stroke: #a03020; }
 
-  /* C · Mastering Hybrid: measurement first. Wide analysis stage (spectrum, needles, offline
-     values) on top, track/timeline row, mixer bank below with the inspector, master at right. */
-  main[data-layout='c'] { --accent: #b48cff; grid-template-columns: minmax(0, 1fr) 18rem; grid-template-areas: "head head" "xport xport" "dock master" "tracks master" "mixer inspector" "foot foot"; background: #121019; }
-  main[data-layout='c'] .layout-dock { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr); align-items: start; border-color: #5a4a86; }
-  main[data-layout='c'] .tracks { min-height: 16rem; }
-  main[data-layout='c'] .strips { grid-template-columns: repeat(4, minmax(8rem, 1fr)); }
+  /* C · Mastering Hybrid — analysis first: five panels in one row, then selected-chain editor +
+     routing (planned), a dense bank across the bottom with the master at the far right. */
+  main[data-layout='c'] { --accent: #6aa8ff; --strip-w: 4.6rem; grid-template-columns: 8.5rem minmax(0, 1fr) 17rem; grid-template-areas: "head head head" "xport xport xport" "rail stage stage" "rail inspector routing" "tracks tracks tracks" "bank bank master" "mixer mixer mixer" "foot foot foot"; background: #0f1218; }
+  main[data-layout='c'] .stage-c { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  main[data-layout='c'] .stage-c > [data-testid='measured-panel'] { display: none; }
+  main[data-layout='c'] .stage-c .kit-curve-plot { height: 10rem; }
+  main[data-layout='c'] .stage-c .dock-realtime .output-spectrum { height: 10rem; }
+  main[data-layout='c'] .kit-strip { min-height: 22rem; }
+  main[data-layout='c'] .inspector-knobs { grid-template-columns: repeat(4, auto); align-items: start; justify-content: start; gap: 8px 22px; }
   main[data-layout='c'] .panel-heading h2, main[data-layout='c'] .dock-title { color: var(--accent); }
 
-  /* D · Digital Console Suite: left navigation + stems, centre workspace with inspector between
-     tracks and a wide strip bank, right master/output rack with a vertical fader. */
-  main[data-layout='d'] { --accent: #6fe0a8; grid-template-columns: 12rem minmax(0, 1fr) 16rem; grid-template-areas: "head head head" "xport xport xport" "dock tracks master" "dock inspector master" "dock mixer master" "foot foot foot"; background: #0e1512; }
-  main[data-layout='d'] .strips { grid-template-columns: repeat(4, minmax(12rem, 1fr)); }
-  main[data-layout='d'] .strip { background: #131c18; }
+  /* D · Digital Console Suite — left navigation + workspace, selected-channel inspector, eight
+     full-height strips, right master/output rack with the analysis stack beneath. */
+  main[data-layout='d'] { --accent: #8d7bff; --strip-w: 5.4rem; grid-template-columns: 12rem 21rem minmax(0, 1fr) 24rem; grid-template-areas: "head head head head" "xport xport xport xport" "tracks tracks tracks tracks" "rail inspector bank master" "rail stage stage stage" "mixer mixer mixer mixer" "foot foot foot foot"; background: #0f1015; }
+  main[data-layout='d'] .kit-strip { min-height: 28rem; background: linear-gradient(#1b1d29, #14161f); }
   main[data-layout='d'] .panel-heading h2, main[data-layout='d'] .dock-title { color: var(--accent); }
-  main[data-layout='d'] .master { border-color: #2f6a4f; }
-  main[data-layout='d'] .inspector { grid-template-columns: auto auto auto auto; align-items: center; justify-content: start; gap: 8px 16px; }
-  main[data-layout='d'] .inspector .dock-title { margin: 0; }
-  main[data-layout='d'] .inspector .fine-print { grid-column: 1 / -1; margin: 0; }
+  main[data-layout='d'] .stage-d { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  main[data-layout='d'] .dock-nav { grid-template-columns: 1fr; }
+  main[data-layout='d'] .dock-nav button { padding: 10px 12px; font-size: 14px; }
+  main[data-layout='d'] .inspector-knobs { grid-template-columns: 1fr; }
 }
-/* 761–1000px: too narrow for side columns, so every layout becomes one column in its own order. */
-@media (min-width: 761px) and (max-width: 1000px) {
+/* 761–1199px: too narrow for side columns, so every layout becomes one column in its own order. */
+@media (min-width: 761px) and (max-width: 1199px) {
   main[data-layout='a'], main[data-layout='b'], main[data-layout='c'], main[data-layout='d'] { grid-template-columns: minmax(0, 1fr); }
-  main[data-layout='a'] { grid-template-areas: "head" "xport" "dock" "tracks" "master" "mixer" "inspector" "foot"; }
-  main[data-layout='b'] { grid-template-areas: "head" "xport" "mixer" "master" "dock" "tracks" "foot"; }
-  main[data-layout='c'] { grid-template-areas: "head" "xport" "dock" "tracks" "master" "mixer" "inspector" "foot"; }
-  main[data-layout='d'] { grid-template-areas: "head" "xport" "dock" "tracks" "inspector" "mixer" "master" "foot"; }
-  main[data-layout='a'] .layout-dock, main[data-layout='d'] .layout-dock { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  main[data-layout='c'] .layout-dock { grid-template-columns: minmax(0, 1fr); }
-  main[data-layout='d'] .dock-nav { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-column: 1 / -1; }
-  main[data-layout='a'] .dock-nav { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-column: 1 / -1; }
-  main[data-layout='d'] .inspector { grid-template-columns: auto auto auto; }
+  main[data-layout='a'] { grid-template-areas: "head" "xport" "tracks" "stage" "bank" "master" "inspector" "rail" "mixer" "foot"; }
+  main[data-layout='b'] { grid-template-areas: "head" "xport" "tracks" "bank" "master" "stage" "mixer" "foot"; }
+  main[data-layout='c'] { grid-template-areas: "head" "xport" "tracks" "stage" "inspector" "bank" "master" "rail" "routing" "mixer" "foot"; }
+  main[data-layout='d'] { grid-template-areas: "head" "xport" "tracks" "inspector" "bank" "master" "stage" "rail" "mixer" "foot"; }
+  main[data-layout='a'] .stage-a, main[data-layout='b'] .stage-b, main[data-layout='c'] .stage-c { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  main[data-layout='b'] .stage-b > :first-child { display: none; }
+  main:not([data-layout='classic']) .part.rail { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  main:not([data-layout='classic']) .dock-nav { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-column: 1 / -1; }
+  main[data-layout='d'] .dock-nav button { padding: 4px 8px; font-size: 12px; }
+  main:not([data-layout='classic']) .inspector-knobs { grid-template-columns: repeat(2, auto); justify-content: start; gap: 8px 24px; }
 }
 @media (max-width: 760px) {
   .layout-switcher span { display: none; }
   .vfader { height: 9rem; }
   .vfader-track input { width: 9rem; }
+  main:not([data-layout='classic']) .part.rail { display: none; }
+  main:not([data-layout='classic']) .part.stage { grid-template-columns: 1fr; }
 }
