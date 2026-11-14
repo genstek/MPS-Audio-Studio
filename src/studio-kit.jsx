@@ -10,7 +10,7 @@ const fmtDb = db => (db === -Infinity || db === null ? '−∞' : `${db > 0 ? '+
 
 // Rotary control. Interactive (role=slider: arrows, Page keys, Home/End, vertical drag) when
 // onChange is given; otherwise a read-only dial (role=img) that only shows a real value.
-export function Knob({ label, value, min, max, step = 1, unit = '', digits = 0, onChange, disabled = false, size = 34, tone, format }) {
+export function Knob({ label, ariaLabel = label, value, min, max, step = 1, unit = '', digits = 0, onChange, disabled = false, size = 34, tone, format }) {
   const t = clamp((value - min) / (max - min), 0, 1);
   const angle = -135 + t * 270;
   const interactive = Boolean(onChange) && !disabled;
@@ -33,8 +33,8 @@ export function Knob({ label, value, min, max, step = 1, unit = '', digits = 0, 
   const rad = ((angle - 90) * Math.PI) / 180;
   const r = size / 2;
   const props = interactive
-    ? { role: 'slider', tabIndex: 0, 'aria-label': label, 'aria-valuemin': min, 'aria-valuemax': max, 'aria-valuenow': value, 'aria-valuetext': text, onKeyDown: key, onPointerDown: down }
-    : { role: 'img', 'aria-label': `${label} ${text}${onChange ? ' (unavailable)' : ' (read-only)'}` };
+    ? { role: 'slider', tabIndex: 0, 'aria-label': ariaLabel, 'aria-valuemin': min, 'aria-valuemax': max, 'aria-valuenow': value, 'aria-valuetext': text, onKeyDown: key, onPointerDown: down }
+    : { role: 'img', 'aria-label': `${ariaLabel} ${text}${onChange ? ' (unavailable)' : ' (read-only)'}` };
   return (
     <span className={`kit-knob${interactive ? ' is-live' : ''}`} style={{ '--knob-size': `${size}px`, '--knob-tone': tone }}>
       <span className="kit-knob-dial" {...props}>
@@ -49,17 +49,20 @@ export function Knob({ label, value, min, max, step = 1, unit = '', digits = 0, 
   );
 }
 
-// Upright fader scale. Live when onChange is given (a real range input, turned upright); read-only
-// otherwise (a depiction of a real value, not focusable and not draggable).
+// Upright fader. Live when onChange is given: a real range input turned upright (arrows, Page
+// keys, Home/End and drag all work, as on the master fader). Read-only otherwise: a depiction of a
+// real value, not focusable and not draggable.
 const FADER_TICKS = [10, 6, 0, -6, -12, -24, -48];
-export function Fader({ value, min = -60, max = 10, onChange, label, disabled = false, readOnlyNote = 'read-only' }) {
+export function Fader({ value, min = -60, max = 10, step = 0.5, onChange, label, disabled = false, readOnlyNote = 'read-only' }) {
   const pos = db => `${(1 - (clamp(db, min, max) - min) / (max - min)) * 100}%`;
   const interactive = Boolean(onChange) && !disabled;
   return (
     <span className="kit-fader" data-live={interactive}>
-      <span className="kit-fader-scale" aria-hidden="true">{FADER_TICKS.map(t => <span key={t} style={{ top: pos(t) }}>{t > 0 ? `+${t}` : String(t).replace('-', '−')}</span>)}</span>
+      <span className="kit-fader-scale" aria-hidden="true">{FADER_TICKS.filter(t => t >= min && t <= max).map(t => <span key={t} style={{ top: pos(t) }}>{t > 0 ? `+${t}` : String(t).replace('-', '−')}</span>)}</span>
       <span className="kit-fader-rail" role={interactive ? undefined : 'img'} aria-label={interactive ? undefined : `${label} ${fmtDb(value)} dB (${readOnlyNote})`}>
         <span className="kit-fader-cap" style={{ top: pos(value) }} aria-hidden="true" />
+        {interactive && <input type="range" className="kit-fader-input" aria-label={label} min={min} max={max} step={step} value={value}
+          aria-valuetext={`${fmtDb(value)} dB`} onChange={event => onChange(Number(event.target.value))} onDoubleClick={() => onChange(0)} />}
       </span>
     </span>
   );

@@ -1,4 +1,4 @@
-import React, { useSyncExternalStore } from 'react';
+import React, { useState, useSyncExternalStore } from 'react';
 import { NeedleMeter, OutputSpectrum, METER_FLOOR_DB } from './Player.jsx';
 import { EqThumbnail } from './EqEditor.jsx';
 import { measuredRows } from './measured-summary.js';
@@ -120,28 +120,57 @@ export function MasterInstruments({ meters, analysis, file, vu = false }) {
   );
 }
 
-// The dense channel bank. Only real sources become strips: each stem of the session, or the
-// loaded track. Every other position is an inert PLANNED slot (no name, no fader, no meter).
-// Gain, pan, mute and solo are shown read-only here and edited in the Stems mixer (Stage 2 binds them).
+// The dense channel bank (LAS-45 Stage 2). Only real sources become strips: each stem of the one
+// stem session, or the loaded track. Stem strips are live: fader (gain), pan, mute and solo call the
+// same session methods as the Stems dialog through the shared store, and the meter shows what the
+// strip sends to the mix. Every other position is an inert PLANNED outline.
 const BANK_SLOTS = { a: 15, b: 24, c: 16, d: 8 };
 const TONES = ['#5b8fc7', '#c75b5b', '#c7a45b', '#5bc788', '#a45bc7', '#5bc7c7', '#c75b9b', '#8fc75b'];
-function stemEq(stem) {
-  const bands = stem.params?.eq?.left?.filter(b => b.enabled).slice(0, 4) ?? [];
-  return bands;
+export const STEM_GAIN = { min: -24, max: 12, step: 0.5 }; // the same range as the Stems dialog
+const stemEq = stem => stem.params?.eq?.left?.filter(b => b.enabled).slice(0, 4) ?? [];
+const clock = seconds => `${Math.floor(seconds / 60)}:${(seconds % 60).toFixed(1).padStart(4, '0')}`;
+const panText = v => (Math.round(v) === 0 ? 'C' : `${v < 0 ? 'L' : 'R'} ${Math.abs(Math.round(v))}`);
+
+function StripMeter({ store, id, name }) {
+  const live = useSyncExternalStore(store.subscribeLive, store.getLive);
+  const level = live.levels.stems.find(l => l.id === id);
+  return <MeterBar db={level?.peakDb ?? null} label={`${name} level`} />;
 }
-export function StripBank({ layout, stems, track, onOpenStems }) {
+
+// Transport of the stem session, so the strips can be heard and metered without opening the dialog.
+function StemTransport({ store, onStemsPlay }) {
+  const state = useSyncExternalStore(store.subscribe, store.get);
+  const live = useSyncExternalStore(store.subscribeLive, store.getLive);
+  const [problem, setProblem] = useState('');
+  async function play() {
+    setProblem('');
+    try { if (await store.play()) onStemsPlay?.(); } catch { setProblem('Audio could not start. Try again.'); store.refresh(); }
+  }
+  return (
+    <span className="bank-transport" role="group" aria-label="Stem transport (bank)">
+      <button type="button" className="heading-button" onClick={play} disabled={state.playing} aria-label="Play stems"><span aria-hidden="true">▶</span> Stems</button>
+      <button type="button" className="heading-button" onClick={() => store.act('pause')} disabled={!state.playing} aria-label="Pause stems"><span aria-hidden="true">Ⅱ</span></button>
+      <button type="button" className="heading-button" onClick={() => store.act('stop')} aria-label="Stop stems"><span aria-hidden="true">■</span></button>
+      <span role="timer" aria-label="Stem position (bank)" className="bank-clock">{clock(live.position)} / {clock(state.duration)}</span>
+      {problem && <span role="alert" className="bank-problem">{problem}</span>}
+    </span>
+  );
+}
+
+export function StripBank({ layout, stems, track, onOpenStems, store, onStemsPlay }) {
   const slots = BANK_SLOTS[layout] ?? 8;
   const real = stems.length ? stems : track ? [{ name: track.name, source: 'track' }] : [];
-  const open = onOpenStems;
+  const live = stems.length > 0 && Boolean(store);
   return (
-    <section className={`part bank bank-${layout}`} aria-label="Channel bank" data-testid="stem-strips" data-real-strips={real.length}>
+    <section className={`part bank bank-${layout}`} aria-label="Channel bank" data-testid="stem-strips" data-real-strips={real.length} data-live={live}>
       <div className="bank-head">
         <h2 className="dock-title">Channels · {real.length} real{real.length ? '' : ' (none loaded)'}{slots > real.length ? ` · ${slots - real.length} planned (inert)` : ''}</h2>
-        <button type="button" className="heading-button" onClick={open}>Open Stems mixer</button>
+        {live && <StemTransport store={store} onStemsPlay={onStemsPlay} />}
+        <button type="button" className="heading-button" onClick={onOpenStems}>Open Stems mixer</button>
       </div>
       <div className="bank-scroll" tabIndex={0} role="group" aria-label="Channel strips (scrolls)">
         {real.map((stem, i) => (
-          <StripFrame key={`${stem.name}-${i}`} name={stem.name} tone={TONES[i % TONES.length]} className={`kit-strip-${layout}`} data-real="true">
+          <StripFrame key={stem.id ?? `${stem.name}-${i}`} name={stem.name} tone={TONES[i % TONES.length]} className={`kit-strip-${layout}${stem.audible === false ? ' is-silent' : ''}`} data-real="true">
             <span className="kit-strip-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
             {layout === 'b' && (
               <>
@@ -159,13 +188,23 @@ export function StripBank({ layout, stems, track, onOpenStems }) {
             )}
             {stem.source !== 'track' ? (
               <>
-                <Knob label="Pan" value={(stem.pan ?? 0) * 100} min={-100} max={100} size={layout === 'b' ? 22 : 28} format={v => (Math.round(v) === 0 ? 'C' : `${v < 0 ? 'L' : 'R'} ${Math.abs(Math.round(v))}`)} />
-                <div className="kit-strip-flags" aria-label={`${stem.name} mute and solo (read-only)`}>
-                  <span className={stem.solo ? 'on solo' : ''} aria-hidden="true">S</span><span className={stem.mute ? 'on mute' : ''} aria-hidden="true">M</span>
-                  <span className="sr-only">{stem.mute ? 'muted' : 'not muted'}, {stem.solo ? 'solo' : 'not solo'}</span>
+                <Knob label="Pan" ariaLabel={`${stem.name} pan`} value={(stem.pan ?? 0) * 100} min={-100} max={100} step={5} size={layout === 'b' ? 22 : 28} format={panText}
+                  onChange={live ? value => store.act('setPan', stem.id, value / 100) : undefined} />
+                <div className="kit-strip-flags">
+                  {live ? (
+                    <>
+                      <button type="button" className={stem.solo ? 'on solo' : ''} aria-pressed={stem.solo} aria-label={`Solo ${stem.name}`} onClick={() => store.act('setSolo', stem.id, !stem.solo)}>S</button>
+                      <button type="button" className={stem.mute ? 'on mute' : ''} aria-pressed={stem.mute} aria-label={`Mute ${stem.name}`} onClick={() => store.act('setMute', stem.id, !stem.mute)}>M</button>
+                    </>
+                  ) : (
+                    <><span className={stem.solo ? 'on solo' : ''} aria-hidden="true">S</span><span className={stem.mute ? 'on mute' : ''} aria-hidden="true">M</span></>
+                  )}
                 </div>
-                <Fader value={stem.gainDb ?? 0} label={`${stem.name} gain`} min={-60} max={10} />
-                <output className="kit-strip-readout">{fmt(stem.gainDb ?? 0, 1)}</output>
+                <div className="kit-strip-fader">
+                  <Fader value={stem.gainDb ?? 0} label={`${stem.name} gain`} {...STEM_GAIN} onChange={live ? db => store.act('setGain', stem.id, db) : undefined} />
+                  {live && <StripMeter store={store} id={stem.id} name={stem.name} />}
+                </div>
+                <output className="kit-strip-readout" aria-label={`${stem.name} gain in dB`}>{fmt(stem.gainDb ?? 0, 1)}</output>
               </>
             ) : (
               <p className="kit-strip-note">Single track. Its level is the Master monitor fader.</p>
@@ -174,7 +213,7 @@ export function StripBank({ layout, stems, track, onOpenStems }) {
         ))}
         <PlannedSlots count={slots - real.length} layout={layout} />
       </div>
-      <p className="kit-provenance bank-note" title="Strips are the real stems or the loaded track only. Faint outlines are planned positions with no signal and no controls.">Strips = real stems / loaded track only. Read-only here: edit gain, pan, mute and solo in the Stems mixer (live strips: Stage 2). Per-strip meters need Stage 2.</p>
+      <p className="kit-provenance bank-note" title="Strips are the real stems or the loaded track only. Faint outlines are planned positions with no signal and no controls.">Strips = real stems / loaded track only. Stem fader, pan, S and M are live and shared with the Stems mixer; the meter is the strip's own post-fader peak. Chain, offset and render stay in the Stems mixer.</p>
     </section>
   );
 }
@@ -233,9 +272,9 @@ function PlannedList({ title, items }) {
 }
 
 // Layout-specific composition. All parts are siblings placed by the layout's grid areas.
-export function LayoutDock({ layout, listening, masterDb, track, stemCount, stems, analysis, file, engine, meters, params, sampleRate }) {
+export function LayoutDock({ layout, listening, masterDb, track, stemCount, stems, stemStore, onStemsPlay, analysis, file, engine, meters, params, sampleRate }) {
   const openStems = () => document.querySelector('[data-stems-open]')?.click();
-  const bank = <StripBank layout={layout} stems={stems} track={track} onOpenStems={openStems} />;
+  const bank = <StripBank layout={layout} stems={stems} track={track} onOpenStems={openStems} store={stemStore} onStemsPlay={onStemsPlay} />;
   const facts = <SessionFacts listening={listening} masterDb={masterDb} track={track} stemCount={stemCount} />;
   if (layout === 'a') {
     return (
@@ -318,7 +357,7 @@ export function LayoutDock({ layout, listening, masterDb, track, stemCount, stem
 
 function QuickView({ meters }) {
   const m = useMeterSnapshot(meters);
-  return <span className="kit-meter-pair kit-quick"><MeterBar db={m.left.rms} label="Quick view left" /><MeterBar db={m.right.rms} label="Quick view right" /><small>Master L R · stems need Stage 2</small></span>;
+  return <span className="kit-meter-pair kit-quick"><MeterBar db={m.left.rms} label="Quick view left" /><MeterBar db={m.right.rms} label="Quick view right" /><small>Master L R</small></span>;
 }
 
 export { CompCurve };

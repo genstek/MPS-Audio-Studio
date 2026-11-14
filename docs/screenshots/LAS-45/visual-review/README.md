@@ -6,7 +6,7 @@
 
 Reproduce with the app running: `node scripts/las45-visual-review.js` (other sizes: `LAS45_SIZES=1280x720`).
 The script loads an original synthetic signal as the track and three synthetic stems, runs Analyze and
-plays. These are review captures, not a pixel-diff baseline, and they prove nothing about audio fidelity.
+plays the stems from the bank's own transport (so the strip meters read). These are review captures, not a pixel-diff baseline, and they prove nothing about audio fidelity.
 
 ## Viewport fit (measured by the script and asserted in `tests/e2e/studio-layout.spec.js`)
 
@@ -49,11 +49,17 @@ Reference boxes are the approximate regions from `COMPONENT_MAP.md`.
 
 | Concept | Now matches | Still differs |
 |---|---|---|
-| A | One-screen console: Scenes/Monitor rail, large EQ view over the real-time spectrum with the analyzer beside it, 15 narrow positions below, master top right, selected-processor inspector with EQ curve, compressor curve, live gain-reduction meter and knobs, processing rack | The reference Master and Output are two panels; the app has one Master panel (Output device/rate/latency: PLANNED). Only real stems or the loaded track are strips; the other positions are faint inert outlines. No INS/SND rows, record arm, icons, group bars, per-strip meters (Stage 2). No menu/tab row, BPM, key, record, loop. Stereo width/vectorscope: Stage 3. EQ curve and spectrum use separate axes |
-| B | 24 narrow tall positions with EQ/DYN/pan/S-M/fader hierarchy on real strips, tall master column with VU needles and upright fader, bottom dock with spectrum, phase/correlation and loudness | Strip knobs are read-only values of each stem's own chain; INPUT, Ø/HPF, sends, record, per-strip GR VU and meters do not exist (Stage 2). Master EQ/DYN/TAPE/DRIVE/STEREO sections are replaced by the real processing rack in the dock. Phase scope and LUFS history: Stage 3. A bank with few stems is mostly outlines |
+| A | One-screen console: Scenes/Monitor rail, large EQ view over the real-time spectrum with the analyzer beside it, 15 narrow positions below, master top right, selected-processor inspector with EQ curve, compressor curve, live gain-reduction meter and knobs, processing rack | The reference Master and Output are two panels; the app has one Master panel (Output device/rate/latency: PLANNED). Only real stems or the loaded track are strips; the other positions are faint inert outlines. No INS/SND rows, record arm, icons or group bars. No menu/tab row, BPM, key, record, loop. Stereo width/vectorscope: Stage 3. EQ curve and spectrum use separate axes |
+| B | 24 narrow tall positions with EQ/DYN/pan/S-M/fader hierarchy on real strips, tall master column with VU needles and upright fader, bottom dock with spectrum, phase/correlation and loudness | EQ/DYN strip knobs are read-only values of each stem's own chain (edited in the Stems mixer); INPUT, Ø/HPF, sends, record and per-strip GR VU do not exist. Master EQ/DYN/TAPE/DRIVE/STEREO sections are replaced by the real processing rack in the dock. Phase scope and LUFS history: Stage 3. A bank with few stems is mostly outlines |
 | C | Five analysis panels in one row, workflow rail, selected-processor row, 16-position bank with the master at the right, all on one screen | Vectorscope PLANNED (offline correlation only); loudness is offline plus live sample peak; routing matrix is an inert panel (hidden below 1500 px wide); SAT/DRIVE and gate absent; no status bar (scene, automation, DSP %) |
-| D | Navigation rail with workspace and quick view, selected-processor column (EQ curve, compressor curve, live GR, knobs, chain), eight full-height positions, master/output rack (processing rack, master, spectrum, stereo, loudness) | Rack lists the four real modules only (no stereo imager/exciter). Strips have no insert lists, icons or meters (Stage 2). Quick View shows master L/R only. Vectorscope PLANNED. Band table and comp VU are replaced by knobs and a bar meter |
+| D | Navigation rail with workspace and quick view, selected-processor column (EQ curve, compressor curve, live GR, knobs, chain), eight full-height positions, master/output rack (processing rack, master, spectrum, stereo, loudness) | Rack lists the four real modules only (no stereo imager/exciter). Strips have no insert lists or icons. Quick View shows master L/R only. Vectorscope PLANNED. Band table and comp VU are replaced by knobs and a bar meter |
 
-All four: strip faders, pan, mute and solo are read-only depictions of the real stem session; editing
-stays in the Stems dialog until Stage 2 shares that state. Real-time LUFS, true peak, M/S and
-vectorscope need Stage 3. Intel macOS Ventura 13 WKWebView: NOT RUN.
+## Stage 2 (live strips)
+
+Stem strips are live in all four layouts: fader (gain, −24…+12 dB in 0.5 dB steps), pan, Solo and Mute
+call the same stem-session methods as the Stems dialog through one shared store, and each strip has a
+post-fader peak meter. The bank has its own stem transport (play, pause, stop, position). The dialog
+and every layout show the same values; there is one session, one audio context and one 10 Hz poll.
+Still in the Stems dialog only: add/remove stems, offset, a stem's own chain, session files, render.
+The single loaded track has no strip controls (its level is the Master monitor fader).
+Real-time LUFS, true peak, M/S and vectorscope need Stage 3. Intel macOS Ventura 13 WKWebView: NOT RUN.

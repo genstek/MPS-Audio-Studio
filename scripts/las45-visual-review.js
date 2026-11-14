@@ -47,6 +47,7 @@ for (const [width, height] of sizes) {
       await stems.getByLabel('Add stem WAVs').setInputFiles([wav('Synthetic-1.wav', 4, 3, 82), wav('Synthetic-2.wav', 4, 5, 164), wav('Synthetic-3.wav', 4, 9, 330)]);
       await stems.getByRole('status').filter({ hasText: /^3 stem/ }).waitFor();
       await stems.getByRole('slider', { name: 'Gain (dB)' }).first().fill('-6');
+      await stems.getByRole('slider', { name: 'Pan' }).nth(1).fill('-0.4');
       await stems.getByRole('button', { name: 'Close stems' }).click();
     }
     if (!process.env.LAS45_NO_ANALYZE) {
@@ -56,7 +57,9 @@ for (const [width, height] of sizes) {
       await dialog.getByRole('button', { name: 'Close analysis' }).click();
     }
     await page.getByRole('combobox', { name: 'Studio Layout' }).selectOption(id);
-    await page.getByRole('region', { name: 'Transport', exact: true }).getByRole('button', { name: 'Play', exact: true }).click();
+    // With stems the bank's own transport plays the session, so the strip meters read (Stage 2).
+    if (process.env.LAS45_NO_STEMS) await page.getByRole('region', { name: 'Transport', exact: true }).getByRole('button', { name: 'Play', exact: true }).click();
+    else await page.getByRole('button', { name: 'Play stems' }).click();
     await page.waitForTimeout(1500);
     const metrics = await page.evaluate(() => ({ scrollHeight: document.documentElement.scrollHeight, scrollWidth: document.documentElement.scrollWidth, innerHeight, innerWidth }));
     report.push({ layout: id, viewport: `${width}x${height}`, ...metrics });

@@ -238,7 +238,7 @@ test('LAS-45: instruments are sourced — real-time panels, offline values only 
   }
 });
 
-test('LAS-45: stem channels are a read-only view of the real stem session; the AI slot is stable', async ({ page }) => {
+test('LAS-45: without stems the bank says so and opens the Stems mixer; the AI slot is stable', async ({ page }) => {
   await page.goto('/');
   for (const [id] of LAYOUTS) {
     await switcher(page).selectOption(id);
@@ -248,8 +248,9 @@ test('LAS-45: stem channels are a read-only view of the real stem session; the A
     await switcher(page).selectOption(id);
     const strips = page.getByTestId('stem-strips');
     await expect(strips).toHaveAttribute('data-real-strips', '0');
+    await expect(strips).toHaveAttribute('data-live', 'false');
     await expect(strips).toContainText('none loaded');
-    await expect(strips).toContainText('Read-only here');
+    await expect(strips.getByRole('group', { name: 'Stem transport (bank)' })).toHaveCount(0);
     await strips.getByRole('button', { name: 'Open Stems mixer' }).click();
     await expect(page.getByRole('dialog', { name: 'Stem session' })).toBeVisible();
     await page.getByRole('button', { name: 'Close stems' }).click();
@@ -382,35 +383,137 @@ test.describe('review screenshots', () => {
   }
 });
 
-// Stage 1 honesty: strips are real stems only; every other position is an inert PLANNED slot.
+// Stage 2: strips are the real stems of the one stem session, live and shared with the Stems
+// dialog; every other position stays an inert PLANNED outline. UI state only: no fidelity claim.
 const SLOTS = { a: 15, b: 24, c: 16, d: 8 };
-test('LAS-45: real stems become strips; empty positions are inert PLANNED slots with no fake controls', async ({ page }) => {
-  await page.goto('/');
-  await loadTone(page, 5);
+async function addStems(page, seconds = 2) {
   await page.getByRole('button', { name: 'Stems…' }).click();
   const stems = page.getByRole('dialog', { name: 'Stem session' });
-  const wav = makeWav({ seconds: 2, channels: 2 });
+  const wav = makeWav({ seconds, channels: 2 });
   await stems.getByLabel('Add stem WAVs').setInputFiles([{ name: 'Kick.wav', mimeType: 'audio/wav', buffer: wav }, { name: 'Bass.wav', mimeType: 'audio/wav', buffer: wav }]);
   await expect(stems.getByRole('status')).toHaveText(/^2 stem/);
+  return stems;
+}
+test('LAS-45 Stage 2: real stems are live strips; empty positions stay inert PLANNED outlines', async ({ page }) => {
+  await page.goto('/');
+  await loadTone(page, 5);
+  const stems = await addStems(page);
   await stems.getByRole('slider', { name: 'Gain (dB)' }).first().fill('-6');
   await stems.getByRole('button', { name: 'Close stems' }).click();
   for (const id of ['a', 'b', 'c', 'd']) {
     await switcher(page).selectOption(id);
     const bank = page.getByTestId('stem-strips');
     await expect(bank).toHaveAttribute('data-real-strips', '2');
+    await expect(bank).toHaveAttribute('data-live', 'true');
     await expect(bank.locator('[data-real="true"]')).toHaveCount(2);
     await expect(bank.locator('[data-real="true"]').first()).toContainText('Kick.wav');
-    await expect(bank.locator('[data-planned="true"]')).toHaveCount(SLOTS[id] - 2);
     // Planned slots: hidden from assistive tech, not focusable, no inputs, no meters, no names.
     const planned = bank.locator('[data-planned="true"]');
+    await expect(planned).toHaveCount(SLOTS[id] - 2);
     await expect(planned.first()).toHaveAttribute('aria-hidden', 'true');
     await expect(planned.locator('input, button, [role="slider"], [role="meter"], [tabindex]')).toHaveCount(0);
-    // No meters in strips at all (per-stem meters need Stage 2).
-    await expect(bank.locator('[role="meter"]')).toHaveCount(0);
-    // The strip's gain is the real stem gain (−6.0 dB on the first stem), read-only.
+    // One meter per real strip and nowhere else in the bank.
+    await expect(bank.getByRole('meter')).toHaveCount(2);
+    // The strip shows the session's gain (−6.0 dB set in the dialog) on a real control.
     await expect(bank.locator('[data-real="true"]').first().locator('output')).toHaveText('−6.0');
-    await expect(bank.locator('[data-real="true"] input')).toHaveCount(0);
+    await expect(bank.getByRole('slider', { name: 'Kick.wav gain' })).toHaveValue('-6');
+    for (const name of ['Kick.wav pan', 'Bass.wav gain', 'Bass.wav pan']) await expect(bank.getByRole('slider', { name })).toBeVisible();
+    for (const name of ['Solo Kick.wav', 'Mute Kick.wav', 'Solo Bass.wav', 'Mute Bass.wav']) await expect(bank.getByRole('button', { name })).toHaveAttribute('aria-pressed', 'false');
   }
+});
+
+test('LAS-45 Stage 2: bank and Stems dialog edit one session in both directions, across layouts', async ({ page }) => {
+  await page.goto('/');
+  await loadTone(page, 5);
+  const stems = await addStems(page);
+  await stems.getByRole('button', { name: 'Close stems' }).click();
+  await switcher(page).selectOption('a');
+  const bank = page.getByTestId('stem-strips');
+  const kick = bank.locator('[data-real="true"]').first();
+  // Bank → session: keyboard on the fader and the pan knob, click on Mute.
+  await bank.getByRole('slider', { name: 'Kick.wav gain' }).focus();
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await expect(kick.locator('output')).toHaveText('−1.0');
+  await bank.getByRole('slider', { name: 'Kick.wav pan' }).focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(bank.getByRole('slider', { name: 'Kick.wav pan' })).toHaveAttribute('aria-valuetext', 'R 5');
+  await bank.getByRole('button', { name: 'Mute Kick.wav' }).click();
+  await expect(bank.getByRole('button', { name: 'Mute Kick.wav' })).toHaveAttribute('aria-pressed', 'true');
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  // The dialog shows exactly that.
+  await bank.getByRole('button', { name: 'Open Stems mixer' }).click();
+  const strip = stems.getByRole('listitem', { name: 'Stem Kick.wav' });
+  await expect(strip.getByRole('slider', { name: 'Gain (dB)' })).toHaveValue('-1');
+  await expect(strip.getByRole('slider', { name: 'Pan' })).toHaveValue('0.05');
+  await expect(strip.getByRole('button', { name: 'Mute' })).toHaveAttribute('aria-pressed', 'true');
+  // Dialog → session → bank, in another layout.
+  await strip.getByRole('slider', { name: 'Gain (dB)' }).fill('3');
+  await strip.getByRole('button', { name: 'Mute' }).click();
+  await stems.getByRole('listitem', { name: 'Stem Bass.wav' }).getByRole('button', { name: 'Solo' }).click();
+  await stems.getByRole('button', { name: 'Close stems' }).click();
+  for (const id of ['d', 'b', 'c', 'a']) {
+    await switcher(page).selectOption(id);
+    await expect(bank.locator('[data-real="true"]').first().locator('output')).toHaveText('+3.0');
+    await expect(bank.getByRole('slider', { name: 'Kick.wav gain' })).toHaveValue('3');
+    await expect(bank.getByRole('button', { name: 'Mute Kick.wav' })).toHaveAttribute('aria-pressed', 'false');
+    await expect(bank.getByRole('button', { name: 'Solo Bass.wav' })).toHaveAttribute('aria-pressed', 'true');
+    await expect(bank.getByRole('slider', { name: 'Kick.wav pan' })).toHaveAttribute('aria-valuetext', 'R 5');
+  }
+  // A stem removed in the dialog leaves the bank; the last one removed makes the bank non-live.
+  await bank.getByRole('button', { name: 'Open Stems mixer' }).click();
+  await stems.getByRole('button', { name: 'Remove Kick.wav' }).click();
+  await stems.getByRole('button', { name: 'Close stems' }).click();
+  await expect(bank).toHaveAttribute('data-real-strips', '1');
+  await expect(bank.getByRole('slider', { name: 'Kick.wav gain' })).toHaveCount(0);
+});
+
+test('LAS-45 Stage 2: the bank transport plays the one stem session; strip meters follow mute and stop', async ({ page }) => {
+  await installAudioProbe(page);
+  await page.goto('/');
+  await loadTone(page, 5);
+  const stems = await addStems(page, 20);
+  await stems.getByRole('button', { name: 'Close stems' }).click();
+  const contexts = (await contextStates(page)).length;
+  await switcher(page).selectOption('c');
+  const bank = page.getByTestId('stem-strips');
+  const transport = bank.getByRole('group', { name: 'Stem transport (bank)' });
+  const level = name => bank.getByRole('meter', { name: `${name} level` });
+  const now = async name => Number(await level(name).getAttribute('aria-valuenow'));
+  expect(await now('Kick.wav')).toBe(-60); // nothing plays: no reading
+  await transport.getByRole('button', { name: 'Play stems' }).click();
+  await expect(transport.getByRole('button', { name: 'Pause stems' })).toBeEnabled();
+  await expect(transportOf(page).getByRole('status')).not.toHaveText('Playing'); // single-track transport is not running
+  await expect.poll(() => now('Kick.wav')).toBeGreaterThan(-60);
+  await expect.poll(() => now('Bass.wav')).toBeGreaterThan(-60);
+  const timer = transport.getByRole('timer', { name: 'Stem position (bank)' });
+  const seconds = async () => Number((await timer.textContent()).split(' / ')[0].split(':')[1]);
+  await expect.poll(seconds).toBeGreaterThan(0.3);
+  // Muting one strip silences only its meter; the other keeps reading.
+  await bank.getByRole('button', { name: 'Mute Kick.wav' }).click();
+  await expect.poll(() => now('Kick.wav')).toBe(-60);
+  expect(await now('Bass.wav')).toBeGreaterThan(-60);
+  await bank.getByRole('button', { name: 'Mute Kick.wav' }).click();
+  await expect.poll(() => now('Kick.wav')).toBeGreaterThan(-60);
+  // A louder fader reads higher on the same meter.
+  const before = await now('Bass.wav');
+  await bank.getByRole('slider', { name: 'Bass.wav gain' }).focus();
+  await page.keyboard.press('End');
+  await expect.poll(() => now('Bass.wav')).toBeGreaterThan(before + 6);
+  // Layout switches keep the session playing, on the one audio context.
+  let last = await seconds();
+  for (const id of ['d', 'a', 'b']) {
+    await switcher(page).selectOption(id);
+    await expect(transport.getByRole('button', { name: 'Pause stems' })).toBeEnabled();
+    await expect.poll(seconds).toBeGreaterThan(last);
+    last = await seconds();
+    expect((await contextStates(page)).length).toBe(contexts);
+  }
+  // The dialog shows the same running transport; stopping in the bank clears the meters.
+  await transport.getByRole('button', { name: 'Stop stems' }).click();
+  await expect(transport.getByRole('button', { name: 'Play stems' })).toBeEnabled();
+  await expect.poll(() => now('Kick.wav')).toBe(-60);
+  await expect(timer).toHaveText(/^0:00\.0 \//);
 });
 
 test('LAS-45: inspector knobs drive the real compressor, share undo, and survive layout switches', async ({ page }) => {
