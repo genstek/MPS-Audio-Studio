@@ -2,7 +2,9 @@
 
 Captured with headless Chromium (Linux) from the real app while a generated 20 s sine WAV plays and
 after Analyze finished: `LAS45_SHOTS=1 npx playwright test tests/e2e/studio-layout.spec.js -g shot`.
-Files: `{classic,a,b,c,d}-{1920x1080,1280x720,1024x768,761x450}.png` (full page).
+Files: `{classic,a,b,c,d}-{1920x1080,1280x720,1024x768,761x450}.png` (full page; from 1200×700 up
+layouts A–D are exactly one screen tall). Concept-vs-app comparisons and the discrepancy matrix are in
+`visual-review/`.
 
 They show composition only. They are not a pixel comparison with the owner's ChatGPT concept images
 (not in the repository) and prove nothing about audio fidelity. Ventura 13 WKWebView: NOT RUN.

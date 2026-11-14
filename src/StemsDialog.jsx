@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState, useSyncExternalStore } from 'react';
 import { ListenSwitch } from './ListeningControls.jsx';
 import { parseChain } from './dsp/chain-params.js';
 import { bypassChain } from './dsp/stem-render.js';
@@ -42,11 +42,14 @@ function Meter({ label, level }) {
 // session has its own transport with seek; the single-track transport stops while it plays.
 // LAS-35: each strip has its own chain (bypass, a copy of the master settings, or a settings file),
 // the session's settings can be saved and recalled, and the stem master is rendered offline.
-export function StemsDialog({ engine, chain, listening, onListen, onStemsPlay, onStemsChange = () => {}, masterLevel }) {
+// LAS-45 Stage 2: the strip values come from the shared stem store, so the channel banks of layouts
+// A–D and this dialog always show and edit the same session.
+export function StemsDialog({ engine, store, chain, listening, onListen, onStemsPlay, masterLevel }) {
   const dialog = useRef(null);
-  const [stems, setStems] = useState([]);
-  const [state, setState] = useState({ playing: false, position: 0, duration: 0, rate: null });
-  const [levels, setLevels] = useState({ stems: [], master: null });
+  const state = useSyncExternalStore(store.subscribe, store.get);
+  const live = useSyncExternalStore(store.subscribeLive, store.getLive);
+  const { stems } = state;
+  const { levels } = live;
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -54,29 +57,10 @@ export function StemsDialog({ engine, chain, listening, onListen, onStemsPlay, o
   const [render, setRender] = useState(null); // { report, urls } or { running, stage }
   const renderJob = useRef(null);
 
-  const refresh = () => {
-    const session = engine.current.stemSession();
-    if (!session) return;
-    setStems(session.stems());
-    onStemsChange(session.stems());
-    setState({ playing: session.playing(), position: session.position(), duration: session.duration(), rate: engine.current.sampleRate() });
-  };
-
-  // Position and meters ten times a second while the dialog is open and playing.
-  useEffect(() => {
-    if (!state.playing) return undefined;
-    const timer = setInterval(() => {
-      const session = engine.current.stemSession();
-      if (!session) return;
-      setLevels(engine.current.stemLevels());
-      setState(s => ({ ...s, playing: session.playing(), position: session.position() }));
-    }, 100);
-    return () => clearInterval(timer);
-  }, [engine, state.playing]);
+  const refresh = store.refresh;
 
   async function open() {
     setError('');
-    setStems([]);
     dialog.current.showModal();
     try {
       await engine.current.openStems(() => refresh());
@@ -102,15 +86,15 @@ export function StemsDialog({ engine, chain, listening, onListen, onStemsPlay, o
     refresh();
   }
 
-  const act = (action, ...args) => { engine.current.stemSession()[action](...args); refresh(); };
+  const act = store.act;
   async function play() {
     setError('');
     try {
-      if (await engine.current.playStems()) onStemsPlay();
+      if (await store.play()) onStemsPlay();
     } catch {
       setError('Audio could not start. Try pressing Play again.');
+      refresh();
     }
-    refresh();
   }
 
   function close() {
@@ -223,9 +207,9 @@ export function StemsDialog({ engine, chain, listening, onListen, onStemsPlay, o
               <button onClick={() => act('pause')} disabled={!state.playing}><span aria-hidden="true">Ⅱ</span> Pause</button>
               <button onClick={() => act('stop')}><span aria-hidden="true">■</span> Stop</button>
               <label className="stems-seek">Position
-                <input type="range" min="0" max={state.duration} step="0.01" value={state.position} aria-valuetext={`${clock(state.position)} of ${clock(state.duration)}`} onChange={e => act('seek', Number(e.target.value))} />
+                <input type="range" min="0" max={state.duration} step="0.01" value={live.position} aria-valuetext={`${clock(live.position)} of ${clock(state.duration)}`} onChange={e => act('seek', Number(e.target.value))} />
               </label>
-              <span role="timer" aria-label="Stem position">{clock(state.position)} / {clock(state.duration)}</span>
+              <span role="timer" aria-label="Stem position">{clock(live.position)} / {clock(state.duration)}</span>
               <ListenSwitch value={listening} onChange={onListen} />
               <span className="stems-master"><span className="fine-print" aria-hidden="true">Master</span><Meter label="Master output level" level={levels.master} /></span>
               {masterLevel && <MasterLevel value={masterLevel.value} onChange={masterLevel.onChange} compact />}
