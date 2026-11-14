@@ -72,8 +72,24 @@
 .kit-strip-knobs { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; }
 .kit-strip-flat { font-size: 9px; color: #8a96a0; }
 .kit-planned-group { display: contents; }
-.kit-planned { display: grid; flex: 0 0 auto; place-items: center; border: 1px dashed #3c4852; border-radius: 3px; background: repeating-linear-gradient(135deg, #12181d 0 6px, #161d23 6px 12px); color: #5d6a75; min-height: 12rem; align-self: stretch; }
-.kit-planned span { writing-mode: vertical-rl; font-size: 9px; letter-spacing: 2px; }
+.kit-planned { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 4px 2px 6px; flex: 0 0 auto; border: 1px solid #232c33; border-top: 3px solid #2a343c; border-radius: 3px; background: #141a1f; color: #4d5963; min-height: 12rem; align-self: stretch; opacity: .8; }
+.kit-ghost-head { width: 70%; height: 8px; border-radius: 2px; background: #1f272e; }
+.kit-ghost-wells { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; max-width: 100%; }
+.kit-ghost-wells i { width: 18px; height: 18px; border-radius: 50%; border: 1px solid #2c3640; }
+.kit-ghost-lines { display: grid; gap: 3px; width: 80%; }
+.kit-ghost-lines i { height: 12px; border: 1px solid #262f37; border-radius: 2px; }
+.kit-ghost-flags { display: flex; gap: 2px; }
+.kit-ghost-flags i { width: 1.1rem; height: 1.1rem; border: 1px solid #262f37; border-radius: 2px; }
+.kit-ghost-rail { position: relative; flex: 1 1 auto; min-height: 3rem; width: 4px; border-radius: 2px; background: #0d1215; }
+.kit-ghost-rail em { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-90deg); font-style: normal; font-size: 8px; letter-spacing: 2px; white-space: nowrap; color: #55616b; background: #141a1f; padding: 0 5px; }
+.kit-ghost-readout { width: 60%; height: 12px; border: 1px solid #262f37; border-radius: 2px; }
+.kit-sec-label { align-self: stretch; font-size: 8px; letter-spacing: 1.5px; color: var(--accent, #4fd0e6); border-top: 1px solid #ffffff14; padding: 2px 4px 0; }
+.insp-curve { position: relative; height: 4.5rem; background: #0b1013; border: 1px solid #27323a; border-radius: 3px; overflow: hidden; }
+.insp-curve .eq-thumbnail { position: absolute; inset: 0; width: 100%; height: 100%; }
+.insp-curve .eq-thumbnail path { stroke: var(--accent, #4fd0e6); stroke-width: 8; }
+.insp-dyn { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; margin-bottom: 6px; }
+.insp-dyn .gr-meter { height: 4rem; }
+.bank-note { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .kit-curve { margin: 0; display: grid; gap: 2px; min-width: 0; }
 .kit-curve-plot { position: relative; height: 11rem; background: #0b1013; border: 1px solid #27323a; border-radius: 3px; overflow: hidden; }
 .kit-curve figcaption { font-size: 10px; color: #a7b2bc; }
@@ -113,13 +129,35 @@
 .part.bank { display: flex; flex-direction: column; padding: 8px; min-width: 0; background: #151c22; border: 1px solid #2d3841; border-radius: 6px; }
 .part.stage { display: grid; gap: 10px; padding: 8px 10px; background: #141b21; border: 1px solid #2d3841; border-radius: 6px; min-width: 0; align-content: start; }
 .part.rail { padding: 10px; display: grid; gap: 12px; align-content: start; min-width: 0; }
-@media (min-width: 1200px) {
-  .part.bank .bank-scroll { max-height: none; }
+
+/* Shared by every non-classic layout from 761px. */
+@media (min-width: 761px) {
+  main:not([data-layout='classic']) > .workspace { display: contents; }
+  main:not([data-layout='classic']) .master-instruments .kit-provenance { display: none; }
+  main:not([data-layout='classic']) .panel-heading h2, main:not([data-layout='classic']) .dock-title { color: var(--accent); }
+  main[data-layout='a'] { --accent: #4fd0e6; background: #0e1317; }
+  main[data-layout='b'] { --accent: #f0a73c; background: #16110c; }
+  main[data-layout='c'] { --accent: #6aa8ff; background: #0f1218; }
+  main[data-layout='d'] { --accent: #8d7bff; background: #0f1015; }
+  main[data-layout='b'] .inspector { display: none; }
+  main[data-layout='b'] .part.bank, main[data-layout='b'] .part.stage, main[data-layout='b'] .panel { background: #1f1812; border-color: #5a4630; border-radius: 3px; }
+  main[data-layout='b'] .kit-strip { background: linear-gradient(180deg, #33281c, #1c150f); border-color: #54412c; border-top-color: var(--strip-tone); }
+  main[data-layout='b'] .kit-planned { background: #1b150f; border-color: #3a2d1f; border-top-color: #46361f; color: #6b5a44; }
+  main[data-layout='b'] .kit-ghost-head, main[data-layout='b'] .kit-ghost-rail { background: #120d08; }
+  main[data-layout='b'] .kit-ghost-wells i, main[data-layout='b'] .kit-ghost-flags i, main[data-layout='b'] .kit-ghost-readout { border-color: #3d2f20; }
+  main[data-layout='b'] .kit-ghost-rail em { background: #1b150f; color: #7a664b; }
+  main[data-layout='b'] .kit-fader-cap { background: linear-gradient(#e9dcc2, #9b8660); }
+  main[data-layout='b'] .kit-knob-body { fill: #3a2c1c; stroke: #c98a2c; }
+  main[data-layout='b'] .kit-knob-pointer { stroke: #f4d7a0; }
+  main[data-layout='b'] .master { border-width: 2px; }
+  main[data-layout='d'] .kit-strip { background: linear-gradient(#1b1d29, #14161f); }
+  main[data-layout='d'] .kit-planned { background: #13141b; }
 }
 
-@media (min-width: 761px) {
-  main:not([data-layout='classic']) { height: auto; min-height: 100dvh; max-width: 1920px; grid-template-rows: none; grid-auto-rows: auto; align-content: start; }
-  main:not([data-layout='classic']) > .workspace { display: contents; }
+/* Stacked flow: too narrow (761–1199px) or too short (< 700px) for a console that fits one
+   screen, so every layout becomes one column in its own order and the page scrolls. */
+@media (min-width: 761px) and (max-width: 1199px), (min-width: 761px) and (max-height: 699px) {
+  main:not([data-layout='classic']) { height: auto; min-height: 100dvh; max-width: 1920px; grid-template-rows: none; grid-auto-rows: auto; align-content: start; grid-template-columns: minmax(0, 1fr); }
   main:not([data-layout='classic']) .strips { container-type: normal; overflow-x: auto; }
   main:not([data-layout='classic']) > footer { grid-area: foot; }
   main:not([data-layout='classic']) > .masthead { grid-area: head; }
@@ -134,75 +172,251 @@
   main:not([data-layout='classic']) .tracks > .error { flex: 1 0 100%; margin: 0 12px 6px; }
   main:not([data-layout='classic']) .master { grid-area: master; min-height: 0; }
   main:not([data-layout='classic']) .master-body { contain: none; max-height: 9rem; }
-  main:not([data-layout='classic']) .master-instruments .kit-provenance { display: none; }
   main:not([data-layout='classic']) .mixer { grid-area: mixer; }
   main:not([data-layout='classic']) .inspector { grid-area: inspector; }
-  main:not([data-layout='classic']) .part.rail { grid-area: rail; }
+  main:not([data-layout='classic']) .part.rail { grid-area: rail; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   main:not([data-layout='classic']) .part.stage { grid-area: stage; }
   main:not([data-layout='classic']) .part.bank { grid-area: bank; }
   main:not([data-layout='classic']) [data-planned-panel='Routing matrix'] { grid-area: routing; }
   main:not([data-layout='classic']) .mixer .strips { grid-template-columns: repeat(4, minmax(9rem, 1fr)); }
   main:not([data-layout='classic']) .mixer .strip-visual { max-height: 5.5rem; }
+  main:not([data-layout='classic']) .kit-strip, main:not([data-layout='classic']) .kit-planned { min-height: 20rem; }
+  main[data-layout='a'] { --strip-w: 4.1rem; grid-template-areas: "head" "xport" "tracks" "stage" "bank" "master" "inspector" "rail" "mixer" "foot"; }
+  main[data-layout='b'] { --strip-w: 3.9rem; grid-template-areas: "head" "xport" "tracks" "bank" "master" "stage" "mixer" "foot"; }
+  main[data-layout='c'] { --strip-w: 4.6rem; grid-template-areas: "head" "xport" "tracks" "stage" "inspector" "bank" "master" "rail" "routing" "mixer" "foot"; }
+  main[data-layout='d'] { --strip-w: 5.4rem; grid-template-areas: "head" "xport" "tracks" "inspector" "bank" "master" "stage" "rail" "mixer" "foot"; }
+  main[data-layout='a'] .stage-a, main[data-layout='b'] .stage-b, main[data-layout='c'] .stage-c, main[data-layout='d'] .stage-d { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  main[data-layout='b'] .stage-b > :first-child { display: none; }
+  main[data-layout='c'] .stage-c > [data-testid='measured-panel'] { display: none; }
+  main:not([data-layout='classic']) .dock-nav { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-column: 1 / -1; }
+  main:not([data-layout='classic']) .inspector-knobs { grid-template-columns: repeat(2, auto); justify-content: start; gap: 8px 24px; }
+}
 
-  /* A · Console Focus — charcoal / cyan. Left Scenes/Monitor rail; EQ view + analyzer over a dense
-     row of narrow channel strips; right master column over the channel inspector. */
-  main[data-layout='a'] { --accent: #4fd0e6; --strip-w: 4.1rem; grid-template-columns: 11.5rem minmax(0, 1fr) 24rem; grid-template-areas: "head head head" "xport xport xport" "tracks tracks tracks" "rail stage master" "rail bank inspector" "mixer mixer mixer" "foot foot foot"; background: #0e1317; }
-  main[data-layout='a'] .stage-a { grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1fr); }
-  main[data-layout='a'] .stage-a .kit-curve-plot { height: 13rem; }
-  main[data-layout='a'] .kit-strip { min-height: 20rem; }
-  main[data-layout='a'] .panel-heading h2, main[data-layout='a'] .dock-title { color: var(--accent); }
+/* Console fit (>= 1200 x 700): each layout fills exactly one viewport. The page never scrolls;
+   strip banks, racks, rails and panels scroll inside themselves when their content is longer.
+   A 96-column grid carries the proportions of the approved 1672x941 references to any width. */
+@media (min-width: 1200px) and (min-height: 700px) {
+  main:not([data-layout='classic']) {
+    --g: 6px; --space: 6px; height: 100dvh; min-height: 0; max-width: none; margin: 0; padding: 5px 5px 3px; overflow: hidden;
+    grid-template-columns: repeat(96, minmax(0, 1fr)); gap: var(--g) 0;
+    grid-template-rows: [head] auto [bar] auto [bar2] auto var(--body-rows) [foot] auto [end];
+  }
+  main:not([data-layout='classic']) > *, main:not([data-layout='classic']) > .workspace > * { margin-inline: 3px; min-height: 0; }
+  main:not([data-layout='classic']) > .masthead { grid-column: 1 / -1; grid-row: head; }
+  main:not([data-layout='classic']) > .transport { grid-column: 1 / -1; grid-row: bar; }
+  main:not([data-layout='classic']) .tracks { grid-column: 1 / -1; grid-row: bar2; }
+  main:not([data-layout='classic']) > footer { grid-column: 1 / -1; grid-row: foot; font-size: 9px; line-height: 1.2; gap: 8px; white-space: nowrap; overflow: hidden; }
 
-  /* B · Analog Strip Wall — amber hardware. Very narrow tall strips (knob rows, long fader), tall
-     master column on the right, analysis dock across the bottom. */
-  main[data-layout='b'] { --accent: #f0a73c; --strip-w: 3.9rem; grid-template-columns: minmax(0, 1fr) 17rem; grid-template-areas: "head head" "xport xport" "tracks tracks" "bank master" "stage stage" "mixer mixer" "foot foot"; background: #16110c; }
-  main[data-layout='b'] .inspector { display: none; }
-  main[data-layout='b'] .part.bank, main[data-layout='b'] .part.stage, main[data-layout='b'] .panel { background: #1f1812; border-color: #5a4630; border-radius: 3px; }
-  main[data-layout='b'] .kit-strip { background: linear-gradient(180deg, #33281c, #1c150f); border-color: #54412c; border-top-color: var(--strip-tone); min-height: 28rem; }
-  main[data-layout='b'] .kit-fader-cap { background: linear-gradient(#e9dcc2, #9b8660); }
-  main[data-layout='b'] .kit-knob-body { fill: #3a2c1c; stroke: #c98a2c; }
-  main[data-layout='b'] .kit-knob-pointer { stroke: #f4d7a0; }
-  main[data-layout='b'] .kit-planned { min-height: 28rem; background: repeating-linear-gradient(135deg, #1a140e 0 6px, #1f1812 6px 12px); border-color: #54412c; }
-  main[data-layout='b'] .panel-heading h2, main[data-layout='b'] .dock-title { color: var(--accent); }
-  main[data-layout='b'] .stage-b { grid-template-columns: minmax(8rem, 1fr) minmax(0, 3fr) minmax(0, 1.4fr) minmax(0, 1.6fr) minmax(0, 1.2fr); }
-  main[data-layout='b'] .master { border-width: 2px; }
+  /* Top bars: brand + tools, then transport and the track bar. */
+  main:not([data-layout='classic']) .masthead { gap: 10px; }
+  main:not([data-layout='classic']) .brand { gap: 8px; }
+  main:not([data-layout='classic']) .brand .eyebrow { display: none; }
+  main:not([data-layout='classic']) .brand-mark { padding: 2px 6px; font-size: 12px; letter-spacing: 1px; }
+  main:not([data-layout='classic']) .brand-title h1 { font-size: 17px; margin: 0; }
+  main:not([data-layout='classic']) .masthead-tools { gap: 8px; }
+  main:not([data-layout='classic']) .masthead-tools button { padding: 3px 10px; font-size: 12px; }
+  main:not([data-layout='classic']) .transport { padding: 4px 10px; gap: 10px; border-radius: 5px; }
+  main:not([data-layout='classic']) .transport-buttons { flex-wrap: nowrap; gap: 5px; }
+  main:not([data-layout='classic']) .transport-buttons button { padding: 5px 12px; font-size: 13px; white-space: nowrap; }
+  main:not([data-layout='classic']) .transport-state { min-width: 8.5rem; white-space: nowrap; }
+  main:not([data-layout='classic']) .transport .project-name { max-width: 9rem; font-size: 14px; }
+  main:not([data-layout='classic']) .tracks { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto; align-items: center; align-content: center; min-height: 0; border-radius: 5px; }
+  main:not([data-layout='classic']) .tracks > .panel-heading { border-bottom: 0; padding: 3px 8px; gap: 8px; flex: 0 0 auto; }
+  main:not([data-layout='classic']) .tracks .panel-heading h2 { font-size: 13px; margin: 0; }
+  main:not([data-layout='classic']) .tracks .heading-tools { gap: 5px; }
+  main:not([data-layout='classic']) .tracks .heading-tools button { padding: 2px 8px; font-size: 11px; white-space: nowrap; }
+  main:not([data-layout='classic']) .tracks .track-space { flex: 0 1 auto; min-width: 0; container-type: normal; min-height: 0; padding: 2px 6px; background: none; contain-intrinsic-block-size: auto; }
+  main:not([data-layout='classic']) .tracks .track-content { display: grid; grid-template-columns: auto minmax(0, auto) minmax(0, 1fr); grid-template-rows: auto; grid-template-areas: "picker title info"; align-items: center; justify-content: start; justify-items: start; column-gap: 10px; row-gap: 0; height: auto; text-align: left; }
+  main:not([data-layout='classic']) .tracks .audio-icon, main:not([data-layout='classic']) .tracks .track-content .fine-print { display: none; }
+  main:not([data-layout='classic']) .tracks .track-content h3 { font-size: 12px; margin: 0; }
+  main:not([data-layout='classic']) .tracks .track-info { font-size: 10px; margin: 0; }
+  main:not([data-layout='classic']) .tracks .file-picker { padding: 5px 12px; font-size: 12px; }
+  main:not([data-layout='classic']) .tracks .track-footer { grid-column: 1 / -1; min-width: 0; flex-wrap: nowrap; border-top: 0; padding: 0 8px 3px; }
+  main:not([data-layout='classic']) .tracks .badge { display: none; }
+  main:not([data-layout='classic']) .tracks > .error { position: absolute; z-index: 40; top: calc(100% + 2px); left: 0; right: 0; margin: 0; box-shadow: 0 8px 20px #000a; }
+
+  /* Panels fill their grid cell and scroll inside. */
+  main:not([data-layout='classic']) .panel-heading { padding: 3px 8px; }
+  main:not([data-layout='classic']) .panel-heading h2 { font-size: 13px; margin: 0; }
+  main:not([data-layout='classic']) .part.rail { overflow: auto; padding: 8px; gap: 10px; }
+  main:not([data-layout='classic']) .part.stage { overflow: hidden; padding: 6px 8px; gap: 8px; align-content: stretch; grid-auto-rows: minmax(0, 1fr); }
+  main:not([data-layout='classic']) .part.stage > .dock-section { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+  main:not([data-layout='classic']) .part.stage .dock-title { margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 0; }
+  main:not([data-layout='classic']) .part.stage .kit-curve { flex: 1 1 auto; min-height: 0; grid-template-rows: minmax(0, 1fr) auto; }
+  main:not([data-layout='classic']) .part.stage .kit-curve-plot { height: auto; min-height: 0; }
+  main:not([data-layout='classic']) .part.stage .kit-curve figcaption, main:not([data-layout='classic']) .part.stage .kit-provenance { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 0; }
+  main:not([data-layout='classic']) .part.stage .dock-realtime .output-spectrum { flex: 1 1 auto; min-height: 0; height: auto; width: 100%; }
+  main:not([data-layout='classic']) .part.stage .dock-realtime > .fine-print { display: none; }
+  main:not([data-layout='classic']) .part.stage .kit-scope-planned { flex: 1 1 auto; min-height: 2rem; }
+  main:not([data-layout='classic']) .part.stage .dock-facts { font-size: 11px; gap: 2px 8px; }
+  main:not([data-layout='classic']) .part.stage .fine-print { margin: 2px 0 0; font-size: 9px; }
+  main:not([data-layout='classic']) .part.stage .dock-needles { flex: 0 1 auto; min-height: 0; }
+  main:not([data-layout='classic']) .part.stage .dock-needles .needle-meter { height: auto; min-height: 0; }
+  main:not([data-layout='classic']) .dock-needles .needle-meter svg { width: auto; max-width: 100%; height: 4.2rem; max-height: none; }
+  main:not([data-layout='classic']) .part.rail .dock-nav button { padding: 5px 10px; font-size: 12px; }
+  main:not([data-layout='classic']) .part.stage .kit-loudness { flex: 1 1 auto; min-height: 0; }
+  main:not([data-layout='classic']) .part.stage .kit-meter-pair { height: auto; min-height: 2rem; }
+  main:not([data-layout='classic']) .part.bank { overflow: hidden; padding: 5px 6px 3px; }
+  main:not([data-layout='classic']) .bank-scroll { min-height: 0; overflow-x: auto; overflow-y: hidden; padding-bottom: 3px; }
+  main:not([data-layout='classic']) .bank-scroll > .kit-strip, main:not([data-layout='classic']) .bank-scroll .kit-planned { flex: 1 0 var(--strip-w); width: auto; min-height: 0; }
+  main:not([data-layout='classic']) .kit-fader { min-height: 3rem; container-type: size; }
+  @container (max-height: 7.5rem) { .kit-fader-scale span:nth-child(even) { display: none; } }
+  main:not([data-layout='classic']) .master-body .segmented { flex-wrap: nowrap; }
+  main:not([data-layout='classic']) .master-body .segmented legend { float: none; }
+  main:not([data-layout='classic']) .master-body .segmented label { padding: 3px 7px; font-size: 11px; white-space: nowrap; }
+  main:not([data-layout='classic']) .bank-note { margin: 0; flex-shrink: 0; }
+
+  /* Mixer = the real processing chain as a compact rack (one row per module). */
+  main:not([data-layout='classic']) .mixer { display: flex; flex-direction: column; overflow: hidden; }
+  main:not([data-layout='classic']) .mixer > .panel-heading { flex-wrap: wrap; gap: 3px 6px; flex-shrink: 0; }
+  main:not([data-layout='classic']) .mixer .heading-tools { flex-wrap: wrap; gap: 3px 4px; justify-content: flex-end; }
+  main:not([data-layout='classic']) .mixer .heading-button { padding: 1px 7px; font-size: 10px; }
+  main:not([data-layout='classic']) .mixer .mixer-note { margin: 0 8px; padding: 2px 4px; font-size: 11px; flex-shrink: 0; }
+  main:not([data-layout='classic']) .mixer .strips { container-type: normal; contain-intrinsic-block-size: auto; display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; overflow: auto; }
+  main:not([data-layout='classic']) .mixer .strip { flex: 1 0 auto; grid-template-columns: minmax(5.4rem, 7rem) 2.3rem minmax(0, 1fr) auto auto; grid-template-areas: "title knob caption select button"; align-items: center; justify-items: start; column-gap: 6px; row-gap: 0; padding: 2px 8px; min-height: 1.75rem; text-align: left; border-right: 0; border-bottom: 1px solid #39434c; }
+  main:not([data-layout='classic']) .mixer .strip:last-of-type { border-bottom: 0; }
+  main:not([data-layout='classic']) .mixer .strip-title { gap: 5px; flex-wrap: nowrap; }
+  main:not([data-layout='classic']) .mixer .strip-title h3 { font-size: 12px; margin: 0; }
+  main:not([data-layout='classic']) .mixer .strip-edited { display: none; }
+  main:not([data-layout='classic']) .mixer .strip-visual { width: 2.3rem; height: 1.35rem; max-height: none; aspect-ratio: auto; border-radius: 3px; }
+  main:not([data-layout='classic']) .mixer .strip p { display: block; margin: 0; font-size: 10px; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  main:not([data-layout='classic']) .mixer .strip .strip-select { grid-area: select; padding: 1px 6px; font-size: 10px; }
+  main:not([data-layout='classic']) .mixer .strip .strip-edit button { padding: 2px 10px; font-size: 11px; }
+
+  /* Inspector (selected processor). */
+  main:not([data-layout='classic']) .inspector { overflow: auto; padding: 6px 10px; gap: 6px; }
+  main:not([data-layout='classic']) .inspector > button { padding: 3px 10px; font-size: 12px; justify-self: start; }
+  main:not([data-layout='classic']) .inspector .fine-print { margin: 2px 0 0; font-size: 10px; }
+  main:not([data-layout='classic']) .inspector-knobs { gap: 6px; }
+  main:not([data-layout='classic']) .knob-row { gap: 4px 8px; }
+
+  /* Master panel. */
+  main:not([data-layout='classic']) .master { display: grid; overflow: hidden; }
+  main:not([data-layout='classic']) .master > * { min-width: 0; min-height: 0; }
+  main:not([data-layout='classic']) .master > .panel-heading { grid-area: mh; }
+  main:not([data-layout='classic']) .master-instruments { grid-area: mi; padding: 4px 8px; border-bottom: 0; align-content: start; overflow: hidden; }
+  main:not([data-layout='classic']) .master-instruments .kit-meter-pair { height: auto; min-height: 2.5rem; }
+  main:not([data-layout='classic']) .master-body { grid-area: mb; contain: none; min-height: 0; max-height: none; overflow: auto; padding: 4px 6px; font-size: 12px; border-top: 1px solid #39434c; }
+  main:not([data-layout='classic']) .master-body .eyebrow { margin: 0 0 3px; }
+  main:not([data-layout='classic']) .master-level { grid-area: ml; padding: 3px 8px 0; }
+  main:not([data-layout='classic']) .master-level .fine-print { margin: 0; font-size: 9px; }
+  main:not([data-layout='classic']) .master > .export-wrap { grid-area: me; margin: 4px 8px; }
+  main:not([data-layout='classic']) .master > .export-wrap > button { padding-block: 4px; }
+  /* Upright fader fills the height it is given (B, C, D). */
+  main:not([data-layout='classic']) .master-level:has(.vfader) { display: flex; flex-direction: column; border-top: 0; border-left: 1px solid #39434c; }
+  main:not([data-layout='classic']) .master-level:has(.vfader) .master-fader { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+  main:not([data-layout='classic']) .master-level:has(.vfader) .master-fader-row { flex-wrap: wrap; justify-content: center; gap: 2px 6px; font-size: 11px; }
+  main:not([data-layout='classic']) .master-level:has(.vfader) .master-value { margin-left: 0; }
+  main:not([data-layout='classic']) .vfader { flex: 1 1 auto; height: auto; min-height: 4.5rem; margin: 6px 0; container-type: size; }
+  main:not([data-layout='classic']) .vfader-track input { width: 100cqh; }
+
+  /* A · Console Focus: Scenes/Monitor rail | EQ view + analyzer over a 15-position strip bank |
+     master over the selected-processor inspector and the processing rack. */
+  main[data-layout='a'] { --strip-w: 3.3rem; --body-rows: [r1] minmax(11.5rem, 36fr) [r2] minmax(0, 64fr) [r3] auto; }
+  main[data-layout='a'] .part.rail { grid-column: 1 / 11; grid-row: r1 / foot; }
+  main[data-layout='a'] .part.stage { grid-column: 11 / 73; grid-row: r1; grid-template-columns: minmax(0, 1fr) clamp(11rem, 19%, 15rem); grid-template-rows: minmax(0, 1fr) minmax(0, 1.15fr); }
+  main[data-layout='a'] .stage-a .dock-needles .needle-meter svg { height: 3.4rem; }
+  main[data-layout='a'] .stage-a .dock-facts { font-size: 10px; }
+  main[data-layout='a'] .stage-a > .kit-eqview { grid-row: 1 / -1; }
+  main[data-layout='a'] .master { grid-column: 73 / -1; grid-row: r1; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); grid-template-rows: auto minmax(3.3rem, 1fr) auto auto; grid-template-areas: "mh mh" "mi mb" "ml mb" "me mb"; }
+  main[data-layout='a'] .master-body { border-top: 0; border-left: 1px solid #39434c; }
+  main[data-layout='a'] .part.bank { grid-column: 11 / 73; grid-row: r2 / foot; }
+  main[data-layout='a'] .inspector { grid-column: 73 / -1; grid-row: r2; }
+  main[data-layout='a'] .mixer { grid-column: 73 / -1; grid-row: r3; max-height: 34dvh; }
+  main[data-layout='a'] .inspector-knobs { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 12px; }
+  main[data-layout='a'] .inspector-knobs > section:nth-child(2), main[data-layout='a'] .inspector-knobs > section:nth-child(4) { grid-column: 1 / -1; order: 2; }
+  main[data-layout='a'] .insp-curve { height: 3.4rem; }
+  main[data-layout='a'] .insp-dyn .gr-meter { height: 3.2rem; }
+  main[data-layout='a'] .master-instruments { grid-template-rows: minmax(0, 1fr); }
+  main[data-layout='a'] .master-readouts { height: 100%; }
+
+  /* B · Analog Strip Wall: 24 narrow tall positions with the tall master beside them, and the
+     analysis dock with the processing rack along the bottom. */
+  main[data-layout='b'] { --strip-w: 3.5rem; --body-rows: [r1] minmax(0, 1fr) [r2] clamp(11.5rem, 22dvh, 14rem); }
+  main[data-layout='b'] .kit-strip-knobs { flex-wrap: nowrap; }
+  main[data-layout='b'] .part.bank { grid-column: 1 / 85; grid-row: r1; }
+  main[data-layout='b'] .master { grid-column: 85 / -1; grid-row: r1; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, auto) minmax(4.5rem, 1fr) minmax(6rem, 1.6fr) auto; grid-template-areas: "mh" "mi" "mb" "ml" "me"; }
+  main[data-layout='b'] .master-level:has(.vfader) { border-left: 0; border-top: 1px solid #5a4630; }
+  main[data-layout='b'] .part.stage { grid-column: 1 / 75; grid-row: r2; grid-template-columns: 10rem minmax(0, 3fr) minmax(0, 1.2fr) minmax(0, 1.4fr); }
+  main[data-layout='b'] .master-instruments .needle-meter figcaption { color: #2b2113; }
+  main[data-layout='b'] .mixer { grid-column: 75 / -1; grid-row: r2; }
   main[data-layout='b'] .master-instruments .needle-meter { background: #e8d9ae; border-radius: 4px; color: #2b2113; }
   main[data-layout='b'] .master-instruments .needle-meter text { fill: #2b2113; }
   main[data-layout='b'] .master-instruments .needle { stroke: #a03020; }
+  main[data-layout='b'] .master-readouts { grid-template-columns: minmax(0, 1fr); }
+  main[data-layout='b'] .master-readouts .kit-meter-pair { display: none; }
 
-  /* C · Mastering Hybrid — analysis first: five panels in one row, then selected-chain editor +
-     routing (planned), a dense bank across the bottom with the master at the far right. */
-  main[data-layout='c'] { --accent: #6aa8ff; --strip-w: 4.6rem; grid-template-columns: 8.5rem minmax(0, 1fr) 17rem; grid-template-areas: "head head head" "xport xport xport" "rail stage stage" "rail inspector routing" "tracks tracks tracks" "bank bank master" "mixer mixer mixer" "foot foot foot"; background: #0f1218; }
-  main[data-layout='c'] .stage-c { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-  main[data-layout='c'] .stage-c > [data-testid='measured-panel'] { display: none; }
-  main[data-layout='c'] .stage-c .kit-curve-plot { height: 10rem; }
-  main[data-layout='c'] .stage-c .dock-realtime .output-spectrum { height: 10rem; }
-  main[data-layout='c'] .kit-strip { min-height: 22rem; }
-  main[data-layout='c'] .inspector-knobs { grid-template-columns: repeat(4, auto); align-items: start; justify-content: start; gap: 8px 22px; }
-  main[data-layout='c'] .panel-heading h2, main[data-layout='c'] .dock-title { color: var(--accent); }
+  /* C · Mastering Hybrid: five analysis panels across the top, the selected-processor row with
+     the processing rack, then the 16-position bank with the master at the right. */
+  main[data-layout='c'] { --strip-w: 4rem; --body-rows: [r1] minmax(0, 27fr) [r2] minmax(0, 23fr) [r3] minmax(0, 50fr); }
+  main[data-layout='c'] .part.rail { grid-column: 1 / 8; grid-row: r1 / r3; }
+  main[data-layout='c'] .part.stage { grid-column: 8 / -1; grid-row: r1; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  main[data-layout='c'] .part.stage.stage-c > [data-testid='measured-panel'], main[data-layout='b'] .part.stage.stage-b > [data-testid='measured-panel'] { display: none; }
+  main[data-layout='c'] .part.rail { padding: 6px; gap: 8px; font-size: 11px; }
+  main[data-layout='c'] .part.rail .dock-nav { gap: 4px; }
+  main[data-layout='c'] .part.rail .dock-nav button { padding: 4px 8px; font-size: 12px; }
+  main[data-layout='c'] .part.rail .dock-facts { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  main[data-layout='c'] .part.rail .dock-facts dd { margin-bottom: 3px; }
+  main[data-layout='c'] .inspector { grid-column: 8 / 68; grid-row: r2; grid-template-columns: 9.5rem minmax(0, 1fr); grid-template-rows: repeat(4, auto) minmax(0, 1fr); column-gap: 14px; align-content: start; }
+  main[data-layout='c'] .inspector > * { grid-column: 1; }
+  main[data-layout='c'] .inspector > .inspector-knobs { grid-column: 2; grid-row: 1 / -1; grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr) auto minmax(0, 1.3fr); gap: 4px 14px; align-items: start; }
+  main[data-layout='c'] .insp-curve { height: 2.6rem; }
+  main[data-layout='c'] .insp-dyn .gr-meter { height: 2.4rem; }
+  main[data-layout='c'] .mixer { grid-column: 68 / 87; grid-row: r2; }
+  main[data-layout='c'] [data-planned-panel='Routing matrix'] { grid-column: 87 / -1; grid-row: r2; display: flex; flex-direction: column; padding: 6px 8px; border: 1px solid #2d3841; border-radius: 6px; background: #141b21; overflow: hidden; }
+  main[data-layout='c'] [data-planned-panel='Routing matrix'] .kit-scope-planned { flex: 1 1 auto; min-height: 1.5rem; border-radius: 3px; background: repeating-linear-gradient(0deg, transparent 0 15px, #1c252c 15px 16px), repeating-linear-gradient(90deg, transparent 0 15px, #1c252c 15px 16px), #10161a; }
+  main[data-layout='c'] .part.bank { grid-column: 1 / 82; grid-row: r3; }
+  main[data-layout='c'] .master { grid-column: 82 / -1; grid-row: r3; grid-template-columns: minmax(0, 1fr) 5.6rem; grid-template-rows: auto minmax(0, auto) minmax(4.5rem, 1fr) auto; grid-template-areas: "mh mh" "mi ml" "mb ml" "me me"; }
 
-  /* D · Digital Console Suite — left navigation + workspace, selected-channel inspector, eight
-     full-height strips, right master/output rack with the analysis stack beneath. */
-  main[data-layout='d'] { --accent: #8d7bff; --strip-w: 5.4rem; grid-template-columns: 12rem 21rem minmax(0, 1fr) 24rem; grid-template-areas: "head head head head" "xport xport xport xport" "tracks tracks tracks tracks" "rail inspector bank master" "rail stage stage stage" "mixer mixer mixer mixer" "foot foot foot foot"; background: #0f1015; }
-  main[data-layout='d'] .kit-strip { min-height: 28rem; background: linear-gradient(#1b1d29, #14161f); }
-  main[data-layout='d'] .panel-heading h2, main[data-layout='d'] .dock-title { color: var(--accent); }
-  main[data-layout='d'] .stage-d { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  /* D · Digital Console Suite: navigation | selected processor | 8 full-height positions |
+     master/output rack (processing rack, master, analysis). */
+  main[data-layout='d'] { --strip-w: 4.6rem; --body-rows: [r1] auto [r2] minmax(0, 1fr) [r3] clamp(9.5rem, 24dvh, 15rem); }
+  main[data-layout='d'] .part.rail { grid-column: 1 / 13; grid-row: r1 / foot; }
+  main[data-layout='d'] .inspector { grid-column: 13 / 32; grid-row: r1 / foot; }
+  main[data-layout='d'] .part.bank { grid-column: 32 / 73; grid-row: r1 / foot; }
+  main[data-layout='d'] .mixer { grid-column: 73 / -1; grid-row: r1; max-height: 30dvh; }
+  main[data-layout='d'] .master { grid-column: 73 / -1; grid-row: r2; grid-template-columns: minmax(0, 1fr) 6.5rem; grid-template-rows: auto minmax(0, auto) minmax(4.5rem, 1fr) auto; grid-template-areas: "mh mh" "mi ml" "mb ml" "me me"; }
+  main[data-layout='d'] .part.stage { grid-column: 73 / -1; grid-row: r3; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); }
+  main[data-layout='d'] .stage-d .dock-facts { font-size: 10px; }
+  main[data-layout='d'] .stage-d > .dock-realtime { grid-row: 1 / -1; }
   main[data-layout='d'] .dock-nav { grid-template-columns: 1fr; }
-  main[data-layout='d'] .dock-nav button { padding: 10px 12px; font-size: 14px; }
-  main[data-layout='d'] .inspector-knobs { grid-template-columns: 1fr; }
+  main[data-layout='d'] .dock-nav button { padding: 8px 12px; font-size: 14px; }
+  main[data-layout='d'] .inspector-knobs { grid-template-columns: 1fr; gap: 10px; }
+  main[data-layout='d'] .insp-curve { height: 6.5rem; }
+  main[data-layout='d'] .insp-dyn .gr-meter { height: 6rem; }
 }
-/* 761–1199px: too narrow for side columns, so every layout becomes one column in its own order. */
-@media (min-width: 761px) and (max-width: 1199px) {
-  main[data-layout='a'], main[data-layout='b'], main[data-layout='c'], main[data-layout='d'] { grid-template-columns: minmax(0, 1fr); }
-  main[data-layout='a'] { grid-template-areas: "head" "xport" "tracks" "stage" "bank" "master" "inspector" "rail" "mixer" "foot"; }
-  main[data-layout='b'] { grid-template-areas: "head" "xport" "tracks" "bank" "master" "stage" "mixer" "foot"; }
-  main[data-layout='c'] { grid-template-areas: "head" "xport" "tracks" "stage" "inspector" "bank" "master" "rail" "routing" "mixer" "foot"; }
-  main[data-layout='d'] { grid-template-areas: "head" "xport" "tracks" "inspector" "bank" "master" "stage" "rail" "mixer" "foot"; }
-  main[data-layout='a'] .stage-a, main[data-layout='b'] .stage-b, main[data-layout='c'] .stage-c { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  main[data-layout='b'] .stage-b > :first-child { display: none; }
-  main:not([data-layout='classic']) .part.rail { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  main:not([data-layout='classic']) .dock-nav { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-column: 1 / -1; }
-  main[data-layout='d'] .dock-nav button { padding: 4px 8px; font-size: 12px; }
-  main:not([data-layout='classic']) .inspector-knobs { grid-template-columns: repeat(2, auto); justify-content: start; gap: 8px 24px; }
+/* Narrower or shorter consoles (for example 1280x720, 1440x900): keep every real control in
+   view; drop the roomier duplicates (VU needles next to the readouts, second offline list). */
+@media (min-width: 1200px) and (max-width: 1499px) and (min-height: 700px) {
+  main:not([data-layout='classic']) .part.rail .dock-facts { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  main:not([data-layout='classic']) .part.rail .dock-facts dd { margin-bottom: 3px; }
+  main[data-layout='b'] .master { grid-column: 83 / -1; }
+  main[data-layout='b'] .part.bank { grid-column: 1 / 83; }
+  main[data-layout='d'] .part.stage.stage-d > [data-testid='measured-panel'] { display: none; }
+  main[data-layout='d'] .stage-d > [data-testid='stereo-panel'] { grid-row: 1 / -1; }
+  main[data-layout='a'] .part.stage.stage-a > [data-testid='measured-panel'] { overflow: auto; }
+  main[data-layout='c'] [data-planned-panel='Routing matrix'] { display: none; }
+  main[data-layout='a'] .master-readouts { grid-template-columns: minmax(0, 1fr); }
+  main[data-layout='a'] .master-readouts .kit-meter-pair { display: none; }
+  main[data-layout='c'] .mixer { grid-column: 68 / -1; }
+  main[data-layout='c'] .part.bank { grid-column: 1 / 79; }
+  main[data-layout='c'] .master { grid-column: 79 / -1; grid-template-columns: minmax(0, 1fr) 4.8rem; }
+  main[data-layout='c'] .master-readouts { grid-template-columns: minmax(0, 1fr); }
+  main[data-layout='c'] .master-readouts .kit-meter-pair { display: none; }
+}
+@media (min-width: 1200px) and (min-height: 700px) and (max-height: 859px) {
+  main:not([data-layout='classic']) .master-instruments .dock-needles { display: none; }
+  main:not([data-layout='classic']) .timeline-ruler { display: none; }
+  main:not([data-layout='classic']) .master-level .master-scale { display: none; }
+  main:not([data-layout='classic']) .mixer .strip { min-height: 1.5rem; padding-block: 1px; }
+  main[data-layout='a'] .part.rail [aria-label$='(planned)'] li:nth-child(n+3) { display: none; }
+  main[data-layout='c'] { --body-rows: [r1] minmax(0, 27fr) [r2] minmax(9.6rem, 23fr) [r3] minmax(0, 50fr); }
+}
+/* Wide consoles: transport and the track bar share one row, as in the references' top bars. */
+@media (min-width: 1500px) and (min-height: 700px) {
+  main:not([data-layout='classic']) { grid-template-rows: [head] auto [bar bar2] auto var(--body-rows) [foot] auto [end]; }
+  main:not([data-layout='classic']) > .transport { grid-column: 1 / 36; }
+  main:not([data-layout='classic']) .tracks { grid-column: 36 / -1; }
 }
 @media (max-width: 760px) {
   .layout-switcher span { display: none; }

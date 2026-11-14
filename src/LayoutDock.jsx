@@ -136,7 +136,7 @@ export function StripBank({ layout, stems, track, onOpenStems }) {
   return (
     <section className={`part bank bank-${layout}`} aria-label="Channel bank" data-testid="stem-strips" data-real-strips={real.length}>
       <div className="bank-head">
-        <h2 className="dock-title">Channels · {real.length} real{real.length ? '' : ' (none loaded)'}</h2>
+        <h2 className="dock-title">Channels · {real.length} real{real.length ? '' : ' (none loaded)'}{slots > real.length ? ` · ${slots - real.length} planned (inert)` : ''}</h2>
         <button type="button" className="heading-button" onClick={open}>Open Stems mixer</button>
       </div>
       <div className="bank-scroll" tabIndex={0} role="group" aria-label="Channel strips (scrolls)">
@@ -145,10 +145,12 @@ export function StripBank({ layout, stems, track, onOpenStems }) {
             <span className="kit-strip-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
             {layout === 'b' && (
               <>
+                <span className="kit-sec-label" aria-hidden="true">EQ</span>
                 <div className="kit-strip-knobs" aria-label="Stem EQ (read-only)">
                   {stemEq(stem).length ? stemEq(stem).map((band, k) => <Knob key={k} label={`B${k + 1}`} value={band.gain} min={-18} max={18} size={22} format={v => fmt(v, 1)} />)
                     : <span className="kit-strip-flat">EQ flat</span>}
                 </div>
+                {stem.params && <span className="kit-sec-label" aria-hidden="true">DYN</span>}
                 {stem.params && <div className="kit-strip-knobs" aria-label="Stem dynamics (read-only)">
                   <Knob label="THR" value={stem.params.compressor.threshold} min={-60} max={0} size={22} format={v => `${v}`} />
                   <Knob label="RAT" value={stem.params.compressor.ratio} min={1} max={20} size={22} format={v => `${v}`} />
@@ -170,9 +172,9 @@ export function StripBank({ layout, stems, track, onOpenStems }) {
             )}
           </StripFrame>
         ))}
-        <PlannedSlots count={slots - real.length} />
+        <PlannedSlots count={slots - real.length} layout={layout} />
       </div>
-      <Provenance>Strips = real stems / loaded track only. Read-only here: edit gain, pan, mute and solo in the Stems mixer (live strips: Stage 2). Per-strip meters need Stage 2.</Provenance>
+      <p className="kit-provenance bank-note" title="Strips are the real stems or the loaded track only. Faint outlines are planned positions with no signal and no controls.">Strips = real stems / loaded track only. Read-only here: edit gain, pan, mute and solo in the Stems mixer (live strips: Stage 2). Per-strip meters need Stage 2.</p>
     </section>
   );
 }

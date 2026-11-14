@@ -288,7 +288,7 @@ function App() {
             <div data-slot="ai-coproducer" className="ai-slot" />
           </div>
           <div className="master-level">
-            <MasterLevel value={masterDb} onChange={changeMaster} disabled={!playable} vertical={layout === 'b' || layout === 'd'}
+            <MasterLevel value={masterDb} onChange={changeMaster} disabled={!playable} vertical={layout === 'b' || layout === 'c' || layout === 'd'}
               reason={busy ? 'Available when the audio has loaded.' : 'Import a WAV or add stems to use the master level.'} />
           </div>
           <ExportDialog file={currentFile} params={chain.params} />

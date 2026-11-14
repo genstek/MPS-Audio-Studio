@@ -10,7 +10,7 @@ import { HelpTip, WithHelp } from './HelpTip.jsx';
 import { GainReductionMeter } from './GainReductionMeter.jsx';
 import { ListenSwitch } from './ListeningControls.jsx';
 import { SettingsDialog } from './SettingsDialog.jsx';
-import { Knob } from './studio-kit.jsx';
+import { CompCurve, Knob } from './studio-kit.jsx';
 import { BOUNDS } from './dsp/chain-params.js';
 
 function eqCaption(eq) {
@@ -167,9 +167,12 @@ export function MixerPanel({ chain, engine, track, sampleRate, listening, onList
         <button type="button" onClick={() => openEditor(selectedStrip.editor)} aria-label={`Open ${selectedStrip.name} editor`}>Open editor</button>
         <div className="inspector-knobs" data-testid="inspector-knobs">
           <section aria-label="EQ bands (read-only)"><h3 className="dock-title">EQ · enabled bands</h3>
+            <div className="insp-curve" data-testid="inspector-eq-curve"><EqThumbnail params={params} sampleRate={sampleRate} /></div>
             <div className="knob-row">{bands.length ? bands.map((b, i) => <Knob key={i} label={`${b.frequency >= 1000 ? `${(b.frequency / 1000).toFixed(1)}k` : Math.round(b.frequency)} Hz`} value={b.gain} min={-18} max={18} size={36} format={v => `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v).toFixed(1)} dB`} />) : <span className="dock-na">No bands enabled</span>}</div>
             <p className="fine-print">Shown from the real EQ. Edit bands in the EQ editor.</p></section>
           <section aria-label="Dynamics"><h3 className="dock-title">Dynamics</h3>
+            <div className="insp-dyn"><div className="insp-curve"><CompCurve compressor={params.compressor} /></div>
+              <GainReductionMeter engine={engine} which="compressor" label="Inspector compressor gain reduction" active={active} /></div>
             <div className="knob-row">
               {[['Threshold', 'threshold', 1, 'dB'], ['Ratio', 'ratio', 0.1, ':1'], ['Attack', 'attack', 1, 'ms'], ['Release', 'release', 5, 'ms'], ['Makeup', 'makeup', 0.5, 'dB']].map(([label, key, step, unit]) => (
                 <Knob key={key} label={label} value={params.compressor[key]} min={BOUNDS[key][0]} max={BOUNDS[key][1]} step={step} unit={unit} digits={step < 1 ? 1 : 0} size={36}

@@ -114,7 +114,8 @@ test('LAS-45: layouts follow the approved concept compositions, not recolours', 
   expect(b.bank.y).toBeLessThan(b.stage.y);
   expect(b.master.x).toBeGreaterThan(right(b.bank) - 2);
   expect(b.master.height).toBeGreaterThan(400);
-  expect(b.stage.width).toBeGreaterThan(b.bank.width);
+  expect(b.stage.y).toBeGreaterThan(b.bank.y + b.bank.height - 2); // analysis dock under the wall
+  expect(b.bank.width).toBeGreaterThan(b.master.width * 4);
   expect(b.inspector).toBeNull();
   expect(b.rail).toBeNull();
   // C: five-panel analysis row on top, then inspector, then the full-width bank with master at right.
@@ -133,14 +134,14 @@ test('LAS-45: layouts follow the approved concept compositions, not recolours', 
   expect(new Set(['a', 'b', 'c', 'd'].map(signature)).size).toBe(4);
 });
 
-test('LAS-45: B and D use an upright master fader that is still the real control', async ({ page }) => {
+test('LAS-45: B, C and D use an upright master fader that is still the real control', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
   await loadTone(page);
   const fader = page.getByRole('slider', { name: 'Master level' });
   const before = await fader.boundingBox();
   expect(before.width).toBeGreaterThan(before.height); // Classic: horizontal
-  for (const id of ['b', 'd']) {
+  for (const id of ['b', 'c', 'd']) {
     await switcher(page).selectOption(id);
     await expect(page.getByTestId('vertical-master-fader')).toBeVisible();
     const upright = await fader.boundingBox();
@@ -263,6 +264,82 @@ test('LAS-45: controls expose accessible names in every layout', async ({ page }
     await expect(page.getByRole('complementary', { name: 'Selected processor inspector' }).or(page.locator('main[data-layout="b"]'))).toBeAttached();
     await expect(page.getByRole('group', { name: 'Processing modules' })).toBeVisible();
   }
+});
+
+// Console fit (>= 1200 x 700): layouts A-D are one screen tall. The page itself never scrolls;
+// only strip banks, racks and panels scroll inside. Geometry only: no claim about audio.
+const FIT = [{ width: 1672, height: 941 }, { width: 1920, height: 1080 }, { width: 1440, height: 900 }, { width: 1280, height: 720 }];
+const fitControls = page => {
+  const transport = transportOf(page);
+  return [
+    ...['Play', 'Pause', 'Stop', 'Rewind 5 seconds', 'Fast forward 5 seconds'].map(name => transport.getByRole('button', { name, exact: true })),
+    transport.getByRole('status'), transport.getByRole('timer', { name: 'Playback position' }),
+    switcher(page), page.getByTestId('build-identity'), page.getByRole('slider', { name: 'Timeline' }),
+    page.getByRole('button', { name: 'Import WAV', exact: true }), page.getByRole('button', { name: 'Analyze' }),
+    page.getByRole('slider', { name: 'Master level' }), page.getByRole('button', { name: 'Export WAV', exact: true }),
+    page.getByRole('radio', { name: 'Processed' }), page.getByRole('radio', { name: 'Original' }),
+    page.getByRole('button', { name: 'Undo', exact: true }).first(), page.getByRole('button', { name: 'Stems…' }),
+    ...['Edit EQ', 'Edit dynamics', 'Edit limiter', 'Edit space'].map(name => page.getByRole('button', { name })),
+    page.getByTestId('stem-strips').getByRole('button', { name: 'Open Stems mixer' }),
+  ];
+};
+for (const viewport of FIT) {
+  for (const [id, label] of LAYOUTS.slice(1)) {
+    test(`LAS-45: ${label} fits one ${viewport.width}x${viewport.height} screen with internal scrolling only`, async ({ page }) => {
+      await page.setViewportSize(viewport);
+      await page.goto('/');
+      await loadTone(page, 5);
+      await switcher(page).selectOption(id);
+      const doc = () => page.evaluate(() => ({ h: document.documentElement.scrollHeight, w: document.documentElement.scrollWidth, y: window.scrollY, x: window.scrollX }));
+      expect(await doc()).toEqual({ h: viewport.height, w: viewport.width, y: 0, x: 0 });
+      // Every console region lies inside the viewport.
+      for (const selector of ['.masthead', '.transport', '.tracks', '.master', '.mixer', '.part.bank', '.part.stage', 'main > footer']) {
+        const region = await box(page, selector);
+        expect(region, selector).not.toBeNull();
+        expect(region.x, selector).toBeGreaterThanOrEqual(0);
+        expect(region.y, selector).toBeGreaterThanOrEqual(0);
+        expect(region.x + region.width, selector).toBeLessThanOrEqual(viewport.width + 0.5);
+        expect(region.y + region.height, selector).toBeLessThanOrEqual(viewport.height + 0.5);
+        expect(region.height, selector).toBeGreaterThan(10);
+      }
+      // The bank shows its strips at a usable height and scrolls sideways inside itself.
+      const bank = page.locator('.bank-scroll');
+      expect((await bank.boundingBox()).height).toBeGreaterThan(viewport.height * 0.22);
+      expect(await bank.evaluate(node => getComputedStyle(node).overflowX)).toBe('auto');
+      // Real controls are reachable without moving the page (a panel may scroll inside).
+      const primary = viewport.height >= 900 && viewport.width >= 1600;
+      for (const control of fitControls(page)) {
+        if (!primary) await control.scrollIntoViewIfNeeded();
+        await expect(control).toBeInViewport({ ratio: 1 });
+      }
+      expect(await doc()).toEqual({ h: viewport.height, w: viewport.width, y: 0, x: 0 });
+      // Keyboard: the switcher and the master fader take focus and respond.
+      await page.getByRole('slider', { name: 'Master level' }).focus();
+      await page.keyboard.press('Home');
+      await expect(page.locator('.master-value')).toHaveText('−∞ dB');
+      await page.keyboard.press('End');
+      await expect(page.locator('.master-value')).toHaveText('0.0 dB');
+      expect((await doc()).y).toBe(0);
+    });
+  }
+}
+
+test('LAS-45: playback continues and the page stays put while an inner panel scrolls (fit mode)', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto('/');
+  await loadTone(page);
+  const transport = transportOf(page);
+  await transport.getByRole('button', { name: 'Play', exact: true }).click();
+  await expect(transport.getByRole('status')).toHaveText('Playing');
+  for (const id of ['a', 'b', 'c', 'd']) {
+    await switcher(page).selectOption(id);
+    await page.locator('.bank-scroll').evaluate(node => { node.scrollLeft = node.scrollWidth; });
+    await page.getByRole('button', { name: 'Edit space' }).scrollIntoViewIfNeeded();
+    await expect(page.getByRole('button', { name: 'Edit space' })).toBeInViewport({ ratio: 1 });
+    await expect(transport.getByRole('status')).toHaveText('Playing');
+    expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  }
+  await transport.getByRole('button', { name: 'Stop', exact: true }).click();
 });
 
 for (const viewport of viewports) {

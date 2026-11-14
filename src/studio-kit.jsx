@@ -84,13 +84,23 @@ export function StripFrame({ name, tone, selected = false, children, className =
   );
 }
 
-// An empty channel position: no name, no fader, no meter, not focusable. The group announces it once.
-export function PlannedSlots({ count, label = 'Planned channel positions — not available yet' }) {
+// An empty channel position, drawn as the faint outline of a strip (empty wells, an empty fader
+// slot): no name, no value, no cap, no meter, not focusable. The group announces it once.
+export function PlannedSlots({ count, layout = 'a', label = 'Planned channel positions — not available yet' }) {
   if (count <= 0) return null;
+  const wells = n => <span className="kit-ghost-wells">{Array.from({ length: n }, (_, i) => <i key={i} />)}</span>;
   return (
     <div className="kit-planned-group" role="group" aria-label={label} data-testid="planned-slots">
       {Array.from({ length: count }, (_, i) => (
-        <div key={i} className="kit-planned" aria-hidden="true" data-planned="true"><span>PLANNED</span></div>
+        <div key={i} className={`kit-planned kit-planned-${layout}`} aria-hidden="true" data-planned="true">
+          <span className="kit-ghost-head" />
+          {layout === 'b' && <>{wells(1)}{wells(4)}{wells(3)}</>}
+          {layout === 'd' && <span className="kit-ghost-lines"><i /><i /><i /></span>}
+          {wells(1)}
+          <span className="kit-ghost-flags"><i /><i /></span>
+          <span className="kit-ghost-rail"><em>PLANNED</em></span>
+          <span className="kit-ghost-readout" />
+        </div>
       ))}
     </div>
   );
