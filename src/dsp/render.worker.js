@@ -16,6 +16,7 @@ import { resample, checkConversion, ResampleError, SUPPORTED_RATES } from './res
 //   mode 'match':  render with the chain and measure the integrated loudness of both versions;
 //   mode 'compare': analyse one section of the original and of the processed render (LAS-31);
 //   mode 'propose': build a reference-guided proposal for one section (LAS-32);
+//   mode 'suggest': analyse the original and the same file rendered through the current chain (LAS-174);
 //   mode 'stems':   render the stem master and each audible stem's strip output (LAS-35).
 // The page cancels by terminating the worker. The source file is only read.
 const db = value => (value > 0 ? 20 * Math.log10(value) : null);
@@ -56,6 +57,16 @@ self.onmessage = async ({ data: { mode, file, params, bitDepth = 24, segment, re
       const processed = analyze(section.channels, source.sampleRate);
       processed.input = { ...processed.input, segment: original.input.segment };
       self.postMessage({ type: 'done', report: { original, processed, meters: section.meters, preRollSeconds: section.preRoll, warnings: section.warnings } });
+      return;
+    }
+    if (mode === 'suggest') {
+      const rendered = renderChain(params, source.samples, source.sampleRate, {
+        onProgress: fraction => self.postMessage({ type: 'progress', stage: 'Rendering with your settings…', fraction: 0.05 + 0.6 * fraction }),
+      });
+      self.postMessage({ type: 'progress', stage: 'Measuring both versions…', fraction: 0.7 });
+      const original = analyze(source.samples, source.sampleRate);
+      const processed = analyze(rendered.channels, source.sampleRate);
+      self.postMessage({ type: 'done', report: { original, processed, sampleRate: source.sampleRate, warnings: rendered.warnings } });
       return;
     }
     // LAS-127: optional sample-rate conversion (export only). The source is band-limit resampled

@@ -1,5 +1,5 @@
 // Starts an offline render in a Web Worker (LAS-28): mode 'export', 'match', 'compare' (LAS-31,
-// with segment { start, end } in seconds) or 'propose' (LAS-32, with segment and the reference
+// with segment { start, end } in seconds) 'suggest' (LAS-174, original and processed analysis) or 'propose' (LAS-32, with segment and the reference
 // section's analysis report) or 'stems' (LAS-35, with stems [{ file, name, offsetSeconds, gainDb,
 // pan, mute, solo, params }] and the master params). Returns
 // { result, cancel }: result resolves with { report, bytes } or rejects with a showable Error;
