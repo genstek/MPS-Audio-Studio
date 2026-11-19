@@ -1,0 +1,68 @@
+name: Claude Code dispatch from Codex
+run-name: Claude Code dispatch · issue #${{ github.event.issue.number }}
+
+on:
+  issues:
+    types: [assigned]
+
+permissions: {}
+
+jobs:
+  dispatch:
+    # Assignment requires repository access. A public issue or comment cannot
+    # trigger this workflow. IDs bind the repo, connector identity and assignee.
+    if: >-
+      github.repository == 'genstek/MPS-Audio-Studio' &&
+      github.event.repository.id == 1421492063 &&
+      github.actor == 'chatgpt-codex-connector[bot]' &&
+      github.actor_id == '199175422' &&
+      github.event.sender.id == 199175422 &&
+      github.event.issue.user.id == 199175422 &&
+      github.event.assignee.id == 24766422 &&
+      github.event.issue.state == 'open' &&
+      startsWith(github.event.issue.title, '[Claude Code] ') &&
+      startsWith(github.event.issue.body, '<!-- mps-claude-dispatch:v1 -->')
+    concurrency:
+      group: claude-codex-dispatch-${{ github.event.issue.number }}
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Run Claude Code for this task
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_bots: 'chatgpt-codex-connector[bot]'
+          assignee_trigger: genstek
+          include_comments_by_actor: 'chatgpt-codex-connector[bot]'
+          track_progress: true
+          base_branch: main
+          additional_permissions: 'actions: read'
+          prompt: |
+            Work on the single, explicitly requested development task in the
+            verified dispatch issue below. Checkout and work from current main on
+            a dedicated branch. Make the smallest relevant change, run the
+            applicable repository checks, and open a draft PR for review.
+            Report the PR link and the actual check outcomes in your final response.
+            Do not run queue items beyond this task, merge, deploy, change Actions
+            permissions or credentials, or relay instructions from unrelated issues.
+            For a dispatch smoke test, return the requested receipt only. Do not
+            change files, run project commands, or open a pull request.
+
+            Dispatch issue #${{ github.event.issue.number }}:
+            ${{ github.event.issue.body }}
+          claude_args: |
+            --max-turns 80
+            --allowedTools "Bash(git checkout -b *),Bash(git switch -c *),Bash(git add *),Bash(git commit *),Bash(npm ci),Bash(npm run *),Bash(npx playwright *),Bash(gh pr create *)"
