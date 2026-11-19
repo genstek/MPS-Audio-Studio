@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { analyze } from '../../src/dsp/analysis.js';
 import { buildSuggestions } from '../../src/ai/suggestions.js';
-import { defaultChain } from '../../src/dsp/chain-params.js';
+import { renderChain } from '../../src/dsp/chain.js';
 import { decodeWav } from '../../src/dsp/wav-decode.js';
 import { encodeWav } from '../../src/dsp/wav-encode.js';
 import { installChainProbe, lastChainParams, pathGains } from './helpers/chain-probe.js';
@@ -18,10 +18,12 @@ const CENTRES = [31.5, 63, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
 const tones = Float32Array.from({ length: RATE * SECONDS }, (_, i) => CENTRES
   .reduce((sum, f) => sum + (f === 250 ? 0.1 : 0.05) * Math.sin(2 * Math.PI * f * i / RATE + f), 0));
 const WAV = Buffer.from(encodeWav([tones, tones], RATE, { bitDepth: 16 }).bytes);
-// The same suggestion, computed here from the same file bytes.
-const expectedSuggestions = () => {
+// The same suggestion (LAS-174: measured on the original and on the render through the chain in
+// force), computed here from the same file bytes and the same chain the page sent to the worker.
+const expectedSuggestions = chain => {
   const audio = decodeWav(WAV.buffer.slice(WAV.byteOffset, WAV.byteOffset + WAV.byteLength));
-  return buildSuggestions(analyze(audio.samples, RATE), { chain: defaultChain(), sampleRate: RATE });
+  const processed = analyze(renderChain(chain, audio.samples, RATE).channels, RATE);
+  return buildSuggestions({ original: analyze(audio.samples, RATE), processed }, { chain, sampleRate: RATE });
 };
 const cutsAt250 = params => params.eq.left.filter(b => b.enabled && b.frequency === 250 && b.gain < 0).map(b => b.gain);
 const dbOf = (gain, reference) => 20 * Math.log10(gain / reference);
@@ -62,7 +64,7 @@ test('LAS-120: level-matched Preview (B) / Current (A), Reject, Apply, Undo, Red
   const card = panel.getByRole('article', { name: /^Low-mid build-up \(250 Hz\)/ });
   await expect(card).toContainText('EQ · measured', { timeout: 30_000 });
   await expect(panel.getByRole('article')).toHaveCount(1);
-  const [expected] = expectedSuggestions();
+  const [expected] = expectedSuggestions(before);
   for (const text of expected.evidence) await expect(card).toContainText(text);
   await expect(card).toContainText('Bell 250 Hz, −3.0 dB, Q 1');
   expect(await lastChainParams(page)).toEqual(before); // suggesting changes nothing
@@ -120,9 +122,9 @@ test('LAS-120: level-matched Preview (B) / Current (A), Reject, Apply, Undo, Red
   await expect.poll(() => lastChainParams(page)).toEqual(appliedParams);
   await expect(card).toContainText('applied');
 
-  // The measurement is of the original file, so the same excess is measured again: no second cut.
+  // The measurement is now of the processed audio and the stacking guard still refuses a second cut.
   await panel.getByRole('button', { name: 'Measure again' }).click();
-  await expect(card).toContainText('Your EQ already cuts near 250 Hz (−3.0 dB at 250 Hz).', { timeout: 30_000 });
+  await expect(card).toContainText('Your EQ already cuts near 250 Hz (−3.0 dB at 250 Hz), so another cut is not suggested on top of it.', { timeout: 30_000 });
   await expect(card).toContainText('unavailable');
   await expect(card.getByRole('button', { name: 'Apply suggestion' })).toHaveCount(0);
 
