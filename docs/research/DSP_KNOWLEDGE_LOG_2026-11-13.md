@@ -51,3 +51,55 @@ Edges: non-integer ratio, end-of-stream flushing, >1GiB guard, low memory, 16-bi
 **Confirmed by publications:** BS.1770 defines a measurement framework; EBU supplies meter requirements; AES offers delivery guidance; libsoxr documents filter tradeoffs and latency.
 **Hypotheses requiring MPS experiments:** ±0.2 LU/dB meter agreement; 0.1 dB ripple; 90 dB alias rejection; LUFS matching alone yields perceptually fair A/B (it may not for different spectra/transients).
 **Next test proposals:** prioritize independent loudness/TP oracle, A/B non-destructive monitor gain, LAS-127 spectral regression and frame-count tests. Mid/Side/mono stem tests remain a next-cycle research topic, not presented as newly validated here.
+
+
+---
+
+## Research cycle 2026-11-20 — additional sources (not implementation verification)
+Checked against entries 1–4 above: no repeated source. Dates below are publication dates, not dates of new discoveries. **No MPS code was executed.** All numerical acceptance thresholds labelled PROPOSED require baseline/oracle validation.
+
+### 5. W3C Audio EQ Cookbook — 2021-06-08
+Primary: https://www.w3.org/TR/audio-eq-cookbook/
+Confidence HIGH for published coefficient equations; MPS applicability CONDITIONAL (must first identify its actual EQ implementation).
+Evidence/method: Robert Bristow-Johnson's biquad analog prototypes transformed using bilinear transform with frequency prewarping; defines peaking, shelves, low/high-pass, notch, all-pass, and Q/BW/S parameter semantics. Analytic property: equal peaking boost and cut with same Q and f0 ideally cancel in cascade; NOT a measured MPS result.
+Limits: not a numerical-stability or click-free automation guarantee; finite precision, coefficient smoothing, cascaded gain and high-frequency warping require independent tests.
+DSP proposal: document EQ filter type, sample-rate-specific coefficients and Q definition; ensure parameter changes do not mutate unrelated modules; protect against unstable/invalid coefficients.
+QA EQ-01 fixture: 48k and 96k float stereo impulses, 1 kHz -18 dBFS sine, 20 Hz–20 kHz logarithmic sweep; independent RBJ coefficient oracle.
+Steps: render peak +6 dB at 1 kHz Q=1; render matching -6 dB in cascade; FFT/transfer-function compare, then automate f0/Q/gain over block boundaries.
+Expected: peak center gain +6 dB; inverse cascade near unity in static state. PROPOSED pass: center error <=0.1 dB, inverse response <=0.1 dB over 30 Hz–18 kHz after settling; no NaN/Inf or out-of-range coefficients. Fail on excess error, runaway signal, or unrelated Dynamics/Limiter parameter changes. Edge: f0 near Nyquist, Q extremes, zero gain, silence, 1-sample buffers, rapid changes, bypass and Undo/Redo. Relates to reported EQ slider/Undo-Redo cross-module bug; not proof of cause.
+
+### 6. ITU-R BS.2051-3 — 2022-05
+Primary: https://www.itu.int/dms_pubrec/itu-r/rec/bs/R-REC-BS.2051-3-202205-I%21%21PDF-E.pdf
+Confidence HIGH for defined loudspeaker layouts and labels; MEDIUM relevance to future multichannel/stem routing.
+Evidence/method: normative sound-system loudspeaker configurations and channel positions; recommendation notes 100 microsecond alignment accuracy at central listening position when speakers are not on a sphere. This is a playback alignment recommendation, NOT a mono compatibility pass criterion.
+Limits: multichannel speaker layout standard does not define a universal stereo Mid/Side width algorithm or guarantee mono compatibility.
+DSP proposal: make channel mapping explicit and reversible; never silently reinterpret stereo M/S as surround channels. For stereo define M=(L+R)/2, S=(L-R)/2 and reconstruct L=M+S, R=M-S; mono fold-down policy must be explicit.
+QA MS-01 fixture: stereo identical L=R, anti-phase L=-R, L-only impulse, decorrelated stereo noise, 11-stem synchronized 48k set (if accessible and authorized).
+Steps: encode M/S, decode, sum to mono, measure sample residual and RMS per fixture, then change width and compare fold-down.
+Expected: identical stereo S=0; anti-phase M=0; M/S roundtrip reproduces L/R. PROPOSED pass: float64 roundtrip max absolute error <1e-12 for finite inputs within [-1,1]; anti-phase mono cancellation within numerical floor. This is not a subjective quality threshold. Fail on channel swaps, unintended gain, hidden polarity inversion. Edges: zero/one-sample stems, unequal stem lengths, channel layout metadata, nonfinite samples, 24-bit export quantization, near-zero RMS correlation undefined. Note: mathematical M/S identities are independent of BS.2051 and are recorded as engineering test design, not a normative requirement of this recommendation.
+
+### 7. Julius O. Smith III, Physical Audio Signal Processing — Windowed Sinc Interpolation (online book, page undated; checked 2026-11-20)
+Primary: https://www.dsprelated.com/freebooks/pasp/Windowed_Sinc_Interpolation.html
+Confidence HIGH for sampling theory and algorithmic derivation; MPS performance UNKNOWN.
+Evidence/method: sampled-signal reconstruction by sinc interpolation, finite window approximation and cutoff reduction when downsampling to avoid aliasing. Derived compute-cost dependence on higher of input/output rates and extra boundary samples required for convolution. No measured benchmark for MPS.
+Limits: ideal sinc is infinite; practical filter length/window trades stopband rejection, transition bandwidth, latency and ringing. 48→96k does not recover information absent from 48k source.
+DSP proposal (LAS-127): document passband/stopband, boundary policy, delay compensation and exact frame-count contract separately; test downsampling as well as 96k export; keep 24-bit PCM encoding/dither separate from sample-rate conversion.
+QA SRC-02 fixture: 44.1/48/96k impulses at first/middle/last sample, 1 kHz sine, passband sweep, 30 kHz sine at 96k for 96→48 alias test, 1,000,001-frame stereo file; independent offline high-quality reference.
+Steps: convert 44.1→96, 48→96, 96→48, 96→44.1 in whole-buffer and random-sized chunks, flush tails, inspect PCM header, duration, FFT alias and endpoint impulse energy.
+Expected: documented frame count round(N*Fo/Fi), correct header and no dropped tail; PROPOSED pass: passband ripple <=0.1 dB within *specified* band and out-of-band rejection >=90 dB for controlled test, after excluding transition band and window leakage. Fail on wrong length, unexplained latency shift, >threshold aliases, missing tail or channel divergence. Edges: 0/1 samples, noninteger ratios, DC, near Nyquist, nonfinite input, large files, dither on/off. These thresholds are engineering hypotheses, not sourced MPS measurements.
+
+### 8. AES17:2020 — Measurement of digital audio equipment (2020-11-21)
+Primary catalog: https://www.aes.org/publications/standards/search.cfm?docID=21
+Publisher status: https://aes.org/standards/standards-development/project-status/
+Confidence HIGH for scope/date; LIMITED for detailed normative tolerances (full paid text not accessed).
+Evidence/method: AES standard methods for specifying and verifying digital-audio equipment performance. Current AES standards committee status lists AES17:2020 under review. Do not infer exact standard tolerances from catalog abstract.
+Limits: some equipment measurement conditions are hardware-specific; not all are appropriate for software DSP. This is not a substitute for BS.1770 loudness/TP.
+DSP proposal: establish repeatable independent measurement harness for gain, noise, distortion, clipping and export bit depth, with clearly defined stimulus/reference and measurement bandwidth.
+QA MEAS-01 fixture: 48/96k 24-bit PCM silence, -20 dBFS 997 Hz sine, near-full-scale sine, low-level dithered sine, independent measurement tool/version.
+Steps: import/export bypass; measure gain, noise floor, THD+N, PCM format and compare with fixture/reference; repeat with EQ bypass and enabled.
+Expected: bypass is sample-preserving if contract says lossless, otherwise bounded by declared dither/quantization; correct 24-bit PCM container. PROPOSED pass: gain error <=0.05 dB for steady tone, no unexpected clipping or NaN; THD+N threshold TBD from validated baseline, not asserted as AES17 compliance. Fail on format mismatch or undocumented signal alteration. Edges: 16→24-bit padding, 24→16-bit dither, mono/stereo, denormals, silence, intersample peak. Do not claim AES17 compliance until licensed full standard and test method are reviewed.
+
+### Consolidated evidence / next actions
+Verified external claims: W3C RBJ equations and filter definitions; ITU multichannel layout recommendation; Smith's windowed-sinc derivation; AES17:2020 scope and active review. No empirical measurements of MPS were performed.
+Hypotheses: ±0.1 dB EQ response, 1e-12 M/S roundtrip float64, <=0.1 dB SRC ripple, >=90 dB SRC rejection, <=0.05 dB gain error. These are provisional engineering thresholds, not published performance claims.
+Priority test proposals: (1) EQ module isolation and Undo/Redo regression; (2) stereo M/S/mono fixtures for future stem workflow; (3) LAS-127 chunk-boundary, anti-alias and output-format checks; (4) reproducible measurement harness. No production DSP changes or Jira issues authorized.
