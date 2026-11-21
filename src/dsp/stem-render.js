@@ -1,9 +1,10 @@
 import { renderChain } from './chain.js';
 import { defaultChain, validateChain } from './chain-params.js';
+import { applyStemWidth, measureLowBand, measureStereo, validateStemWidth } from './stem-width.js';
 
 // Offline stem master (LAS-35): the same signal path as the live stem session (LAS-34), computed
 // from the files' own samples:
-//   stem → its own chain (latency compensated) → gain → pan → placed at its offset ─┐
+//   stem → its own chain (latency compensated) → gain → width (LAS-128, opt-in) → pan → offset ─┐
 //                                                          sum of audible strips ←─┘ → master chain
 // Every chain is rendered by renderChain(), the code the preview runs in the AudioWorklet, and every
 // chain has the same constant latency, which renderChain removes, so the stems stay sample-aligned.
@@ -54,11 +55,16 @@ export function renderStemMix({ stems, master, onProgress = () => {} }) {
     const padded = stem.channels.map(channel => { const p = new Float32Array(frames - stem.offsetFrames); p.set(channel); return p; });
     const processed = renderChain(validateChain(stem.params), padded, sampleRate).channels;
     const gain = dbToGain(stem.gainDb);
-    const [left, right] = pan(processed.map(channel => channel.map(v => v * gain)), stem.pan);
+    const width = validateStemWidth(stem.width);
+    const widened = applyStemWidth(processed.map(channel => channel.map(v => v * gain)), width, sampleRate);
+    const [left, right] = pan(widened, stem.pan);
     const out = [new Float32Array(frames), new Float32Array(frames)];
     out[0].set(left, stem.offsetFrames);
     out[1].set(right, stem.offsetFrames);
-    return { name: stem.name, channels: out };
+    // Measured on what the strip sends to the bus: zero-lag correlation and mono fold-down, and the
+    // same below the stem's bass crossover.
+    const stereo = { ...measureStereo(out[0], out[1]), low: measureLowBand(out[0], out[1], width.crossoverHz, sampleRate), crossoverHz: width.crossoverHz };
+    return { name: stem.name, channels: out, stereo };
   });
   const bus = [new Float32Array(frames), new Float32Array(frames)];
   for (const strip of strips) for (let c = 0; c < 2; c++) for (let n = 0; n < frames; n++) bus[c][n] += strip.channels[c][n];

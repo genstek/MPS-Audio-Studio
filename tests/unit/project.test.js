@@ -12,13 +12,33 @@ function sample() {
     media: {
       policy: 'manifest',
       track: { name: 'mix.wav', size: 1234, sha256: SHA, duration: 12.5, sampleRate: 48000, channels: 2 },
-      stems: [{ name: 'bass.wav', size: 99, sha256: 'b'.repeat(64), duration: 3, sampleRate: 44100, channels: 1, offset: 0.25, gainDb: -3, pan: -0.5, mute: false, solo: true, chainLabel: 'copy of master settings', chain }],
+      stems: [{ name: 'bass.wav', size: 99, sha256: 'b'.repeat(64), duration: 3, sampleRate: 44100, channels: 1, offset: 0.25, gainDb: -3, pan: -0.5, mute: false, solo: true, chainLabel: 'copy of master settings', chain, width: { enabled: true, width: 1.4, crossoverHz: 180 } }],
     },
     chain,
     player: { listening: 'original' },
     layout: { windows: { eq: { open: true, x: 120, y: 200 }, space: { open: false, x: 40, y: 80 } } },
   };
 }
+
+describe('LAS-128 per-stem width in projects', () => {
+  test('a project saved before width existed opens with width off (additive field, no version bump)', () => {
+    const legacy = JSON.parse(serializeProject(sample()));
+    delete legacy.media.stems[0].width;
+    const opened = parseProject(JSON.stringify(legacy));
+    expect(opened.version).toBe(1);
+    expect(opened.media.stems[0].width).toEqual({ enabled: false, width: 1, crossoverHz: 150 });
+  });
+  test('out-of-range width in a project is refused with a clear message', () => {
+    const bad = JSON.parse(serializeProject(sample()));
+    bad.media.stems[0].width = { enabled: true, width: 3, crossoverHz: 150 };
+    expect(() => parseProject(JSON.stringify(bad))).toThrow(ProjectFileError);
+  });
+  test('changing a stem width changes the project key (unsaved-changes detection)', () => {
+    const stems = width => [{ name: 'a', sha256: SHA, offset: 0, gainDb: 0, pan: 0, mute: false, solo: false, chainLabel: 'x', params: null, width }];
+    const key = width => projectKey({ project: { id: 'p', name: 'A' }, stems: stems(width), chain: null, listening: 'processed', windowLayout: {} });
+    expect(key({ enabled: true, width: 1.5, crossoverHz: 150 })).not.toBe(key({ enabled: false, width: 1.5, crossoverHz: 150 }));
+  });
+});
 
 describe('LAS-69 project files', () => {
   test('save → open round trip keeps every value; the text is stable', () => {
