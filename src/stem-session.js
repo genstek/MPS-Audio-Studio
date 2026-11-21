@@ -8,6 +8,8 @@
 // source and start new ones the same way. Alignment policy: each stem starts at session time
 // `offset` (0 by default, set in samples of the playback rate); the session lasts as long as the
 // longest stem; stems at another sample rate are resampled by the browser for playback.
+import { DEFAULT_WIDTH, deltaGains, LR2_Q, validateStemWidth } from './dsp/stem-width.js';
+
 export const START_LEAD_SECONDS = 0.05; // time for every source to be scheduled before the shared start
 export const GATE_RAMP_SECONDS = 0.01;
 export const MAX_STEMS = 16;
@@ -15,6 +17,35 @@ export const MAX_STEMS = 16;
 export class StemError extends Error {}
 
 const dbToGain = db => 10 ** (db / 20);
+const LR2_Q_DB = 20 * Math.log10(LR2_Q); // BiquadFilterNode lowpass/highpass Q is in dB
+
+// trim → splitter → S = (L−R)/2 → D = direct·S + filtered·HP2(S) → L += D, R −= D → pan.
+// Returns every node (for disconnecting) with the controllable ones named: high (= `direct`),
+// low (= `filtered`) and filters (the one highpass).
+function buildWidthBranch(context, trim, pan) {
+  const splitter = new ChannelSplitterNode(context, { numberOfOutputs: 2 });
+  const halfLeft = new GainNode(context, { gain: 0.5 });
+  const halfRight = new GainNode(context, { gain: -0.5 });
+  const side = new GainNode(context, { gain: 1 });
+  const high = new GainNode(context, { gain: 0 });
+  const filters = [new BiquadFilterNode(context, { type: 'highpass', frequency: DEFAULT_WIDTH.crossoverHz, Q: LR2_Q_DB })];
+  const low = new GainNode(context, { gain: 0 });
+  const delta = new GainNode(context, { gain: 1 });
+  const negate = new GainNode(context, { gain: -1 });
+  const merger = new ChannelMergerNode(context, { numberOfInputs: 2 });
+  trim.connect(splitter);
+  splitter.connect(halfLeft, 0);
+  splitter.connect(halfRight, 1);
+  halfLeft.connect(side);
+  halfRight.connect(side);
+  side.connect(high).connect(delta);
+  side.connect(filters[0]).connect(low).connect(delta);
+  delta.connect(merger, 0, 0);
+  delta.connect(negate).connect(merger, 0, 1);
+  merger.connect(pan);
+  const nodes = [splitter, halfLeft, halfRight, side, high, ...filters, low, delta, negate, merger];
+  return Object.assign(nodes, { high, low, filters });
+}
 
 export function createStemSession(context, output, { onEnded = () => {} } = {}) {
   const bus = new GainNode(context, { gain: 1, channelCount: 2, channelCountMode: 'explicit' });
@@ -93,7 +124,12 @@ export function createStemSession(context, output, { onEnded = () => {} } = {}) 
       const meter = new AnalyserNode(context, { fftSize: 2048, smoothingTimeConstant: 0 });
       trim.connect(pan).connect(gate).connect(meter).connect(bus);
       if (chain) chain.node.connect(trim);
+      // Per-stem width (LAS-128), off by default: a side branch that adds D to L and −D to R
+      // (see src/dsp/stem-width.js). Off, both branch gains are 0, so D = 0 and the strip is
+      // unchanged. Mono stems have no side signal and get no branch.
+      const widthNodes = buffer.numberOfChannels === 1 ? [] : buildWidthBranch(context, trim, pan);
       const stem = {
+        widthNodes, width: { ...DEFAULT_WIDTH },
         id: nextId++, name: info.name, fileSampleRate: info.sampleRate, fileChannels: info.channels, buffer,
         file: info.file ?? null, sha256: info.sha256 ?? null, params: info.params ?? null, chainLabel: 'bypass', chain,
         offset: 0, gainDb: 0, pan: 0, mute: false, solo: false, trim, panner: pan, gate, meter,
@@ -109,13 +145,14 @@ export function createStemSession(context, output, { onEnded = () => {} } = {}) 
       const at = currentPosition();
       stopSources();
       const [stem] = stems.splice(index, 1);
-      for (const node of [stem.trim, stem.panner, stem.gate, stem.meter, stem.chain?.node].filter(Boolean)) node.disconnect();
+      for (const node of [stem.trim, stem.panner, stem.gate, stem.meter, stem.chain?.node, ...stem.widthNodes].filter(Boolean)) node.disconnect();
       position = Math.min(at, duration());
       updateGates();
       if (wasPlaying && stems.length) startSources(position);
     },
-    stems: () => stems.map(({ id, name, fileSampleRate, fileChannels, buffer, offset, gainDb, pan, mute, solo, file, sha256, params, chainLabel }) => ({
+    stems: () => stems.map(({ id, name, fileSampleRate, fileChannels, buffer, offset, gainDb, pan, mute, solo, file, sha256, params, chainLabel, width }) => ({
       id, name, fileSampleRate, fileChannels, duration: buffer.duration, channels: buffer.numberOfChannels, offset, gainDb, pan, mute, solo, audible: audible({ mute, solo }),
+      width: { ...width }, widthApplies: buffer.numberOfChannels !== 1,
       file, sha256, params, chainLabel,
     })),
     // Gives a stem its own chain settings (LAS-35), applied live by its chain node. Resolves with the
@@ -176,6 +213,20 @@ export function createStemSession(context, output, { onEnded = () => {} } = {}) 
       stem.pan = Math.max(-1, Math.min(1, value));
       stem.panner.pan.setTargetAtTime(stem.pan, context.currentTime, GATE_RAMP_SECONDS / 3);
     },
+    // Per-stem width (LAS-128): { enabled, width 0–2, crossoverHz }. Refuses values outside the bounds
+    // (StemWidthError) and leaves the stem as it was. Only this stem's branch changes; the settings
+    // are kept when it is switched off (bypass), and mono stems keep them without effect.
+    setWidth(id, settings) {
+      const stem = stems.find(s => s.id === id);
+      const next = validateStemWidth({ ...stem.width, ...settings });
+      stem.width = next;
+      if (!stem.widthNodes.length) return;
+      const [direct, filtered] = deltaGains(next);
+      const at = context.currentTime, tau = GATE_RAMP_SECONDS / 3;
+      stem.widthNodes.high.gain.setTargetAtTime(next.enabled ? direct : 0, at, tau);
+      stem.widthNodes.low.gain.setTargetAtTime(next.enabled ? filtered : 0, at, tau);
+      for (const filter of stem.widthNodes.filters) filter.frequency.setValueAtTime(next.crossoverHz, at);
+    },
     setMute(id, mute) { stems.find(s => s.id === id).mute = mute; updateGates(); },
     setSolo(id, solo) { stems.find(s => s.id === id).solo = solo; updateGates(); },
     // Peak and RMS (dBFS) of what each strip sends to the bus, from its own analyser.
@@ -190,7 +241,7 @@ export function createStemSession(context, output, { onEnded = () => {} } = {}) 
     },
     dispose() {
       stopSources();
-      for (const stem of stems) for (const node of [stem.trim, stem.panner, stem.gate, stem.meter, stem.chain?.node].filter(Boolean)) node.disconnect();
+      for (const stem of stems) for (const node of [stem.trim, stem.panner, stem.gate, stem.meter, stem.chain?.node, ...stem.widthNodes].filter(Boolean)) node.disconnect();
       stems.length = 0;
       bus.disconnect();
     },

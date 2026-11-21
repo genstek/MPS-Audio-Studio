@@ -21,7 +21,7 @@ const PICKER_TYPES = [{ description: 'MPS project', accept: { 'application/json'
 const layoutOf = windows => Object.fromEntries(Object.entries(windows).filter(([, w]) => w.position).map(([name, w]) => [name, { open: Boolean(w.open), x: w.position.x, y: w.position.y }]));
 const windowsFrom = layout => Object.fromEntries(Object.entries(layout).map(([name, w], i) => [name, { open: w.open, position: { x: w.x, y: w.y }, z: i + 1, focusRequest: 0 }]));
 const withoutSlot = stem => { const copy = { ...stem }; delete copy.slot; return copy; };
-const stemKeyOf = s => ({ name: s.name, sha256: s.sha256, offset: s.offset, gainDb: s.gainDb, pan: s.pan, mute: s.mute, solo: s.solo, chainLabel: s.chainLabel, params: s.params ?? s.chain });
+const stemKeyOf = s => ({ name: s.name, sha256: s.sha256, offset: s.offset, gainDb: s.gainDb, pan: s.pan, mute: s.mute, solo: s.solo, chainLabel: s.chainLabel, params: s.params ?? s.chain, width: s.width });
 
 function downloadText(text, name) {
   const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
@@ -72,7 +72,7 @@ export function useProject({ engine, chain, listening, listen, windows, setWindo
     return { name: currentFile.name, size: currentFile.size, sha256: sha, duration: track?.duration ?? null, sampleRate: track?.sampleRate ?? null, channels: track?.channels ?? null };
   }
   const stemEntries = () => [
-    ...stems.map(s => ({ name: s.name, size: s.file?.size ?? 0, sha256: s.sha256, duration: s.duration, sampleRate: s.fileSampleRate, channels: s.fileChannels, offset: s.offset, gainDb: s.gainDb, pan: s.pan, mute: s.mute, solo: s.solo, chainLabel: s.chainLabel, chain: s.params })),
+    ...stems.map(s => ({ name: s.name, size: s.file?.size ?? 0, sha256: s.sha256, duration: s.duration, sampleRate: s.fileSampleRate, channels: s.fileChannels, offset: s.offset, gainDb: s.gainDb, pan: s.pan, mute: s.mute, solo: s.solo, chainLabel: s.chainLabel, chain: s.params, width: s.width })),
     ...(missing?.stems ?? []).map(withoutSlot), // the slot is only for relinking, not saved
   ];
 
@@ -205,6 +205,7 @@ export function useProject({ engine, chain, listening, listen, windows, setWindo
         session.setOffset(id, entry.offset);
         session.setGain(id, entry.gainDb);
         session.setPan(id, entry.pan);
+        session.setWidth(id, entry.width);
         session.setMute(id, entry.mute);
         session.setSolo(id, entry.solo);
         await session.setChain(id, entry.chain, entry.chainLabel);
