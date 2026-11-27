@@ -103,3 +103,33 @@ Expected: bypass is sample-preserving if contract says lossless, otherwise bound
 Verified external claims: W3C RBJ equations and filter definitions; ITU multichannel layout recommendation; Smith's windowed-sinc derivation; AES17:2020 scope and active review. No empirical measurements of MPS were performed.
 Hypotheses: ±0.1 dB EQ response, 1e-12 M/S roundtrip float64, <=0.1 dB SRC ripple, >=90 dB SRC rejection, <=0.05 dB gain error. These are provisional engineering thresholds, not published performance claims.
 Priority test proposals: (1) EQ module isolation and Undo/Redo regression; (2) stereo M/S/mono fixtures for future stem workflow; (3) LAS-127 chunk-boundary, anti-alias and output-format checks; (4) reproducible measurement harness. No production DSP changes or Jira issues authorized.
+
+
+---
+
+## Research cycle 2026-11-27 — stem integrity and final quantization
+Compared with entries 1–8; both sources are new to this journal, not newly published. No MPS execution or Jira changes. All acceptance tolerances below are proposals.
+
+### 9. Le Roux et al., SDR — Half-baked or Well Done? (ICASSP May 2019; preprint 2018-11-06)
+Primary full text: https://arxiv.org/pdf/1811.02508 ; DOI: 10.1109/ICASSP.2019.8683855 ; checked 2026-11-27.
+Confidence: high for mathematical metric; conditional for stereo music.
+Evidence: projection of estimate onto reference, with SI-SDR = 10 log10(projected energy / residual energy). Analytical counterexamples demonstrate shortcomings of filter-tolerant BSS_eval SDR. Scale invariance means an estimate multiplied by a nonzero scalar can score perfectly despite wrong gain. This is a mathematical result, not a measured MPS benchmark.
+Limit: single-channel separation focus; cannot establish perceived spatial position, height, or mix quality. A polarity reversal can also score perfectly. No claim that SI-SDR should evaluate intentional EQ or panning.
+DSP proposal: for stem import/bypass or future separation with ground truth, report SI-SDR alongside signed gain, sample alignment, residual and channel mapping; separately measure per-stem L/R energy and mono fold-down. Never use aggregate stereo width as evidence of localization.
+QA STEM-03 fixture: two known orthogonal equal-energy mono signals s and n, each 1 second at 48 kHz, e.g. 997 and 1500 Hz, peak 0.1; estimate s+0.1n; gain-only 0.5s; inverted -s; silence; stereo pair with swapped channels.
+Steps: compute projection and residual in float64; compare independent analytic oracle; run gain and polarity checks; compare channel mapping and frame alignment; repeat with imported stems in bypass when available.
+Expected: first estimate 20 dB SI-SDR analytically; gain-only and inverted cases zero residual (infinite or explicitly capped score), but separate signed gain detects 0.5 and -1; silent reference explicitly undefined. Proposed pass: finite score within 0.05 dB of oracle, signed gain within 0.001 of expected, no channel swap or silent-reference false pass. Fail on incorrect metric or missed gain/polarity error. Edges: unequal lengths, one-sample shift, near-zero reference, nonfinite samples, intentional processing excluded from bypass oracle.
+Spatial follow-up hypothesis: per-stem time/frequency L/R energy and mono loss can diagnose crowded center, but perceived height/depth requires controlled listening and appropriate renderer. No spatial performance claim.
+
+### 10. Lipshitz, Wannamaker, Vanderkooy — Quantization and Dither: A Theoretical Survey (JAES 40(5), May 1992, pp.355–375)
+Primary paper copy: https://hajim.rochester.edu/ece/sites/zduan/teaching/ece472/reading/Lipshitz_1992.pdf ; checked 2026-11-27.
+Confidence: high for ideal quantizer theory and reported simulation; conditional for MPS export.
+Evidence: sections 5.4 and 6, figures 9–10. Non-subtractive triangular PDF dither with 2 LSB peak-to-peak makes conditional first and second error moments constant; total error variance delta^2/4. Authors simulate 1 kHz sine at 4 LSB peak-to-peak and estimate spectrum using 60 half-overlapped Hann 512-point records at assumed 44.1 kHz. Reported noise floor increase 4.8 dB relative to subtractive case. Higher moments may remain input dependent; no claim of full statistical independence.
+DSP proposal (LAS-127 export follow-up, current issue status not checked): retain floating precision through SRC and processing; if selected, apply TPDF once at final integer quantization, independent random draws per channel, document clipping/headroom and bit-exact bypass policy. Do not add dither to untouched integer padding by default; 96 kHz does not restore lost information.
+QA DITHER-01 fixture: float64 96 kHz, 24-bit step delta=2^-23 normalized; 1 million samples per DC offset 0, 0.25, 0.5, 0.75 LSB; 1 kHz sine at 4 LSB peak-to-peak; fixed test seed; independent rounding oracle; stereo silence and near-full-scale cases.
+Steps: export with dither enabled, decode signed PCM24, compute error relative to input in LSB units per offset; repeat with disabled dither and exact 16-to-24 padding; check header and clipping counters; repeat independent seeds.
+Expected theoretical RMS 0.5 LSB (~-144.5 dBFS relative to unit peak), mean zero, variance 0.25 LSB^2 for ideal unclipped TPDF. Proposed pass: abs(mean) <=0.01 LSB and variance 0.24–0.26 LSB^2 per offset; exact padding preserves samples with dither off; no integer wraparound; clipping explicitly reported. Fail on wrong format, systematic offset-dependent noise, overflow, or unintended repeat quantization. Edges: full-scale rails (exclude clipped samples from moment oracle), silence policy, float32 precision near full scale, stereo RNG correlation, chunk boundaries, reproducible test seed versus production randomness.
+No claim of audible improvement at 24 bits; validate with measurements before changing export.
+
+### Consolidation
+Confirmed: SI-SDR scale invariance and TPDF first/second moment results under stated assumptions. Proposed: numerical QA tolerances, per-stem spatial diagnostics, final-stage dither policy. No production DSP tests run; no code or Jira changes. Next cycle: independent spatial localization/controlled listening sources.
