@@ -1,5 +1,5 @@
 #!/bin/bash
-# Build and package an UNSIGNED, owner-only development DMG from the current checkout.
+# Build and package an ad-hoc sealed, owner-only development DMG from the current checkout.
 # Not a production installer: not Developer ID signed, not notarized.
 # Usage: bash scripts/apple/package-dev-macos.sh [--skip-build]
 set -euo pipefail
@@ -22,7 +22,7 @@ dirty=''
 version="$(plutil -extract CFBundleShortVersionString raw "$app/Contents/Info.plist")"
 build="$(plutil -extract CFBundleVersion raw "$app/Contents/Info.plist")"
 exe="$app/Contents/MacOS/$(plutil -extract CFBundleExecutable raw "$app/Contents/Info.plist")"
-name="MPS-Audio-Studio-${version}+${build}-${sha}${dirty}-DEV-UNSIGNED"
+name="MPS-Audio-Studio-${version}+${build}-${sha}${dirty}-DEV-ADHOC"
 
 out="artifacts/apple-dev/$name"
 test ! -e "$out" || { echo "$out already exists; move it first." >&2; exit 1; }
@@ -42,12 +42,15 @@ test -f "$app/Contents/Resources/WebAssets/index.html" || test -d "$app/Contents
 stage="$(mktemp -d)"
 trap 'rm -rf "$stage"' EXIT
 ditto "$app" "$stage/MPS Audio Studio.app"
+# Seal the STAGED copy only after all resources are final, then verify strictly.
+bash scripts/apple/seal-dev-app.sh "$stage/MPS Audio Studio.app"
 ln -s /Applications "$stage/Applications"
-hdiutil create -volname 'MPS Audio Studio DEV (unsigned)' -srcfolder "$stage" -ov -format UDZO "$out/$name.dmg"
-ditto -c -k --keepParent "$app" "$out/$name-app.zip"
+hdiutil create -volname 'MPS Audio Studio DEV (ad-hoc)' -srcfolder "$stage" -ov -format UDZO "$out/$name.dmg"
+ditto -c -k --keepParent "$stage/MPS Audio Studio.app" "$out/$name-app.zip"
+bash scripts/apple/verify-dev-dmg.sh "$out/$name.dmg"
 
 {
-  echo "build_type: DEBUG, UNSIGNED, DEVELOPMENT ONLY (not notarized; not for distribution)"
+  echo "build_type: DEBUG, AD-HOC SEALED (not Developer ID), DEVELOPMENT ONLY (not notarized; not for distribution)"
   echo "git_sha: $(git rev-parse HEAD)${dirty}"
   echo "git_branch: $(git rev-parse --abbrev-ref HEAD)"
   echo "built_utc: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
@@ -57,11 +60,11 @@ ditto -c -k --keepParent "$app" "$out/$name-app.zip"
   echo "executable_archs: $archs"
   echo "min_macos_load_command: $minos"
   echo "LSMinimumSystemVersion: $plist_min"
-  echo "codesign: $(codesign -dv "$app" 2>&1 | grep -E 'Signature|flags' | tr '\n' ' ')"
+  echo "codesign: $(codesign -dv "$stage/MPS Audio Studio.app" 2>&1 | grep -E 'Signature|flags' | tr '\n' ' ')"
 } > "$out/PROVENANCE.txt"
 
 ( cd "$out" && shasum -a 256 "$name.dmg" "$name-app.zip" > SHA256SUMS.txt )
 cat "$out/PROVENANCE.txt"
 echo "Output: $out"
 cat "$out/SHA256SUMS.txt"
-echo 'DEVELOPMENT BUILD ONLY: unsigned, not notarized. Gatekeeper will warn; see docs/delivery/LAS-58/RELEASE-RUNBOOK.md.'
+echo 'DEVELOPMENT BUILD ONLY: ad-hoc sealed, not notarized. Gatekeeper will warn; see docs/delivery/LAS-58/RELEASE-RUNBOOK.md.'
